@@ -62,3 +62,38 @@ Boat length (0–15+ metres), engine power (0–400+ horsepower), Number of peop
 - Sidebar order: Boat type; Price per day; Instant booking; Number of people; Boat length; Engine power; then existing Details and Equipment.
 - Daily price has a two-handle slider and editable Minimum / Maximum amount fields. €50 minimum, €2,000+ means no upper cap.
 - Instant booking is demo-only and does not guarantee owner confirmation or live availability.
+
+## Navigation, homepage, and login updates (October 26, 2026)
+
+- **Boat Rental** replaces **Boats** in both desktop and mobile top navigation; both still lead to the existing results page.
+- The **“Boats worth falling for”** curated boat-card section has been removed **from the homepage only**. Destination tiles, search, editorial areas, dedicated boat results, and individual boat pages are untouched.
+- Login heading reads **“Welcome to Get By Boat”** instead of “Welcome back.”
+- Customer login/registration UI now offers **Continue with Google** and **Continue with Apple** alongside email/password forms. Create an account switches to a real registration-form layout. The same Google/Apple buttons are present on registration.
+
+### Activate real Google / Apple / email authentication
+
+**Current state:** These are designed and wired to Supabase Auth, but **Google, Apple, and email sign-in do not work until you configure your own authentication service.** Without that connection, clicking them shows an honest setup notice; no user account is created. The customer and owner dashboards remain **preview screens** even after authentication is connected, and they are not secure account-specific dashboards. No payment or booking is live.
+
+1. Create a **Supabase** project at https://supabase.com/dashboard . Use its **Project URL** and **publishable/anon key** in `public/auth-config.js`:
+
+   ```js
+   window.GBB_AUTH_CONFIG = {
+     supabaseUrl: 'https://YOUR-PROJECT.supabase.co',
+     supabasePublishableKey: 'YOUR-PUBLISHABLE-KEY'
+   };
+   ```
+
+   These two values are meant to be public in browser apps. **Never** put a **service_role** key, Google client secret, or Apple private key in `public/` or GitHub.
+
+2. In Supabase **Authentication → URL Configuration**, set **Site URL** to your site's real HTTPS URL (e.g. `https://get-by-boat-fresh.boludo-workstation.workers.dev/`), and add that URL plus `https://get-by-boat-fresh.boludo-workstation.workers.dev/?auth_callback=1` to allowed **Redirect URLs**. Set up any custom domain as well if used.
+3. In Supabase **Authentication → Providers**, enable **Google** and **Apple** and complete their respective Google Cloud OAuth and Apple Developer **Services ID** configuration. Apple's setup generally requires an Apple Developer account and credential renewal/maintenance. Use the provider callback URL shown **by your own Supabase project**, not the website's URL, when configuring the external OAuth provider. The website's URL belongs in Supabase's Redirect URLs.
+4. Enable email/password authentication and decide your email-confirmation policy in Supabase.
+5. Upload the updated project (including `public/auth-config.js`), then test with your own accounts in a private browser window. Configure Row Level Security and protected server endpoints before introducing private per-user data, owner listings, payments or dashboards.
+
+Docs:
+- https://supabase.com/docs/reference/javascript/auth-signinwithoauth
+- https://supabase.com/docs/guides/auth/social-login/auth-google
+- https://supabase.com/docs/guides/auth/social-login/auth-apple
+- https://supabase.com/docs/guides/auth/redirect-urls
+
+The browser loads the Supabase JavaScript library from a CDN **only when the authentication project settings are filled in**. Its absence or disabled provider setup won't prevent static website deployment; it will affect only sign-in.

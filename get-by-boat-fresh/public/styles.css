@@ -80,3 +80,12 @@
 .instant-filter-group .instant-switch-row{margin:0}
 .instant-filter-group .instant-switch-subtitle{max-width:185px}
 @media(max-width:800px){.price-box{padding:12px 13px}.price-box-value{font-size:18px}.instant-filter-group .instant-switch-subtitle{max-width:none}}
+
+/* Login: provider choices use the existing premium palette without changing other pages. */
+.login-box h1{font-size:clamp(39px,3.4vw,53px);line-height:1.08}
+.social-auth{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 0}
+.social-auth-button{display:flex;align-items:center;justify-content:center;gap:9px;min-height:47px;padding:10px 8px;background:#fff;color:#233d47;border:1px solid #dbe5e6;border-radius:5px;font-weight:700;font-size:11px;transition:background .2s,border-color .2s}
+.social-auth-button:hover{background:#f1fbfb;border-color:#00a8c6}
+.social-auth-button svg{flex:none}
+.login-box .login-divider{margin:19px 0}
+@media(max-width:540px){.social-auth{grid-template-columns:1fr}.login-box h1{font-size:43px}}
