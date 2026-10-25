@@ -97,3 +97,6 @@ Docs:
 - https://supabase.com/docs/guides/auth/redirect-urls
 
 The browser loads the Supabase JavaScript library from a CDN **only when the authentication project settings are filled in**. Its absence or disabled provider setup won't prevent static website deployment; it will affect only sign-in.
+
+## Login copy update
+The subtitle beneath “Welcome to Get By Boat” now shows orange “Create your account.” and “Log in.” links. Clicking either opens the corresponding signup or login form. All other pages and styling are retained.
