@@ -57,3 +57,8 @@ The search filters include Water skis, Wakeboard, Towable Tube, Inflatable banan
 
 ## Latest filter changes
 Boat length (0–15+ metres), engine power (0–400+ horsepower), Number of people (1–12), and an ocean-blue Instant booking on/off switch. All filters work on illustrative sample boat specifications only; instant booking is not yet a live reservation feature.
+
+## Filter refinements (this release)
+- Sidebar order: Boat type; Price per day; Instant booking; Number of people; Boat length; Engine power; then existing Details and Equipment.
+- Daily price has a two-handle slider and editable Minimum / Maximum amount fields. €50 minimum, €2,000+ means no upper cap.
+- Instant booking is demo-only and does not guarantee owner confirmation or live availability.

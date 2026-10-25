@@ -66,3 +66,17 @@
 .dual-range input[data-end=max]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M5.5 2.5 11 8l-5.5 5.5' fill='none' stroke='%23223847' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 /* Keep labels readable on narrow screens. */
 @media (max-width:1150px){.people-filter .people-row{align-items:flex-start}.people-stepper{margin-left:auto}}
+
+/* Price per day: two-handle slider + editable minimum and maximum values. */
+.price-filter-group .price-dual-range{margin:7px 0 15px}
+.price-boxes{display:flex;align-items:center;gap:8px;min-width:0}
+.price-box{display:flex;flex-direction:column;gap:7px;min-width:0;flex:1 1 0;border:1px solid #d9e3e7;border-radius:9px;padding:10px 9px;background:#fff;cursor:text}
+.price-box>span:first-child{font-size:11px;color:#52666c;font-weight:650}
+.price-box-value{display:flex;align-items:center;gap:3px;min-width:0;font-size:16px;color:var(--deep)}
+.price-box-value input{appearance:textfield;-moz-appearance:textfield;min-width:0;width:100%;border:0;outline:none;font:inherit;color:inherit;background:transparent;padding:0;}
+.price-box-value input::-webkit-inner-spin-button,.price-box-value input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.price-box:focus-within{border-color:var(--blue);box-shadow:0 0 0 2px #00a8c61c}
+.price-separator{font-size:18px;font-weight:700;color:var(--deep);flex:0 0 auto}
+.instant-filter-group .instant-switch-row{margin:0}
+.instant-filter-group .instant-switch-subtitle{max-width:185px}
+@media(max-width:800px){.price-box{padding:12px 13px}.price-box-value{font-size:18px}.instant-filter-group .instant-switch-subtitle{max-width:none}}
