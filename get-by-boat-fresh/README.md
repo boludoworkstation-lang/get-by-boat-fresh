@@ -1,26 +1,35 @@
-# Get By Boat — premium visual concept
+# Get By Boat — Image 1 Premium Marketplace Preview
 
-A responsive, editorial-style boat marketplace **frontend preview** for Croatia, Greece, Spain, Italy, France, USA, Bahamas and Australia.
+A hand-crafted responsive frontend following the **first six-panel visual concept** approved in the chat:
+- Scenic full-width yacht hero with search and eight destination cards
+- Search-results page with filters and boat-list / map preview
+- Boat-detail page with photo gallery and reservation form
+- Customer login, booking preview and boat-owner dashboard
+- Mediterranean Blue: `#00A8C6`
 
-## What's included
-- Homepage with luxury hero, sea photography, search card, destinations and boats
-- Search by destination and boat type, dates UI and simple date validation
-- Boat cards, detail previews, guest checkout UI, customer login UI, owner dashboard UI
-- Mediterranean Blue (#00A8C6) buttons, responsive mobile design
+## IMPORTANT: what is NOT live
+This is a **frontend demonstration**. The boats, owners, prices, bookings and ratings are sample data. No real identity authentication, owner listing storage, availability locks, charges, payouts, or customer payments exist. Booking and login forms clearly tell visitors they are demos. This ZIP is **not ready to accept real bookings or payments**.
 
-## Important limits
-- This is a **frontend design concept**, NOT a working marketplace.
-- Boats and prices are fictional sample content.
-- Accounts, owner listing persistence, bookings, inventory, payments and payouts are NOT connected. No charges are possible.
-- Images and fonts are fetched from third-party CDN services at runtime and require internet access; replace with properly licensed hosted assets before production.
-- Dates are collected for search UI but availability is NOT verified.
+## Project structure
+- `public/index.html` — shell
+- `public/styles.css` — complete responsive design
+- `public/app.js` — sample data, navigation, search, filters and UI interactions
+- `public/assets/` — bundled imagery, favicon; no external photo servers required
+- `src/index.js` — Cloudflare Worker
+- `wrangler.toml` — Worker name and static asset directory
+- `package.json` — Wrangler setup
 
-## Cloudflare Workers
-`wrangler.toml` uses a Worker with static assets. `src/index.js` delegates requests to the ASSETS binding.
+## Publish to your EXISTING Cloudflare project
+The current GitHub repository is `boludoworkstation-lang/get-by-boat-fresh`, with the app inside the **nested `get-by-boat-fresh/` folder**. Cloudflare Builds **Root directory** should stay `get-by-boat-fresh` unless files are intentionally moved to the repo root.
 
-For Git-connected deployments set Root directory to the folder containing `wrangler.toml` and `public/`, build command blank, deploy command `npx wrangler deploy`.
+1. Unzip this package.
+2. In GitHub, navigate to `get-by-boat-fresh/get-by-boat-fresh/` (the INNER folder).
+3. Upload the **contents** of this ZIP (not the outer folder and not the ZIP itself): `public`, `src`, `README.md`, `package.json`, `wrangler.toml`.
+4. Commit and wait for the Cloudflare production build; deploy command `npx wrangler deploy`, build command blank.
+5. Make sure old files from earlier versions that aren't in this ZIP don't override expected paths. Do not delete your project or change Cloudflare settings before confirming the status.
 
-The Worker name in wrangler.toml is `get-by-boat-fresh` for compatibility with the existing project; change if deploying a separate Worker.
+## Local check (optional)
+`npm install`, `npm run check`, `npm run dev`. No npm setup is needed for the GitHub web-upload workflow.
 
-## Uploading to existing GitHub repo
-Upload the contents of this ZIP **inside the existing nested `get-by-boat-fresh/` folder**, replacing the old `src/index.js`, `public/` files, `wrangler.toml`, `package.json` and README. GitHub's web upload may not remove old files; remove unused old assets manually after confirming the new version works. Verify the upload destination before committing.
+## Scope and design
+Only these countries are represented: Croatia, Greece, Spain, Italy, France, USA, Bahamas, Australia. No "Daily experiences" mode. Search is sample-data only. Photo assets are bundled with the package.
