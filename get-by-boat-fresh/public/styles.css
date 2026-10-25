@@ -106,3 +106,6 @@
 .login-mode-links button.current { text-decoration:underline; text-underline-offset:4px; }
 .login-mode-links button:hover { color:#953c11; }
 .login-mode-links button:focus-visible { outline:2px solid #c45b20; outline-offset:4px; border-radius:2px; }
+
+/* Login/register mode label: single orange phrase, without links. */
+.login-box > p.login-mode-links { color: #c45b20; font-weight: 700; }
