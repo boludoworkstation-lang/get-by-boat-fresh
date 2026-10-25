@@ -1,96 +1,17 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Get By Boat — find and explore boat rentals across eight stunning destinations." />
-  <meta name="theme-color" content="#00A8C6" />
-  <title>Get By Boat — Boat rentals in beautiful destinations</title>
-  <link rel="stylesheet" href="/style.css" />
-  <script src="/app.js" defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#006a83">
+  <meta name="description" content="Get By Boat — discover memorable boat charters in Croatia, Greece, Spain, Italy, France, the USA, the Bahamas, and Australia.">
+  <title>Get By Boat — Explore the world by boat</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="logo" href="/" aria-label="Get By Boat home"><span class="logo-icon">〰</span> Get <strong>By</strong> Boat<span class="logo-dot">.</span></a>
-      <nav class="desktop-nav" aria-label="Main navigation">
-        <a href="#destinations">Destinations</a>
-        <a href="#boats">Find a boat</a>
-        <a href="#how-it-works">How it works</a>
-      </nav>
-      <div class="header-actions">
-        <button id="ownerNav" class="link-button" type="button">List your boat</button>
-        <button id="loginNav" class="header-login" type="button">Log in <span aria-hidden="true">↗</span></button>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero" aria-labelledby="hero-heading">
-      <div class="hero-layout">
-        <div class="search-card">
-          <div class="topline"><span class="topline-dot"></span> THE WATER IS CALLING</div>
-          <h1 id="hero-heading">The perfect way to rent your next boat</h1>
-          <p class="hero-description">Explore memorable boat rentals and sail away to the places you've always dreamed of.</p>
-          <div class="rental-tab"><span class="tab-symbol" aria-hidden="true">⛵</span><span><strong>Boat rentals</strong><small>Find your perfect boat on the water</small></span><span class="check" aria-label="Selected">✓</span></div>
-          <form id="searchForm" class="search-form">
-            <label class="search-label" for="locationInput">Place of departure</label>
-            <div class="control-wrap place-wrap">
-              <input id="locationInput" name="location" list="places" placeholder="Ibiza, Croatia, Sardinia..." autocomplete="off" />
-              <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5"/></svg>
-            </div>
-            <datalist id="places">
-              <option value="Croatia"></option><option value="Split"></option><option value="Dubrovnik"></option><option value="Hvar"></option>
-              <option value="Greece"></option><option value="Athens"></option><option value="Mykonos"></option>
-              <option value="Spain"></option><option value="Ibiza"></option><option value="Mallorca"></option>
-              <option value="Italy"></option><option value="Sardinia"></option><option value="Amalfi"></option>
-              <option value="France"></option><option value="Nice"></option><option value="Cannes"></option>
-              <option value="USA"></option><option value="Miami"></option><option value="California"></option>
-              <option value="Bahamas"></option><option value="Nassau"></option>
-              <option value="Australia"></option><option value="Sydney"></option>
-            </datalist>
-            <div class="date-grid">
-              <div><label class="search-label" for="startDate">Starting date</label><div class="control-wrap"><input id="startDate" name="start" type="date" aria-label="Starting date" /></div></div>
-              <div><label class="search-label" for="endDate">Ending date</label><div class="control-wrap"><input id="endDate" name="end" type="date" aria-label="Ending date" /></div></div>
-            </div>
-            <label class="search-label boat-label" for="boatType">Boat type</label>
-            <div class="control-wrap"><select id="boatType" name="type"><option value="">Sailboat, motorboat, catamaran...</option><option>Motorboat</option><option>Sailboat</option><option>Catamaran</option><option>Yacht</option><option>RIB</option></select></div>
-            <div class="search-actions"><button class="primary" type="submit">Search <span aria-hidden="true">→</span></button></div>
-          </form>
-        </div>
-        <div class="hero-copy"><div class="badge-white">THE SEA IS YOURS TO EXPLORE</div><h2>Discover more.<br>Feel the freedom.</h2><p>Eight incredible countries. Countless reasons to get out on the water.</p></div>
-      </div>
-      <div class="hero-bottom">DISCOVER THE WORLD FROM THE WATER <span aria-hidden="true">↓</span></div>
-    </section>
-
-    <section id="destinations" class="content-section destinations-section">
-      <div class="section-heading"><div><span class="eyebrow">YOUR NEXT DESTINATION</span><h2>Where do you want to sail?</h2><p>Discover boat rentals across our eight selected countries.</p></div><a class="text-link" href="#boats">Explore boats <span>→</span></a></div>
-      <div class="destination-grid" id="destinationGrid"></div>
-    </section>
-
-    <section id="boats" class="content-section boats-section">
-      <div class="section-heading"><div><span class="eyebrow">FIND YOUR PERFECT MATCH</span><h2>Beautiful boats, unforgettable days</h2><p id="resultsDescription">Explore our sample boat collection.</p></div></div>
-      <div class="filter-row">
-        <label for="countryFilter">Destination <select id="countryFilter"><option value="">All destinations</option></select></label>
-        <label for="typeFilter">Boat type <select id="typeFilter"><option value="">All boat types</option><option>Motorboat</option><option>Sailboat</option><option>Catamaran</option><option>Yacht</option><option>RIB</option></select></label>
-        <label for="sortFilter">Sort by <select id="sortFilter"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label>
-        <button type="button" id="clearFilters" class="clear-filters">Clear filters</button>
-      </div>
-      <div class="boat-grid" id="boatGrid" aria-live="polite"></div>
-      <div class="demo-disclosure"><strong>Website preview:</strong> Boats, prices and owner profiles shown here are illustrative. Real owner accounts, availability, booking confirmation and payments will be connected in a later phase. No charges are made.</div>
-    </section>
-
-    <section id="how-it-works" class="content-section how-section">
-      <div class="section-heading"><div><span class="eyebrow">SIMPLE FROM START TO FINISH</span><h2>A better day starts with a boat</h2></div></div>
-      <div class="steps"><div><span class="step-icon">01</span><h3>Find your boat</h3><p>Choose a destination, dates and the right type of boat for your plans.</p></div><div><span class="step-icon">02</span><h3>Explore your options</h3><p>Review photos, equipment and pricing before making your choice.</p></div><div><span class="step-icon">03</span><h3>Book with confidence</h3><p>Secure booking and online payments are coming as the marketplace backend is completed.</p></div></div>
-    </section>
-
-    <section class="owner-cta"><div class="owner-cta-inner"><div><span class="eyebrow">FOR BOAT OWNERS</span><h2>Your boat. More possibilities.</h2><p>List your boat, manage reservations and grow your charter business with Get By Boat.</p></div><button class="primary" id="ownerCta" type="button">Explore owner dashboard <span aria-hidden="true">→</span></button></div></section>
-  </main>
-  <footer class="footer"><div class="footer-inner"><div class="logo light">〰 Get <strong>By</strong> Boat.</div><p>Made for people who love the water.</p><div class="footer-nav"><a href="#destinations">Destinations</a><a href="#boats">Boat rentals</a><a href="#how-it-works">How it works</a></div><small>© 2026 Get By Boat · Preview website · Eight selected countries</small></div></footer>
-
-  <dialog id="detailDialog" class="dialog" aria-labelledby="detailTitle"><div class="dialog-top"><span class="eyebrow">BOAT DETAILS</span><button type="button" class="close-dialog" data-close="detailDialog" aria-label="Close">×</button></div><div id="detailContent"></div></dialog>
-  <dialog id="accountDialog" class="dialog" aria-labelledby="accountTitle"><div class="dialog-top"><span class="eyebrow">GET BY BOAT</span><button type="button" class="close-dialog" data-close="accountDialog" aria-label="Close">×</button></div><div id="accountContent"></div></dialog>
-  <dialog id="ownerDialog" class="dialog large-dialog" aria-labelledby="ownerTitle"><div class="dialog-top"><span class="eyebrow">BOAT OWNERS</span><button type="button" class="close-dialog" data-close="ownerDialog" aria-label="Close">×</button></div><div id="ownerContent"></div></dialog>
+  <div id="app"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
