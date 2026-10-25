@@ -40,3 +40,6 @@ Only these countries are represented: Croatia, Greece, Spain, Italy, France, USA
 - Daily-price filter runs from EUR 50 to EUR 2,000+. The top setting does not exclude higher-priced boats.
 - Instant booking checkbox filters illustrative sample boats only; actual booking, availability and instant confirmation are not active.
 - The existing layout and other pages have been kept unchanged.
+
+## Sidebar correction
+The country-selector dropdown in the results sidebar has been removed. Customers type a location in the Departure location search field. Boat type, price and Instant booking filters remain intact.
