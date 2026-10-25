@@ -33,3 +33,10 @@ The current GitHub repository is `boludoworkstation-lang/get-by-boat-fresh`, wit
 
 ## Scope and design
 Only these countries are represented: Croatia, Greece, Spain, Italy, France, USA, Bahamas, Australia. No "Daily experiences" mode. Search is sample-data only. Photo assets are bundled with the package.
+
+## Small search/filter changes (October 2026)
+- Departure location now accepts typed city, island or country text. It filters the sample boats by their stored locations; it is not a worldwide geocoding service.
+- Search boat categories: Motorboats, RIBs, Sailboats, Catamarans and Yachts. Not all categories have demo listings.
+- Daily-price filter runs from EUR 50 to EUR 2,000+. The top setting does not exclude higher-priced boats.
+- Instant booking checkbox filters illustrative sample boats only; actual booking, availability and instant confirmation are not active.
+- The existing layout and other pages have been kept unchanged.
