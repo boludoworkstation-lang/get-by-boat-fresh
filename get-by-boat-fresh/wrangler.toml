@@ -1,6 +1,6 @@
-name = "get-by-boat"
+name = "get-by-boat-fresh"
 main = "src/index.js"
-compatibility_date = "2025-04-01"
+compatibility_date = "2025-01-01"
 
 [assets]
 directory = "./public"

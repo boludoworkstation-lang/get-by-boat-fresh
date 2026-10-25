@@ -1,30 +1,26 @@
-# Get By Boat — simple Cloudflare Workers demo
+# Get By Boat — premium visual concept
 
-This is a new, minimal project designed to deploy on Cloudflare Workers without R2, D1, Stripe, Hono, or a paid service.
+A responsive, editorial-style boat marketplace **frontend preview** for Croatia, Greece, Spain, Italy, France, USA, Bahamas and Australia.
 
-## Features
-- Responsive boat-rental landing page
-- Search sample boats by destination and type
-- Sample boat cards and demo request form
-- Demo requests saved to the visitor's browser localStorage only
-- `/api/health` endpoint
+## What's included
+- Homepage with luxury hero, sea photography, search card, destinations and boats
+- Search by destination and boat type, dates UI and simple date validation
+- Boat cards, detail previews, guest checkout UI, customer login UI, owner dashboard UI
+- Mediterranean Blue (#00A8C6) buttons, responsive mobile design
 
-## Important limitations
-This is a **prototype**, not a production marketplace. Listings are examples. Booking requests are **not sent to owners** and are **not stored on a server**. No accounts, payments, real inventory, owner dashboards, or image uploads are included. Photos are loaded from Unsplash and require internet access.
+## Important limits
+- This is a **frontend design concept**, NOT a working marketplace.
+- Boats and prices are fictional sample content.
+- Accounts, owner listing persistence, bookings, inventory, payments and payouts are NOT connected. No charges are possible.
+- Images and fonts are fetched from third-party CDN services at runtime and require internet access; replace with properly licensed hosted assets before production.
+- Dates are collected for search UI but availability is NOT verified.
 
-## GitHub upload (no terminal)
-1. Create a **new empty GitHub repository** (recommended) or delete old project files in an existing repo before uploading.
-2. Open the extracted `get-by-boat-fresh` folder on your computer.
-3. Upload the CONTENTS of that folder (`wrangler.toml`, `package.json`, `src/`, `public/`, `README.md`) directly to the root of the GitHub repository. Do not upload the ZIP itself and do not nest an extra folder.
-4. In Cloudflare Workers & Pages, create a Worker using GitHub integration and select the repository.
-5. Set Root directory to repository root (blank or `/`, depending on UI). Build command: leave blank if allowed. Deploy command: `npx wrangler deploy`.
-6. Deploy. The first deployment may ask you to configure a `workers.dev` subdomain.
+## Cloudflare Workers
+`wrangler.toml` uses a Worker with static assets. `src/index.js` delegates requests to the ASSETS binding.
 
-## Deployment notes
-- `wrangler.toml` configures the Worker entry point and static assets.
-- `package.json` only installs Wrangler for deployment.
-- There are no secrets or service bindings to create.
-- To verify the Worker, visit `https://YOUR-URL/api/health` and look for `"ok":true`.
+For Git-connected deployments set Root directory to the folder containing `wrangler.toml` and `public/`, build command blank, deploy command `npx wrangler deploy`.
 
-## Next steps for a real marketplace
-Add proper authentication, D1 database, secure owner listing management, server-side booking requests and notifications, verified listings, and Stripe Connect/payment processing before accepting real customers. Never accept real payments using this demo.
+The Worker name in wrangler.toml is `get-by-boat-fresh` for compatibility with the existing project; change if deploying a separate Worker.
+
+## Uploading to existing GitHub repo
+Upload the contents of this ZIP **inside the existing nested `get-by-boat-fresh/` folder**, replacing the old `src/index.js`, `public/` files, `wrangler.toml`, `package.json` and README. GitHub's web upload may not remove old files; remove unused old assets manually after confirming the new version works. Verify the upload destination before committing.
