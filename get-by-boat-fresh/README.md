@@ -43,3 +43,17 @@ Only these countries are represented: Croatia, Greece, Spain, Italy, France, USA
 
 ## Sidebar correction
 The country-selector dropdown in the results sidebar has been removed. Customers type a location in the Departure location search field. Boat type, price and Instant booking filters remain intact.
+
+## Equipment filter (preview)
+The search filters include Water skis, Wakeboard, Towable Tube, Inflatable banana, Air Conditioning, Fridge, External speakers, Outdoor shower, Bimini, Autopilot, and GPS. You can select multiple items; demo boats must match all selected equipment. Equipment on sample boats is illustrative, not verified. When real owner listings are added, equipment must come from owner-provided verified inventory. No live bookings or payments are enabled.
+
+
+## Boat length, engine power, and people filters
+- Boat length: dual-handle filter from 0 m to 15+ m (15+ means no upper limit).
+- Engine power: dual-handle filter from 0 hp to 400+ hp (400+ means no upper limit).
+- Number of people replaces Guests in the search filter. Starts at 1, plus and minus adjust 1–12.
+- Search results update on filter changes and Clear all restores defaults.
+- Boat dimensions and power specifications are **illustrative demo data**, not owner-verified. Nothing about real boats or availability is guaranteed.
+
+## Latest filter changes
+Boat length (0–15+ metres), engine power (0–400+ horsepower), Number of people (1–12), and an ocean-blue Instant booking on/off switch. All filters work on illustrative sample boat specifications only; instant booking is not yet a live reservation feature.

@@ -20,3 +20,49 @@
 
 /* Departure location is now editable without changing the existing design. */
 .search-location input[type="text"]{cursor:text}
+
+/* Range filters — same premium visual language as the existing search sidebar. */
+.filter-range-group .range-label-row{display:flex;align-items:baseline;justify-content:space-between;gap:9px;margin-bottom:14px}
+.filter-range-group .range-label-row h4{margin:0}
+.filter-range-group .range-label-row span{font-size:12px;white-space:nowrap;color:var(--deep);font-weight:700}
+.dual-range{height:38px;position:relative;margin:4px 0 1px;--range-left:0%;--range-right:100%}
+.dual-range-base,.dual-range-selected{position:absolute;top:17px;height:4px;border-radius:4px;left:0;right:0;background:#e0ebec;pointer-events:none}
+.dual-range-selected{left:var(--range-left);right:calc(100% - var(--range-right));background:var(--blue)}
+.dual-range input[type=range]{appearance:none;-webkit-appearance:none;position:absolute;inset:0;width:100%;height:38px;margin:0;background:transparent;pointer-events:none;cursor:pointer}
+.dual-range input[type=range]:last-of-type{z-index:3}
+.dual-range input[type=range]:first-of-type{z-index:2}
+.dual-range input[type=range]:focus{z-index:4;outline:none}
+.dual-range input[type=range]::-webkit-slider-runnable-track{height:4px;background:transparent}
+.dual-range input[type=range]::-moz-range-track{height:4px;background:transparent}
+.dual-range input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;height:34px;width:34px;border-radius:50%;border:1px solid #c7d8de;background:#fff;box-shadow:0 2px 8px #163b491c;margin-top:-15px;pointer-events:auto;cursor:grab}
+.dual-range input[type=range]::-moz-range-thumb{height:32px;width:32px;border-radius:50%;border:1px solid #c7d8de;background:#fff;box-shadow:0 2px 8px #163b491c;pointer-events:auto;cursor:grab}
+.dual-range input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid var(--blue);outline-offset:2px}
+.dual-range input[type=range]:focus-visible::-moz-range-thumb{outline:3px solid var(--blue);outline-offset:2px}
+.filter-range-group .range-foot{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:3px}
+.stepper button:disabled{opacity:.38;cursor:default}
+
+/* 2026-10-25: only sidebar adjustments requested by the owner. */
+.people-filter .people-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.people-filter .people-row h4{margin:0;flex:1 1 85px}
+.people-stepper{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto}
+.people-stepper button{width:39px;height:39px;display:grid;place-items:center;cursor:pointer;color:var(--deep);background:#fff;border:1px solid var(--line);border-radius:50%;font-size:24px;line-height:1;transition:border-color .2s,background .2s}
+.people-stepper button:hover:not(:disabled){border-color:var(--blue);background:#edfafd}
+.people-stepper button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.people-stepper button:disabled{opacity:.4;cursor:not-allowed;background:#f2f5f6}
+.people-stepper span{min-width:19px;text-align:center;font-size:17px;font-weight:600;color:var(--deep);font-variant-numeric:tabular-nums}
+.instant-switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;margin:17px 0 3px;color:var(--deep);font-size:12px;font-weight:600}
+.instant-switch-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.instant-switch-subtitle{font-size:12px;font-weight:400;line-height:1.5;color:#7a858d;max-width:230px}
+.instant-switch-control{display:inline-flex;position:relative;flex:0 0 auto;width:47px;height:27px}
+.instant-switch-control input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2}
+.instant-switch-track{width:47px;height:27px;background:#d7e2e5;border-radius:100px;border:1px solid #c6d5da;transition:background .2s,border-color .2s;position:relative;pointer-events:none}
+.instant-switch-track:before{content:'';position:absolute;top:3px;left:3px;width:19px;height:19px;background:#fff;border-radius:50%;box-shadow:0 1px 3px #092d3d36;transition:transform .2s}
+.instant-switch-control input:checked + .instant-switch-track{background:var(--blue);border-color:var(--blue)}
+.instant-switch-control input:checked + .instant-switch-track:before{transform:translateX(20px)}
+.instant-switch-control input:focus-visible + .instant-switch-track{outline:2px solid var(--blue);outline-offset:3px}
+/* Arrow-accented handles for the two technical specification range sliders. */
+.dual-range input[type=range]::-webkit-slider-thumb{background-repeat:no-repeat;background-position:center;background-size:12px 12px}
+.dual-range input[data-end=min]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M10.5 2.5 5 8l5.5 5.5' fill='none' stroke='%23223847' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.dual-range input[data-end=max]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M5.5 2.5 11 8l-5.5 5.5' fill='none' stroke='%23223847' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+/* Keep labels readable on narrow screens. */
+@media (max-width:1150px){.people-filter .people-row{align-items:flex-start}.people-stepper{margin-left:auto}}
