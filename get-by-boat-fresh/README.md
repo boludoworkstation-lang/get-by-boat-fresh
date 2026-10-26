@@ -100,3 +100,9 @@ The browser loads the Supabase JavaScript library from a CDN **only when the aut
 
 ## Login copy update
 The subtitle beneath “Welcome to Get By Boat” now shows orange “Create your account.” and “Log in.” links. Clicking either opens the corresponding signup or login form. All other pages and styling are retained.
+
+
+## Brand copy refinement
+- Footer brand message: “More than a booking. Your next holiday starts here.”
+- Supporting line: “Beautiful days begin at sea.”
+- “Say hello to summer” copy: “Unforgettable destinations. One beautiful horizon.” followed by Croatia · Greece · Spain · Italy · Malta; France · USA · Bahamas · Australia.
