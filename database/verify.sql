@@ -1,0 +1,34 @@
+begin;
+insert into auth.users(id,email) values('11111111-1111-4111-8111-111111111111','owner@example.invalid'),('22222222-2222-4222-8222-222222222222','guest@example.invalid'),('33333333-3333-4333-8333-333333333333','other@example.invalid');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+insert into public.profiles(id,display_name,account_type) values(auth.uid(),'Test Owner','owner');
+insert into public.boats(id,owner_id,name,country,location,type,price,guests,published) values('44444444-4444-4444-8444-444444444444',auth.uid(),'Test Boat','Croatia','Split','Sailboat',800,6,true);
+select set_config('request.jwt.claim.sub','22222222-2222-4222-8222-222222222222',true);
+insert into public.profiles(id,display_name) values(auth.uid(),'Test Guest');
+insert into public.bookings(id,boat_id,customer_id,start_date,end_date,guests,customer_name,total,status) values('55555555-5555-4555-8555-555555555555','44444444-4444-4444-8444-444444444444',auth.uid(),current_date+30,current_date+32,2,'Test Guest',1,'confirmed');
+do $$begin
+ if not exists(select 1 from public.bookings where total=2457 and charter_price=2400 and service_fee=57 and status='pending_owner') then raise exception 'Server price/status test failed';end if;
+ if (select count(*) from public.profiles)<>1 then raise exception 'Profile privacy failed';end if;
+end$$;
+select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
+do $$begin if exists(select 1 from public.bookings) then raise exception 'Cross-customer privacy failed';end if;end$$;
+insert into public.bookings(id,boat_id,customer_id,start_date,end_date,guests,customer_name) values('66666666-6666-4666-8666-666666666666','44444444-4444-4444-8444-444444444444',auth.uid(),current_date+32,current_date+33,1,'Other Guest');
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+update public.bookings set status='awaiting_payment' where id='55555555-5555-4555-8555-555555555555';
+do $$declare rejected boolean:=false;begin
+ begin update public.bookings set status='awaiting_payment' where id='66666666-6666-4666-8666-666666666666';exception when others then if sqlerrm='These dates are no longer available' then rejected:=true;else raise;end if;end;
+ if not rejected then raise exception 'Overlap test failed';end if;
+ rejected:=false;
+ begin update public.bookings set status='confirmed' where id='55555555-5555-4555-8555-555555555555';exception when others then if sqlerrm='This booking transition is not permitted' then rejected:=true;else raise;end if;end;
+ if not rejected then raise exception 'Payment bypass test failed';end if;
+ rejected:=false;
+ begin insert into public.boat_blocks(boat_id,start_date,end_date) values('44444444-4444-4444-8444-444444444444',current_date+31,current_date+32);exception when others then if sqlerrm='A reservation already holds these dates' then rejected:=true;else raise;end if;end;
+ if not rejected then raise exception 'Block overlap failed';end if;
+end$$;
+select set_config('request.jwt.claim.sub','22222222-2222-4222-8222-222222222222',true);
+update public.bookings set status='cancelled' where id='55555555-5555-4555-8555-555555555555';
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+update public.bookings set status='awaiting_payment' where id='66666666-6666-4666-8666-666666666666';
+select 'PASS: pricing, profile isolation, booking isolation, owner acceptance, inclusive overlap, payment protection, calendar blocks, cancellation releases dates' as result;
+rollback;

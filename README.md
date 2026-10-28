@@ -1,4 +1,4 @@
-# Get By Boat — Image 1 Premium Marketplace Preview
+# Go By Boat — Image 1 Premium Marketplace Preview
 
 A hand-crafted responsive frontend following the **first six-panel visual concept** approved in the chat:
 - Scenic full-width yacht hero with search and eight destination cards
@@ -67,7 +67,7 @@ Boat length (0–15+ metres), engine power (0–400+ horsepower), Number of peop
 
 - **Boat Rental** replaces **Boats** in both desktop and mobile top navigation; both still lead to the existing results page.
 - The **“Boats worth falling for”** curated boat-card section has been removed **from the homepage only**. Destination tiles, search, editorial areas, dedicated boat results, and individual boat pages are untouched.
-- Login heading reads **“Welcome to Get By Boat”** instead of “Welcome back.”
+- Login heading reads **“Welcome to Go By Boat”** instead of “Welcome back.”
 - Customer login/registration UI now offers **Continue with Google** and **Continue with Apple** alongside email/password forms. Create an account switches to a real registration-form layout. The same Google/Apple buttons are present on registration.
 
 ### Activate real Google / Apple / email authentication
@@ -99,7 +99,7 @@ Docs:
 The browser loads the Supabase JavaScript library from a CDN **only when the authentication project settings are filled in**. Its absence or disabled provider setup won't prevent static website deployment; it will affect only sign-in.
 
 ## Login copy update
-The subtitle beneath “Welcome to Get By Boat” now shows orange “Create your account.” and “Log in.” links. Clicking either opens the corresponding signup or login form. All other pages and styling are retained.
+The subtitle beneath “Welcome to Go By Boat” now shows orange “Create your account.” and “Log in.” links. Clicking either opens the corresponding signup or login form. All other pages and styling are retained.
 
 
 ## Brand copy refinement

@@ -1,4 +1,4 @@
-# Get By Boat — verified frontend preview
+# Go By Boat — verified frontend preview
 
 **This is NOT a functioning payment or booking marketplace.** It is a frontend preview with sample listings and preview-only owner/customer dialogs. No user data is collected and no payments occur.
 

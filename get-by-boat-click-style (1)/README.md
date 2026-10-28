@@ -1,4 +1,4 @@
-# Get By Boat — Image 1 Premium Marketplace Preview
+# Go By Boat — Image 1 Premium Marketplace Preview
 
 A hand-crafted responsive frontend following the **first six-panel visual concept** approved in the chat:
 - Scenic full-width yacht hero with search and eight destination cards
