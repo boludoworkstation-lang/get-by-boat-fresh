@@ -1,0 +1,12 @@
+alter table public.profiles add column if not exists details jsonb not null default '{}'::jsonb check (jsonb_typeof(details)='object' and octet_length(details::text)<=16000);
+alter table public.profiles add column if not exists avatar_path text check (length(avatar_path)<=250);
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) values ('profile-photos','profile-photos',false,5242880,array['image/jpeg','image/png','image/webp']) on conflict(id) do nothing;
+create policy profile_photo_read on storage.objects for select to authenticated using (bucket_id='profile-photos' and (storage.foldername(name))[1]=(select auth.uid())::text);
+create policy profile_photo_insert on storage.objects for insert to authenticated with check (bucket_id='profile-photos' and (storage.foldername(name))[1]=(select auth.uid())::text);
+create policy profile_photo_delete on storage.objects for delete to authenticated using (bucket_id='profile-photos' and (storage.foldername(name))[1]=(select auth.uid())::text);
+create table public.favourites(user_id uuid not null references auth.users(id) on delete cascade,boat_id uuid not null references public.boats(id) on delete cascade,created_at timestamptz not null default now(),primary key(user_id,boat_id));
+alter table public.favourites enable row level security;
+revoke all on public.favourites from anon,authenticated;
+grant select,insert,delete on public.favourites to authenticated;
+create policy favourites_self on public.favourites for all to authenticated using(user_id=(select auth.uid())) with check(user_id=(select auth.uid()));
+create index favourites_boat_idx on public.favourites(boat_id);

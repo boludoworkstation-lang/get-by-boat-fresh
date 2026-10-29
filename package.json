@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "check": "node --check public/app.js && node --check public/backend.js && node --check public/auth-config.js && node --check src/index.js && node tests/frontend.cjs"
+    "check": "node --check public/app.js && node --check public/backend.js && node --check public/auth-config.js && node --check src/index.js && node tests/frontend.cjs && node tests/auth-flows.cjs"
   },
   "devDependencies": {
     "wrangler": "4.154.0"

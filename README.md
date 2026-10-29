@@ -22,6 +22,11 @@ The Worker name remains `get-by-boat-fresh` to update the existing deployment an
 - Calendar blocks, customer requests, owner acceptance/decline and cancellation.
 - Server-calculated daily prices and service fee; inclusive dates, 09:00–19:00 daily.
 - Google and Apple OAuth buttons with clear availability feedback.
+- Refreshed signed-in customer dashboard, with customer profiles created automatically from available OAuth identity details.
+- Optional identity/passport and boat-licence document submission for manual staff review, with private Supabase Storage and staff-only verification decisions.
+- A verified, unexpired boat licence is required before any boat booking request can be created or accepted; the database enforces this separately from the UI.
+
+The verification database objects are already applied to the connected Supabase project. `database/account-dashboard.sql` and `database/verification.sql` document those changes and must not be reapplied blindly. Customers can create accounts without uploading a boating licence, but cannot book until staff approval. Check the privacy notice, retention rules, and document-handling procedures before collecting real ID documents.
 
 The catalogue is empty until owners add published boats. Sample marketing boat pages cannot submit real requests.
 
