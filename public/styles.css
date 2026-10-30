@@ -192,7 +192,7 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .member-hero h1{font:400 clamp(34px,3.8vw,54px)/1.07 var(--serif);letter-spacing:-.045em;margin:0}
 .member-hero h1 em{font-style:italic;color:#b9eff1}
 .member-hero p{font-size:12px;color:#d4e9ed;margin:16px 0 20px;max-width:320px;line-height:1.7}
-.member-hero-btn{background:#fff;color:#08768b;min-height:42px;padding:11px 17px;border-radius:8px}
+.member-hero-btn{background:#fff;color:#08768b;min-height:42px;padding:11px 17px;border-radius:8px;margin-top:18px}
 .member-hero-btn:hover{background:#ebfbfc;color:#07596c}
 .member-hero-btn .icon{width:15px;height:15px}
 .member-hero-image{background:linear-gradient(90deg,#0b4d6100,#022c3c24),url('assets/yacht-cove.webp') center/cover;min-height:100%}
