@@ -7,11 +7,8 @@ create table if not exists private.verification_staff (
 );
 revoke all on private.verification_staff from public, anon, authenticated;
 
--- The confirmed, existing Get By Boat Site owner may review submissions.
--- Future staff must be added by a privileged administrator, never by browser-side code.
-insert into private.verification_staff(user_id)
-select id from auth.users where lower(email)='pj.scouting@gmail.com' and email_confirmed_at is not null
-on conflict do nothing;
+-- Grant staff access through a private, privileged administrator action.
+-- Never commit staff email addresses or identity details into a public repository.
 
 create or replace function private.is_verification_staff()
 returns boolean language sql stable security definer set search_path=''
@@ -136,6 +133,9 @@ create or replace function private.require_verified_boat_licence()
 returns trigger language plpgsql security definer set search_path='' as $$
 begin
   if TG_OP='UPDATE' and (new.status<>'awaiting_payment' or new.status=old.status) then return new; end if;
+  -- With a skipper supplied by the owner, the renter does not operate the boat.
+  -- Another trigger validates that the listing actually offers that mode.
+  if new.with_skipper then return new; end if;
   if not exists(
     select 1 from public.verification_requests v
     join public.verification_reviews r on r.user_id=v.user_id
@@ -150,7 +150,7 @@ begin
       and (nullif(p.details->>'birth_date','') is null or (p.details->>'birth_date')=v.birth_date::text)
       and (v.licence_expiry is null or v.licence_expiry>=new.end_date)
   ) then
-    raise exception 'A verified identity and boat driving licence are required before booking. Open My profile > Verifications.';
+    raise exception 'A verified identity and boat driving licence are required to rent without a skipper. Open My profile > Verification.';
   end if;
   return new;
 end$$;
