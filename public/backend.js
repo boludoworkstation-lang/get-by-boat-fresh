@@ -117,7 +117,8 @@
     const select=(label,name,options)=>`<label>${label}<select name="${name}"><option value="">Select…</option>${options.map(x=>`<option ${d[name]===x?'selected':''}>${esc(x)}</option>`).join('')}</select></label>`;
     const isOwner=profile.account_type==='owner';
     if(tab==='experience')tab='information';
-    const tabs=`<nav class="member-tabs" aria-label="Profile sections">${(isOwner?[['information','Information'],['password','Password']]:[['verification','Verifications'],['information','Information'],['password','Password']]).map(([id,label])=>`<a href="#/account?tab=${id}" ${tab===id?'aria-current="page"':''}>${label}</a>`).join('')}</nav>`;
+    let tabs=`<nav class="member-tabs" aria-label="Profile sections">${(isOwner?[['information','Information'],['password','Password']]:[['verification','Verifications'],['information','Information'],['password','Password']]).map(([id,label])=>`<a href="#/account?tab=${id}" ${tab===id?'aria-current="page"':''}>${label}</a>`).join('')}</nav>`;
+    if(tab==='information')tabs+=`<section class="profile-panel"><h2>Email notifications · Test</h2><p class="member-note">Send one test email to your confirmed sign-in address <strong>${esc(session.user.email||'')}</strong>. This does not create a booking, send messages to others, or access verification documents. Limited to one email per day.</p>${btn('Send me a test email','test-email')}<p data-email-test-feedback role="status"></p></section>`;
     if(isOwner&&['verification','experience'].includes(tab))return tabs+`<div class="profile-panel"><h2>Owner account</h2><p>Boating verification is for customers booking a boat. Your owner account is for listing boats and handling guest requests only.</p><a href="#/owner">Go to my boats</a></div>`;
     if(tab==='verification')return tabs+verificationForm();
     if(tab==='password')return tabs+`<form class="profile-panel live-form" data-live-form="password"><h2>Change your password</h2>${field('New password','password','password','','required minlength="10" autocomplete="new-password"')}${field('Re-enter new password','confirm','password','','required minlength="10" autocomplete="new-password"')}<button class="btn">Save password</button><p data-feedback role="status"></p></form><div class="profile-panel"><h2>Account support</h2><p>To request deletion of your account and personal data, contact our team from your registered email address.</p><a href="mailto:pere.juran@gmail.com?subject=Account%20deletion%20request">Request account deletion</a></div>`;
@@ -339,6 +340,23 @@
       } catch(error) {if(feedback)feedback.textContent=error.message||'Sign-in could not start. Please try again.';else throw error;}
       break;
     }case 'refresh':await current();render();break;case 'auth-mode':authEmail=document.querySelector('[name="email"]')?.value||authEmail;authMode=authMode==='login'?'signup':'login';render();break;case 'logout':case 'logout-owner':{const createOwner=b.dataset.live==='logout-owner';check(await client.auth.signOut());session=null;profile=null;authStep='email';authEmail='';authNext=createOwner?'#/owner':'#/dashboard';ownerIntent=createOwner;window.GBB_ACCOUNT_LINK=null;window.GBB_ACCOUNT_ROLE=null;location.hash=loginLink(authNext);render();break}case 'reset':{const email=document.querySelector('[name="email"]')?.value;if(!email)throw Error('Enter your email address first.');check(await client.auth.resetPasswordForEmail(email,{redirectTo:authRedirect()}));toast('Check your email for the password reset link.');break}case 'accept':case 'decline':case 'cancel':{const action=b.dataset.live;const booking=check(await client.from('bookings').update({status:{accept:'awaiting_payment',decline:'declined',cancel:'cancelled'}[action]}).eq('id',b.dataset.id).select().single());if(action==='accept'||action==='decline')notifyBookingEmail(action==='accept'?'owner_accepted':'owner_declined',booking.id);render();break}case 'unblock':check(await client.from('boat_blocks').delete().eq('id',b.dataset.id).select().single());render();break}}catch(err){toast(err.message||'Please try again.')}finally{b.disabled=false}});
+  document.addEventListener('click',async event=>{
+    const button=event.target.closest?.('[data-live="test-email"]');
+    if(!button||button.dataset?.live!=='test-email')return;
+    event.preventDefault();
+    event.stopImmediatePropagation?.();
+    if(button.disabled)return;
+    button.disabled=true;
+    const feedback=button.parentElement?.querySelector?.('[data-email-test-feedback]');
+    if(feedback)feedback.textContent='Sending test email…';
+    try{
+      if(!client||!session?.user?.email)throw Error('Please sign in with a confirmed email account first.');
+      const {data,error}=await client.functions.invoke('email-self-test',{body:{}});
+      if(error)throw Error('Test unavailable. Check the Resend setup or Supabase Edge Function logs.');
+      if(feedback)feedback.textContent=data?.sent?'Resend accepted the test email. Check your inbox and spam folder.':data?.reason||'No test email sent.';
+    }catch(error){if(feedback)feedback.textContent=error.message||'Unable to send test email.';}
+    finally{button.disabled=false;}
+  },true);
   // Static sample boats cannot create real requests or paid confirmations.
   document.addEventListener('submit',e=>{if(['reserve-form','checkout-form'].includes(e.target.id)){e.preventDefault();e.stopImmediatePropagation();modal('Example boat','This is an example listing. Explore the live boat catalogue to send a real booking request.');}},true);
   async function boot(){try{client=await authClient();client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});await current();if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
