@@ -19,17 +19,17 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  await e.submit('auth',{email:'test@example.invalid',password:'not-a-real-password'});assert.equal(e.ctx.location.hash,'#/dashboard');
  let html=await e.route('#/dashboard');assert.match(html,/Finish signing up/);assert.match(html,/name="first_name"/);assert.match(html,/name="last_name"/);assert.equal(e.state.profile.account_type,'customer');
  await e.submit('profile',{first_name:'Guest',last_name:'Marin'},{accountType:'customer',next:'#/dashboard'});
- html=await e.route('#/dashboard');assert.match(html,/member-sidebar/);assert.match(html,/Booking requests/);assert.match(html,/Welcome aboard/);assert.doesNotMatch(html,/<footer|What should we call you/);
- html=await e.route('#/account');assert.match(html,/Personal information/);assert.match(html,/data-live-form="avatar"/);
- html=await e.route('#/account?tab=experience');assert.match(html,/Your boat licences/);
+ html=await e.route('#/dashboard');assert.match(html,/member-sidebar/);assert.match(html,/Booking requests/);assert.match(html,/Welcome aboard/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Boating experience|List your boat|<footer|What should we call you/);
+ assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
+ html=await e.route('#/account');assert.match(html,/Personal information/);assert.match(html,/data-live-form="avatar"/);assert.doesNotMatch(html,/Boating experience/);
+ html=await e.route('#/account?tab=experience');assert.match(html,/Personal information/);assert.doesNotMatch(html,/Boating experience|Your boat licences/);
  html=await e.route('#/bookings');assert.doesNotMatch(html,/My boats|Accept request/);
  await e.submit('details',{first_name:'Pere',last_name:'Juran',city:'Split'},{section:'information'});assert.equal(e.state.profile.display_name,'Pere Juran');assert.equal(e.state.profile.details.city,'Split');assert.equal(e.state.profile.account_type,'customer');
- await e.submit('details',{boating_level:'Experienced',licences:['Coastal licence'],bio:'Sailing since childhood.'},{section:'experience'});assert.equal(e.state.profile.details.city,'Split');assert.equal(e.state.profile.details.boating_level,'Experienced');assert.equal(e.state.profile.details.licences[0],'Coastal licence');
- // Existing customer cannot silently become an owner by visiting the owner space.
- html=await e.route('#/owner');assert.match(html,/Continue as boat owner/);assert.match(html,/role="dialog"/);assert.equal(e.state.profile.account_type,'customer');
- await e.submit('profile',{first_name:'Pere',last_name:'Juran'},{accountType:'owner',next:'#/owner'});assert.equal(e.state.profile.account_type,'owner');assert.equal(e.ctx.location.hash,'#/owner');html=await e.route('#/owner');assert.match(html,/Boat owner/);assert.match(html,/My boats/);
- // Owner capabilities survive editing the customer profile.
- await e.submit('profile',{first_name:'Pere',last_name:'Juran'},{accountType:'customer',next:'#/bookings'});assert.equal(e.state.profile.account_type,'owner');assert.equal(e.ctx.location.hash,'#/bookings');
+ // An existing customer cannot convert to owner, even by forging form submission.
+ html=await e.route('#/owner');assert.match(html,/Only boat owners can list boats/);assert.doesNotMatch(html,/data-live-form="boat"|Continue as boat owner/);assert.equal(e.state.profile.account_type,'customer');
+ await e.submit('profile',{first_name:'Pere',last_name:'Juran'},{accountType:'owner',next:'#/owner'});assert.equal(e.state.profile.account_type,'customer');assert.match(e.feedback.textContent,/Account roles cannot be changed/);
+ const uploadsBefore=e.state.uploads.length;
+ await e.submit('boat',{name:'Attempted listing',photo:{size:100,type:'image/jpeg'}});assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);assert.equal(e.state.uploads.length,uploadsBefore);
  // A guest's boat, dates and guest count survive email login and profile setup.
  e=await environment({hash:'#/listing/boat-1'});await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'4'},{id:'boat-1'});
  const returnTo=new URLSearchParams(e.ctx.location.hash.split('?')[1]).get('next');assert.match(returnTo,/#\/listing\/boat-1\?start=2027-07-01&end=2027-07-03&guests=4/);assert.equal(e.state.writes.length,0);
@@ -44,6 +44,18 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  e=await environment({hash:'#/owner'});await e.click('social-google');let u=new URL(e.state.oauth.options.redirectTo);assert.equal(new URLSearchParams(u.hash.split('?')[1]).get('next'),'#/owner');
  e=await environment({hash:u.hash,search:u.search,user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'}});assert.equal(e.ctx.location.hash,'#/owner');
  e=await environment({hash:'#/login',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'}});assert.equal(e.ctx.location.hash,'#/dashboard');
+ // Brand-new Google/Apple signup from the owner flow creates a fixed owner role.
+ e=await environment({hash:'#/login?next=%23%2Fowner',user:{id:'new-owner',user_metadata:{given_name:'Maja',family_name:'Perić'}},profile:null});
+ assert.equal(e.state.profile.account_type,'owner');assert.equal(e.state.profile.display_name,'Maja Perić');
+ html=await e.route('#/dashboard');assert.match(html,/YOUR OWNER SPACE/);assert.match(html,/My boats/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Profile essentials|My bookings/);
+ assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
+ html=await e.route('#/account?tab=verification');assert.match(html,/Owner account/);assert.doesNotMatch(html,/verification-upload/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/Owner account · bookings unavailable/);assert.doesNotMatch(html,/data-live-form="request"|Save to favourites/);
+ await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2'},{id:'boat-1'});
+ assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);assert.match(e.feedback.textContent,/Owner accounts cannot rent boats/);
+ await e.submit('profile',{first_name:'Maja',last_name:'Perić'},{accountType:'customer',next:'#/bookings'});assert.equal(e.state.profile.account_type,'owner');assert.match(e.feedback.textContent,/Account roles cannot be changed/);
+ html=await e.route('#/bookings');assert.match(html,/Owner accounts cannot rent boats/);
+ html=await e.route('#/owner');assert.match(html,/Your fleet/);
  // Google supplies a full name: a customer profile is created without an extra form.
  e=await environment({hash:'#/dashboard',user:{id:'google-user',user_metadata:{given_name:'Luka',family_name:'Kovač'}},profile:null});
  assert.equal(e.state.profile.account_type,'customer');assert.equal(e.state.profile.display_name,'Luka Kovač');
