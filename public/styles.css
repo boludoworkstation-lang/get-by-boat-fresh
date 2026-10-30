@@ -276,6 +276,12 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .verification-booking-block strong{display:flex;align-items:center;gap:8px;color:#07576a;font-size:14px}
 .verification-booking-block p{font-size:13px;line-height:1.65;color:#4c6c77;margin:9px 0}
 .verification-booking-block a{font-weight:750;font-size:13px;color:#008ca4;text-decoration:underline}
+.verification-booking-block[hidden]{display:none!important}
+.rental-modes{border:1px solid #d4e7e9;border-radius:12px;padding:14px 18px;margin:20px 0;background:#f8fcfc}
+.rental-modes legend{font-size:14px;font-weight:750;color:#184e5d;padding:0 6px}
+.rental-modes .live-check{margin:8px 0}
+.rental-modes .member-note{font-size:12px;line-height:1.65;margin:12px 0 0;color:#65818a}
+.rental-mode-summary{display:inline-block;font-size:12px;font-weight:700;color:#05697e;background:#ecf8f9;padding:6px 10px;border-radius:8px}
 .verification-staff-list{display:flex;flex-direction:column;gap:22px;margin-top:26px}
 .verification-staff-card{max-width:1100px;width:100%;margin:0}
 .verification-staff-card>p{font-size:13px;color:#5c7680;line-height:1.6}
