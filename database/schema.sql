@@ -1,9 +1,9 @@
 create schema if not exists private;
 revoke all on schema private from public,anon,authenticated;
 create table public.profiles(id uuid primary key references auth.users(id) on delete cascade, display_name text not null default '' check(length(display_name)<=120), account_type text not null default 'customer' check(account_type in ('customer','owner')), created_at timestamptz not null default now());
-create table public.boats(id uuid primary key default gen_random_uuid(),owner_id uuid not null references auth.users(id),name text not null check(length(name) between 1 and 120),country text not null,location text not null,type text not null check(type in ('Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski')),price numeric(12,2) not null check(price>0 and price<=100000),guests integer not null check(guests between 1 and 100),cabins integer not null default 0 check(cabins>=0),description text not null default '' check(length(description)<=10000),photo_url text, published boolean not null default false,created_at timestamptz not null default now());
+create table public.boats(id uuid primary key default gen_random_uuid(),owner_id uuid not null references auth.users(id),name text not null check(length(name) between 1 and 120),country text not null,location text not null,type text not null check(type in ('Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski')),price numeric(12,2) not null check(price>0 and price<=100000),guests integer not null check(guests between 1 and 100),cabins integer not null default 0 check(cabins>=0),description text not null default '' check(length(description)<=10000),photo_url text, published boolean not null default false,with_skipper boolean not null default false,without_skipper boolean not null default true,check(with_skipper or without_skipper),created_at timestamptz not null default now());
 create index boats_owner_idx on public.boats(owner_id);
-create table public.bookings(id uuid primary key default gen_random_uuid(),boat_id uuid not null references public.boats(id),customer_id uuid not null references auth.users(id),start_date date not null,end_date date not null,guests integer not null check(guests>0),status text not null default 'pending_owner' check(status in ('pending_owner','awaiting_payment','declined','cancelled','confirmed')),daily_rate numeric(12,2) not null default 0,charter_price numeric(12,2) not null default 0,service_fee numeric(12,2) not null default 0,total numeric(12,2) not null default 0,customer_name text not null check(length(customer_name) between 1 and 120),created_at timestamptz not null default now(),check(end_date>=start_date and end_date-start_date<=365));
+create table public.bookings(id uuid primary key default gen_random_uuid(),boat_id uuid not null references public.boats(id),customer_id uuid not null references auth.users(id),start_date date not null,end_date date not null,guests integer not null check(guests>0),with_skipper boolean not null default false,status text not null default 'pending_owner' check(status in ('pending_owner','awaiting_payment','declined','cancelled','confirmed')),daily_rate numeric(12,2) not null default 0,charter_price numeric(12,2) not null default 0,service_fee numeric(12,2) not null default 0,total numeric(12,2) not null default 0,customer_name text not null check(length(customer_name) between 1 and 120),created_at timestamptz not null default now(),check(end_date>=start_date and end_date-start_date<=365));
 create index bookings_boat_idx on public.bookings(boat_id,start_date,end_date);
 create index bookings_customer_idx on public.bookings(customer_id,created_at);
 create table public.boat_blocks(id uuid primary key default gen_random_uuid(),boat_id uuid not null references public.boats(id),start_date date not null,end_date date not null,check(end_date>=start_date and end_date-start_date<=730));
@@ -55,6 +55,14 @@ begin
  return new;
 end$$;
 create trigger check_booking before insert or update on public.bookings for each row execute function private.check_booking();
+create function private.require_offered_rental_mode() returns trigger language plpgsql security definer set search_path='' as $$
+begin
+ if not exists(select 1 from public.boats b where b.id=new.boat_id and ((new.with_skipper and b.with_skipper) or (not new.with_skipper and b.without_skipper))) then
+   raise exception 'This boat does not offer the selected skipper option';
+ end if;
+ return new;
+end$$;
+create trigger require_offered_rental_mode before insert on public.bookings for each row execute function private.require_offered_rental_mode();
 create function private.check_block() returns trigger language plpgsql security definer set search_path='' as $$begin
  if auth.uid() is null or not exists(select 1 from public.boats where id=new.boat_id and owner_id=auth.uid()) then raise exception 'Owner access required';end if;
  perform pg_advisory_xact_lock(hashtextextended(new.boat_id::text,0));
