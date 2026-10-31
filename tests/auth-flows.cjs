@@ -33,7 +33,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  await e.submit('profile',{first_name:'Guest',last_name:'Marin'},{accountType:'customer',next:'#/dashboard'});
  html=await e.route('#/dashboard');assert.match(html,/member-sidebar/);assert.match(html,/Booking requests/);assert.match(html,/Welcome aboard/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Boating experience|List your boat|<footer|What should we call you/);
  html=await e.route('#/boats');assert.match(html,/€885\.53 \/ day/);assert.doesNotMatch(html,/platform fee|commission|service fee|processing allowance/i);
- html=await e.route('#/listing/boat-1');assert.match(html,/€885\.53 \/ day/);assert.doesNotMatch(html,/platform fee|commission|service fee|processing allowance/i);assert.doesNotMatch(html,/Unavailable dates/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/€885\.53 <small>\/ day<\/small>/);assert.doesNotMatch(html,/platform fee|commission|service fee|processing allowance/i);assert.doesNotMatch(html,/Unavailable dates/);assert.match(html,/data-public-map/);
  assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
  html=await e.route('#/account');assert.match(html,/Personal information/);assert.match(html,/data-live-form="avatar"/);assert.doesNotMatch(html,/Boating experience/);
  html=await e.route('#/account?tab=experience');assert.match(html,/Personal information/);assert.doesNotMatch(html,/Boating experience|Your boat licences/);
@@ -101,21 +101,23 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.doesNotMatch(html,/Insurance certificate \(optional\)|Proof of boat ownership \(optional\)|name="document_insurance"|name="document_ownership"|Not uploaded · optional/);
  assert.doesNotMatch(html,/name="cabins"|name="sleeping_area"/);
  const writesBeforeInvalidCountry=verifiedOwner.state.writes.length;
- await verifiedOwner.submit('boat',{name:'Invalid country',country:'Canada',location:'Split',pickup_location:'ACI Marina Split',type:'Motorboat',price:'400',guests:'6',with_skipper:'on',skipper_fee_per_day:'100',published:'on'});
+ await verifiedOwner.submit('boat',{name:'Invalid country',country:'Canada',location:'Split',pickup_location:'ACI Marina Split',type:'Motorboat',price:'400',guests:'6',with_skipper:'on',skipper_included_ack:'on',published:'on'});
  assert.equal(verifiedOwner.state.writes.length,writesBeforeInvalidCountry);
  assert.match(verifiedOwner.feedback.textContent,/Choose a country from the 14 available countries/);
- await verifiedOwner.submit('boat',{name:'Invalid pin',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split',pickup_latitude:'43.819',type:'Motorboat',price:'400',guests:'6',with_skipper:'on',skipper_fee_per_day:'100',published:'on'});
+ await verifiedOwner.submit('boat',{name:'Invalid pin',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split',pickup_latitude:'43.819',type:'Motorboat',price:'400',guests:'6',with_skipper:'on',skipper_included_ack:'on',published:'on'});
  assert.equal(verifiedOwner.state.writes.length,writesBeforeInvalidCountry);
  assert.match(verifiedOwner.feedback.textContent,/Set both latitude and longitude/);
- await verifiedOwner.submit('boat',{name:'Test Boat',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split, pier A',pickup_latitude:'43.819123',pickup_longitude:'15.596456',type:'Motorboat',price:'400',guests:'6',description:'Great day trip',with_skipper:'on',skipper_fee_per_day:'100',published:'on',check_in_time:'08:30',check_out_time:'18:45',spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',insurance_type:'third_party',security_deposit:'500'});
+ await verifiedOwner.submit('boat',{name:'Test Boat',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split, pier A',pickup_latitude:'43.819123',pickup_longitude:'15.596456',type:'Motorboat',price:'400',guests:'6',description:'Great day trip',with_skipper:'on',skipper_included_ack:'on',published:'on',check_in_time:'08:30',check_out_time:'18:45',spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',insurance_type:'third_party',security_deposit:'500'});
  const boatSaved=verifiedOwner.state.writes.find(x=>x.table==='boats');
  assert.equal(boatSaved.value.specifications.engine_hp,250);assert.equal(boatSaved.value.specifications.length_m,7.5);
  assert.equal(boatSaved.value.insurance_type,'third_party');assert.equal(boatSaved.value.security_deposit,500);
- assert.equal(boatSaved.value.pickup_location,'ACI Marina Split, pier A');
- assert.equal(boatSaved.value.pickup_latitude,43.819123);assert.equal(boatSaved.value.pickup_longitude,15.596456);
+ assert.equal(boatSaved.value.pickup_location,undefined);assert.equal(boatSaved.value.pickup_latitude,undefined);
+ const privatePickup=verifiedOwner.state.writes.find(x=>x.table==='boat_pickups');
+ assert.equal(privatePickup.value.pickup_address,'ACI Marina Split, pier A');
+ assert.equal(privatePickup.value.latitude,43.819123);assert.equal(privatePickup.value.longitude,15.596456);
  assert.equal(boatSaved.value.check_in_time,'08:30');assert.equal(boatSaved.value.check_out_time,'18:45');
  assert.equal(verifiedOwner.state.uploads.length,0);
- assert.equal(verifiedOwner.state.writes.at(-1).table,'boats');
+ assert.equal(verifiedOwner.state.writes.at(-1).table,'boat_pickups');
  assert.equal(verifiedOwner.ctx.location.hash,'#/owner');
  html=await verifiedOwner.route('#/account?tab=verification');assert.match(html,/Your business is approved/);assert.match(html,/class="verification-badge approved">Verified/);
  // Editing a single approved field returns the application to draft without new uploads.
@@ -125,7 +127,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  const changedOwnerRequest={...pendingOwnerRequest,business_website:'https://newcompany.example'};
  let changedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:changedOwnerRequest,ownerReview:reviewer.state.ownerReview});
  html=await changedOwner.route('#/owner?edit=new');assert.match(html,/Your boat will be saved as a draft/);
- html=await e.route('#/listing/boat-1');assert.match(html,/Owner account · bookings unavailable/);assert.doesNotMatch(html,/data-live-form="request"|Save to favourites/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/Owner preview/);assert.doesNotMatch(html,/data-live-form="request"|Save to favourites/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'without'},{id:'boat-1'});
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);assert.match(e.feedback.textContent,/Owner accounts cannot rent boats/);
  await e.submit('profile',{first_name:'Maja',last_name:'Perić'},{accountType:'customer',next:'#/bookings'});assert.equal(e.state.profile.account_type,'owner');assert.match(e.feedback.textContent,/Account roles cannot be changed/);
@@ -175,14 +177,14 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  const verifiedProfile={id:'guest-1',display_name:'Ana Marin',account_type:'customer',details:{first_name:'Ana',last_name:'Marin'}};
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile});
  html=await e.route('#/dashboard');assert.match(html,/ID & boat licence/);
- html=await e.route('#/listing/boat-1');assert.match(html,/Licence verification required/);assert.match(html,/Verification required<\/button>/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/Licence verification required/);assert.match(html,/Verify your licence to book<\/button>/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'without'},{id:'boat-1'});
  assert.equal(e.ctx.location.hash,'#/account?tab=verification');assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
  html=await e.route('#/account?tab=verification');assert.match(html,/ID card \/ passport image or PDF/);assert.match(html,/boat driving licence/i);
  const pdf={size:2400,type:'application/pdf'};
  await e.submit('verification',{identity_type:'passport',identity_file:pdf,licence_file:pdf,licence_type:'coastal',licence_expiry:'2028-12-31',birth_date:'1992-02-04',documents_own:'on'});
  assert.equal(e.state.uploads.length,2);assert.equal(e.state.verificationRequest.identity_type,'passport');
- html=await e.route('#/listing/boat-1');assert.match(html,/Pending staff review/);assert.match(html,/Verification required<\/button>/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/Pending staff review/);assert.match(html,/Verify your licence to book<\/button>/);
  // An authorised reviewer checks the ID and skipper licence, then records a decision.
  e=await environment({hash:'#/staff',user:verifiedUser,profile:verifiedProfile,request:e.state.verificationRequest,staff:true});
  html=await e.route('#/staff');assert.match(html,/Staff verification/);assert.match(html,/Approve documents/);assert.match(html,/View ID \/ passport/);
@@ -190,7 +192,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.verificationReview.status,'approved');assert.equal(e.state.deletions.length,2);
  // A verified customer can book; changing the account name invalidates the approval.
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,request:e.state.verificationRequest,review:e.state.verificationReview});
- html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-verification hidden/);assert.match(html,/Send booking request<\/button>/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-verification hidden/);assert.match(html,/Request to book<\/button>/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'without'},{id:'boat-1'});
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,1);
  await e.submit('details',{first_name:'Different',last_name:'Name'},{section:'information'});
@@ -198,10 +200,10 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  // A customer with no verification can rent WITH a skipper, but not without one.
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true}});
  html=await e.route('#/listing/boat-1');assert.match(html,/Rent with skipper/);assert.match(html,/Rent without skipper/);assert.match(html,/name="skipper"/);
- assert.match(html,/value="with" selected/);assert.match(html,/data-skipper-verification hidden/);assert.match(html,/Send booking request/);
+ assert.match(html,/value="with" selected/);assert.match(html,/data-skipper-verification hidden/);assert.match(html,/Request to book/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'with'},{id:'boat-1',withSkipper:'true',withoutSkipper:'true'});
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,1);assert.equal(e.state.writes.at(-1).value.with_skipper,true);
- html=await e.route('#/listing/boat-1?skipper=without');assert.match(html,/data-skipper-verification\s*>/);assert.match(html,/Verification required<\/button>/);
+ html=await e.route('#/listing/boat-1?skipper=without');assert.match(html,/data-skipper-verification\s*>/);assert.match(html,/Verify your licence to book<\/button>/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'without'},{id:'boat-1',withSkipper:'true',withoutSkipper:'true'});
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,1);
  // The browser refuses a mode not offered by the boat, even with tampered form data.
@@ -218,10 +220,10 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on'});
  assert.match(e.feedback.textContent,/skipper price per day/);assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on',skipper_fee_per_day:'120'});
- assert.equal(e.state.writes.filter(x=>x.table==='boats').length,1);assert.equal(e.state.writes.at(-1).value.with_skipper,true);assert.equal(e.state.writes.at(-1).value.without_skipper,true);
- assert.equal(e.state.writes.at(-1).value.skipper_fee_per_day,120);
- await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',skipper_fee_per_day:'200'});
- assert.equal(e.state.writes.at(-1).value.skipper_fee_per_day,200);
+ assert.equal(e.state.writes.filter(x=>x.table==='boats').length,1);assert.equal(e.state.writes.find(x=>x.table==='boats').value.with_skipper,true);assert.equal(e.state.writes.find(x=>x.table==='boats').value.without_skipper,true);
+ assert.equal(e.state.writes.find(x=>x.table==='boats').value.skipper_fee_per_day,120);
+ await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',skipper_included_ack:'on'});
+ assert.equal(e.state.writes.filter(x=>x.table==='boats').at(-1).value.skipper_fee_per_day,0);
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true,skipper_fee_per_day:120}});
  html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);
  console.log('PASS: customer/owner journeys, secure staff verification, no-skipper licence gate, skipper bookings without renter documents, rejected unavailable modes, and owner rental options.');
