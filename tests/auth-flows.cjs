@@ -32,8 +32,8 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  let html=await e.route('#/dashboard');assert.match(html,/Finish signing up/);assert.match(html,/name="first_name"/);assert.match(html,/name="last_name"/);assert.equal(e.state.profile.account_type,'customer');
  await e.submit('profile',{first_name:'Guest',last_name:'Marin'},{accountType:'customer',next:'#/dashboard'});
  html=await e.route('#/dashboard');assert.match(html,/member-sidebar/);assert.match(html,/Booking requests/);assert.match(html,/Welcome aboard/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Boating experience|List your boat|<footer|What should we call you/);
- html=await e.route('#/boats');assert.match(html,/€856\.00 \/ day/);assert.doesNotMatch(html,/platform fee|commission|service fee/i);
- html=await e.route('#/listing/boat-1');assert.match(html,/€856\.00 \/ day/);assert.doesNotMatch(html,/platform fee|commission|service fee/i);
+ html=await e.route('#/boats');assert.match(html,/€869\.29 \/ day/);assert.doesNotMatch(html,/platform fee|commission|service fee|processing allowance/i);
+ html=await e.route('#/listing/boat-1');assert.match(html,/€869\.29 \/ day/);assert.doesNotMatch(html,/platform fee|commission|service fee|processing allowance/i);
  assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
  html=await e.route('#/account');assert.match(html,/Personal information/);assert.match(html,/data-live-form="avatar"/);assert.doesNotMatch(html,/Boating experience/);
  html=await e.route('#/account?tab=experience');assert.match(html,/Personal information/);assert.doesNotMatch(html,/Boating experience|Your boat licences/);
@@ -67,7 +67,8 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  html=await e.route('#/account?tab=business');assert.match(html,/data-live-form="owner-business"/);assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/data-live-form="owner-document"/);assert.match(html,/data-live-form="owner-submit"/);assert.match(html,/France · SIRET/);assert.match(html,/Business website \(required\)/);assert.equal((html.match(/PUBLISHING REQUIREMENTS/g)||[]).length,1);assert.match(html,/data-live="owner-jump"/);
  html=await e.route('#/owner?edit=new');assert.match(html,/Your boat will be saved as a draft/);assert.match(html,/name="published" value=""/);assert.doesNotMatch(html,/data-step="4"|id="boat-publishing"/);
  const ownerPdf={size:2400,type:'application/pdf'};
- assert.equal(e.ctx.serviceFee(800),56);assert.equal(e.ctx.serviceFee(950),66.5);
+ assert.equal(e.ctx.platformFee(100),7);assert.equal(e.ctx.processingAllowance(100),1.88);assert.equal(e.ctx.serviceFee(100),8.88);
+ assert.equal(e.ctx.serviceFee(800),69.29);assert.equal(e.ctx.serviceFee(950),82.23);
  await e.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://bateaux.example',registered_address:'12 Quai de Paris, Marseille, France'});
  assert.equal(e.state.ownerRequest.business_country,'FR');assert.equal(e.state.ownerRequest.application_state,'draft');assert.equal(e.state.uploads.length,0);
  html=await e.route('#/account?tab=payouts');assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/Automated payouts are not yet active/);

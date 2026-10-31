@@ -3,7 +3,7 @@ revoke all on schema private from public,anon,authenticated;
 create table public.profiles(id uuid primary key references auth.users(id) on delete cascade, display_name text not null default '' check(length(display_name)<=120), account_type text not null default 'customer' check(account_type in ('customer','owner')), created_at timestamptz not null default now());
 create table public.boats(id uuid primary key default gen_random_uuid(),owner_id uuid not null references auth.users(id),name text not null check(length(name) between 1 and 120),country text not null,location text not null,type text not null check(type in ('Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski')),price numeric(12,2) not null check(price>0 and price<=100000),guests integer not null check(guests between 1 and 100),cabins integer not null default 0 check(cabins>=0),description text not null default '' check(length(description)<=10000),photo_url text, published boolean not null default false,with_skipper boolean not null default false,without_skipper boolean not null default true,check(with_skipper or without_skipper),created_at timestamptz not null default now());
 create index boats_owner_idx on public.boats(owner_id);
-create table public.bookings(id uuid primary key default gen_random_uuid(),boat_id uuid not null references public.boats(id),customer_id uuid not null references auth.users(id),start_date date not null,end_date date not null,guests integer not null check(guests>0),with_skipper boolean not null default false,status text not null default 'pending_owner' check(status in ('pending_owner','awaiting_payment','declined','cancelled','confirmed')),daily_rate numeric(12,2) not null default 0,charter_price numeric(12,2) not null default 0,service_fee numeric(12,2) not null default 0,total numeric(12,2) not null default 0,customer_name text not null check(length(customer_name) between 1 and 120),created_at timestamptz not null default now(),check(end_date>=start_date and end_date-start_date<=365));
+create table public.bookings(id uuid primary key default gen_random_uuid(),boat_id uuid not null references public.boats(id),customer_id uuid not null references auth.users(id),start_date date not null,end_date date not null,guests integer not null check(guests>0),with_skipper boolean not null default false,status text not null default 'pending_owner' check(status in ('pending_owner','awaiting_payment','declined','cancelled','confirmed')),daily_rate numeric(12,2) not null default 0,charter_price numeric(12,2) not null default 0,service_fee numeric(12,2) not null default 0,processing_fee numeric(12,2) not null default 0 check(processing_fee>=0),total numeric(12,2) not null default 0,customer_name text not null check(length(customer_name) between 1 and 120),created_at timestamptz not null default now(),check(end_date>=start_date and end_date-start_date<=365));
 create index bookings_boat_idx on public.bookings(boat_id,start_date,end_date);
 create index bookings_customer_idx on public.bookings(customer_id,created_at);
 create table public.boat_blocks(id uuid primary key default gen_random_uuid(),boat_id uuid not null references public.boats(id),start_date date not null,end_date date not null,check(end_date>=start_date and end_date-start_date<=730));
@@ -29,6 +29,9 @@ create policy blocks_read on public.boat_blocks for select to authenticated usin
 create policy blocks_add on public.boat_blocks for insert to authenticated with check(exists(select 1 from public.boats where id=boat_id and owner_id=(select auth.uid())));
 create policy blocks_remove on public.boat_blocks for delete to authenticated using(exists(select 1 from public.boats where id=boat_id and owner_id=(select auth.uid())));
 create function private.fee(amount numeric) returns numeric language sql immutable set search_path='' as $$select round(amount*0.07,2)$$;
+create function private.processing_allowance(charter numeric) returns numeric language sql immutable set search_path='' as $$
+select case when charter<=0 then 0::numeric else greatest(0::numeric,round((charter+private.fee(charter)+0.25)/0.985,2)-charter-private.fee(charter)) end
+$$;
 -- A private trigger validates identity, transitions and server-calculated prices.
 create function private.check_booking() returns trigger language plpgsql security definer set search_path='' as $$
 declare b public.boats; actor uuid:=auth.uid();
@@ -40,7 +43,7 @@ begin
  if TG_OP='INSERT' then
   if new.customer_id<>actor or b.owner_id=actor or not b.published then raise exception 'Invalid booking request';end if;
   if new.start_date<current_date or new.end_date<new.start_date or new.end_date-new.start_date>365 or new.guests>b.guests then raise exception 'Invalid dates or guest count';end if;
-  new.status:='pending_owner';new.daily_rate:=b.price;new.charter_price:=b.price*(new.end_date-new.start_date+1);new.service_fee:=private.fee(new.charter_price);new.total:=new.charter_price+new.service_fee;new.created_at:=now();
+  new.status:='pending_owner';new.daily_rate:=b.price;new.charter_price:=b.price*(new.end_date-new.start_date+1);new.processing_fee:=private.processing_allowance(new.charter_price);new.service_fee:=private.fee(new.charter_price)+new.processing_fee;new.total:=new.charter_price+new.service_fee;new.created_at:=now();
  else
   if (to_jsonb(new)-'status') is distinct from (to_jsonb(old)-'status') then raise exception 'Booking details cannot be modified';end if;
   if new.status=old.status then return new;end if;

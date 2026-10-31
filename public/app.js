@@ -243,10 +243,21 @@ function rentalDayCount(start,end){
  if(!Number.isFinite(first)||!Number.isFinite(last)||last<first)return null;
  return Math.round((last-first)/86400000)+1;
 }
-// Get By Boat adds a fixed 7% to the owner's net charter rate.
+// One universal guest price, independent of payment method. This budgets the
+// standard EEA Stripe processing rate (1.5% + €0.25 per booking), not a card surcharge.
+const priceCents=amount=>Math.round((Number(amount)+Number.EPSILON)*100)/100;
+function platformFee(charterPrice){
+ if(!Number.isFinite(charterPrice)||charterPrice<=0)return 0;
+ return priceCents(charterPrice*0.07);
+}
+function processingAllowance(charterPrice){
+ if(!Number.isFinite(charterPrice)||charterPrice<=0)return 0;
+ const subtotal=priceCents(charterPrice+platformFee(charterPrice));
+ return priceCents(priceCents((subtotal+0.25)/0.985)-subtotal);
+}
 function serviceFee(charterPrice){
  if(!Number.isFinite(charterPrice)||charterPrice<=0)return 0;
- return Math.round(charterPrice*0.07*100)/100;
+ return priceCents(platformFee(charterPrice)+processingAllowance(charterPrice));
 }
 const rentalMoney=n=>'€'+new Intl.NumberFormat('en-IE',{minimumFractionDigits:0,maximumFractionDigits:2}).format(n);
 function rentalPriceSummary(b){
