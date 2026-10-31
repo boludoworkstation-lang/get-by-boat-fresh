@@ -521,6 +521,26 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .fleet-editor-save [data-feedback]:not(:empty){margin-top:7px;color:#637e86}
 @media(max-width:720px){.fleet-editor-header{flex-direction:column;align-items:stretch}.fleet-editor-header>.btn{width:max-content;max-width:100%}.fleet-editor-navigation{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:6px}.fleet-editor-navigation button{min-height:65px;padding:8px;font-size:11px;flex-direction:row;justify-content:flex-start;text-align:left}.fleet-editor-navigation button b{flex:none;width:23px;height:23px;font-size:10px}.member-main .fleet-editor-section{padding:25px 19px;min-height:300px}.fleet-rental-modes{grid-template-columns:1fr}.fleet-rental-modes .live-check{min-height:75px}.fleet-editor-save{flex-direction:column;align-items:stretch;bottom:5px;gap:12px}.fleet-editor-actions{width:100%;margin-left:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}.fleet-editor-actions .btn{grid-column:1/-1;width:100%}.fleet-step-secondary{width:100%}}
 
+/* Optional listing information stays tucked away until the owner needs it. */
+.fleet-optional-panel{border:1px solid #e0e9ec;border-radius:12px;background:#fafeff;margin-top:19px;overflow:hidden}
+.fleet-optional-panel summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:15px;cursor:pointer;padding:19px 21px;color:#234a57}
+.fleet-optional-panel summary::-webkit-details-marker{display:none}
+.fleet-optional-panel summary>span{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:750}
+.fleet-optional-panel summary>span svg{width:19px;height:19px;color:#018ba5}
+.fleet-optional-panel summary>small{font-size:11px;color:#768f98;text-align:right}
+.fleet-optional-panel summary:focus-visible{outline:3px solid #00a6c2;outline-offset:-3px}
+.fleet-optional-panel[open] summary{border-bottom:1px solid #e4edef;background:#eff9fb}
+.fleet-optional-content{padding:18px 21px 23px}
+.fleet-optional-content>.live-columns{margin-bottom:4px}
+.fleet-optional-content .member-note{margin:2px 0 17px}
+.fleet-document-input{display:flex!important;flex-direction:column;gap:8px;align-items:stretch}
+.fleet-document-input input[type=file]{max-width:100%;padding:10px;font-size:12px}
+.fleet-document-input small{color:#6b8790;line-height:1.5;font-size:11px}
+.fleet-document-input a{color:#007d96;text-decoration:underline}
+.boat-public-facts{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0}
+.boat-public-facts span{display:inline-flex;border:1px solid #d7e8ed;border-radius:20px;padding:6px 11px;background:#f4fafb;color:#385b65;font-size:12px}
+@media(max-width:610px){.fleet-optional-panel summary{align-items:flex-start;flex-direction:column;gap:5px;padding:16px}.fleet-optional-panel summary>small{text-align:left}.fleet-optional-content{padding:16px}}
+
 /* Private conversations between renters and owners */
 .booking-messenger{display:grid;grid-template-columns:minmax(230px,310px) minmax(0,1fr);min-height:580px;margin:25px 0;background:#fff;border:1px solid #deebee;border-radius:18px;overflow:hidden;box-shadow:0 14px 32px rgba(5,53,67,.035)}
 .booking-conversations{background:#f8fbfc;border-right:1px solid #e3ebee;padding:18px 12px}
