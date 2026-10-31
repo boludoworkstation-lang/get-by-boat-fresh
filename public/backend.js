@@ -224,14 +224,15 @@
     return publicTownCenters[`${String(b.location||'').toLowerCase().trim()},${String(b.country||'').toLowerCase().trim()}`]||countryMapCenters[b.country]?.slice(0,2)||countryMapCenters.Croatia.slice(0,2);
   };
   const terrainTiles=map=>window.L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,subdomains:'abc',attribution:'Terrain: &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> · &copy; OpenStreetMap contributors'}).addTo(map);
-  const guestMapTiles=map=>window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);
+  const guestMapTiles=map=>window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
   const equipmentCategories=[
-    ['Deck & outdoor',[['bimini','Bimini'],['outdoor_shower','Outdoor shower'],['outdoor_table','Outdoor table'],['outdoor_speakers','Outdoor speakers'],['teak_deck','Teak deck'],['bow_sundeck','Bow sundeck'],['aft_sundeck','Aft sundeck'],['swim_platform','Swimming platform'],['swim_ladder','Swimming ladder']]],
-    ['Comfort',[['hot_water','Hot water'],['watermaker','Watermaker'],['air_conditioning','Air conditioning'],['fans','Fans'],['heating','Heating'],['electric_toilet','Electric toilet'],['bed_linen','Bed linen'],['bath_towels','Bath towels'],['beach_towels','Beach towels'],['wifi','Wi-Fi'],['usb','USB charging'],['tv','TV']]],
-    ['Navigation',[['dinghy','Dinghy'],['dinghy_motor','Dinghy motor'],['bow_thruster','Bow thruster'],['electric_windlass','Electric windlass'],['autopilot','Autopilot'],['gps','GPS'],['depth_sounder','Depth sounder'],['vhf','VHF radio'],['satellite_phone','Satellite phone'],['guides_maps','Guides & maps']]],
-    ['Kitchen',[['fridge','Fridge'],['freezer','Freezer'],['oven','Oven / stovetop'],['bbq','BBQ grill'],['microwave','Microwave'],['coffee_machine','Coffee machine'],['ice_machine','Ice machine'],['ice_box','Ice box']]],
-    ['Leisure & water sports',[['paddleboard','Paddleboard / SUP'],['kayak','Kayak'],['snorkel','Snorkelling equipment'],['fishing','Fishing equipment'],['diving','Diving equipment'],['seabob','Seabob'],['bike','Bike'],['scooter','Electric scooter'],['drone','Drone'],['camera','Video camera'],['water_skis','Water skis'],['monoski','Monoski'],['wakeboard','Wakeboard'],['towable_tube','Towable tube'],['banana','Inflatable banana'],['kneeboard','Kneeboard']]],
-    ['Power',[['generator','Generator'],['inverter','Power inverter'],['power_220v','220V power outlet']]]
+    ['Outdoor equipment',[['bimini','Bimini'],['outdoor_shower','Outdoor shower'],['outdoor_table','External table'],['outdoor_speakers','External speakers'],['teak_deck','Teak deck'],['bow_sundeck','Bow sundeck'],['aft_sundeck','Aft sundeck'],['swim_platform','Bathing platform'],['swim_ladder','Bathing ladder']]],
+    ['Extra comforts',[['hot_water','Hot water'],['watermaker','Watermaker'],['air_conditioning','Air conditioning'],['fans','Fans'],['heating','Heating'],['electric_toilet','Electric toilet'],['bed_linen','Bed linen'],['bath_towels','Bath towels'],['beach_towels','Beach towels'],['wifi','Wi-Fi'],['usb','USB socket'],['tv','TV']]],
+    ['Navigation equipment',[['dinghy','Dinghy'],['dinghy_motor',"Dinghy's motor"],['bow_thruster','Bow thruster'],['electric_windlass','Electric windlass'],['autopilot','Autopilot'],['gps','GPS'],['depth_sounder','Depth sounder'],['vhf','VHF'],['satellite_phone','Satellite phone'],['guides_maps','Guides & maps']]],
+    ['Kitchen',[['fridge','Fridge'],['freezer','Freezer'],['oven','Oven/stovetop'],['bbq','BBQ grill'],['microwave','Microwave'],['coffee_machine','Coffee machine'],['ice_machine','Ice machine'],['ice_box','Ice box']]],
+    ['Leisure activities',[['paddleboard','Paddle board'],['kayak','Kayak'],['snorkel','Snorkelling equipment'],['fishing','Fishing equipment'],['diving','Diving equipment'],['seabob','Seabob'],['bike','Bike'],['scooter','Electric scooter'],['drone','Drone'],['camera','Video camera']]],
+    ['Onboard energy',[['generator','Generator'],['inverter','Power inverter'],['power_220v','220V power outlet']]],
+    ['Water sports',[['water_skis','Water skis'],['monoski','Monoski'],['wakeboard','Wakeboard'],['towable_tube','Towable tube'],['banana','Inflatable banana'],['kneeboard','Kneeboard']]]
   ];
   const allowedEquipment=new Set(equipmentCategories.flatMap(([,options])=>options.map(([id])=>id)));
   const listingEquipmentSection=boat=>{
@@ -251,10 +252,11 @@
       ['Length',numeric(specs.length_m,'m')],
       ['Width',numeric(specs.width_m,'m')],
       ['Draft',numeric(specs.draft_m,'m')],
-      ['Year built',Number.isInteger(Number(specs.build_year))&&specs.build_year!==null&&specs.build_year!==undefined&&specs.build_year!==''?String(Number(specs.build_year)):''],
+      ['Tank capacity',numeric(specs.tank_capacity_l,'L')],
       ['Fuel consumption',numeric(specs.fuel_lph,'L/h')],
       ['Top speed',numeric(specs.speed_knots,'knots')],
-      ['Crew members',numeric(specs.crew)]
+      ['Crew members',numeric(specs.crew)],
+      ['Year built',Number.isInteger(Number(specs.build_year))&&specs.build_year!==null&&specs.build_year!==undefined&&specs.build_year!==''?String(Number(specs.build_year)):'']
     ].filter(([,value])=>value!=='');
     const detailRows=rows=>`<dl class="listing-spec-grid">${rows.map(([label,value])=>`<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>`;
     const insuranceLabels={not_specified:'Not specified',none:'Not insured',third_party:'Third-party insurance',comprehensive:'Fully comprehensive'};
@@ -408,7 +410,7 @@
     const insuranceTypes=[['not_specified','Not specified'],['none','Not insured'],['third_party','Third-party insurance'],['comprehensive','Fully comprehensive']];
     const optionalSelect=(name,label,options,value)=>`<label>${esc(label)}<select name="${name}">${options.map(([id,text])=>`<option value="${esc(id)}" ${id===value?'selected':''}>${esc(text)}</option>`).join('')}</select></label>`;
     const number=(label,name,value,max,step='1')=>field(label,name,'number',value??'',`min="0" max="${max}" step="${step}" placeholder="Optional"`);
-    const technical=`<details class="fleet-optional-panel" ${hasSpecs?'open':''}><summary><span>${icon('ship')} Technical specifications</span><small>Optional · engine, dimensions & performance</small></summary><div class="fleet-optional-content"><p class="member-note">Add what you know. Leave the rest blank; guests can still book your boat.</p><div class="live-columns">${optionalSelect('spec_engine_type','Engine type',types,s.engine_type||'')}${number('Total engine horsepower (hp)','spec_engine_hp',s.engine_hp,50000)}</div><div class="live-columns">${number('Boat length (m)','spec_length_m',s.length_m,200,'0.01')}${number('Boat width (m)','spec_width_m',s.width_m,100,'0.01')}</div><div class="live-columns">${number('Draft (m)','spec_draft_m',s.draft_m,50,'0.01')}${number('Year built','spec_build_year',s.build_year,2100)}</div><div class="live-columns">${number('Fuel consumption (L/h)','spec_fuel_lph',s.fuel_lph,10000,'0.1')}${number('Top speed (knots)','spec_speed_knots',s.speed_knots,200,'0.1')}</div><div class="live-columns">${number('Crew members (if included)','spec_crew',s.crew,100)}</div></div></details>`;
+    const technical=`<details class="fleet-optional-panel" ${hasSpecs?'open':''}><summary><span>${icon('ship')} Technical specifications</span><small>Optional · engine, dimensions & performance</small></summary><div class="fleet-optional-content"><p class="member-note">Add what you know. Leave the rest blank; guests can still book your boat.</p><div class="live-columns">${optionalSelect('spec_engine_type','Engine type',types,s.engine_type||'')}${number('Total engine horsepower (hp)','spec_engine_hp',s.engine_hp,50000)}</div><div class="live-columns">${number('Boat length (m)','spec_length_m',s.length_m,200,'0.01')}${number('Boat width (m)','spec_width_m',s.width_m,100,'0.01')}</div><div class="live-columns">${number('Draft (m)','spec_draft_m',s.draft_m,50,'0.01')}${number('Year built','spec_build_year',s.build_year,2100)}</div><div class="live-columns">${number('Tank capacity (L)','spec_tank_capacity_l',s.tank_capacity_l,50000,'0.1')}${number('Fuel consumption (L/h)','spec_fuel_lph',s.fuel_lph,10000,'0.1')}</div><div class="live-columns">${number('Top speed (knots)','spec_speed_knots',s.speed_knots,200,'0.1')}${number('Crew members (if included)','spec_crew',s.crew,100)}</div></div></details>`;
     const insurance=`<details class="fleet-optional-panel" ${b.insurance_type&&b.insurance_type!=='not_specified'||Number(b.security_deposit)>0?'open':''}><summary><span>${icon('shield')} Insurance & security deposit</span><small>Optional · coverage and refundable deposit</small></summary><div class="fleet-optional-content"><p class="member-note">Choose the insurance coverage and refundable deposit applicable to this boat.</p><div class="live-columns">${optionalSelect('insurance_type','Insurance coverage',insuranceTypes,b.insurance_type||'not_specified')}${number('Refundable security deposit (€)','security_deposit',b.security_deposit??0,100000,'0.01')}</div></div></details>`;
     const selectedEquipment=new Set(Array.isArray(s.equipment)?s.equipment:[]);
     const equipmentCount=[...selectedEquipment].filter(id=>allowedEquipment.has(id)).length;
@@ -871,7 +873,7 @@
       if(!country)throw Error('Choose a country from the 14 available countries.');
       const skipperFee=withSkipper&&withoutSkipper?Number(d.get('skipper_fee_per_day')):0;
       if(!Number.isFinite(skipperFee)||(withSkipper&&withoutSkipper&&skipperFee<=0)||skipperFee<0||skipperFee>10000)throw Error('Enter a skipper price per day greater than €0 (maximum €10,000).');
-      const specNames=['engine_hp','length_m','width_m','draft_m','build_year','fuel_lph','speed_knots','crew'];
+      const specNames=['engine_hp','length_m','width_m','draft_m','build_year','tank_capacity_l','fuel_lph','speed_knots','crew'];
       const specs={};
       for(const name of specNames){
         const raw=String(d.get('spec_'+name)||'').trim();
