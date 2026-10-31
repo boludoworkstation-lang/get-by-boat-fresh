@@ -102,6 +102,8 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  const countryOptions=[...html.matchAll(/<option value="([^"]+)"><\/option>/g)].map(match=>match[1]);
  assert.deepEqual(countryOptions,['Croatia','Greece','Spain','France','Italy','Portugal','Cyprus','Turkey','Malta','Australia','Montenegro','Albania','USA','Bahamas']);
  assert.match(html,/data-rental-both/);assert.doesNotMatch(html,/Offshore equipment|Last renovated \(year\)|Tender engine horsepower/);
+ const ruleFields=['name="licence_required"','name="pets_allowed"','name="minimum_rental_age"'].map(field=>html.indexOf(field));
+ assert.ok(ruleFields.every((position,i)=>position>=0&&(i===0||position>ruleFields[i-1])),'Boat rules should list licence, pets and rental age in that order.');
  const basicsSection=html.slice(html.indexOf('id="boat-basics"'),html.indexOf('id="boat-rental"'));
  assert.match(basicsSection,/How can guests rent your boat\?/);assert.match(basicsSection,/name="with_skipper"/);assert.match(basicsSection,/name="without_skipper"/);
  assert.ok(basicsSection.indexOf('name="with_skipper"')<basicsSection.indexOf('name="country"'),'Skipper choices should be visible before the location fields.');
@@ -115,9 +117,10 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  await verifiedOwner.submit('boat',{name:'Invalid pin',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split',pickup_latitude:'43.819',type:'Motorboat',price:'400',guests:'6',with_skipper:'on',skipper_included_ack:'on',published:'on'});
  assert.equal(verifiedOwner.state.writes.length,writesBeforeInvalidCountry);
  assert.match(verifiedOwner.feedback.textContent,/Set both latitude and longitude/);
- await verifiedOwner.submit('boat',{name:'Test Boat',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split, pier A',pickup_latitude:'43.819123',pickup_longitude:'15.596456',type:'Motorboat',price:'400',guests:'6',description:'Great day trip',with_skipper:'on',skipper_included_ack:'on',published:'on',check_in_time:'08:30',check_out_time:'18:45',spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',insurance_type:'third_party',security_deposit:'500'});
+ await verifiedOwner.submit('boat',{name:'Test Boat',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split, pier A',pickup_latitude:'43.819123',pickup_longitude:'15.596456',type:'Motorboat',price:'400',guests:'6',description:'Great day trip',with_skipper:'on',skipper_included_ack:'on',published:'on',check_in_time:'08:30',check_out_time:'18:45',spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',pets_allowed:'true',insurance_type:'third_party',security_deposit:'500'});
  const boatSaved=verifiedOwner.state.writes.find(x=>x.table==='boats');
  assert.equal(boatSaved.value.specifications.engine_hp,250);assert.equal(boatSaved.value.specifications.length_m,7.5);
+ assert.equal(boatSaved.value.specifications.pets_allowed,true);
  assert.equal(boatSaved.value.insurance_type,'third_party');assert.equal(boatSaved.value.security_deposit,500);
  assert.equal(boatSaved.value.pickup_location,undefined);assert.equal(boatSaved.value.pickup_latitude,undefined);
  const privatePickup=verifiedOwner.state.writes.find(x=>x.table==='boat_pickups');
@@ -238,8 +241,9 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.writes.filter(x=>x.table==='boats').at(-1).value.skipper_fee_per_day,0);
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true,skipper_fee_per_day:120}});
  html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);assert.match(html,/\(\+€120\.00 \/ day\)/);
- e=await environment({boatOptions:{specifications:{build_year:2015,tank_capacity_l:150,equipment:['bimini','gps','paddleboard']},guests:8,type:'RIB'}});
+ e=await environment({boatOptions:{specifications:{build_year:2015,tank_capacity_l:150,pets_allowed:true,equipment:['bimini','gps','paddleboard']},guests:8,type:'RIB'}});
  html=await e.route('#/listing/boat-1');assert.match(html,/Year built<\/dt><dd>2015<\/dd>/);assert.doesNotMatch(html,/2,015/);assert.match(html,/Boat type<\/dt><dd>RIB/);assert.match(html,/Maximum passengers<\/dt><dd>8/);assert.match(html,/Tank capacity<\/dt><dd>150 L<\/dd>/);assert.match(html,/Equipment available on the RIB/);assert.match(html,/Bimini/);assert.match(html,/Paddle board/);assert.match(html,/Availability calendar/);assert.match(html,/Owner reviews/);
+ assert.match(html,/Boat licence required<\/dt><dd>Yes<\/dd>.*Pets allowed<\/dt><dd>Yes<\/dd>.*Minimum rental age<\/dt><dd>18 years<\/dd>/);
  assert.ok(html.indexOf('Tank capacity</dt>')<html.indexOf('Year built</dt>'));
  e=await environment({boatOptions:{specifications:{equipment:['bimini','outdoor_shower','outdoor_table','teak_deck','hot_water','wifi','gps','fridge','kayak']}}});
  html=await e.route('#/listing/boat-1');assert.match(html,/listing-amenity-grid/);assert.match(html,/Outdoor shower/);assert.match(html,/Fridge/);assert.doesNotMatch(html,/Show all 9 amenities|Bow sundeck|Hot water/);
