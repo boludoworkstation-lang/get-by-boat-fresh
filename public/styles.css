@@ -850,3 +850,11 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .fleet-modes{display:flex;align-items:center;gap:8px}
 .fleet-modes .skipper-cap-icon{flex:none;display:block}
 @media(max-width:520px){.profile-phone-inputs{grid-template-columns:1fr}}
+/* Public listing: clear skipper arrangement beneath the boat photo. */
+.listing-skipper-summary{display:flex;align-items:flex-start;gap:13px;padding:16px 18px;margin:0 0 23px;border:1px solid #dfeaec;border-radius:14px;background:#fbfdfd}
+.listing-skipper-summary>.skipper-cap-icon{width:32px;height:32px;flex:none;margin-top:2px}
+.listing-skipper-summary strong{display:block;font-size:16px;font-weight:750;line-height:1.35;color:#193e49}
+.listing-skipper-summary p{margin:4px 0;color:#65818b;font-size:13px;line-height:1.55}
+.listing-skipper-summary details{margin-top:6px}
+.listing-skipper-summary summary{display:inline-block;text-decoration:underline;text-underline-offset:3px;color:#426b76;cursor:pointer;font-size:13px}
+.listing-skipper-summary details[open] p{margin-top:8px}
