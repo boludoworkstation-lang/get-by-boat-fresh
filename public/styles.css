@@ -473,6 +473,54 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 @media(max-width:850px){.fleet-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fleet-editor-form{grid-template-columns:1fr}.fleet-editor-navigation{position:static;flex-direction:row;flex-wrap:wrap;gap:5px;padding:12px}.fleet-editor-navigation>span{width:100%;padding:3px 7px}.fleet-editor-navigation button{padding:9px}.fleet-calendar-side{grid-template-columns:1fr}}
 @media(max-width:610px){.fleet-hero{padding:26px 24px;display:block}.fleet-hero .fleet-primary{margin-top:22px;width:100%}.fleet-list-head{align-items:start;flex-direction:column}.fleet-filters{width:100%}.fleet-filters a{flex:1;justify-content:center;padding:9px 6px}.fleet-card-photo{height:185px}.fleet-card-body{padding:20px}.fleet-card-head{flex-direction:column;gap:7px}.fleet-card-actions .btn{flex:1;width:100%}.fleet-stat-grid{gap:8px}.fleet-stat-grid>div,.fleet-stat-grid>a{padding:15px;min-height:120px}.fleet-stat-grid strong{font-size:27px}.fleet-calendar-title,.fleet-editor-header{flex-direction:column}.fleet-calendar-panel{padding:17px!important}.fleet-calendar-day,.fleet-calendar-empty{min-height:52px;padding:7px 3px;gap:4px}.fleet-calendar-day small{font-size:8px;overflow:hidden}.fleet-calendar-weekdays,.fleet-calendar-grid{gap:3px}.fleet-calendar-legend{gap:8px}.member-main .fleet-editor-section{padding:23px 17px}.fleet-editor-section .live-columns{grid-template-columns:1fr}.fleet-editor-section-heading{gap:10px}.fleet-editor-save{padding:17px}.fleet-editor-save .btn{width:100%}}
 
+/* Simplified four-step boat editor — only one focused stage is visible at once. */
+.fleet-editor-page{max-width:940px}
+.fleet-editor-header{max-width:860px;align-items:center;gap:28px;margin-bottom:26px}
+.fleet-editor-header>div:first-child{min-width:0}
+.fleet-editor-header h2{font-size:clamp(29px,3vw,39px);line-height:1.15;margin:9px 0 6px;overflow-wrap:anywhere}
+.fleet-editor-header p{margin:0 0 13px}
+.fleet-editor-header .fleet-back{margin-bottom:23px}
+.fleet-editor-state{display:inline-flex;align-items:center;width:max-content;border-radius:30px;padding:6px 11px;font-weight:750;font-size:11px}
+.fleet-editor-state.published{background:#e3f7eb;color:#287c58}
+.fleet-editor-state.draft{background:#fff1d5;color:#956a23}
+.fleet-editor-form{display:block;max-width:860px;margin:0 auto}
+.fleet-editor-navigation{position:static;top:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:8px;background:#fff;border-radius:13px;margin-bottom:20px;box-shadow:0 4px 14px #0d405008}
+.fleet-editor-navigation button{display:flex;align-items:center;flex-direction:column;justify-content:center;gap:9px;min-height:79px;border:1px solid transparent;border-radius:9px;padding:12px 8px;text-align:center;font-size:12px;color:#69818b;transition:background .15s,border-color .15s}
+.fleet-editor-navigation button b{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;font-size:12px;background:#e9eff1;color:#6c8790}
+.fleet-editor-navigation button:hover{background:#f0f9fa}
+.fleet-editor-navigation button[aria-current=step]{background:#e9f8fa;border-color:#8cced8;color:#006c83;box-shadow:inset 0 -3px #00a4be}
+.fleet-editor-navigation button[aria-current=step] b{background:#008ba5;color:#fff}
+.fleet-editor-fields{width:100%}
+.fleet-editor-section[hidden],.fleet-editor-save [hidden]{display:none!important}
+.member-main .fleet-editor-section{max-width:none;margin-bottom:17px;padding:35px 39px;min-height:345px;box-shadow:0 8px 28px #1b4f5809}
+.fleet-editor-section-heading{margin-bottom:29px}
+.fleet-editor-section-heading>span{width:43px;height:43px;border-radius:13px}
+.fleet-editor-section-heading h3{font-size:21px}
+.fleet-editor-section .live-columns{gap:18px}
+.fleet-editor-section>label,.fleet-editor-section .live-columns>label{display:block;margin:15px 0}
+.fleet-editor-section input,.fleet-editor-section select,.fleet-editor-section textarea{border-color:#d8e5e8}
+.fleet-editor-section input:focus,.fleet-editor-section textarea:focus,.fleet-editor-section select:focus{border-color:#008fab;box-shadow:0 0 0 3px #c9f2f8}
+.fleet-rental-modes{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;border:0!important;padding:4px 0!important;margin:18px 0!important}
+.fleet-rental-modes legend{display:block;margin-bottom:7px}
+.fleet-rental-modes .live-check{border:1px solid #dbe8eb;background:#fff;border-radius:10px;padding:17px 16px;min-height:100px;align-items:flex-start;cursor:pointer}
+.fleet-rental-modes .live-check:has(input:checked){background:#effafb;border-color:#81cbd6}
+.fleet-rental-modes .live-check strong{font-size:14px}
+.fleet-rental-modes .live-check small{line-height:1.5;margin-top:6px}
+.fleet-skipper-fee{padding:22px 24px;margin-top:19px}
+.fleet-skipper-fee label{max-width:320px}
+.fleet-existing-photo{margin-top:20px}
+.fleet-publish-toggle{border:1px solid #e1eaed;background:#fcfefe;padding:19px!important;border-radius:11px}
+.fleet-publish-toggle:has(input:checked){border-color:#90d0d9;background:#f0fafa}
+.fleet-editor-save{position:sticky;bottom:12px;z-index:8;min-height:77px;background:#fff;box-shadow:0 10px 35px #17475223;max-width:100%;padding:15px 22px}
+.fleet-editor-save>[data-editor-progress]{font-weight:700;color:#2c626f}
+.fleet-editor-actions{display:flex;align-items:center;gap:9px;margin-left:auto}
+.fleet-editor-actions .btn{min-height:43px;white-space:nowrap}
+.fleet-step-secondary{border:1px solid #c9dfe3;border-radius:8px;min-height:43px;padding:10px 17px;background:#f8fcfd;color:#0b778d;font-weight:750;font-size:12px;white-space:nowrap}
+.fleet-step-secondary:hover{background:#e6f8fb;border-color:#80cbd7}
+.fleet-editor-save [data-feedback]:empty{display:none}
+.fleet-editor-save [data-feedback]:not(:empty){margin-top:7px;color:#637e86}
+@media(max-width:720px){.fleet-editor-header{flex-direction:column;align-items:stretch}.fleet-editor-header>.btn{width:max-content;max-width:100%}.fleet-editor-navigation{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:6px}.fleet-editor-navigation button{min-height:65px;padding:8px;font-size:11px;flex-direction:row;justify-content:flex-start;text-align:left}.fleet-editor-navigation button b{flex:none;width:23px;height:23px;font-size:10px}.member-main .fleet-editor-section{padding:25px 19px;min-height:300px}.fleet-rental-modes{grid-template-columns:1fr}.fleet-rental-modes .live-check{min-height:75px}.fleet-editor-save{flex-direction:column;align-items:stretch;bottom:5px;gap:12px}.fleet-editor-actions{width:100%;margin-left:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}.fleet-editor-actions .btn{grid-column:1/-1;width:100%}.fleet-step-secondary{width:100%}}
+
 /* Private conversations between renters and owners */
 .booking-messenger{display:grid;grid-template-columns:minmax(230px,310px) minmax(0,1fr);min-height:580px;margin:25px 0;background:#fff;border:1px solid #deebee;border-radius:18px;overflow:hidden;box-shadow:0 14px 32px rgba(5,53,67,.035)}
 .booking-conversations{background:#f8fbfc;border-right:1px solid #e3ebee;padding:18px 12px}
