@@ -69,7 +69,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  html=await e.route('#/dashboard');assert.match(html,/YOUR OWNER SPACE/);assert.match(html,/My boats/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Profile essentials|My bookings/);
  assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
  html=await e.route('#/account?tab=information');assert.match(html,/Owner account/);assert.match(html,/Personal profile/);assert.match(html,/Business & verification/);assert.match(html,/Security/);assert.doesNotMatch(html,/href="#\/account\?tab=payouts"|Owner verification/);
- html=await e.route('#/account?tab=business');assert.match(html,/data-live-form="owner-business"/);assert.match(html,/Registration \/ tax number/);assert.doesNotMatch(html,/OIB, SIRET, VAT/);assert.match(html,/<h2>Send for review<\/h2>/);assert.doesNotMatch(html,/Send for staff review/);assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/data-live-form="owner-document"/);assert.match(html,/data-live-form="owner-submit"/);assert.match(html,/France · SIRET/);for(const label of ['Greece · AFM','Portugal · NIPC/NIF','Cyprus · TIN','Turkey · VKN','Malta · Tax number','Australia · ABN','Montenegro · PIB','Albania · NUIS/NIPT','United States · EIN','Bahamas · TIN / Business Licence'])assert.ok(html.includes(label));assert.match(html,/name="business_country" required autocomplete="off"/);assert.match(html,/<option value="" disabled selected>Select country<\/option>/);assert.match(html,/data-live-form="owner-payouts" autocomplete="off"/);assert.match(html,/name="iban" type="text"[^>]*autocomplete="off"[^>]*spellcheck="false"/);assert.doesNotMatch(html,/placeholder="HR…"/);assert.match(html,/Business website \(required\)/);assert.equal((html.match(/PUBLISHING REQUIREMENTS/g)||[]).length,1);assert.match(html,/data-live="owner-jump"/);
+ html=await e.route('#/account?tab=business');assert.match(html,/data-live-form="owner-business"/);assert.match(html,/Business registration \/ Tax ID/);assert.doesNotMatch(html,/OIB, SIRET, VAT/);assert.match(html,/<h2>Send for review<\/h2>/);assert.doesNotMatch(html,/Send for staff review/);assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/data-live-form="owner-document"/);assert.match(html,/data-live-form="owner-submit"/);assert.match(html,/<option value="FR"[^>]*>France<\/option>/);for(const [code,name] of [['HR','Croatia'],['GR','Greece'],['ES','Spain'],['FR','France'],['IT','Italy'],['PT','Portugal'],['CY','Cyprus'],['TR','Turkey'],['MT','Malta'],['AU','Australia'],['ME','Montenegro'],['AL','Albania'],['US','United States'],['BS','Bahamas']])assert.match(html,new RegExp('<option value="'+code+'"[^>]*>'+name+'<\\/option>'));assert.doesNotMatch(html,/<option value="(?:DE|GB)"/);assert.doesNotMatch(html,/<option[^>]*>(?:Germany|United Kingdom)<\/option>/);assert.match(html,/data-owner-tax-hint/);assert.match(html,/name="bank_country" required/);assert.match(html,/data-owner-bank-local/);assert.match(html,/Proof of business bank account/);assert.match(html,/name="business_country" required autocomplete="off"/);assert.match(html,/<option value="" disabled selected>Select country<\/option>/);assert.match(html,/data-live-form="owner-payouts" autocomplete="off"/);assert.match(html,/name="iban" type="text"[^>]*autocomplete="off"[^>]*spellcheck="false"/);assert.doesNotMatch(html,/placeholder="HR…"/);assert.match(html,/Business website \(required\)/);assert.equal((html.match(/PUBLISHING REQUIREMENTS/g)||[]).length,1);assert.match(html,/data-live="owner-jump"/);
  const bothOwner=await environment({hash:'#/owner',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'},boatOptions:{with_skipper:true,without_skipper:true}});const bothOwnerHtml=await bothOwner.route('#/owner');assert.match(bothOwnerHtml,/With or without a skipper/);assert.match(bothOwnerHtml,/skipper-cap-icon/);assert.doesNotMatch(bothOwnerHtml,/Rent with skipper · Rent without skipper/);
  html=await e.route('#/owner?edit=new');assert.match(html,/Your boat will be saved as a draft/);assert.match(html,/name="published" value=""/);assert.doesNotMatch(html,/data-step="4"|id="boat-publishing"/);
  const ownerPdf={size:2400,type:'application/pdf'};
@@ -77,19 +77,44 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.ctx.serviceFee(800),85.53);assert.equal(e.ctx.serviceFee(950),101.52);
  await e.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://bateaux.example',registered_address:'12 Quai de Paris, Marseille, France'});
  assert.equal(e.state.ownerRequest.business_country,'FR');assert.equal(e.state.ownerRequest.application_state,'draft');assert.equal(e.state.uploads.length,0);
- html=await e.route('#/account?tab=payouts');assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/Automated payouts are not yet active/);
- await e.submit('owner-payouts',{iban:'FR7630006000011234567890189',iban_holder:'Bateaux SARL'});assert.equal(e.state.ownerRequest.iban_holder,'Bateaux SARL');
+ html=await e.route('#/account?tab=payouts');assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/automated payouts are not yet active/i);
+ await e.submit('owner-payouts',{bank_country:'FR',iban:'FR7630006000011234567890189',iban_holder:'Bateaux SARL'});assert.equal(e.state.ownerRequest.iban_holder,'Bateaux SARL');assert.equal(e.state.ownerRequest.payout_bank_details.method,'iban');
  html=await e.route('#/account?tab=verification');assert.match(html,/data-live-form="owner-document"/);assert.match(html,/Missing/);assert.match(html,/disabled/);
  for(const [kind,values] of [['registration',{}],['identity',{identity_type:'passport'}],['iban',{}]])await e.submit('owner-document',{...values,document_file:ownerPdf},{document:kind});
  assert.equal(e.state.uploads.length,3);assert.equal(e.state.ownerRequest.identity_type,'passport');assert.equal(e.state.ownerRequest.application_state,'draft');
  html=await e.route('#/account?tab=verification');assert.match(html,/Uploaded/);assert.doesNotMatch(html,/Submit for review<\/button>[^<]*<p class="member-note">Complete/);
  await e.submit('owner-submit',{documents_own:'on'});assert.equal(e.state.ownerRequest.application_state,'submitted');assert.ok(e.state.ownerRequest.submitted_at);
  const pendingOwnerRequest=e.state.ownerRequest;
+ // Three non-IBAN markets require bank details appropriate to the bank country.
+ for(const [country,account,routing,swift] of [['US','123456789','021000021','CHASUS33'],['AU','123456789','062000',''],['BS','123456789','BRANCH01','RBTTBSNS']]){
+   const localOwner=await environment({hash:'#/account?tab=business',user:{id:'local-'+country},profile:{display_name:'Local Owner',account_type:'owner'}});
+   const localHtml=await localOwner.route('#/account?tab=business');
+   assert.match(localHtml,/name="bank_country" required/);
+   await localOwner.submit('owner-business',{business_country:country,legal_business_name:'Local Marine Company',tax_identifier:'REG1234567',business_website:'https://local.example',registered_address:'11 Marina Road, Harbour City'});
+   await localOwner.submit('owner-payouts',{bank_country:country,account_number:account,routing_number:routing,swift_bic:swift,iban_holder:'Local Marine Company'});
+   assert.equal(localOwner.state.ownerRequest.iban,null);
+   assert.equal(localOwner.state.ownerRequest.payout_bank_details.country,country);
+   assert.equal(localOwner.state.ownerRequest.payout_bank_details.method,'local');
+   assert.equal(localOwner.state.ownerRequest.payout_bank_details.account_number,account);
+   assert.equal(localOwner.state.ownerRequest.payout_bank_details.routing_number,routing);
+   assert.equal(localOwner.state.ownerRequest.payout_bank_details.swift_bic,swift);
+   const rendered=await localOwner.route('#/account?tab=payouts');assert.match(rendered,new RegExp('option value="'+country+'" selected'));
+   for(const [doc,values] of [['registration',{}],['identity',{identity_type:'passport'}],['iban',{}]])await localOwner.submit('owner-document',{...values,document_file:ownerPdf},{document:doc});
+   await localOwner.submit('owner-submit',{documents_own:'on'});assert.equal(localOwner.state.ownerRequest.application_state,'submitted');
+ }
  html=await e.route('#/account?tab=verification');assert.match(html,/Pending staff review/);
  let reviewer=await environment({hash:'#/staff',user:{id:'reviewer-1'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:pendingOwnerRequest,staff:true});
  html=await reviewer.route('#/staff');assert.match(html,/Business \/ owner verification/);assert.match(html,/Bateaux SARL/);assert.match(html,/View Registration/);
  await reviewer.submit('owner-review',{status:'approved',registration_matches:'on',identity_matches:'on',bank_matches:'on',note:''},{id:'new-owner'});
  assert.equal(reviewer.state.ownerReview.status,'approved');assert.equal(reviewer.state.deletions.length,0);
+ // Legacy approved snapshots do not include the new nullable payout column.
+ const legacyRequest={...pendingOwnerRequest,payout_bank_details:null};
+ const legacyReview={...reviewer.state.ownerReview,reviewed_request:{...reviewer.state.ownerReview.reviewed_request}};
+ delete legacyReview.reviewed_request.payout_bank_details;
+ const legacyOwner=await environment({hash:'#/account?tab=business',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:legacyRequest,ownerReview:legacyReview});
+ assert.match(await legacyOwner.route('#/account?tab=business'),/Your business is approved/);
+ const alteredOwner=await environment({hash:'#/account?tab=business',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:{...legacyRequest,payout_bank_details:{country:'FR',method:'iban'}},ownerReview:legacyReview});
+ assert.doesNotMatch(await alteredOwner.route('#/account?tab=business'),/Your business is approved/);
  let verifiedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:pendingOwnerRequest,ownerReview:reviewer.state.ownerReview});
  html=await verifiedOwner.route('#/owner');assert.doesNotMatch(html,/fleet-owner-commission|Get By Boat commission: 7%|Your price is your payout/);
  html=await verifiedOwner.route('#/owner?edit=new');assert.match(html,/name="published" value="on"/);assert.match(html,/>Publish<\/button>/);

@@ -858,3 +858,9 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .listing-skipper-summary details{margin-top:6px}
 .listing-skipper-summary summary{display:inline-block;text-decoration:underline;text-underline-offset:3px;color:#426b76;cursor:pointer;font-size:13px}
 .listing-skipper-summary details[open] p{margin-top:8px}
+
+/* Context-aware owner business tax ID and bank account details. */
+.owner-field-help{display:block;margin-top:7px;color:#6b8590;font-size:12px;line-height:1.5;font-weight:400}
+.owner-bank-fields{margin-top:13px}
+.owner-bank-fields[hidden]{display:none!important}
+.owner-bank-fields.live-columns{align-items:start}
