@@ -13,8 +13,8 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
    const ownerRow=()=>table==='owner_verification_requests'?state.ownerRequest:state.ownerReview;
    const q={select(){return q},eq(){return q},in(){return q},order(){return q},limit(){return q},upsert(value){
      state.writes.push({table,value});
-     if(table==='owner_verification_requests')state.ownerRequest=value;
-     else state.ownerReview={...value,reviewed_name:state.profile.display_name,reviewed_request:Object.fromEntries(Object.entries(state.ownerRequest).filter(([k])=>k!=='submitted_at'))};
+     if(table==='owner_verification_requests')state.ownerRequest={...state.ownerRequest,...value};
+     else state.ownerReview={...value,reviewed_name:state.profile.display_name,reviewed_request:Object.fromEntries(Object.entries(state.ownerRequest).filter(([k])=>k!=='application_state'))};
      return q;
    },maybeSingle:async()=>({data:ownerRow()}),single:async()=>({data:ownerRow()}),then(resolve){resolve({data:ownerRow()?[ownerRow()]:[]})}};
    return q;
@@ -61,11 +61,19 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.profile.account_type,'owner');assert.equal(e.state.profile.display_name,'Maja Perić');
  html=await e.route('#/dashboard');assert.match(html,/YOUR OWNER SPACE/);assert.match(html,/My boats/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Profile essentials|My bookings/);
  assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
- html=await e.route('#/account?tab=verification');assert.match(html,/Verify your owner account/);assert.match(html,/data-live-form="owner-verification"/);assert.match(html,/France · SIRET/);assert.match(html,/Business website \(required\)/);
+ html=await e.route('#/account?tab=information');assert.match(html,/Personal information/);assert.match(html,/Business information/);assert.match(html,/Verification & documents/);assert.match(html,/Payout details/);assert.match(html,/Security/);assert.doesNotMatch(html,/Owner verification/);
+ html=await e.route('#/account?tab=business');assert.match(html,/data-live-form="owner-business"/);assert.match(html,/France · SIRET/);assert.match(html,/Business website \(required\)/);
  html=await e.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);assert.match(html,/name="published"[^>]*disabled/);
  const ownerPdf={size:2400,type:'application/pdf'};
- await e.submit('owner-verification',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://bateaux.example',registered_address:'12 Quai de Paris, Marseille, France',iban:'FR7630006000011234567890189',iban_holder:'Bateaux SARL',identity_type:'passport',registration_file:ownerPdf,identity_file:ownerPdf,iban_file:ownerPdf,documents_own:'on'});
- assert.equal(e.state.uploads.length,3);assert.equal(e.state.ownerRequest.business_country,'FR');assert.equal(e.state.ownerRequest.iban_holder,'Bateaux SARL');
+ await e.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://bateaux.example',registered_address:'12 Quai de Paris, Marseille, France'});
+ assert.equal(e.state.ownerRequest.business_country,'FR');assert.equal(e.state.ownerRequest.application_state,'draft');assert.equal(e.state.uploads.length,0);
+ html=await e.route('#/account?tab=payouts');assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/Automated payouts are not yet active/);
+ await e.submit('owner-payouts',{iban:'FR7630006000011234567890189',iban_holder:'Bateaux SARL'});assert.equal(e.state.ownerRequest.iban_holder,'Bateaux SARL');
+ html=await e.route('#/account?tab=verification');assert.match(html,/data-live-form="owner-document"/);assert.match(html,/Missing/);assert.match(html,/disabled/);
+ for(const [kind,values] of [['registration',{}],['identity',{identity_type:'passport'}],['iban',{}]])await e.submit('owner-document',{...values,document_file:ownerPdf},{document:kind});
+ assert.equal(e.state.uploads.length,3);assert.equal(e.state.ownerRequest.identity_type,'passport');assert.equal(e.state.ownerRequest.application_state,'draft');
+ html=await e.route('#/account?tab=verification');assert.match(html,/Uploaded/);assert.doesNotMatch(html,/Submit for review<\/button>[^<]*<p class="member-note">Complete/);
+ await e.submit('owner-submit',{documents_own:'on'});assert.equal(e.state.ownerRequest.application_state,'submitted');assert.ok(e.state.ownerRequest.submitted_at);
  const pendingOwnerRequest=e.state.ownerRequest;
  html=await e.route('#/account?tab=verification');assert.match(html,/Pending staff review/);
  let reviewer=await environment({hash:'#/staff',user:{id:'reviewer-1'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:pendingOwnerRequest,staff:true});
@@ -75,6 +83,10 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  let verifiedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:pendingOwnerRequest,ownerReview:reviewer.state.ownerReview});
  html=await verifiedOwner.route('#/owner?edit=new');assert.doesNotMatch(html,/name="published"[^>]*disabled/);
  html=await verifiedOwner.route('#/account?tab=verification');assert.match(html,/Your business is approved/);
+ // Editing a single approved field returns the application to draft without new uploads.
+ await verifiedOwner.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://newcompany.example',registered_address:'12 Quai de Paris, Marseille, France'});
+ assert.equal(verifiedOwner.state.uploads.length,0);assert.equal(verifiedOwner.state.ownerRequest.application_state,'draft');
+ html=await verifiedOwner.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);
  const changedOwnerRequest={...pendingOwnerRequest,business_website:'https://newcompany.example'};
  let changedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:changedOwnerRequest,ownerReview:reviewer.state.ownerReview});
  html=await changedOwner.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);

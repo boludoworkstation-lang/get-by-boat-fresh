@@ -273,6 +273,22 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .verification-owner-docs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
 .verification-owner-docs label{min-width:0}
 .verification-owner-docs input[type=file]{width:100%;font-size:12px}
+.verification-badge.draft,.verification-badge.uploaded{background:#e6f6f3;color:#13675c}
+.verification-badge.missing{background:#f4f5f6;color:#677a83}
+.owner-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px}
+.owner-progress-step{display:flex;align-items:center;gap:8px;border:1px solid #e1e8eb;background:#f8fafb;border-radius:9px;padding:14px 12px;text-decoration:none;color:#536d77;font-size:12px;font-weight:650}
+.owner-progress-step span{font-size:21px;color:#8fa7ad}
+.owner-progress-step.complete{border-color:#acdccc;background:#f1faf7;color:#13675c}
+.owner-progress-step.complete span{color:#14856f}
+.owner-documents-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.owner-document-card{border:1px solid #dce7e9;border-radius:12px;background:#fbfcfd;padding:18px;min-width:0}
+.owner-document-head{display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-height:82px}
+.owner-document-card input[type=file]{font-size:12px;max-width:100%}
+.owner-document-card .btn{width:100%;margin-top:7px}
+.owner-document-card [data-feedback]{font-size:12px;overflow-wrap:anywhere}
+.owner-submit-form button[disabled]{opacity:.48;cursor:not-allowed}
+@media(max-width:1020px){.owner-documents-grid{grid-template-columns:1fr}.owner-document-head{min-height:0}}
+@media(max-width:700px){.owner-progress{grid-template-columns:1fr}}
 .verification-good,.verification-warning{border-radius:8px;padding:13px 16px;font-size:13px;line-height:1.7;margin:18px 0 0}
 .verification-good{background:#e9f9f0;color:#136d45}.verification-warning{background:#fff0e9;color:#935033}
 .verification-booking-block{border:1px solid #bbdfe5;border-radius:9px;background:#f0f9fa;padding:16px;margin:16px 0}
