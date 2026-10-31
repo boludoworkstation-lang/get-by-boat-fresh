@@ -4,4 +4,4 @@
 //   API: Maps JavaScript API only
 // Google Maps requires an enabled billing account. Without a key, the site
 // automatically continues showing the existing OpenStreetMap/terrain maps.
-window.GBB_GOOGLE_MAPS_API_KEY = '';
+window.GBB_GOOGLE_MAPS_API_KEY = 'AIzaSyDhSx8qH1QfuyNPSCgTIQeMVfXGBkNcgxE';
