@@ -620,6 +620,7 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .listing-layout .listing-details,.listing-layout .listing-booking{min-width:0}
 .listing-cover{border-radius:20px;overflow:hidden;background:#e9f5f5;box-shadow:0 14px 32px #25455012}
 .listing-cover .live-photo,.listing-cover .live-placeholder{height:clamp(290px,35vw,440px);border-radius:0;display:block;object-fit:cover}
+.listing-cover .live-placeholder{display:grid;place-items:center;text-align:center;background:linear-gradient(140deg,#d7edf1,#eaf7f6 60%,#d7edef);color:#527c83;font-size:17px;font-family:Georgia,serif}
 .listing-highlight-row{display:flex;flex-wrap:wrap;gap:10px;margin:17px 0 22px}
 .listing-highlight-row>span,.listing-skipper-highlight{border:1px solid #cfe4e9;background:#f0f9fa;border-radius:99px;padding:9px 14px;font-size:12px;font-weight:750;color:#275765}
 .listing-highlight-row .icon{width:15px;vertical-align:middle;color:#008ba6}
@@ -653,6 +654,11 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .fleet-public-pickup p.listing-map-disclaimer{padding:14px 20px;font-size:12px;color:#69838b;line-height:1.55}
 .listing-map-link{display:inline-flex;padding:17px 20px;align-items:center;gap:7px;color:#0086a0;font-weight:750;font-size:13px;text-decoration:none}
 .listing-map-link:hover{text-decoration:underline}
+.listing-unavailable{max-width:680px;margin:28px auto 60px;padding:45px 35px;text-align:center;border:1px solid #e0edef;border-radius:20px;background:linear-gradient(135deg,#f7fcfd,#ecf7f9)}
+.listing-unavailable-icon{margin:0 auto 16px;display:grid;place-items:center;width:70px;height:70px;border-radius:50%;background:#d9f3f6;color:#008ea6}
+.listing-unavailable-icon .icon{width:32px;height:32px}
+.listing-unavailable h2{font-size:23px;margin:10px 0;color:#214a57}
+.listing-unavailable p{font-size:14px;line-height:1.8;color:#66818b;margin:12px auto 24px;max-width:430px}
 .fleet-skipper-included{margin:18px 0!important;border:1px solid #c7e9d5;background:#eaf7ef;padding:17px;border-radius:12px}
 .fleet-skipper-included strong{color:#186c52;font-size:14px}
 .fleet-skipper-included small{display:block;color:#598175;font-size:12px}
