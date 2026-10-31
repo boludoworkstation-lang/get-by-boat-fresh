@@ -227,12 +227,12 @@
   const guestMapTiles=map=>window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
   const equipmentCategories=[
     ['Outdoor equipment',[['bimini','Bimini'],['outdoor_shower','Outdoor shower'],['outdoor_table','External table'],['outdoor_speakers','External speakers'],['teak_deck','Teak deck'],['bow_sundeck','Bow sundeck'],['aft_sundeck','Aft sundeck'],['swim_platform','Bathing platform'],['swim_ladder','Bathing ladder']]],
-    ['Extra comforts',[['hot_water','Hot water'],['watermaker','Watermaker'],['air_conditioning','Air conditioning'],['fans','Fans'],['heating','Heating'],['electric_toilet','Electric toilet'],['bed_linen','Bed linen'],['bath_towels','Bath towels'],['beach_towels','Beach towels'],['wifi','Wi-Fi'],['usb','USB socket'],['tv','TV']]],
-    ['Navigation equipment',[['dinghy','Dinghy'],['dinghy_motor',"Dinghy's motor"],['bow_thruster','Bow thruster'],['electric_windlass','Electric windlass'],['autopilot','Autopilot'],['gps','GPS'],['depth_sounder','Depth sounder'],['vhf','VHF'],['satellite_phone','Satellite phone'],['guides_maps','Guides & maps']]],
+    ['Extra comforts',[['air_conditioning','Air conditioning'],['heating','Heating'],['electric_toilet','Toilet'],['bed_linen','Bed linen'],['bath_towels','Bath towels'],['wifi','Wi-Fi'],['usb','USB socket'],['tv','TV']]],
+    ['Navigation equipment',[['dinghy','Dinghy'],['bow_thruster','Bow thruster'],['electric_windlass','Electric windlass'],['autopilot','Autopilot'],['gps','GPS'],['depth_sounder','Depth sounder'],['vhf','VHF'],['satellite_phone','Satellite phone'],['guides_maps','Map']]],
     ['Kitchen',[['fridge','Fridge'],['freezer','Freezer'],['oven','Oven/stovetop'],['bbq','BBQ grill'],['microwave','Microwave'],['coffee_machine','Coffee machine'],['ice_machine','Ice machine'],['ice_box','Ice box']]],
-    ['Leisure activities',[['paddleboard','Paddle board'],['kayak','Kayak'],['snorkel','Snorkelling equipment'],['fishing','Fishing equipment'],['diving','Diving equipment'],['seabob','Seabob'],['bike','Bike'],['scooter','Electric scooter'],['drone','Drone'],['camera','Video camera']]],
-    ['Onboard energy',[['generator','Generator'],['inverter','Power inverter'],['power_220v','220V power outlet']]],
-    ['Water sports',[['water_skis','Water skis'],['monoski','Monoski'],['wakeboard','Wakeboard'],['towable_tube','Towable tube'],['banana','Inflatable banana'],['kneeboard','Kneeboard']]]
+    ['Leisure activities',[['paddleboard','Paddle board'],['kayak','Kayak'],['snorkel','Snorkelling equipment'],['fishing','Fishing equipment'],['diving','Diving equipment'],['seabob','Seabob']]],
+    ['Onboard energy',[['generator','Generator'],['power_220v','220V power outlet']]],
+    ['Water sports',[['water_skis','Water skis'],['wakeboard','Wakeboard'],['towable_tube','Tube'],['banana','Inflatable banana'],['kneeboard','Kneeboard']]]
   ];
   const allowedEquipment=new Set(equipmentCategories.flatMap(([,options])=>options.map(([id])=>id)));
   const equipmentIconPaths={
@@ -552,7 +552,7 @@
     const pickup=String(b.pickup_location||b.location||'');
     const pickupCoordinates=boatPickupCoordinates(b);
     const pickupFields=`<div class="fleet-pickup"><h4>Where will guests pick up the boat?</h4>${field('Pickup point / meeting address','pickup_location','text',pickup,'required maxlength="240" placeholder="e.g. Marina Hramina, pier A"')}<div class="fleet-pickup-actions"><button class="btn live-secondary" type="button" data-pickup-search>Find address on map</button></div><p class="member-note">Drag the pin or click the exact marina. Guests only see your city until their booking is paid and confirmed.</p><div class="fleet-pickup-map" data-pickup-map aria-label="Interactive pickup map with a draggable pin"></div><p class="fleet-pickup-status" data-pickup-status role="status"></p><input type="hidden" name="pickup_latitude" value="${esc(pickupCoordinates?pickupCoordinates[0]:'')}"><input type="hidden" name="pickup_longitude" value="${esc(pickupCoordinates?pickupCoordinates[1]:'')}"></div>`;
-    return boatFormBase(b)
+    return positionOwnerRentalModes(boatFormBase(b)
       .replace('organised into four quick steps','organised into three quick steps')
       .replace('<button type="button" data-live="boat-step" data-step="4"><b>4</b> Publish</button>','')
       .replace(countryField,countries)
@@ -571,7 +571,18 @@
       .replace('<div class="fleet-editor-save">',`<input type="hidden" name="published" value="${willPublish?'on':''}"><div class="fleet-editor-save">`)
       .replace('Step 1 of 4 · Boat & location','Step 1 of 3 · Boat & location')
       .replace(/<button class="btn" type="submit">(?:Save changes|Save boat)<\/button>/,`<button class="btn" type="submit">${willPublish?'Publish':'Save draft'}</button>`)
-      .replace('<p data-feedback role="status"></p></div></div></form>',`${!willPublish?'<p class="verification-warning">To publish, complete your <a href="#/account?tab=business">owner verification</a>. Your boat will be saved as a draft until approval.</p>':''}<p data-feedback role="status"></p></div></div></form>`);
+      .replace('<p data-feedback role="status"></p></div></div></form>',`${!willPublish?'<p class="verification-warning">To publish, complete your <a href="#/account?tab=business">owner verification</a>. Your boat will be saved as a draft until approval.</p>':''}<p data-feedback role="status"></p></div></div></form>`));
+  }
+  function positionOwnerRentalModes(markup){
+    const start=markup.indexOf('<fieldset class="fleet-rental-modes">');
+    const end=start<0?-1:markup.indexOf('</fieldset>',start);
+    const countryAnchor='<div class="live-columns"><label>Country<input name="country"';
+    if(start<0||end<0||!markup.includes(countryAnchor))return markup;
+    const choices=markup.slice(start,end+'</fieldset>'.length).replace('Available rental options','Choose your rental options');
+    const remaining=markup.slice(0,start)+markup.slice(end+'</fieldset>'.length);
+    const insertAt=remaining.indexOf(countryAnchor);
+    const callout=`<div class="fleet-rental-onboarding"><div class="fleet-rental-onboarding-heading"><h4>How can guests rent your boat?</h4><p>Select one option or both. You can set skipper pricing in the next step.</p></div>${choices}</div>`;
+    return remaining.slice(0,insertAt)+callout+remaining.slice(insertAt);
   }
   function ownerReviewForm(booking,existing){
     if(booking.status!=='confirmed'||booking.end_date>=today())return '';

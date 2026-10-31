@@ -102,6 +102,9 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  const countryOptions=[...html.matchAll(/<option value="([^"]+)"><\/option>/g)].map(match=>match[1]);
  assert.deepEqual(countryOptions,['Croatia','Greece','Spain','France','Italy','Portugal','Cyprus','Turkey','Malta','Australia','Montenegro','Albania','USA','Bahamas']);
  assert.match(html,/data-rental-both/);assert.doesNotMatch(html,/Offshore equipment|Last renovated \(year\)|Tender engine horsepower/);
+ const basicsSection=html.slice(html.indexOf('id="boat-basics"'),html.indexOf('id="boat-rental"'));
+ assert.match(basicsSection,/How can guests rent your boat\?/);assert.match(basicsSection,/name="with_skipper"/);assert.match(basicsSection,/name="without_skipper"/);
+ assert.ok(basicsSection.indexOf('name="with_skipper"')<basicsSection.indexOf('name="country"'),'Skipper choices should be visible before the location fields.');
  assert.match(html,/Technical specifications/);assert.match(html,/Insurance & security deposit/);
  assert.doesNotMatch(html,/Insurance certificate \(optional\)|Proof of boat ownership \(optional\)|name="document_insurance"|name="document_ownership"|Not uploaded · optional/);
  assert.doesNotMatch(html,/name="cabins"|name="sleeping_area"/);
@@ -218,7 +221,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(e.feedback.textContent,/does not offer/);assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
  // Owners must select at least one option, and both values are saved to the listing.
  e=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'}});
- html=await e.route('#/owner?edit=boat-1');assert.match(html,/Available rental options/);
+ html=await e.route('#/owner?edit=boat-1');assert.match(html,/Choose your rental options/);
  assert.match(html,/Skipper price per day/);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null});
  assert.match(e.feedback.textContent,/at least one rental option/);assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);
@@ -238,10 +241,12 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  html=await e.route('#/listing/boat-1');assert.match(html,/Year built<\/dt><dd>2015<\/dd>/);assert.doesNotMatch(html,/2,015/);assert.match(html,/Boat type<\/dt><dd>RIB/);assert.match(html,/Maximum passengers<\/dt><dd>8/);assert.match(html,/Tank capacity<\/dt><dd>150 L<\/dd>/);assert.match(html,/Equipment available on the RIB/);assert.match(html,/Bimini/);assert.match(html,/Paddle board/);assert.match(html,/Availability calendar/);assert.match(html,/Owner reviews/);
  assert.ok(html.indexOf('Tank capacity</dt>')<html.indexOf('Year built</dt>'));
  e=await environment({boatOptions:{specifications:{equipment:['bimini','outdoor_shower','outdoor_table','teak_deck','hot_water','wifi','gps','fridge','kayak']}}});
- html=await e.route('#/listing/boat-1');assert.match(html,/listing-amenity-grid/);assert.match(html,/Outdoor shower/);assert.match(html,/Fridge/);assert.doesNotMatch(html,/Show all 9 amenities|Bow sundeck/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/listing-amenity-grid/);assert.match(html,/Outdoor shower/);assert.match(html,/Fridge/);assert.doesNotMatch(html,/Show all 9 amenities|Bow sundeck|Hot water/);
  e=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'},boatOptions:{specifications:{equipment:['bimini','gps']}}});
  html=await e.route('#/owner?edit=boat-1');assert.match(html,/name="equipment" value="bimini" checked/);assert.match(html,/name="equipment" value="gps" checked/);for(const group of ['Outdoor equipment','Extra comforts','Navigation equipment','Kitchen','Leisure activities','Onboard energy','Water sports'])assert.ok(html.includes(group),group);assert.match(html,/name="spec_tank_capacity_l"/);
- assert.match(html,/data-equipment-picker/);assert.match(html,/data-equipment-search/);assert.match(html,/data-equipment-selected-only/);assert.match(html,/2 items selected/);assert.equal((html.match(/name="equipment"/g)||[]).length,58);
+ assert.match(html,/data-equipment-picker/);assert.match(html,/data-equipment-search/);assert.match(html,/data-equipment-selected-only/);assert.match(html,/2 items selected/);assert.equal((html.match(/name="equipment"/g)||[]).length,47);
+ for(const item of ['hot_water','watermaker','fans','beach_towels','dinghy_motor','bike','scooter','drone','camera','monoski','inverter'])assert.doesNotMatch(html,new RegExp(`name="equipment" value="${item}"`));
+ for(const [id,label] of [['electric_toilet','Toilet'],['guides_maps','Map'],['towable_tube','Tube']])assert.match(html,new RegExp(`<span>${label}</span><input type="checkbox" name="equipment" value="${id}"`));
  const completed={id:'completed-trip',boat_id:'boat-1',customer_id:'guest-1',start_date:'2025-09-01',end_date:'2025-09-02',guests:2,status:'confirmed',total:400,with_skipper:true,boats:{name:'Sessa',owner_id:'owner-1',check_in_time:'09:00',check_out_time:'18:00'}};
  e=await environment({hash:'#/bookings',user:{id:'guest-1'},profile:{display_name:'Guest Marin',account_type:'customer'},bookings:[completed]});
  html=await e.route('#/bookings');assert.match(html,/How was your experience with the owner/);assert.match(html,/data-live-form="guest-owner-review"/);assert.match(html,/name="rating" value="5"/);
