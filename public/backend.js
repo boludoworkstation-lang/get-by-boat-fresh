@@ -242,7 +242,7 @@
   }
   const rentalOptions=b=>[b.with_skipper?'Rent with skipper':null,b.without_skipper!==false?'Rent without skipper':null].filter(Boolean).join(' · ');
   const ownerSkipperOption=b=>b.with_skipper&&b.without_skipper!==false?'With or without a skipper':b.with_skipper?'With a skipper':'Without a skipper';
-  const captainCapIcon='<svg class="skipper-cap-icon" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M4.5 12V8.5C6.7 6.8 9.2 6 12 6s5.3.8 7.5 2.5V12" fill="#f3cceb" stroke="#b14ba9" stroke-width="1.2"/><path d="M3 12.3c3.9-1.6 14.1-1.6 18 0v2.3c-5.3 3.5-12.7 3.5-18 0Z" fill="#c34fb2"/><path d="M9.7 9.6h4.6M12 7.3v4.4" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg>';
+  const captainCapIcon='<svg class="skipper-cap-icon" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M4.5 12V8.5C6.7 6.8 9.2 6 12 6s5.3.8 7.5 2.5V12" fill="#D8F3F8" stroke="#007D98" stroke-width="1.2"/><path d="M3 12.3c3.9-1.6 14.1-1.6 18 0v2.3c-5.3 3.5-12.7 3.5-18 0Z" fill="#00A6BF"/><path d="M9.7 9.6h4.6M12 7.3v4.4" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg>';
   const guestTotal=amount=>Math.round((Number(amount)+serviceFee(Number(amount)))*100)/100;
   const guestDailyRate=amount=>guestTotal(amount);
   const boatClock=(value,fallback)=>/^([01]\d|2[0-3]):[0-5]\d/.test(String(value||''))?String(value).slice(0,5):fallback;
