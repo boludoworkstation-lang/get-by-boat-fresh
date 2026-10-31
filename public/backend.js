@@ -280,6 +280,37 @@
   };
   const terrainTiles=map=>window.L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,subdomains:'abc',attribution:'Terrain: &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> · &copy; OpenStreetMap contributors'}).addTo(map);
   const guestMapTiles=map=>window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
+  // Browser key must be restricted in Google Cloud to this domain and Maps JavaScript API.
+  const googleMapsKey=()=>String(window.GBB_GOOGLE_MAPS_API_KEY||'').trim();
+  let googleMapsLoader=null;
+  const googleMapsApi=()=>{
+    if(!googleMapsKey())return Promise.resolve(null);
+    if(window.google?.maps?.Map)return Promise.resolve(window.google.maps);
+    if(googleMapsLoader)return googleMapsLoader;
+    googleMapsLoader=new Promise(resolve=>{
+      const callback='__gbbGoogleMapsLoaded';
+      let finished=false;
+      const finish=maps=>{
+        if(finished)return;
+        finished=true;
+        clearTimeout(timeout);
+        delete window[callback];
+        resolve(maps?.Map?maps:null);
+      };
+      const timeout=setTimeout(()=>finish(null),12000);
+      window[callback]=()=>finish(window.google?.maps);
+      const script=document.createElement('script');
+      script.async=true;
+      script.src=`https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(googleMapsKey())}&v=weekly&loading=async&callback=${callback}`;
+      script.onerror=()=>finish(null);
+      document.head.appendChild(script);
+    });
+    return googleMapsLoader;
+  };
+  const blueGoogleMarkerIcon=maps=>({
+    url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="45" viewBox="0 0 36 45"><path d="M18 2C9.2 2 2 9.2 2 18c0 12 16 25 16 25s16-13 16-25C34 9.2 26.8 2 18 2z" fill="#0097b6" stroke="#fff" stroke-width="2"/><circle cx="18" cy="18" r="6" fill="#fff"/></svg>'),
+    scaledSize:new maps.Size(36,45),anchor:new maps.Point(18,43)
+  });
   const equipmentCategories=[
     ['Outdoor equipment',[['bimini','Bimini'],['outdoor_shower','Outdoor shower'],['outdoor_table','External table'],['outdoor_speakers','External speakers'],['teak_deck','Teak deck'],['bow_sundeck','Bow sundeck'],['aft_sundeck','Aft sundeck'],['swim_platform','Bathing platform'],['swim_ladder','Bathing ladder']]],
     ['Extra comforts',[['air_conditioning','Air conditioning'],['heating','Heating'],['electric_toilet','Toilet'],['bed_linen','Bed linen'],['bath_towels','Bath towels'],['wifi','Wi-Fi'],['usb','USB socket'],['tv','TV']]],
@@ -424,9 +455,8 @@
     const mapsQuery=exactCoordinates?exactCoordinates.join(','):[address,boat.location,boat.country].filter(Boolean).join(', ');
     return `<section class="fleet-public-pickup"><div class="listing-map-heading"><div><h3>${exact?'Your meeting point':'Where is the boat?'}</h3><p>${icon('pin')} ${exact?esc(address):esc(boat.location+', '+boat.country)}</p></div><span class="listing-location-badge">${exact?'Exact location unlocked':'Approximate 5 km area'}</span></div><div class="fleet-public-map" data-public-map data-lat="${coordinates[0]}" data-lng="${coordinates[1]}" data-exact="${exact&&!!exactCoordinates}" role="img" aria-label="${exact?'Exact pickup map':'Approximate city area shown with a blue 5 kilometre circle'}"></div>${exact?`<a class="listing-map-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery)}">${icon('pin')} Get directions in Google Maps ↗</a>`:'<p class="listing-map-disclaimer">The blue circle shows the approximate town area. The exact marina and meeting address are shared after payment and booking confirmation.</p>'}</section>`;
   };
-  function initPublicPickupMap(){
-    const container=document.querySelector('[data-public-map]');
-    if(!container||!window.L)return;
+  function initPublicPickupMapLeaflet(container){
+    if(!container?.isConnected||!window.L)return;
     const lat=Number(container.dataset.lat),lng=Number(container.dataset.lng),exact=container.dataset.exact==='true';
     if(!validPickupCoordinates(lat,lng))return;
     const map=window.L.map(container,{scrollWheelZoom:false}).setView([lat,lng],exact?12:10);
@@ -436,10 +466,24 @@
     publicPickupMap=map;
     setTimeout(()=>map.invalidateSize(),0);
   }
-  function initOwnerPickupMap(){
-    const form=document.querySelector('[data-live-form="boat"]');
-    const container=form?.querySelector('[data-pickup-map]');
+  function initPublicPickupMap(){
+    const container=document.querySelector('[data-public-map]');
     if(!container)return;
+    if(!googleMapsKey()){initPublicPickupMapLeaflet(container);return;}
+    googleMapsApi().then(maps=>{
+      if(!container.isConnected||publicPickupMap)return;
+      if(!maps){initPublicPickupMapLeaflet(container);return;}
+      const lat=Number(container.dataset.lat),lng=Number(container.dataset.lng),exact=container.dataset.exact==='true';
+      if(!validPickupCoordinates(lat,lng))return;
+      const center={lat,lng};
+      const map=new maps.Map(container,{center,zoom:exact?12:10,mapTypeId:'terrain',mapTypeControl:false,streetViewControl:false,fullscreenControl:false,zoomControl:true,gestureHandling:'cooperative'});
+      const marker=exact?new maps.Marker({map,position:center,icon:blueGoogleMarkerIcon(maps),title:'Boat pickup point'}):null;
+      const circle=!exact?new maps.Circle({map,center,radius:5000,strokeColor:'#0588c7',strokeOpacity:1,strokeWeight:2.5,fillColor:'#30a6df',fillOpacity:.22,clickable:false}):null;
+      publicPickupMap={remove(){marker?.setMap(null);circle?.setMap(null);maps.event.clearInstanceListeners(map);}};
+    });
+  }
+  function initOwnerPickupMapLeaflet(form,container){
+    if(!container?.isConnected)return;
     if(!window.L){container.textContent='Map could not load. Please try again in a moment.';return;}
     const latitude=form.querySelector('[name="pickup_latitude"]'),longitude=form.querySelector('[name="pickup_longitude"]');
     const status=form.querySelector('[data-pickup-status]');
@@ -462,6 +506,46 @@
     if(status)status.textContent=saved?`Saved pickup pin: ${latitude.value}, ${longitude.value}. Drag it to adjust.`:'Drag the pin or click the map to mark the exact marina. The approximate country centre will not be saved until you choose a location.';
     ownerPickupMap={map,marker,form,setCoordinates};
     setTimeout(()=>map.invalidateSize(),0);
+  }
+  function initOwnerPickupMap(){
+    const form=document.querySelector('[data-live-form="boat"]');
+    const container=form?.querySelector('[data-pickup-map]');
+    if(!container)return;
+    if(!googleMapsKey()){initOwnerPickupMapLeaflet(form,container);return;}
+    googleMapsApi().then(maps=>{
+      if(!container.isConnected||ownerPickupMap)return;
+      if(!maps){initOwnerPickupMapLeaflet(form,container);return;}
+      const latitude=form.querySelector('[name="pickup_latitude"]'),longitude=form.querySelector('[name="pickup_longitude"]');
+      const status=form.querySelector('[data-pickup-status]');
+      const country=String(form.querySelector('[name="country"]')?.value||'');
+      const countryCenter=countryMapCenters[country]||countryMapCenters.Croatia;
+      const saved=latitude.value!==''&&longitude.value!==''&&validPickupCoordinates(Number(latitude.value),Number(longitude.value));
+      const initial=saved?[Number(latitude.value),Number(longitude.value)]:countryCenter.slice(0,2);
+      const center={lat:initial[0],lng:initial[1]};
+      const map=new maps.Map(container,{center,zoom:saved?13:countryCenter[2],mapTypeId:'terrain',mapTypeControl:false,streetViewControl:false,fullscreenControl:false,zoomControl:true,gestureHandling:'cooperative'});
+      const marker=new maps.Marker({map,position:center,draggable:true,icon:blueGoogleMarkerIcon(maps),title:'Drag to the exact marina'});
+      const setCoordinates=position=>{
+        latitude.value=position.lat.toFixed(6);
+        longitude.value=position.lng.toFixed(6);
+        if(status)status.textContent=`Exact pickup pin: ${latitude.value}, ${longitude.value}. Save the listing to keep this location.`;
+      };
+      marker.addListener('dragend',()=>{
+        const pos=marker.getPosition();
+        if(pos)setCoordinates({lat:pos.lat(),lng:pos.lng()});
+      });
+      map.addListener('click',event=>{
+        if(!event.latLng)return;
+        const point={lat:event.latLng.lat(),lng:event.latLng.lng()};
+        marker.setPosition(point);
+        setCoordinates(point);
+      });
+      if(status)status.textContent=saved?`Saved pickup pin: ${latitude.value}, ${longitude.value}. Drag it to adjust.`:'Drag the pin or click the map to mark the exact marina. The approximate country centre will not be saved until you choose a location.';
+      ownerPickupMap={
+        map:{setView(point,zoom){map.setCenter({lat:point[0],lng:point[1]});if(zoom)map.setZoom(zoom);},invalidateSize(){},remove(){marker.setMap(null);maps.event.clearInstanceListeners(marker);maps.event.clearInstanceListeners(map);}},
+        marker:{setLatLng(point){marker.setPosition(Array.isArray(point)?{lat:point[0],lng:point[1]}:point);}},
+        form,setCoordinates
+      };
+    });
   }
   function updateOwnerSkipperFee(form){
     if(!form)return;
