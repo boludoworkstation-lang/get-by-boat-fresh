@@ -56,22 +56,22 @@ const MAX_PRICE = 2000; // slider at 2000 means EUR 2,000+ (no price ceiling)
 const MAX_LENGTH = 15; // 15+ = open-ended upper bound in metres
 const MAX_ENGINE = 400; // 400+ = open-ended upper bound in horsepower
 const PHOTO_URLS = {
-  'yacht-main.webp': 'https://images.pexels.com/photos/4353556/pexels-photo-4353556.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-lagoon.webp': 'https://images.pexels.com/photos/32509689/pexels-photo-32509689.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-spain.webp': 'https://images.pexels.com/photos/32769083/pexels-photo-32769083.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-italy.webp': 'https://images.pexels.com/photos/18782331/pexels-photo-18782331.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-france.webp': 'https://images.pexels.com/photos/39894332/pexels-photo-39894332.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-usa.webp': 'https://images.pexels.com/photos/17908348/pexels-photo-17908348.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-bahamas.webp': 'https://images.pexels.com/photos/34123151/pexels-photo-34123151.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-australia.webp': 'https://images.pexels.com/photos/36983261/pexels-photo-36983261.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-main.webp': 'https://images.pexels.com/photos/35495052/pexels-photo-35495052.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-lagoon.webp': 'https://images.pexels.com/photos/32543555/pexels-photo-32543555.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-spain.webp': 'https://images.pexels.com/photos/34228252/pexels-photo-34228252.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-italy.webp': 'https://images.pexels.com/photos/32821307/pexels-photo-32821307.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-france.webp': 'https://images.pexels.com/photos/32406547/pexels-photo-32406547.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-usa.webp': 'https://images.pexels.com/photos/12778501/pexels-photo-12778501.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-bahamas.webp': 'https://images.pexels.com/photos/5022265/pexels-photo-5022265.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-australia.webp': 'https://images.pexels.com/photos/35926541/pexels-photo-35926541.jpeg?auto=compress&cs=tinysrgb&w=1920',
   'yacht-detail.webp': 'https://images.pexels.com/photos/8356431/pexels-photo-8356431.jpeg?auto=compress&cs=tinysrgb&w=1920',
   'yacht-deck.webp': 'https://images.pexels.com/photos/17635350/pexels-photo-17635350.jpeg?auto=compress&cs=tinysrgb&w=1920',
   'yacht-cabin.webp': 'https://images.pexels.com/photos/6510302/pexels-photo-6510302.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-sailsea.webp': 'https://images.pexels.com/photos/12966216/pexels-photo-12966216.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-azimut.webp': 'https://images.pexels.com/photos/36403723/pexels-photo-36403723.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-sailsea.webp': 'https://images.pexels.com/photos/8652635/pexels-photo-8652635.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'yacht-azimut.webp': 'https://images.pexels.com/photos/12778564/pexels-photo-12778564.jpeg?auto=compress&cs=tinysrgb&w=1920',
   'yacht-sail.webp': 'https://images.pexels.com/photos/15524459/pexels-photo-15524459.jpeg?auto=compress&cs=tinysrgb&w=1920',
   'yacht-jeanneau.webp': 'https://images.pexels.com/photos/13600149/pexels-photo-13600149.jpeg?auto=compress&cs=tinysrgb&w=1920',
-  'yacht-cove.webp': 'https://images.pexels.com/photos/32799597/pexels-photo-32799597.jpeg?auto=compress&cs=tinysrgb&w=1920'
+  'yacht-cove.webp': 'https://images.pexels.com/photos/29168885/pexels-photo-29168885.jpeg?auto=compress&cs=tinysrgb&w=1920'
 };
 const IMG = (s) => PHOTO_URLS[s] || 'assets/' + s;
 const fmt = n => '€'+new Intl.NumberFormat('en-IE',{maximumFractionDigits:0}).format(n);
