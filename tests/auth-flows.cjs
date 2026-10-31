@@ -82,7 +82,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(reviewer.state.ownerReview.status,'approved');assert.equal(reviewer.state.deletions.length,0);
  let verifiedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:pendingOwnerRequest,ownerReview:reviewer.state.ownerReview});
  html=await verifiedOwner.route('#/owner?edit=new');assert.doesNotMatch(html,/name="published"[^>]*disabled/);
- html=await verifiedOwner.route('#/account?tab=verification');assert.match(html,/Your business is approved/);
+ html=await verifiedOwner.route('#/account?tab=verification');assert.match(html,/Your business is approved/);assert.match(html,/class="verification-badge approved">Verified/);
  // Editing a single approved field returns the application to draft without new uploads.
  await verifiedOwner.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://newcompany.example',registered_address:'12 Quai de Paris, Marseille, France'});
  assert.equal(verifiedOwner.state.uploads.length,0);assert.equal(verifiedOwner.state.ownerRequest.application_state,'draft');
