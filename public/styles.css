@@ -659,6 +659,64 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .listing-equipment-disclosure[open] .listing-amenities-more{display:none}
 .listing-equipment-disclosure[open] .listing-amenities-less{display:inline}
 .listing-equipment-disclosure>.listing-equipment-groups{padding:0 15px 15px}
+/* Quiet, two-column equipment list: icons identify each amenity without card clutter. */
+.listing-amenity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:25px;row-gap:18px;margin:8px 0 2px;padding:0;list-style:none}
+.listing-amenity-grid li{display:flex;gap:14px;align-items:center;min-height:33px;color:#304b54;font-size:15px;font-weight:500;line-height:1.45}
+.listing-amenity-icon{width:25px;height:25px;flex:0 0 25px;color:#173f4b}
+.listing-amenity-more{margin-top:24px;border-top:1px solid #edf2f3;padding-top:12px}
+.listing-amenity-more summary{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:750;color:#0787a3;cursor:pointer;list-style:none}
+.listing-amenity-more summary::-webkit-details-marker{display:none}
+.listing-amenity-more summary .icon{width:15px;height:15px;transition:transform .18s}
+.listing-amenity-more[open] summary .icon{transform:rotate(180deg)}
+.listing-amenity-more .listing-amenity-grid{margin-top:20px}
+/* Public calendar reveals only availability, never a booking or its guest. */
+.listing-calendar-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:25px}
+.listing-details>section .listing-calendar-header h2{margin-bottom:7px}
+.listing-calendar-header p,.listing-calendar-hint{font-size:13px;color:#708891;line-height:1.55;margin:0}
+.listing-calendar-arrows{display:flex;gap:8px}
+.listing-calendar-arrows button{width:35px;height:35px;border:1px solid #d3e4e8;border-radius:9px;background:#fff;color:#1b5667;font-size:23px;line-height:1;cursor:pointer}
+.listing-calendar-arrows button:hover{background:#e9f7fa;border-color:#9bcfd9}
+.listing-calendar-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.listing-calendar-month{min-width:0}
+.listing-calendar-month h3{font-size:16px;color:#234650;text-align:center;margin:0 0 18px;font-weight:750}
+.listing-calendar-weekdays,.listing-calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;text-align:center}
+.listing-calendar-weekdays{margin-bottom:10px}
+.listing-calendar-weekdays span{font-size:10px;font-weight:700;color:#78909a;padding:6px 0}
+.listing-calendar-date{display:grid;place-items:center;border:0;background:transparent;min-width:0;aspect-ratio:1/1;border-radius:9px;color:#244b56;font-size:12px;font-weight:650}
+button.listing-calendar-date{cursor:pointer}
+button.listing-calendar-date:hover,button.listing-calendar-date:focus-visible{background:#dff4f7;color:#087c98;outline:1px solid #80d5e2}
+.listing-calendar-date.is-unavailable{color:#a9b8bd;text-decoration:line-through;text-decoration-thickness:1.3px;background:#f5f7f8}
+.listing-calendar-date.is-past{color:#bdc7cb;text-decoration:line-through}
+button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0}
+.listing-calendar-hint{margin-top:17px}
+.listing-reviews-title{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.listing-details>section .listing-reviews-title h2{margin:0}
+.listing-reviews-title>strong{display:flex;align-items:center;gap:8px;font-size:17px;color:#234650}
+.listing-reviews-title small{font-size:12px;color:#69838b;font-weight:500}
+.listing-review-stars{display:inline-flex;align-items:center;gap:2px;white-space:nowrap;color:#d9e0e3;letter-spacing:1px}
+.listing-review-stars .is-filled{color:#f3b443}
+.listing-review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.listing-review{padding:16px;border:1px solid #e3edf0;border-radius:13px;background:#fcfefe}
+.listing-review-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.listing-review-head>span:last-child{color:#78909a;font-size:11px}
+.listing-review p{font-size:13px;line-height:1.55;color:#355561;margin:10px 0 0;overflow-wrap:anywhere}
+.listing-review .listing-review-muted{color:#889ba1}
+.booking-owner-review{margin-top:22px;border-top:1px solid #e1eaed;padding-top:20px}
+.booking-owner-review h4{font-size:17px;color:#19414c;margin:0 0 5px}
+.booking-owner-review>p{font-size:13px;color:#728992;margin:6px 0 12px}
+.owner-star-picker{border:0;padding:0;margin:14px 0;display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:4px}
+.owner-star-picker legend{font-size:12px;font-weight:700;color:#567580;margin-bottom:8px}
+.owner-star-picker label{position:relative;cursor:pointer;padding:2px;line-height:1;font-size:35px;color:#d8e1e4}
+.owner-star-picker input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.owner-star-picker label:has(input:checked),.owner-star-picker label:has(input:checked) ~ label,.owner-star-picker label:hover,.owner-star-picker label:hover ~ label{color:#f1b53d}
+.owner-star-picker label:has(input:focus-visible){outline:2px solid #009cba;border-radius:5px}
+.booking-review-comment{display:grid;gap:8px;max-width:630px;font-size:13px;font-weight:700;color:#315663;margin-bottom:14px}
+.booking-review-comment textarea{font-weight:400;min-height:87px}
+.booking-owner-review.is-submitted{font-size:14px;color:#264b55}
+.booking-owner-review.is-submitted p{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:640px){.listing-calendar-pair,.listing-review-grid{grid-template-columns:1fr}.listing-calendar-month{max-width:450px}.listing-amenity-grid{row-gap:14px;column-gap:14px}.listing-amenity-grid li{gap:9px;font-size:13px}.listing-amenity-icon{width:21px;height:21px;flex-basis:21px}}
+@media(max-width:390px){.listing-amenity-grid{grid-template-columns:1fr}}
 .fleet-equipment-panel{background:linear-gradient(165deg,#f7fcfc,#fff 58%);border:1px solid #d5e8ec;border-radius:18px;padding:23px;margin:20px 0 8px;min-width:0}
 .fleet-equipment-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}
 .fleet-equipment-eyebrow{display:block;font-size:10px;font-weight:800;letter-spacing:1.5px;color:#1595a8;margin-bottom:6px}

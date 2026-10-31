@@ -93,7 +93,8 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(html,/name="pickup_location"/);assert.match(html,/list="boat-countries"/);assert.match(html,/option value="France"/);
  assert.match(html,/data-pickup-map/);assert.match(html,/data-pickup-status/);
  assert.match(html,/name="pickup_latitude"/);assert.match(html,/name="pickup_longitude"/);
- assert.match(html,/Jump to selected country/);
+ assert.doesNotMatch(html,/Jump to selected country|Enter coordinates manually \(optional\)/);
+ assert.match(html,/type="hidden" name="pickup_latitude"/);
  const countryOptions=[...html.matchAll(/<option value="([^"]+)"><\/option>/g)].map(match=>match[1]);
  assert.deepEqual(countryOptions,['Croatia','Greece','Spain','France','Italy','Portugal','Cyprus','Turkey','Malta','Australia','Montenegro','Albania','USA','Bahamas']);
  assert.match(html,/data-rental-both/);assert.doesNotMatch(html,/Offshore equipment|Last renovated \(year\)|Tender engine horsepower/);
@@ -230,10 +231,10 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true,skipper_fee_per_day:120}});
  html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);assert.match(html,/\(\+€120\.00 \/ day\)/);
  e=await environment({boatOptions:{specifications:{build_year:2015,tank_capacity_l:150,equipment:['bimini','gps','paddleboard']},guests:8,type:'RIB'}});
- html=await e.route('#/listing/boat-1');assert.match(html,/Year built<\/dt><dd>2015<\/dd>/);assert.doesNotMatch(html,/2,015/);assert.match(html,/Boat type<\/dt><dd>RIB/);assert.match(html,/Maximum passengers<\/dt><dd>8/);assert.match(html,/Tank capacity<\/dt><dd>150 L<\/dd>/);assert.match(html,/Equipment &amp; amenities/);assert.match(html,/Bimini/);assert.match(html,/Paddle board/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/Year built<\/dt><dd>2015<\/dd>/);assert.doesNotMatch(html,/2,015/);assert.match(html,/Boat type<\/dt><dd>RIB/);assert.match(html,/Maximum passengers<\/dt><dd>8/);assert.match(html,/Tank capacity<\/dt><dd>150 L<\/dd>/);assert.match(html,/Equipment available on the RIB/);assert.match(html,/Bimini/);assert.match(html,/Paddle board/);assert.match(html,/Availability calendar/);assert.match(html,/Owner reviews/);
  assert.ok(html.indexOf('Tank capacity</dt>')<html.indexOf('Year built</dt>'));
  e=await environment({boatOptions:{specifications:{equipment:['bimini','outdoor_shower','outdoor_table','teak_deck','hot_water','wifi','gps','fridge','kayak']}}});
- html=await e.route('#/listing/boat-1');assert.match(html,/9 amenities/);assert.match(html,/See all 9 amenities/);assert.match(html,/listing-equipment-disclosure/);assert.match(html,/Outdoor equipment/);assert.match(html,/Navigation equipment/);assert.doesNotMatch(html,/Bow sundeck/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/listing-amenity-grid/);assert.match(html,/Outdoor shower/);assert.match(html,/Fridge/);assert.doesNotMatch(html,/Show all 9 amenities|Bow sundeck/);
  e=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'},boatOptions:{specifications:{equipment:['bimini','gps']}}});
  html=await e.route('#/owner?edit=boat-1');assert.match(html,/name="equipment" value="bimini" checked/);assert.match(html,/name="equipment" value="gps" checked/);for(const group of ['Outdoor equipment','Extra comforts','Navigation equipment','Kitchen','Leisure activities','Onboard energy','Water sports'])assert.ok(html.includes(group),group);assert.match(html,/name="spec_tank_capacity_l"/);
  assert.match(html,/data-equipment-picker/);assert.match(html,/data-equipment-search/);assert.match(html,/data-equipment-selected-only/);assert.match(html,/2 items selected/);assert.equal((html.match(/name="equipment"/g)||[]).length,58);
