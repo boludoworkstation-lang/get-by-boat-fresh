@@ -87,20 +87,20 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(html,/name="pickup_location"/);assert.match(html,/list="boat-countries"/);assert.match(html,/option value="France"/);
  assert.match(html,/data-rental-both/);assert.doesNotMatch(html,/Offshore equipment|Last renovated \(year\)|Tender engine horsepower/);
  assert.match(html,/Technical specifications/);assert.match(html,/Insurance & security deposit/);
- assert.match(html,/Insurance certificate \(optional\)/);assert.match(html,/Proof of boat ownership \(optional\)/);
+ assert.doesNotMatch(html,/Insurance certificate \(optional\)|Proof of boat ownership \(optional\)|name="document_insurance"|name="document_ownership"|Not uploaded · optional/);
  assert.doesNotMatch(html,/name="cabins"|name="sleeping_area"/);
- await verifiedOwner.submit('boat',{name:'Test Boat',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split, pier A',type:'Motorboat',price:'400',guests:'6',description:'Great day trip',with_skipper:'on',skipper_fee_per_day:'100',published:'on',spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',insurance_type:'third_party',security_deposit:'500',document_insurance:ownerPdf});
+ await verifiedOwner.submit('boat',{name:'Test Boat',country:'Croatia',location:'Split',pickup_location:'ACI Marina Split, pier A',type:'Motorboat',price:'400',guests:'6',description:'Great day trip',with_skipper:'on',skipper_fee_per_day:'100',published:'on',spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',insurance_type:'third_party',security_deposit:'500'});
  const boatSaved=verifiedOwner.state.writes.find(x=>x.table==='boats');
  assert.equal(boatSaved.value.specifications.engine_hp,250);assert.equal(boatSaved.value.specifications.length_m,7.5);
  assert.equal(boatSaved.value.insurance_type,'third_party');assert.equal(boatSaved.value.security_deposit,500);
  assert.equal(boatSaved.value.pickup_location,'ACI Marina Split, pier A');
- assert.equal(verifiedOwner.state.uploads.at(-1).path.includes('/boat-1/insurance/'),true);
- assert.equal(verifiedOwner.state.writes.at(-1).table,'boat_documents');
+ assert.equal(verifiedOwner.state.uploads.length,0);
+ assert.equal(verifiedOwner.state.writes.at(-1).table,'boats');
  assert.equal(verifiedOwner.ctx.location.hash,'#/owner');
  html=await verifiedOwner.route('#/account?tab=verification');assert.match(html,/Your business is approved/);assert.match(html,/class="verification-badge approved">Verified/);
  // Editing a single approved field returns the application to draft without new uploads.
  await verifiedOwner.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://newcompany.example',registered_address:'12 Quai de Paris, Marseille, France'});
- assert.equal(verifiedOwner.state.uploads.length,1);assert.equal(verifiedOwner.state.ownerRequest.application_state,'draft');
+ assert.equal(verifiedOwner.state.uploads.length,0);assert.equal(verifiedOwner.state.ownerRequest.application_state,'draft');
  html=await verifiedOwner.route('#/owner?edit=new');assert.match(html,/Your boat will be saved as a draft/);
  const changedOwnerRequest={...pendingOwnerRequest,business_website:'https://newcompany.example'};
  let changedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:changedOwnerRequest,ownerReview:reviewer.state.ownerReview});
