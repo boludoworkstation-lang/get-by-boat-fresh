@@ -223,24 +223,46 @@
     if(b.city_map_lat!=null&&b.city_map_lng!=null&&validPickupCoordinates(lat,lng))return [lat,lng];
     return publicTownCenters[`${String(b.location||'').toLowerCase().trim()},${String(b.country||'').toLowerCase().trim()}`]||countryMapCenters[b.country]?.slice(0,2)||countryMapCenters.Croatia.slice(0,2);
   };
-  const terrainTiles=map=>window.L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,subdomains:'abc',attribution:'Map: &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> · &copy; OpenStreetMap contributors'}).addTo(map);
+  const terrainTiles=map=>window.L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,subdomains:'abc',attribution:'Terrain: &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> · &copy; OpenStreetMap contributors'}).addTo(map);
+  const listingSpecificationSections=boat=>{
+    const specs=boat.specifications&&typeof boat.specifications==='object'&&!Array.isArray(boat.specifications)?boat.specifications:{};
+    const numeric=(value,unit='')=>value!==null&&value!==undefined&&value!==''&&Number.isFinite(Number(value))?`${Number(value).toLocaleString('en-GB',{maximumFractionDigits:2})}${unit?` ${unit}`:''}`:'';
+    const engineTypes={outboard:'Outboard',inboard:'Inboard',electric:'Electric',none:'No engine',other:'Other'};
+    const technicalRows=[
+      ['Engine type',engineTypes[specs.engine_type]||''],
+      ['Engine power',numeric(specs.engine_hp,'hp')],
+      ['Length',numeric(specs.length_m,'m')],
+      ['Width',numeric(specs.width_m,'m')],
+      ['Draft',numeric(specs.draft_m,'m')],
+      ['Year built',numeric(specs.build_year)],
+      ['Fuel consumption',numeric(specs.fuel_lph,'L/h')],
+      ['Top speed',numeric(specs.speed_knots,'knots')],
+      ['Crew members',numeric(specs.crew)]
+    ].filter(([,value])=>value!=='');
+    const detailRows=rows=>`<dl class="listing-spec-grid">${rows.map(([label,value])=>`<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>`;
+    const insuranceLabels={not_specified:'Not specified',none:'Not insured',third_party:'Third-party insurance',comprehensive:'Fully comprehensive'};
+    const insurance=insuranceLabels[boat.insurance_type]||'Not specified';
+    const deposit=Number(boat.security_deposit);
+    const depositLabel=boat.security_deposit==null||!Number.isFinite(deposit)?'Ask the owner':deposit>0?money(deposit):'No deposit required';
+    return `<section class="listing-technical"><div class="listing-section-title">${icon('ship')}<h2>Technical specifications</h2></div>${technicalRows.length?detailRows(technicalRows):'<p class="listing-detail-empty">Technical details have not been added yet. You can ask the owner before booking.</p>'}</section><section class="listing-insurance"><div class="listing-section-title">${icon('shield')}<h2>Insurance &amp; security deposit</h2></div>${detailRows([['Insurance coverage',insurance],['Refundable security deposit',depositLabel]])}</section>`;
+  };
   const pickupDetails=(boat,exactPickup=null)=>{
     const exactCoordinates=exactPickup&&exactPickup.latitude!=null&&exactPickup.longitude!=null?[Number(exactPickup.latitude),Number(exactPickup.longitude)]:null;
     const coordinates=exactCoordinates&&validPickupCoordinates(...exactCoordinates)?exactCoordinates:publicTownPoint(boat);
     const exact=!!exactPickup;
     const address=exact?String(exactPickup.pickup_address||boat.location||'').trim():'';
     const mapsQuery=exactCoordinates?exactCoordinates.join(','):[address,boat.location,boat.country].filter(Boolean).join(', ');
-    return `<section class="fleet-public-pickup"><div class="listing-map-heading"><div><h3>${exact?'Your meeting point':'Where is the boat?'}</h3><p>${icon('pin')} ${exact?esc(address):esc(boat.location+', '+boat.country)}</p></div><span class="listing-location-badge">${exact?'Exact location unlocked':'Approximate area'}</span></div><div class="fleet-public-map" data-public-map data-lat="${coordinates[0]}" data-lng="${coordinates[1]}" data-exact="${exact&&!!exactCoordinates}" role="img" aria-label="${exact?'Exact pickup map':'Approximate city area map'}"></div>${exact?`<a class="listing-map-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery)}">${icon('pin')} Get directions in Google Maps ↗</a>`:'<p class="listing-map-disclaimer">The exact marina and meeting address are shared after your booking is paid and confirmed.</p>'}</section>`;
+    return `<section class="fleet-public-pickup"><div class="listing-map-heading"><div><h3>${exact?'Your meeting point':'Where is the boat?'}</h3><p>${icon('pin')} ${exact?esc(address):esc(boat.location+', '+boat.country)}</p></div><span class="listing-location-badge">${exact?'Exact location unlocked':'Approximate 5 km area'}</span></div><div class="fleet-public-map" data-public-map data-lat="${coordinates[0]}" data-lng="${coordinates[1]}" data-exact="${exact&&!!exactCoordinates}" role="img" aria-label="${exact?'Exact pickup map':'Approximate city area shown with a blue 5 kilometre circle'}"></div>${exact?`<a class="listing-map-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery)}">${icon('pin')} Get directions in Google Maps ↗</a>`:'<p class="listing-map-disclaimer">The blue circle shows the approximate town area. The exact marina and meeting address are shared after payment and booking confirmation.</p>'}</section>`;
   };
   function initPublicPickupMap(){
     const container=document.querySelector('[data-public-map]');
     if(!container||!window.L)return;
     const lat=Number(container.dataset.lat),lng=Number(container.dataset.lng),exact=container.dataset.exact==='true';
     if(!validPickupCoordinates(lat,lng))return;
-    const map=window.L.map(container,{scrollWheelZoom:false}).setView([lat,lng],exact?15:11);
+    const map=window.L.map(container,{scrollWheelZoom:false}).setView([lat,lng],exact?12:11);
     terrainTiles(map);
     if(exact)window.L.marker([lat,lng]).addTo(map);
-    else window.L.circle([lat,lng],{radius:4000,color:'#0099b9',weight:2,fillColor:'#33add2',fillOpacity:.21}).addTo(map);
+    else window.L.circle([lat,lng],{radius:5000,color:'#0588c7',weight:2.5,fillColor:'#30a6df',fillOpacity:.22,interactive:false}).addTo(map);
     publicPickupMap=map;
     setTimeout(()=>map.invalidateSize(),0);
   }
@@ -255,12 +277,14 @@
     const countryCenter=countryMapCenters[country]||countryMapCenters.Croatia;
     const saved=latitude.value!==''&&longitude.value!==''&&validPickupCoordinates(Number(latitude.value),Number(longitude.value));
     const center=saved?[Number(latitude.value),Number(longitude.value)]:countryCenter.slice(0,2);
-    const map=window.L.map(container,{scrollWheelZoom:false}).setView(center,saved?15:countryCenter[2]);
+    const map=window.L.map(container,{scrollWheelZoom:false}).setView(center,saved?12:countryCenter[2]);
     terrainTiles(map);
+    const approximateArea=window.L.circle(center,{radius:5000,color:'#0588c7',weight:2,fillColor:'#30a6df',fillOpacity:.12,interactive:false}).addTo(map);
     const marker=window.L.marker(center,{draggable:true,autoPan:true}).addTo(map);
     const setCoordinates=position=>{
       latitude.value=position.lat.toFixed(6);
       longitude.value=position.lng.toFixed(6);
+      approximateArea.setLatLng(position);
       if(status)status.textContent=`Exact pickup pin: ${latitude.value}, ${longitude.value}. Save the listing to keep this location.`;
     };
     marker.on('dragend',()=>setCoordinates(marker.getLatLng()));
@@ -498,10 +522,10 @@
       const choices=`<label>Rental option<select name="skipper" required>${hasSkipper?`<option value="with" ${mode==='with'?'selected':''}>Rent with skipper</option>`:''}${hasBareboat?`<option value="without" ${mode==='without'?'selected':''}>Rent without skipper</option>`:''}</select></label>`;
       const warning=`<div class="verification-booking-block" data-skipper-verification ${needsVerification?'':'hidden'}><strong>${icon('shield')} Licence verification required</strong><p>Renting without a skipper requires staff-approved ID/passport and boat driving licence, valid through the rental dates. ${esc(verificationLabel(verificationState()))}.</p><a href="#/account?tab=verification">Go to verification ${icon('arrow')}</a></div>`;
       const included=hasSkipper&&!hasBareboat;
-      const conditions=`<section class="listing-conditions"><h2>Conditions</h2><div class="listing-condition-grid"><div><h3>Check-in & check-out</h3><dl><div><dt>Day rental check-in</dt><dd>${esc(boatClock(b.check_in_time,'09:00'))}</dd></div><div><dt>Day rental check-out</dt><dd>${esc(boatClock(b.check_out_time,'19:00'))}</dd></div></dl></div><div><h3>Boat rules</h3><dl><div><dt>Boat licence required</dt><dd>${b.licence_required===false?'No':'Yes, for self-drive'}</dd></div><div><dt>Minimum rental age</dt><dd>${Math.max(18,Number(b.minimum_rental_age)||18)} years</dd></div></dl></div></div></section>`;
+      const conditions=`<section class="listing-conditions"><h2>Conditions</h2><div class="listing-condition-grid"><div><h3>Check-in & check-out</h3><dl><div><dt>Day rental check-in</dt><dd>${esc(boatClock(b.check_in_time,'09:00'))}</dd></div><div><dt>Day rental check-out</dt><dd>${esc(boatClock(b.check_out_time,'19:00'))}</dd></div></dl></div><div><h3>Boat rules</h3><dl><div><dt>Boat licence required</dt><dd>${b.licence_required===false?'No':'Yes'}</dd></div><div><dt>Minimum rental age</dt><dd>${Math.max(18,Number(b.minimum_rental_age)||18)} years</dd></div></dl></div></div></section>`;
       const bookingBox=isOwner?`<div class="live-card listing-booking-card"><span class="listing-price-caption">Your payout</span><h2>${money(b.price)} <small>/ day</small></h2><p>Guest price: ${money(guestDailyRate(b.price))} per day, fees included.</p><div class="verification-booking-block"><strong>Owner preview</strong><p>Owner accounts cannot rent their own boats. Use a customer account to book.</p></div><a class="btn" href="#/owner?edit=${esc(b.id)}">Edit listing</a></div>`:
         `<form data-live-form="request" data-id="${esc(b.id)}" data-price="${b.price}" data-unavailable="${esc(JSON.stringify(unavailable.map(({start_date,end_date})=>({start_date,end_date}))))}" data-check-in="${esc(boatClock(b.check_in_time,'09:00'))}" data-check-out="${esc(boatClock(b.check_out_time,'19:00'))}" data-with-skipper="${hasSkipper}" data-without-skipper="${hasBareboat}" data-skipper-fee="${Number(b.skipper_fee_per_day)||0}" data-skipper-extra="${hasBareboat&&hasSkipper}" data-verified="${verificationState()==='approved'}" data-licence-required="${b.licence_required!==false}" data-licence-expiry="${esc(verificationRequest?.licence_expiry||'')}" class="live-card live-form listing-booking-card"><span class="listing-price-caption">From</span><h2>${money(guestDailyRate(b.price))} <small>/ day</small></h2><p class="member-note">Full price shown, including booking fees. No payment is taken when you request.</p>${choices}${included?'<p class="listing-skipper-highlight">✓ Professional skipper included in the price</p>':''}${dateFields()}${field('Passengers','guests','number',selectedGuests,`required min="1" max="${b.guests}"`)}<div data-quote aria-live="polite"></div>${warning}<button class="btn" type="submit" ${needsVerification?'disabled':''}>${needsVerification?'Verify your licence to book':session?'Request to book':'Log in to request'}</button><p data-feedback role="status"></p><small>The owner will confirm availability before you pay.</small></form>`;
-      return page(esc(b.name),`<div class="listing-location-intro">${icon('pin')} ${esc(b.location)}, ${esc(b.country)} <span>·</span> ${esc(b.type)} <span>·</span> Up to ${Number(b.guests)||1} ${(Number(b.guests)||1)===1?'passenger':'passengers'}</div><div class="live-columns listing-layout"><section class="listing-details"><div class="listing-cover">${picture(b)}</div><div class="listing-highlight-row"><span>${icon('ship')} ${esc(rentalOptions(b))}</span>${included?`<span class="listing-included-tag">✓ Professional skipper included</span>`:''}</div>${session&&!isOwner?btn('Save to favourites','favourite',b.id):''}<section class="listing-about"><h2>About this boat</h2><p class="live-description">${esc(b.description||'Ask the owner for more information about this boat.')}</p></section>${conditions}${pickupDetails(b,exactPickup)}</section><aside class="listing-booking">${bookingBox}</aside></div>`);
+      return page(esc(b.name),`<div class="listing-location-intro">${icon('pin')} ${esc(b.location)}, ${esc(b.country)} <span>·</span> ${esc(b.type)} <span>·</span> Up to ${Number(b.guests)||1} ${(Number(b.guests)||1)===1?'passenger':'passengers'}</div><div class="live-columns listing-layout"><section class="listing-details"><div class="listing-cover">${picture(b)}</div><div class="listing-highlight-row"><span>${icon('ship')} ${esc(rentalOptions(b))}</span>${included?`<span class="listing-included-tag">✓ Professional skipper included</span>`:''}</div>${session&&!isOwner?btn('Save to favourites','favourite',b.id):''}<section class="listing-about"><h2>About this boat</h2><p class="live-description">${esc(b.description||'Ask the owner for more information about this boat.')}</p></section>${listingSpecificationSections(b)}${conditions}${pickupDetails(b,exactPickup)}</section><aside class="listing-booking">${bookingBox}</aside></div>`);
     }
     const guard=requireAccount();if(guard)return guard;
     if(path==='/messages')return messagesPage(params.get('booking'));

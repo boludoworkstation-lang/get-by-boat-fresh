@@ -612,7 +612,7 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 /* An inviting, straightforward guest-facing listing and privacy-first pickup map. */
 .live-listing-page{padding-top:27px;max-width:1250px}
 .live-listing-page .listing-back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#0b839b;font-size:13px;font-weight:750;margin-bottom:18px}
-.live-listing-page>h1{font-family:Georgia,serif;font-size:clamp(33px,4vw,58px);line-height:1.1;letter-spacing:-1.2px;margin:0 0 13px;color:#153b48}
+.live-listing-page>h1{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:clamp(27px,2.7vw,38px);font-weight:700;line-height:1.2;letter-spacing:-.6px;margin:0 0 12px;color:#153b48}
 .listing-location-intro{display:flex;flex-wrap:wrap;align-items:center;gap:9px;font-size:14px;color:#68838c;margin-bottom:30px}
 .listing-location-intro .icon{color:#008fa5;width:17px;height:17px}
 .listing-location-intro span{opacity:.5}
@@ -628,6 +628,14 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .listing-details>section:not(.fleet-public-pickup){padding:25px 0 27px;border-bottom:1px solid #e2edef}
 .listing-details>section h2{font-size:23px;color:#153b48;margin:0 0 17px;font-weight:750}
 .listing-about .live-description{margin:0;color:#506a73;line-height:1.75;overflow-wrap:anywhere}
+.listing-section-title{display:flex;align-items:center;gap:11px;margin-bottom:17px}
+.listing-details>section .listing-section-title h2{margin:0}
+.listing-section-title>.icon{width:20px;height:20px;color:#0b8ca7;flex:none}
+.listing-spec-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 21px;margin:0}
+.listing-spec-grid>div{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:13px 2px;border-bottom:1px solid #e5edef;font-size:13px;line-height:1.5}
+.listing-spec-grid dt{color:#647d87;min-width:0}
+.listing-spec-grid dd{margin:0;font-weight:750;color:#214653;text-align:right;overflow-wrap:anywhere}
+.listing-detail-empty{border:1px solid #dfebef;background:#f6fafb;border-radius:12px;padding:14px 16px;margin:0;color:#67818b;font-size:13px;line-height:1.6}
 .listing-condition-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
 .listing-condition-grid>div{background:#f7fbfc;border:1px solid #e3edef;border-radius:14px;padding:18px}
 .listing-condition-grid h3{margin:0 0 14px;color:#244b58;font-size:15px}
@@ -666,5 +674,5 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .fleet-pickup-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .fleet-pickup-actions button{padding:10px 14px!important}
 .live-search input[list]{width:100%}
-@media(max-width:880px){.listing-layout{grid-template-columns:1fr;gap:24px}.listing-booking{position:static;grid-row:1}.listing-cover .live-photo,.listing-cover .live-placeholder{height:300px}.live-listing-page>h1{font-size:36px}}
-@media(max-width:550px){.listing-condition-grid{grid-template-columns:1fr;gap:10px}.listing-map-heading{flex-direction:column}.fleet-public-map{height:260px}.listing-booking-card{padding:22px 18px}.listing-cover .live-photo,.listing-cover .live-placeholder{height:220px}.listing-location-intro{gap:5px}}
+@media(max-width:880px){.listing-layout{grid-template-columns:1fr;gap:24px}.listing-booking{position:static;grid-row:1}.listing-cover .live-photo,.listing-cover .live-placeholder{height:300px}.live-listing-page>h1{font-size:32px}}
+@media(max-width:550px){.listing-condition-grid,.listing-spec-grid{grid-template-columns:1fr;gap:10px}.listing-spec-grid{gap:0}.listing-map-heading{flex-direction:column}.fleet-public-map{height:260px}.listing-booking-card{padding:22px 18px}.listing-cover .live-photo,.listing-cover .live-placeholder{height:220px}.listing-location-intro{gap:5px}.live-listing-page>h1{font-size:27px}}
