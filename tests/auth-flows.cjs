@@ -3,10 +3,22 @@ const source=fs.readFileSync('public/app.js','utf8');
 const helpers=source.slice(source.indexOf('function rentalDayCount('),source.indexOf('function boatDetail('));
 const backend=fs.readFileSync('public/backend.js','utf8');
 const sleep=()=>new Promise(r=>setTimeout(r,5));
-async function environment({hash='#/login',user=null,profile=null,search='',request=null,review=null,staff=false,boatOptions={}}={}){
- const state={user,profile,verificationRequest:request,verificationReview:review,staff,writes:[],uploads:[],deletions:[],oauth:null,logins:0};const events={};const feedback={textContent:''};
+async function environment({hash='#/login',user=null,profile=null,search='',request=null,review=null,ownerRequest=null,ownerReview=null,staff=false,boatOptions={}}={}){
+ const state={user,profile,verificationRequest:request,verificationReview:review,ownerRequest,ownerReview,staff,writes:[],uploads:[],deletions:[],oauth:null,logins:0};const events={};const feedback={textContent:''};
  const boat={id:'boat-1',owner_id:'owner-1',name:'Test Boat',country:'Croatia',location:'Split',type:'Motorboat',price:800,guests:6,cabins:1,published:true,with_skipper:false,without_skipper:true,...boatOptions};
  const client={auth:{getUser:async()=>({data:{user:state.user}}),onAuthStateChange(){},signInWithPassword:async()=>{state.logins++;state.user={id:'guest-1'};return {data:{session:{user:state.user}}}},signInWithOAuth:async x=>{state.oauth=x;return {data:{}}},signOut:async()=>{state.user=null;return {data:{}}}},rpc:async(name)=>({data:name==='is_verification_staff'?state.staff:[]}),storage:{from(){return {upload:async(path,file)=>{state.uploads.push({path,file});return {data:{path}}},remove:async paths=>{state.deletions.push(...paths);return {data:paths}},createSignedUrl:async path=>({data:{signedUrl:'https://example.invalid/download/'+path}})}}},from(table){const q={select(){return q},eq(){return q},in(){return q},order(){return q},limit(){return q},update(value){state.writes.push({table,value});if(table==='profiles')state.profile={...state.profile,...value};return q},upsert(value){state.writes.push({table,value});if(table==='profiles')state.profile=value;if(table==='verification_requests')state.verificationRequest=value;if(table==='verification_reviews')state.verificationReview={...value,identity_path:state.verificationRequest.identity_path,licence_path:state.verificationRequest.licence_path,reviewed_birth_date:state.verificationRequest.birth_date,reviewed_licence_type:state.verificationRequest.licence_type,reviewed_licence_expiry:state.verificationRequest.licence_expiry,reviewed_name:state.profile.display_name};return q},insert(value){state.writes.push({table,value});return q},maybeSingle:async()=>({data:table==='profiles'?state.profile:table==='verification_requests'?state.verificationRequest:table==='verification_reviews'?state.verificationReview:null}),single:async()=>({data:table==='verification_requests'?state.verificationRequest:table==='verification_reviews'?state.verificationReview:boat}),then(resolve){resolve({data:table==='boats'?[boat]:table==='verification_requests'&&state.verificationRequest?[state.verificationRequest]:table==='verification_reviews'&&state.verificationReview?[state.verificationReview]:table==='profiles'&&state.profile?[{id:state.user?.id,...state.profile}]:[]})}};return q}};
+ const originalFrom=client.from.bind(client);
+ client.from=table=>{
+   if(!['owner_verification_requests','owner_verification_reviews'].includes(table))return originalFrom(table);
+   const ownerRow=()=>table==='owner_verification_requests'?state.ownerRequest:state.ownerReview;
+   const q={select(){return q},eq(){return q},in(){return q},order(){return q},limit(){return q},upsert(value){
+     state.writes.push({table,value});
+     if(table==='owner_verification_requests')state.ownerRequest=value;
+     else state.ownerReview={...value,reviewed_name:state.profile.display_name,reviewed_request:Object.fromEntries(Object.entries(state.ownerRequest).filter(([k])=>k!=='submitted_at'))};
+     return q;
+   },maybeSingle:async()=>({data:ownerRow()}),single:async()=>({data:ownerRow()}),then(resolve){resolve({data:ownerRow()?[ownerRow()]:[]})}};
+   return q;
+ };
  const ctx={console,setTimeout,URL,URLSearchParams,Intl,Date,crypto:{randomUUID:()=>'00000000-0000-4000-a000-000000000001'},fetch:async()=>({ok:true,json:async()=>({external:{google:true,apple:true}})}),FormData:class{constructor(f){this.values=f.values}get(k){return this.values[k]??null}getAll(k){return this.values[k]||[]}},location:{hash,search,pathname:'/',origin:'https://getbyboat.net'},window:{},document:{addEventListener(k,fn){(events[k]??=[]).push(fn)},querySelector(s){return s==='[data-feedback]'?feedback:null}},app:{innerHTML:''},state:{start:'',end:''},AUTH_CONFIG:{supabaseUrl:'https://example.supabase.co',supabasePublishableKey:'public'},authMode:'login',authClient:async()=>client,home:()=>'<main>Home</main>',header:()=>'<header/>',footer:()=>'<footer/>',waveLogo:()=>'<span class="logo-mark"></span>',icon:()=>'<svg></svg>',safe:s=>String(s??'').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;'),fmt:n=>String(n),toast(){},modal(){},parseRoute(){const [path,q]=ctx.location.hash.slice(1).split('?');return {path,params:new URLSearchParams(q)}},render(){ctx.window.liveRender()}};
  ctx.history={replaceState(_,__,url){const u=new URL(url,ctx.location.origin);ctx.location.hash=u.hash;ctx.location.search=u.search}};
  vm.createContext(ctx);vm.runInContext(helpers,ctx);vm.runInContext(backend,ctx);await sleep();
@@ -49,7 +61,23 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.profile.account_type,'owner');assert.equal(e.state.profile.display_name,'Maja Perić');
  html=await e.route('#/dashboard');assert.match(html,/YOUR OWNER SPACE/);assert.match(html,/My boats/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Profile essentials|My bookings/);
  assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
- html=await e.route('#/account?tab=verification');assert.match(html,/Owner account/);assert.doesNotMatch(html,/verification-upload/);
+ html=await e.route('#/account?tab=verification');assert.match(html,/Verify your owner account/);assert.match(html,/data-live-form="owner-verification"/);assert.match(html,/France · SIRET/);assert.match(html,/Business website \(required\)/);
+ html=await e.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);assert.match(html,/name="published"[^>]*disabled/);
+ const ownerPdf={size:2400,type:'application/pdf'};
+ await e.submit('owner-verification',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://bateaux.example',registered_address:'12 Quai de Paris, Marseille, France',iban:'FR7630006000011234567890189',iban_holder:'Bateaux SARL',identity_type:'passport',registration_file:ownerPdf,identity_file:ownerPdf,iban_file:ownerPdf,documents_own:'on'});
+ assert.equal(e.state.uploads.length,3);assert.equal(e.state.ownerRequest.business_country,'FR');assert.equal(e.state.ownerRequest.iban_holder,'Bateaux SARL');
+ const pendingOwnerRequest=e.state.ownerRequest;
+ html=await e.route('#/account?tab=verification');assert.match(html,/Pending staff review/);
+ let reviewer=await environment({hash:'#/staff',user:{id:'reviewer-1'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:pendingOwnerRequest,staff:true});
+ html=await reviewer.route('#/staff');assert.match(html,/Business \/ owner verification/);assert.match(html,/Bateaux SARL/);assert.match(html,/View Registration/);
+ await reviewer.submit('owner-review',{status:'approved',registration_matches:'on',identity_matches:'on',bank_matches:'on',note:''},{id:'new-owner'});
+ assert.equal(reviewer.state.ownerReview.status,'approved');assert.equal(reviewer.state.deletions.length,0);
+ let verifiedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:pendingOwnerRequest,ownerReview:reviewer.state.ownerReview});
+ html=await verifiedOwner.route('#/owner?edit=new');assert.doesNotMatch(html,/name="published"[^>]*disabled/);
+ html=await verifiedOwner.route('#/account?tab=verification');assert.match(html,/Your business is approved/);
+ const changedOwnerRequest={...pendingOwnerRequest,business_website:'https://newcompany.example'};
+ let changedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:changedOwnerRequest,ownerReview:reviewer.state.ownerReview});
+ html=await changedOwner.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);
  html=await e.route('#/listing/boat-1');assert.match(html,/Owner account · bookings unavailable/);assert.doesNotMatch(html,/data-live-form="request"|Save to favourites/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'without'},{id:'boat-1'});
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);assert.match(e.feedback.textContent,/Owner accounts cannot rent boats/);
