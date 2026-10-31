@@ -487,7 +487,7 @@
     if(path.startsWith('/listing/')) {
       for(const [key,name] of [['start','start'],['end','end']]){const value=params.get(key);if(/^\d{4}-\d{2}-\d{2}$/.test(value||''))state[name]=value;}
       const selectedGuests=Math.max(1,Math.min(100,Number(params.get('guests'))||1));
-      const b=check(await client.from('boats').select('*').eq('id',path.slice(9)).maybeSingle());
+      const b=check(await client.from('boats').select('*').eq('id',path.slice(9)).limit(1))[0];
       if(!b)return page('This boat is not available right now.',`<div class="listing-unavailable"><div class="listing-unavailable-icon">${icon('ship')}</div><h2>Still dreaming of a day at sea?</h2><p>This listing is currently unavailable. Browse other boats and find one that’s ready for your next adventure.</p><a class="btn" href="#/boats">Explore available boats ${icon('arrow')}</a></div>`);
       let unavailable=[];if(session)unavailable=check(await client.rpc('boat_availability',{p_boat:b.id}));
       const exactPickup=session?check(await client.from('boat_pickups').select('pickup_address,latitude,longitude').eq('boat_id',b.id).maybeSingle()):null;
