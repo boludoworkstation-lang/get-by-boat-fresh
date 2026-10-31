@@ -1299,10 +1299,7 @@
       const feedback=document.querySelector('[data-feedback]');
       if(feedback)feedback.textContent='Connecting…';
       try {
-        const response=await fetch(AUTH_CONFIG.supabaseUrl+'/auth/v1/settings',{headers:{apikey:AUTH_CONFIG.supabasePublishableKey}});
-        if(!response.ok)throw Error('Unable to check sign-in availability. Please try again.');
-        const settings=await response.json();
-        if(!settings.external?.[provider])throw Error((provider==='google'?'Google':'Apple')+' sign-in is awaiting activation. Please use email for now.');
+        // Supabase validates the provider during OAuth; avoid an extra settings request before redirect.
         check(await client.auth.signInWithOAuth({provider,options:{redirectTo:authRedirect()}}));
       } catch(error) {if(feedback)feedback.textContent=error.message||'Sign-in could not start. Please try again.';else throw error;}
       break;
