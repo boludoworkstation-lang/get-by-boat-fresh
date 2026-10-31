@@ -28,7 +28,7 @@ create policy booking_edit on public.bookings for update to authenticated using(
 create policy blocks_read on public.boat_blocks for select to authenticated using(exists(select 1 from public.boats where id=boat_id and (published or owner_id=(select auth.uid()))));
 create policy blocks_add on public.boat_blocks for insert to authenticated with check(exists(select 1 from public.boats where id=boat_id and owner_id=(select auth.uid())));
 create policy blocks_remove on public.boat_blocks for delete to authenticated using(exists(select 1 from public.boats where id=boat_id and owner_id=(select auth.uid())));
-create function private.fee(amount numeric) returns numeric language sql immutable set search_path='' as $$select round(case when amount<=800 then amount*30/800 when amount<=2400 then 30+(amount-800)*27/1600 when amount<=6000 then 57+(amount-2400)*54/3600 when amount<=19600 then 111+(amount-6000)*38/13600 else 149 end,2)$$;
+create function private.fee(amount numeric) returns numeric language sql immutable set search_path='' as $$select round(amount*0.09,2)$$;
 -- A private trigger validates identity, transitions and server-calculated prices.
 create function private.check_booking() returns trigger language plpgsql security definer set search_path='' as $$
 declare b public.boats; actor uuid:=auth.uid();

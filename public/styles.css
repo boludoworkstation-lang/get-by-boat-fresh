@@ -405,8 +405,9 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .fleet-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:24px}
 .fleet-calendar-toolbar h3{font-size:21px;font-weight:750;letter-spacing:-.03em}
 .fleet-calendar-toolbar>div{display:flex;gap:8px}
-.fleet-calendar-toolbar a{display:grid;place-items:center;width:37px;height:37px;border:1px solid #d9e6e9;border-radius:8px;font-size:22px;color:#026e84;background:#f9fcfd}
-.fleet-calendar-toolbar a:hover{background:#e6f7fa;border-color:#91cdd8}
+.fleet-calendar-toolbar a,.fleet-calendar-toolbar button{display:grid;place-items:center;width:37px;height:37px;border:1px solid #d9e6e9;border-radius:8px;font-size:22px;color:#026e84;background:#f9fcfd;cursor:pointer}
+.fleet-calendar-toolbar a:hover,.fleet-calendar-toolbar button:hover{background:#e6f7fa;border-color:#91cdd8}
+.fleet-calendar-toolbar button:focus-visible{outline:3px solid #00a3bb;outline-offset:2px}
 .fleet-calendar-weekdays,.fleet-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .fleet-calendar-weekdays{margin-bottom:8px;text-align:center}
 .fleet-calendar-weekdays span{color:#8399a0;font-size:11px;font-weight:750;padding:8px 0}
@@ -425,6 +426,24 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .fleet-calendar-side [data-feedback]:not(:empty){font-size:12px;line-height:1.55;color:#176981;margin:10px 0 2px}
 .fleet-calendar-side button[type=submit]:disabled{opacity:.55;cursor:not-allowed}
 .fleet-skipper-fee[hidden]{display:none!important}
+.fleet-euro-dates{display:grid;gap:11px}
+.fleet-euro-dates label{display:block}
+.fleet-euro-dates input[data-euro-date]{font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.fleet-pickup{margin:20px 0 23px;padding:21px;border:1px solid #dbe9ed;border-radius:13px;background:#f6fbfc}
+.fleet-pickup h4{margin:0 0 12px;font-size:15px;color:#214b57}
+.fleet-pickup-actions{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin:12px 0}
+.fleet-pickup-actions small{color:#76919a;font-size:11px;line-height:1.5}
+.fleet-pickup-map{min-height:160px;border-radius:11px;overflow:hidden;border:1px solid #d4e5e9;background:#e5f1f4}
+.fleet-pickup-map iframe,.fleet-public-pickup iframe{display:block;border:0;width:100%;height:255px}
+.fleet-pickup-map p{padding:45px 15px;text-align:center;color:#6c8b95}
+.fleet-public-pickup{margin:20px 0;border:1px solid #dbe8eb;border-radius:12px;overflow:hidden}
+.fleet-public-pickup h3{font-size:16px;padding:16px 19px 0;margin:0}
+.fleet-public-pickup p{padding:5px 19px 13px;margin:0;color:#41616b;font-size:13px}
+.fleet-guest-rate{border:1px solid #c8e9ef;background:#f0fafc;border-radius:10px;padding:14px 16px;color:#326875;font-size:13px}
+.fleet-guest-rate strong{color:#006a81}
+.fleet-offer-both{border:0;background:transparent;color:#007f96;font-size:12px;font-weight:750;cursor:pointer;justify-self:start;padding:5px 2px;text-decoration:underline;text-underline-offset:3px}
+.fleet-offer-both:hover,.fleet-offer-both:focus-visible{color:#014b63}
+.fleet-rental-summary{color:#3e7180;font-size:12px;margin:0}
 .fleet-calendar-empty{border:none;background:transparent}
 .fleet-calendar-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:20px;font-size:11px;color:#6b828b}
 .fleet-calendar-legend span{display:flex;align-items:center;gap:6px}

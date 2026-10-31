@@ -4,7 +4,7 @@
   let authNext='#/dashboard', avatarUrl='',verificationRequest=null,verificationReview=null,verificationStaff=false;
   let ownerVerificationRequest=null,ownerVerificationReview=null,ownerScrollTarget='';
   let chatChannel=null,chatBookingId='';
-  let calendarSelection=null,calendarUnavailable=[];
+  let calendarSelection=null,calendarUnavailable=[],calendarContext=null;
   const safeNext=value=>{const v=String(value||'');return v.length<1500 && (/^#\/(dashboard|bookings|owner|account|favourites|staff|messages)$/.test(v)||/^#\/messages\?booking=[a-fA-F0-9-]{36}$/.test(v)||/^#\/listing\/[a-zA-Z0-9-]+(?:\?[^#]*)?$/.test(v))?v:'#/dashboard'};
   const loginLink=next=>'#/login?next='+encodeURIComponent(safeNext(next));
   const setupLink=next=>'#/account?next='+encodeURIComponent(safeNext(next));
@@ -12,6 +12,19 @@
   const esc=safe;
   const money=v=>new Intl.NumberFormat('en-IE',{style:'currency',currency:'EUR'}).format(Number(v));
   const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+  const euroDate=iso=>/^\d{4}-\d{2}-\d{2}$/.test(String(iso||''))?`${iso.slice(8,10)}.${iso.slice(5,7)}.${iso.slice(0,4)}.`:'';
+  const euroRange=(start,end)=>{
+    if(!start||!end)return '';
+    if(start===end)return euroDate(start);
+    return start.slice(0,4)===end.slice(0,4)?`${start.slice(8,10)}.${start.slice(5,7)}. – ${euroDate(end)}`:`${euroDate(start)} – ${euroDate(end)}`;
+  };
+  const parseEuroDate=value=>{
+    const match=String(value||'').trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/);
+    if(!match)return '';
+    const iso=`${match[3]}-${match[2].padStart(2,'0')}-${match[1].padStart(2,'0')}`;
+    const parsed=new Date(iso+'T00:00:00Z');
+    return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===iso?iso:'';
+  };
   const field=(label,name,type='text',value='',extra='')=>`<label>${esc(label)}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;
   const namePart=value=>String(value||'').replace(/\s+/g,' ').trim().slice(0,100);
   function identityNames(user){
@@ -68,6 +81,10 @@
   const status=s=>({pending_owner:'Waiting for owner',awaiting_payment:'Accepted · payment not connected',confirmed:'Confirmed',cancelled:'Cancelled',declined:'Declined'}[s]||s);
   const check=({data,error})=>{if(error)throw error;return data};
   const dateFields=()=>field('First day','start_date','date',state.start||today(),`required min="${today()}"`)+field('Last day','end_date','date',state.end||state.start||today(),`required min="${today()}"`);
+  const calendarDateFields=()=>{
+    const first=state.start||today(),last=state.end||first;
+    return `<div class="fleet-euro-dates"><label>First day (DD.MM.YYYY)<input type="text" inputmode="numeric" data-euro-date="start_date" value="${euroDate(first)}" placeholder="DD.MM.YYYY" autocomplete="off"><input type="hidden" name="start_date" value="${first}"></label><label>Last day (DD.MM.YYYY)<input type="text" inputmode="numeric" data-euro-date="end_date" value="${euroDate(last)}" placeholder="DD.MM.YYYY" autocomplete="off"><input type="hidden" name="end_date" value="${last}"></label></div>`;
+  };
   const photo=url=>{try{const u=new URL(url);return u.origin===AUTH_CONFIG.supabaseUrl&&u.pathname.startsWith('/storage/v1/object/public/boat-photos/')?u.href:''}catch{return ''}};
   const picture=b=>photo(b.photo_url)?`<img class="live-photo" src="${esc(photo(b.photo_url))}" alt="${esc(b.name)}" loading="lazy">`:'<div class="live-placeholder">A day at sea awaits</div>';
   const socialButton=(provider,label)=>`<button type="button" class="auth-provider" data-live="social-${provider}"><span aria-hidden="true" class="auth-provider-icon">${provider==='google'?'<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.8 12.2c0-.7-.1-1.5-.2-2.2H12v4.2h5.5a4.8 4.8 0 0 1-2.1 3.1v2.6h3.4c2-1.8 3-4.5 3-7.7z"/><path fill="#34A853" d="M12 22c2.8 0 5.2-.9 6.8-2.5l-3.4-2.6c-.9.6-2 .9-3.4.9-2.7 0-5-1.8-5.8-4.2H2.7v2.7A10.3 10.3 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.2 13.6a6 6 0 0 1 0-3.2V7.7H2.7a10 10 0 0 0 0 8.6z"/><path fill="#EA4335" d="M12 6.2c1.5 0 2.8.5 3.8 1.5L18.7 5A9.6 9.6 0 0 0 12 2a10.3 10.3 0 0 0-9.3 5.7l3.5 2.7C7 8 9.3 6.2 12 6.2z"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.1 12.7c0-2 1.6-3 1.7-3.1-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.7 0-1.6-.7-2.7-.7-1.4 0-2.6.8-3.3 2-1.4 2.4-.4 6 1 8 .6 1 1.4 2 2.4 1.9 1-.1 1.3-.7 2.6-.7s1.6.7 2.7.7 1.7-1 2.4-1.9c.7-1.1 1-2.1 1-2.2-.1 0-1.9-.7-1.9-3.1zM15.1 6.7c.6-.8 1-1.8.9-2.9-.9 0-2 .6-2.6 1.3-.6.7-1.1 1.8-1 2.8 1 .1 2-.5 2.7-1.2z"/></svg>'}</span>${label}</button>`;
@@ -171,6 +188,21 @@
     return tabs+`<form class="profile-panel live-form" data-live-form="avatar"><h2>Your profile photo</h2><div class="profile-photo-preview">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="Your profile photo">`:'<span aria-hidden="true">◎</span>'}</div><label>Select an image<input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required></label><small>JPEG, PNG or WebP. Maximum 5 MB. Your photo is stored privately.</small><button class="btn">Save photo</button><p data-feedback role="status"></p></form><form class="profile-panel live-form" data-live-form="details" data-section="information"><h2>Personal information</h2><p class="member-note">Your name is filled from Google when available, or from the details you supplied during sign-up. You can edit it here.</p><div class="live-columns">${field('First name','first_name','text',d.first_name||'','required maxlength="100" autocomplete="given-name"')}${field('Surname','last_name','text',d.last_name||'','required maxlength="100" autocomplete="family-name"')}${field('Email','email','email',session.user.email||'','readonly')}${field('Date of birth (optional)','birth_date','date',d.birth_date||'',`max="${today()}"`)}${field('Languages spoken','languages','text',d.languages||'','maxlength="150"')}${field('Telephone','phone','tel',d.phone||'','maxlength="40" autocomplete="tel"')}${field('Address','address','text',d.address||'','maxlength="200" autocomplete="street-address"')}${field('Postal code','postal_code','text',d.postal_code||'','maxlength="30" autocomplete="postal-code"')}${field('City','city','text',d.city||'','maxlength="100" autocomplete="address-level2"')}</div><p class="member-note">Your personal details are private to your account. Contact details are optional.</p><button class="btn">Save details</button><p data-feedback role="status"></p></form>`;
   }
   const rentalOptions=b=>[b.with_skipper?'Rent with skipper':null,b.without_skipper!==false?'Rent without skipper':null].filter(Boolean).join(' · ');
+  const guestDailyRate=amount=>Math.round(Number(amount)*1.09*100)/100;
+  const countryLabels=(()=>{
+    const names=new Intl.DisplayNames(['en'],{type:'region'}),rows=[];
+    for(let i=65;i<=90;i++)for(let j=65;j<=90;j++){
+      const code=String.fromCharCode(i,j),label=names.of(code);
+      if(label!==code&&!['EU','UN','EZ','QO','XA','XB','ZZ'].includes(code)&&!/^Pseudo-|^Outlying Oceania$/.test(label))rows.push(label);
+    }
+    return [...new Set(rows)].sort((a,b)=>a.localeCompare(b,'en'));
+  })();
+  const pickupMapUrl=query=>`https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+  const pickupDetails=boat=>{
+    const pickup=String(boat.pickup_location||boat.location||'').trim();
+    const query=[pickup,boat.location,boat.country].filter(Boolean).join(', ');
+    return `<div class="fleet-public-pickup"><h3>Boat pickup location</h3><p>${icon('pin')} ${esc(pickup)}, ${esc(boat.country)}</p><iframe title="Pickup location on the map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${esc(pickupMapUrl(query))}"></iframe></div>`;
+  };
   function updateOwnerSkipperFee(form){
     if(!form)return;
     const withSkipper=!!form.querySelector('[name="with_skipper"]')?.checked;
@@ -182,11 +214,13 @@
     if(wrapper)wrapper.hidden=!withSkipper;
     const note=form.querySelector('[data-skipper-fee-note]');
     if(note)note.textContent=separate?'This is an extra skipper fee, paid directly at check-in in cash or by card. Get By Boat takes no commission.':withSkipper?'The skipper price is already included in your boat price above. Guests will not pay it again at check-in.':'Select Rent with skipper to enter the skipper price.';
+    const summary=form.querySelector('[data-rental-mode-summary]');
+    if(summary)summary.textContent=separate?'Both options selected — guests choose with or without skipper.':withSkipper?'With skipper only.':withoutSkipper?'Without skipper only.':'Choose at least one rental option.';
   }
-  const ownerStepNames=['Boat & location','Price & skipper','Photos & details','Publish'];
+  const ownerStepNames=['Boat & location','Price & skipper','Photos & details'];
   function showOwnerBoatStep(form,next){
     if(!form?.querySelectorAll)return;
-    const step=Math.min(4,Math.max(1,Number(next)||1));
+    const step=Math.min(3,Math.max(1,Number(next)||1));
     form.dataset.editorStep=String(step);
     for(const section of form.querySelectorAll('[data-editor-step]'))section.hidden=Number(section.dataset.editorStep)!==step;
     for(const button of form.querySelectorAll('[data-live="boat-step"]')){
@@ -195,8 +229,8 @@
     }
     const prev=form.querySelector('[data-live="boat-prev"]'),nextButton=form.querySelector('[data-live="boat-next"]'),progress=form.querySelector('[data-editor-progress]');
     if(prev)prev.hidden=step===1;
-    if(nextButton)nextButton.hidden=step===4;
-    if(progress)progress.textContent=`Step ${step} of 4 · ${ownerStepNames[step-1]}`;
+    if(nextButton)nextButton.hidden=step===3;
+    if(progress)progress.textContent=`Step ${step} of 3 · ${ownerStepNames[step-1]}`;
   }
   function validateOwnerBoatStep(form,step){
     if(!form?.querySelectorAll)return true;
@@ -222,12 +256,11 @@
     const filters=[['all','All boats',boats.length],['published','Published',live],['drafts','Drafts',drafts]];
     return `<div class="fleet-home"><div class="fleet-hero"><div><span class="member-eyebrow">YOUR FLEET · GET BY BOAT</span><h2>My Boats</h2><p>Manage listings, pricing and availability in one place.</p></div><a class="btn fleet-primary" href="#/owner?edit=new">${icon('plus')} Add a boat</a></div><div class="fleet-stat-grid"><div><span>Total listings</span><strong>${boats.length}</strong><small>Boats in your account</small></div><div><span>Published</span><strong>${live}</strong><small>Visible to customers</small></div><div><span>Drafts</span><strong>${drafts}</strong><small>Not yet public</small></div><a href="#/owner?view=requests"><span>Requests to answer</span><strong>${pending}</strong><small>${pending?'Review booking requests':'All caught up'} ${icon('arrow')}</small></a></div><div class="fleet-list-head"><div><h2>Your listings</h2><p>${visible.length} ${visible.length===1?'boat':'boats'} shown</p></div><div class="fleet-filters" aria-label="Filter listings">${filters.map(([key,label,count])=>`<a href="#/owner${key==='all'?'':'?filter='+key}" ${filter===key?'aria-current="true"':''}>${label} <span>${count}</span></a>`).join('')}</div></div>${visible.length?`<div class="fleet-card-grid">${visible.map(b=>{const relevant=bookings.filter(r=>r.boat_id===b.id&&r.status==='pending_owner').length;return `<article class="fleet-card"><div class="fleet-card-photo">${picture(b)}<span class="fleet-status ${b.published?'is-live':'is-draft'}">${b.published?'● Published':'○ Draft'}</span></div><div class="fleet-card-body"><div class="fleet-card-head"><h3>${esc(b.name)}</h3><span class="fleet-daily">${money(b.price)} <small>/ day</small></span></div><p class="fleet-location">${icon('pin')} ${esc(b.location)}, ${esc(b.country)}</p><div class="fleet-specs"><span>${icon('ship')} ${esc(b.type)}</span><span>${icon('user')} ${b.guests} guests</span></div><p class="fleet-modes">${esc(rentalOptions(b))}</p>${relevant?`<p class="fleet-attention">${relevant} ${relevant===1?'booking request':'booking requests'} awaiting a reply</p>`:''}<div class="fleet-card-actions"><a class="btn" href="#/owner?edit=${esc(b.id)}">Edit listing</a><a class="fleet-link" href="#/owner?view=calendar&boat=${esc(b.id)}">${icon('calendar')} Calendar</a><a class="fleet-link" href="#/listing/${esc(b.id)}">${icon('arrow')} Preview</a></div></div></article>`}).join('')}</div>`:`<div class="fleet-empty"><span>${icon('ship')}</span><h3>${boats.length?'No boats match this filter':'Your first listing starts here'}</h3><p>${boats.length?'Choose another filter to see your boats.':'Add your boat, set your price and rental options, then prepare it for publication.'}</p><a class="btn" href="${boats.length?'#/owner':'#/owner?edit=new'}">${boats.length?'Show all boats':'Add your first boat'}</a></div>`}</div>`;
   }
-  function ownerCalendarBase(boat,bookings,blocks,selectedMonth){
-    if(!boat)return `<div class="member-empty"><h2>Boat not found</h2><a href="#/owner">Back to My Boats</a></div>`;
+  function calendarMonthContent(boat,bookings,blocks,selectedMonth){
     const safeMonth=/^\d{4}-(0[1-9]|1[0-2])$/.test(selectedMonth||'')?selectedMonth:today().slice(0,7);
     const [year,month]=safeMonth.split('-').map(Number),first=new Date(Date.UTC(year,month-1,1)),days=new Date(Date.UTC(year,month,0)).getUTCDate();
     const before=(first.getUTCDay()+6)%7,back=new Date(Date.UTC(year,month-2,1)).toISOString().slice(0,7),ahead=new Date(Date.UTC(year,month,1)).toISOString().slice(0,7);
-    const monthTitle=first.toLocaleDateString('en-GB',{month:'long',year:'numeric',timeZone:'UTC'}),base=`#/owner?view=calendar&boat=${esc(boat.id)}&month=`;
+    const monthTitle=first.toLocaleDateString('en-GB',{month:'long',year:'numeric',timeZone:'UTC'});
     const statusDay=iso=>bookings.some(r=>['awaiting_payment','confirmed'].includes(r.status)&&r.start_date<=iso&&iso<=r.end_date)?'booked':blocks.some(b=>b.start_date<=iso&&iso<=b.end_date)?'blocked':bookings.some(r=>r.status==='pending_owner'&&r.start_date<=iso&&iso<=r.end_date)?'requested':'available';
     const dates=Array.from({length:before},()=>'<span class="fleet-calendar-empty" aria-hidden="true"></span>').concat(Array.from({length:days},(_,i)=>{
       const day=i+1,iso=`${safeMonth}-${String(day).padStart(2,'0')}`,s=statusDay(iso);
@@ -235,13 +268,18 @@
       if(s==='available'&&iso>=today())return `<button type="button" class="fleet-calendar-day available" data-calendar-date="${iso}" aria-pressed="false" aria-label="Select ${iso}">${content}</button>`;
       return `<span class="fleet-calendar-day ${s} ${iso<today()?'past':''}" aria-label="${iso}: ${s}; not selectable">${content}</span>`;
     }));
+    return `<div class="fleet-calendar-toolbar"><h3>${esc(monthTitle)}</h3><div><button type="button" data-calendar-month="${back}" aria-label="Previous month">‹</button><button type="button" data-calendar-month="${ahead}" aria-label="Next month">›</button></div></div><div class="fleet-calendar-weekdays">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<span>${d}</span>`).join('')}</div><div class="fleet-calendar-grid">${dates.join('')}</div><div class="fleet-calendar-legend"><span><i class="available"></i> Available</span><span><i class="requested"></i> Request</span><span><i class="booked"></i> Reserved</span><span><i class="blocked"></i> Blocked</span></div>`;
+  }
+  function ownerCalendarBase(boat,bookings,blocks,selectedMonth){
+    if(!boat)return `<div class="member-empty"><h2>Boat not found</h2><a href="#/owner">Back to My Boats</a></div>`;
     const boatBlocks=blocks.filter(b=>b.boat_id===boat.id),upcoming=bookings.filter(r=>['pending_owner','awaiting_payment','confirmed'].includes(r.status));
-    return `<div class="fleet-calendar-page"><a class="fleet-back" href="#/owner">${icon('arrow')} Back to My Boats</a><div class="fleet-calendar-title"><div><span class="member-eyebrow">AVAILABILITY MANAGER</span><h2>${esc(boat.name)}</h2><p>Block dates you cannot rent. Confirmed bookings are automatically unavailable.</p></div><a class="btn live-secondary" href="#/owner?edit=${esc(boat.id)}">Edit listing</a></div><div class="fleet-calendar-layout"><section class="profile-panel fleet-calendar-panel"><div class="fleet-calendar-toolbar"><h3>${esc(monthTitle)}</h3><div><a href="${base+back}" aria-label="Previous month">‹</a><a href="${base+ahead}" aria-label="Next month">›</a></div></div><div class="fleet-calendar-weekdays">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<span>${d}</span>`).join('')}</div><div class="fleet-calendar-grid">${dates.join('')}</div><div class="fleet-calendar-legend"><span><i class="available"></i> Available</span><span><i class="requested"></i> Request</span><span><i class="booked"></i> Reserved</span><span><i class="blocked"></i> Blocked</span></div></section><aside class="fleet-calendar-side"><section class="profile-panel"><h3>Block dates</h3><p class="member-note">Stop new bookings for maintenance, private use or other commitments.</p><form class="live-form" data-live-form="block" data-id="${esc(boat.id)}">${dateFields()}<button class="btn" type="submit">Block selected dates</button><p data-feedback role="status"></p></form></section><section class="profile-panel"><h3>Blocked periods</h3>${boatBlocks.length?boatBlocks.map(b=>`<div class="fleet-block-row"><span>${esc(b.start_date)} → ${esc(b.end_date)}</span>${btn('Unblock','unblock',b.id)}</div>`).join(''):'<p class="member-note">No dates manually blocked.</p>'}</section><section class="profile-panel"><h3>Guest activity</h3><p class="member-note">${upcoming.filter(r=>r.status==='pending_owner').length} requests awaiting your reply. Reserved dates are shown on the calendar.</p><a href="#/owner?view=requests">Manage booking requests ${icon('arrow')}</a></section></aside></div></div>`;
+    return `<div class="fleet-calendar-page"><a class="fleet-back" href="#/owner">${icon('arrow')} Back to My Boats</a><div class="fleet-calendar-title"><div><span class="member-eyebrow">AVAILABILITY MANAGER</span><h2>${esc(boat.name)}</h2><p>Block dates you cannot rent. Confirmed bookings are automatically unavailable.</p></div><a class="btn live-secondary" href="#/owner?edit=${esc(boat.id)}">Edit listing</a></div><div class="fleet-calendar-layout"><section class="profile-panel fleet-calendar-panel">${calendarMonthContent(boat,bookings,blocks,selectedMonth)}</section><aside class="fleet-calendar-side"><section class="profile-panel"><h3>Block dates</h3><p class="member-note">Stop new bookings for maintenance, private use or other commitments.</p><form class="live-form" data-live-form="block" data-id="${esc(boat.id)}">${calendarDateFields()}<button class="btn" type="submit">Block selected dates</button><p data-feedback role="status"></p></form></section><section class="profile-panel"><h3>Blocked periods</h3>${boatBlocks.length?boatBlocks.map(b=>`<div class="fleet-block-row"><span>${esc(euroRange(b.start_date,b.end_date))}</span>${btn('Unblock','unblock',b.id)}</div>`).join(''):'<p class="member-note">No dates manually blocked.</p>'}</section><section class="profile-panel"><h3>Guest activity</h3><p class="member-note">${upcoming.filter(r=>r.status==='pending_owner').length} requests awaiting your reply. Reserved dates are shown on the calendar.</p><a href="#/owner?view=requests">Manage booking requests ${icon('arrow')}</a></section></aside></div></div>`;
   }
   function ownerCalendar(...args){
     const [boat,bookings,blocks]=args;
     if(boat){
       if(calendarSelection&&calendarSelection.boatId!==boat.id)calendarSelection=null;
+      calendarContext={boat,bookings,blocks};
       calendarUnavailable=[...bookings.filter(r=>['pending_owner','awaiting_payment','confirmed'].includes(r.status)),...blocks].map(r=>({start:r.start_date,end:r.end_date}));
     }
     return ownerCalendarBase(...args).replace('Stop new bookings for maintenance, private use or other commitments.','Select dates on the calendar: click two days or drag across a range, then confirm below. You can also enter dates manually.');
@@ -262,14 +300,33 @@
       const existing=docs.find(item=>item.document_type===type);
       return `<label class="fleet-document-input"><span>${esc(title)}</span><input type="file" name="document_${type}" accept="image/jpeg,image/png,image/webp,application/pdf"><small>${existing?`Uploaded · ${existing.url?`<a href="${esc(existing.url)}" target="_blank" rel="noopener noreferrer">View privately (5 min)</a>`:'Private file saved'}`:'Not uploaded · optional'}</small></label>`;
     };
-    const technical=`<details class="fleet-optional-panel" ${hasSpecs?'open':''}><summary><span>${icon('ship')} Technical specifications</span><small>Optional · engine, dimensions & performance</small></summary><div class="fleet-optional-content"><p class="member-note">Add what you know. Leave the rest blank; guests can still book your boat.</p><div class="live-columns">${optionalSelect('spec_engine_type','Engine type',types,s.engine_type||'')}${number('Total engine horsepower (hp)','spec_engine_hp',s.engine_hp,50000)}</div><div class="live-columns">${number('Boat length (m)','spec_length_m',s.length_m,200,'0.01')}${number('Boat width (m)','spec_width_m',s.width_m,100,'0.01')}</div><div class="live-columns">${number('Draft (m)','spec_draft_m',s.draft_m,50,'0.01')}${number('Year built','spec_build_year',s.build_year,2100)}</div><div class="live-columns">${number('Fuel consumption (L/h)','spec_fuel_lph',s.fuel_lph,10000,'0.1')}${number('Top speed (knots)','spec_speed_knots',s.speed_knots,200,'0.1')}</div><div class="live-columns">${optionalSelect('spec_offshore','Offshore equipment',[['','Not specified'],['yes','Yes'],['no','No']],s.offshore||'')}${number('Crew members (if included)','spec_crew',s.crew,100)}</div><div class="live-columns">${number('Tender engine horsepower (hp)','spec_tender_hp',s.tender_hp,10000)}${number('Last renovated (year)','spec_renovated_year',s.renovated_year,2100)}</div></div></details>`;
+    const technical=`<details class="fleet-optional-panel" ${hasSpecs?'open':''}><summary><span>${icon('ship')} Technical specifications</span><small>Optional · engine, dimensions & performance</small></summary><div class="fleet-optional-content"><p class="member-note">Add what you know. Leave the rest blank; guests can still book your boat.</p><div class="live-columns">${optionalSelect('spec_engine_type','Engine type',types,s.engine_type||'')}${number('Total engine horsepower (hp)','spec_engine_hp',s.engine_hp,50000)}</div><div class="live-columns">${number('Boat length (m)','spec_length_m',s.length_m,200,'0.01')}${number('Boat width (m)','spec_width_m',s.width_m,100,'0.01')}</div><div class="live-columns">${number('Draft (m)','spec_draft_m',s.draft_m,50,'0.01')}${number('Year built','spec_build_year',s.build_year,2100)}</div><div class="live-columns">${number('Fuel consumption (L/h)','spec_fuel_lph',s.fuel_lph,10000,'0.1')}${number('Top speed (knots)','spec_speed_knots',s.speed_knots,200,'0.1')}</div><div class="live-columns">${number('Crew members (if included)','spec_crew',s.crew,100)}</div></div></details>`;
     const insurance=`<details class="fleet-optional-panel" ${b.insurance_type&&b.insurance_type!=='not_specified'||Number(b.security_deposit)>0||docs.length?'open':''}><summary><span>${icon('shield')} Insurance & security deposit</span><small>Optional · coverage, deposit & documents</small></summary><div class="fleet-optional-content"><p class="member-note">Insurance documents help you manage your listing. Uploads are private, and you do not need a certificate to publish.</p><div class="live-columns">${optionalSelect('insurance_type','Insurance coverage',insuranceTypes,b.insurance_type||'not_specified')}${number('Refundable security deposit (€)','security_deposit',b.security_deposit??0,100000,'0.01')}</div><div class="live-columns">${doc('insurance','Insurance certificate (optional)')}${doc('ownership','Proof of boat ownership (optional)')}</div><p class="member-note">PDF, JPEG, PNG or WebP · maximum 5 MB each. Only you and authorised Get By Boat staff can access these files. Uploading a document does not mean it has been verified.</p></div></details>`;
     const closing='</section><section class="profile-panel fleet-editor-section" id="boat-publishing"';
+    const canPublish=ownerVerificationState()==='approved',willPublish=canPublish||!!b.published;
+    const countryField=field('Country','country','text',b.country||'','required maxlength="80"');
+    const countries=`<label>Country<input name="country" type="text" value="${esc(b.country||'')}" required maxlength="80" list="boat-countries" autocomplete="off" placeholder="Start typing a country in English"><datalist id="boat-countries">${countryLabels.map(name=>`<option value="${esc(name)}"></option>`).join('')}</datalist></label>`;
+    const pickup=String(b.pickup_location||b.location||'');
+    const pickupQuery=[pickup,b.location,b.country].filter(Boolean).join(', ');
+    const pickupFields=`<div class="fleet-pickup"><h4>Where will guests pick up the boat?</h4>${field('Pickup point / meeting address','pickup_location','text',pickup,'required maxlength="240" placeholder="e.g. Marina Hramina, pier A"')}<div class="fleet-pickup-actions"><button class="btn live-secondary" type="button" data-pickup-preview>Show pickup pin on map</button><small>Enter the marina, pier or meeting address. Guests will see this location.</small></div><div class="fleet-pickup-map" data-pickup-map>${pickupQuery?`<iframe title="Boat pickup location map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${esc(pickupMapUrl(pickupQuery))}"></iframe>`:'<p>Enter a pickup address to preview its pin on the map.</p>'}</div></div>`;
     return boatFormBase(b)
+      .replace('organised into four quick steps','organised into three quick steps')
+      .replace('<button type="button" data-live="boat-step" data-step="4"><b>4</b> Publish</button>','')
+      .replace(countryField,countries)
+      .replace('<div class="live-columns"><label>Boat type',pickupFields+'<div class="live-columns"><label>Boat type')
+      .replace('Maximum guests','Maximum Passengers')
+      .replace('Boat price per day (€)','Your payout per day (€)')
+      .replace('<fieldset class="fleet-rental-modes">',`<p class="fleet-guest-rate" data-guest-price-preview>Guests see <strong>${money(guestDailyRate(b.price||0))} / day</strong> (your rate + 9% Get By Boat fee).</p><fieldset class="fleet-rental-modes">`)
+      .replace('</fieldset><div class="fleet-skipper-fee"',`<button type="button" class="fleet-offer-both" data-rental-both>✓ Offer both rental options</button><p class="fleet-rental-summary" data-rental-mode-summary></p></fieldset><div class="fleet-skipper-fee"`)
       .replace('Additional skipper fee per day (€)','Skipper price per day (€)')
       .replace(`min="0" max="10000" step="0.01" ${both?'required':''} ${both?'':'disabled'}`,`min="${b.with_skipper?'0.01':'0'}" max="10000" step="0.01" ${b.with_skipper?'required':''} ${b.with_skipper?'':'disabled'}`)
       .replace('data-skipper-fee-wrapper>','data-skipper-fee-wrapper '+(b.with_skipper?'':'hidden')+'>')
-      .replace(closing,technical+insurance+closing);
+      .replace(closing,technical+insurance+closing)
+      .replace(/<section class="profile-panel fleet-editor-section" id="boat-publishing"[\s\S]*?<\/section>/,'')
+      .replace('<div class="fleet-editor-save">',`<input type="hidden" name="published" value="${willPublish?'on':''}"><div class="fleet-editor-save">`)
+      .replace('Step 1 of 4 · Boat & location','Step 1 of 3 · Boat & location')
+      .replace(/<button class="btn" type="submit">(?:Save changes|Save boat)<\/button>/,`<button class="btn" type="submit">${willPublish?'Publish':'Save draft'}</button>`)
+      .replace('<p data-feedback role="status"></p></div></div></form>',`${!willPublish?'<p class="verification-warning">To publish, complete your <a href="#/account?tab=business">owner verification</a>. Your boat will be saved as a draft until approval.</p>':''}<p data-feedback role="status"></p></div></div></form>`);
   }
   function requests(rows,owner=false){return rows.length?rows.map(r=>`<article class="live-card"><span class="live-status">${esc(status(r.status))}</span><h3>${esc(r.boats?.name||'Boat reservation')}</h3><p>${esc(r.start_date)} — ${esc(r.end_date)} · 09:00–19:00 each day · ${r.guests} guests</p><p><strong>${r.with_skipper?'Rent with skipper':'Rent without skipper'}</strong></p>${owner?`<p>Guest: ${esc(r.customer_name)}</p>`:''}<p>Charter ${money(r.charter_price)} + service fee ${money(r.service_fee)} = <strong>${money(r.total)}</strong></p>${r.with_skipper&&Number(r.skipper_fee_total)>0?`<p class="fleet-quote-extra">Skipper: <strong>${money(r.skipper_fee_total)}</strong> paid directly at check-in in cash or by card (not included in the booking total).</p>`:r.with_skipper?`<p class="fleet-quote-extra">Skipper included in the charter price.</p>`:'' }<small>Request ${esc(r.id)}</small><div class="live-actions"><a class="btn live-secondary" href="#/messages?booking=${esc(r.id)}">${icon('message')} ${owner?'Message guest':'Message owner'}</a>${owner&&r.status==='pending_owner'?btn('Accept request','accept',r.id)+btn('Decline','decline',r.id):''}${!owner&&['pending_owner','awaiting_payment'].includes(r.status)?btn('Cancel request','cancel',r.id):''}</div>${r.status==='awaiting_payment'?'<p>Your dates are held. Online payment is not available yet. This is not a paid, confirmed booking.</p>':''}</article>`).join(''):'<div class="live-card"><p>No booking requests yet.</p></div>'}
   async function messagesPage(requestedId){
@@ -282,10 +339,10 @@
     const mine=session.user.id;
     // Only recipients can mark messages read; an insert or edit never changes sender/content.
     if(messages.some(m=>m.sender_id!==mine&&!m.read_at))client.from('booking_messages').update({read_at:new Date().toISOString()}).eq('booking_id',selected.id).neq('sender_id',mine).is('read_at',null).then(()=>{});
-    const conversations=rows.map(r=>`<a href="#/messages?booking=${esc(r.id)}" class="booking-conversation ${r.id===selected.id?'selected':''}" ${r.id===selected.id?'aria-current="page"':''}><span class="booking-conversation-icon">${icon('ship')}</span><span><strong>${esc(r.boats?.name||'Boat booking')}</strong><small>${esc(r.start_date)} – ${esc(r.end_date)}</small><small>${esc(status(r.status))}</small></span>${icon('arrow')}</a>`).join('');
+    const conversations=rows.map(r=>`<a href="#/messages?booking=${esc(r.id)}" class="booking-conversation ${r.id===selected.id?'selected':''}" ${r.id===selected.id?'aria-current="page"':''}><span class="booking-conversation-icon">${icon('ship')}</span><span><strong>${esc(r.customer_name||'Guest')}</strong><small>${esc(r.boats?.name||'Boat booking')} · ${esc(euroRange(r.start_date,r.end_date))}</small><small>${esc(status(r.status))}</small></span>${icon('arrow')}</a>`).join('');
     const bubbles=messages.map(m=>`<div class="booking-message ${m.sender_id===mine?'outgoing':'incoming'}"><div class="booking-message-bubble"><p>${esc(m.content).replace(/\n/g,'<br>')}</p><small>${esc(new Date(m.created_at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))}${m.sender_id===mine&&m.read_at?' · Read':''}</small></div></div>`).join('');
     const compose=editable?`<form data-live-form="message" data-id="${esc(selected.id)}" class="booking-compose"><label for="booking-message-input">Your message</label><textarea id="booking-message-input" name="content" rows="2" minlength="1" maxlength="2000" placeholder="Ask about the meeting point, arrival time or trip details…" required></textarea><div class="booking-compose-actions"><span>Private to you and the ${profile?.account_type==='owner'?'guest':'owner'} · 2,000 characters max.</span><button class="btn" type="submit">Send message ${icon('arrow')}</button></div><p role="status" data-feedback></p></form>`:`<p class="booking-chat-closed">This booking is ${esc(status(selected.status).toLowerCase())}. The conversation is read-only.</p>`;
-    return page('Messages',`<p class="member-note">Your private conversations about booking requests. Only the renter and boat owner can access each thread.</p><div class="booking-messenger"><aside class="booking-conversations"><h2>Conversations <span>${rows.length}</span></h2>${conversations}</aside><section class="booking-chat" data-booking-id="${esc(selected.id)}"><div class="booking-chat-heading"><div><span class="member-eyebrow">BOOKING CONVERSATION</span><h2>${esc(selected.boats?.name||'Boat booking')}</h2><p>${esc(selected.start_date)} – ${esc(selected.end_date)} · ${selected.with_skipper?'With skipper':'Without skipper'} · ${profile?.account_type==='owner'?'Guest: '+esc(selected.customer_name):'Boat owner'}</p></div><span class="live-status">${esc(status(selected.status))}</span></div><div class="booking-thread" role="log" aria-label="Booking messages">${bubbles||'<div class="booking-thread-empty">No messages yet. Say hello and agree on trip details here.</div>'}</div>${compose}</section></div>`);
+    return page('Messages',`<p class="member-note">Your private conversations about booking requests. Only the renter and boat owner can access each thread.</p><div class="booking-messenger"><aside class="booking-conversations"><h2>Conversations <span>${rows.length}</span></h2>${conversations}</aside><section class="booking-chat" data-booking-id="${esc(selected.id)}"><div class="booking-chat-heading"><div><span class="member-eyebrow">BOOKING CONVERSATION</span><h2>${esc(selected.customer_name||'Guest')} · ${esc(selected.boats?.name||'Boat booking')}</h2><p>${esc(euroRange(selected.start_date,selected.end_date))} · ${selected.with_skipper?'With skipper':'Without skipper'}</p></div><span class="live-status">${esc(status(selected.status))}</span></div><div class="booking-thread" role="log" aria-label="Booking messages">${bubbles||'<div class="booking-thread-empty">No messages yet. Say hello and agree on trip details here.</div>'}</div>${compose}</section></div>`);
   }
   function syncChatSubscription(){
     const bookingId=document.querySelector('.booking-chat')?.dataset.bookingId||'';
@@ -352,7 +409,7 @@
     if(path==='/login'&&session&&!recovery){location.hash=afterLogin();return !profile?profileDialog(authNext):page('Welcome back.','<p>Opening your account…</p>')}
     if(path==='/login')return loginPage();
     if(path==='/owner'&&!session)return loginPage();
-    if(path==='/boats') {const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));const search=(params.get('location')||params.get('country')||'').toLowerCase(),type=params.get('type')||'';const filtered=boats.filter(b=>(!search||`${b.location} ${b.country}`.toLowerCase().includes(search))&&(!type||b.type===type));return page('Discover your next <i>adventure.</i>',`<form data-live-form="search" class="live-card live-search">${field('Where would you like to go?','location','search',search)}<label>Boat type<select name="type"><option value="">Any boat</option>${['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'].map(t=>`<option ${t===type?'selected':''}>${t}</option>`).join('')}</select></label><button class="btn">Search</button></form><p>${filtered.length} ${filtered.length===1?'boat':'boats'} · All bookings upon request</p><div class="live-grid">${filtered.map(b=>`<a class="live-card live-boat" href="#/listing/${b.id}">${picture(b)}<h2>${esc(b.name)}</h2><p>${esc(b.location)}, ${esc(b.country)} · ${esc(b.type)} · ${b.guests} guests</p><p class="rental-mode-summary">${esc(rentalOptions(b))}</p><strong>${money(b.price)} / day</strong></a>`).join('')||`<div class="live-card"><h2>Our next chapter is coming.</h2><p>No published boats match this search yet. Boat owners can add their listings from the owner space.</p>${profile?.account_type!=='customer'?'<a href="#/owner" class="btn">List your boat</a>':''}</div>`}</div>`)}
+    if(path==='/boats') {const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));const search=(params.get('location')||params.get('country')||'').toLowerCase(),type=params.get('type')||'';const filtered=boats.filter(b=>(!search||`${b.location} ${b.country}`.toLowerCase().includes(search))&&(!type||b.type===type));return page('Discover your next <i>adventure.</i>',`<form data-live-form="search" class="live-card live-search">${field('Where would you like to go?','location','search',search)}<label>Boat type<select name="type"><option value="">Any boat</option>${['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'].map(t=>`<option ${t===type?'selected':''}>${t}</option>`).join('')}</select></label><button class="btn">Search</button></form><p>${filtered.length} ${filtered.length===1?'boat':'boats'} · All bookings upon request</p><div class="live-grid">${filtered.map(b=>`<a class="live-card live-boat" href="#/listing/${b.id}">${picture(b)}<h2>${esc(b.name)}</h2><p>${esc(b.location)}, ${esc(b.country)} · ${esc(b.type)} · ${b.guests} passengers</p><p class="rental-mode-summary">${esc(rentalOptions(b))}</p><strong>${money(guestDailyRate(b.price))} / day <small>incl. 9% platform fee</small></strong></a>`).join('')||`<div class="live-card"><h2>Our next chapter is coming.</h2><p>No published boats match this search yet. Boat owners can add their listings from the owner space.</p>${profile?.account_type!=='customer'?'<a href="#/owner" class="btn">List your boat</a>':''}</div>`}</div>`)}
     if(path.startsWith('/listing/')) {
       for(const [key,name] of [['start','start'],['end','end']]){const value=params.get(key);if(/^\d{4}-\d{2}-\d{2}$/.test(value||''))state[name]=value;}
       const selectedGuests=Math.max(1,Math.min(100,Number(params.get('guests'))||1));
@@ -364,7 +421,7 @@
       const needsVerification=session&&!isOwner&&mode==='without'&&(verificationState()!=='approved'||!!(verificationRequest?.licence_expiry&&state.end&&state.end>verificationRequest.licence_expiry));
       const choices=`<label>Rental option<select name="skipper" required>${hasSkipper?`<option value="with" ${mode==='with'?'selected':''}>Rent with skipper</option>`:''}${hasBareboat?`<option value="without" ${mode==='without'?'selected':''}>Rent without skipper</option>`:''}</select></label>`;
       const warning=`<div class="verification-booking-block" data-skipper-verification ${needsVerification?'':'hidden'}><strong>${icon('shield')} Licence verification required</strong><p>Renting without a skipper requires staff-approved ID/passport and boat driving licence, valid through the rental dates. ${esc(verificationLabel(verificationState()))}.</p><a href="#/account?tab=verification">Go to verification ${icon('arrow')}</a></div>`;
-      return page(esc(b.name),`<div class="live-columns"><section>${picture(b)}${session&&!isOwner?btn('Save to favourites','favourite',b.id):''}<h2>${esc(b.location)}, ${esc(b.country)}</h2><p>${esc(b.type)} · ${b.guests} guests · ${b.cabins} cabins</p><p class="rental-mode-summary">${esc(rentalOptions(b))}</p><p class="live-description">${esc(b.description)}</p></section><section>${isOwner?`<div class="live-card"><h2>${money(b.price)} / day</h2><div class="verification-booking-block"><strong>Owner account · bookings unavailable</strong><p>Owner accounts can list boats and manage guest requests, but cannot rent or book boats. Use a separate customer account to rent a boat.</p></div><a class="btn" href="#/owner">Manage my boats</a></div>`:`<form data-live-form="request" data-id="${esc(b.id)}" data-price="${b.price}" data-with-skipper="${hasSkipper}" data-without-skipper="${hasBareboat}" data-skipper-fee="${Number(b.skipper_fee_per_day)||0}" data-skipper-extra="${hasBareboat&&hasSkipper}" data-verified="${verificationState()==='approved'}" data-licence-expiry="${esc(verificationRequest?.licence_expiry||'')}" class="live-card live-form"><h2>${money(b.price)} / day</h2><p>09:00–19:00 each rental day. Owner acceptance required.</p>${choices}<p class="member-note">With skipper: no ID or boat licence verification needed for the renter. Without skipper: both documents must be approved by staff.</p>${dateFields()}${field('Guests','guests','number',selectedGuests,`required min="1" max="${b.guests}"`)}<div data-quote aria-live="polite"></div>${warning}<button class="btn" type="submit" ${needsVerification?'disabled':''}>${needsVerification?'Verification required':session?'Send booking request':'Log in to request'}</button><p data-feedback role="status"></p><small>No payment is taken. Your request does not hold the dates until the owner accepts.</small></form>`}<div class="live-card"><h3>Unavailable dates</h3>${session?unavailable.map(d=>`<p>${esc(d.start_date)} — ${esc(d.end_date)}</p>`).join('')||'<p>No dates currently blocked.</p>':'<p>Log in to check availability.</p>'}</div></section></div>`);
+      return page(esc(b.name),`<div class="live-columns"><section>${picture(b)}${session&&!isOwner?btn('Save to favourites','favourite',b.id):''}<h2>${esc(b.location)}, ${esc(b.country)}</h2><p>${esc(b.type)} · ${b.guests} passengers</p><p class="rental-mode-summary">${esc(rentalOptions(b))}</p><p class="live-description">${esc(b.description)}</p>${pickupDetails(b)}</section><section>${isOwner?`<div class="live-card"><h2>Your payout: ${money(b.price)} / day</h2><p>Guest price: ${money(guestDailyRate(b.price))} / day including the 9% platform fee.</p><div class="verification-booking-block"><strong>Owner account · bookings unavailable</strong><p>Owner accounts can list boats and manage guest requests, but cannot rent or book boats. Use a separate customer account to rent a boat.</p></div><a class="btn" href="#/owner">Manage my boats</a></div>`:`<form data-live-form="request" data-id="${esc(b.id)}" data-price="${b.price}" data-with-skipper="${hasSkipper}" data-without-skipper="${hasBareboat}" data-skipper-fee="${Number(b.skipper_fee_per_day)||0}" data-skipper-extra="${hasBareboat&&hasSkipper}" data-verified="${verificationState()==='approved'}" data-licence-expiry="${esc(verificationRequest?.licence_expiry||'')}" class="live-card live-form"><h2>${money(guestDailyRate(b.price))} / day</h2><p class="member-note">Price includes the 9% Get By Boat platform fee.</p><p>09:00–19:00 each rental day. Owner acceptance required.</p>${choices}<p class="member-note">With skipper: no ID or boat licence verification needed for the renter. Without skipper: both documents must be approved by staff.</p>${dateFields()}${field('Guests','guests','number',selectedGuests,`required min="1" max="${b.guests}"`)}<div data-quote aria-live="polite"></div>${warning}<button class="btn" type="submit" ${needsVerification?'disabled':''}>${needsVerification?'Verification required':session?'Send booking request':'Log in to request'}</button><p data-feedback role="status"></p><small>No payment is taken. Your request does not hold the dates until the owner accepts.</small></form>`}<div class="live-card"><h3>Unavailable dates</h3>${session?unavailable.map(d=>`<p>${esc(d.start_date)} — ${esc(d.end_date)}</p>`).join('')||'<p>No dates currently blocked.</p>':'<p>Log in to check availability.</p>'}</div></section></div>`);
     }
     const guard=requireAccount();if(guard)return guard;
     if(path==='/messages')return messagesPage(params.get('booking'));
@@ -430,7 +487,7 @@
     if(warning)warning.hidden=!blocked;
     if(button){button.disabled=blocked;button.textContent=blocked?'Verification required':session?'Send booking request':'Log in to request';}
   }
-  function quote(){const form=document.querySelector('[data-live-form="request"]');if(!form)return;const d=new FormData(form),n=rentalDayCount(d.get('start_date'),d.get('end_date'));updateBookingVerification(form,d);const out=form.querySelector('[data-quote]');if(!n||n<1){out.textContent='Choose a valid rental period.';return}const charter=n*Number(form.dataset.price),fee=serviceFee(charter),skipperExtra=d.get('skipper')==='with'&&form.dataset.skipperExtra==='true'?n*Number(form.dataset.skipperFee||0):0;out.innerHTML=`<p>${n} ${n===1?'day':'days'} × ${money(form.dataset.price)}: ${money(charter)}</p><p>Service fee: ${money(fee)}</p><p><strong>Booking quote: ${money(charter+fee)}</strong></p>${skipperExtra>0?`<p class="fleet-quote-extra">Skipper payable at check-in: <strong>${money(skipperExtra)}</strong> · cash or card, paid directly (no platform commission).</p>`:d.get('skipper')==='with'&&form.dataset.withoutSkipper==='false'?'<p class="fleet-quote-extra">Skipper included in the boat price.</p>':''}`;}
+  function quote(){const form=document.querySelector('[data-live-form="request"]');if(!form)return;const d=new FormData(form),n=rentalDayCount(d.get('start_date'),d.get('end_date'));updateBookingVerification(form,d);const out=form.querySelector('[data-quote]');if(!n||n<1){out.textContent='Choose a valid rental period.';return}const charter=n*Number(form.dataset.price),fee=serviceFee(charter),skipperExtra=d.get('skipper')==='with'&&form.dataset.skipperExtra==='true'?n*Number(form.dataset.skipperFee||0):0;out.innerHTML=`<p>${n} ${n===1?'day':'days'} × ${money(guestDailyRate(form.dataset.price))} / day including platform fee</p><p>Boat rental: ${money(charter)}</p><p>Get By Boat fee (9%): ${money(fee)}</p><p><strong>Total booking price: ${money(charter+fee)}</strong></p>${skipperExtra>0?`<p class="fleet-quote-extra">Skipper payable at check-in: <strong>${money(skipperExtra)}</strong> · cash or card, paid directly (no platform commission).</p>`:d.get('skipper')==='with'&&form.dataset.withoutSkipper==='false'?'<p class="fleet-quote-extra">Skipper included in the boat price.</p>':''}`;}
   const verificationFileTypes={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','application/pdf':'pdf'};
   function safeVerificationFile(file){if(!file?.size||file.size>5242880||!verificationFileTypes[file.type])throw Error('Upload each required document as JPEG, PNG, WebP or PDF, no larger than 5 MB.');}
   function syncCalendarSelection(){
@@ -449,8 +506,11 @@
     const first=form.querySelector('[name="start_date"]'),last=form.querySelector('[name="end_date"]');
     if(first)first.value=start;
     if(last)last.value=end;
+    const firstDisplay=form.querySelector('[data-euro-date="start_date"]'),lastDisplay=form.querySelector('[data-euro-date="end_date"]');
+    if(firstDisplay)firstDisplay.value=euroDate(start);
+    if(lastDisplay)lastDisplay.value=euroDate(end);
     const message=form.querySelector('[data-feedback]');
-    if(message)message.textContent=selection.invalid?'This range contains reserved, requested or blocked dates. Choose another range.':`Selected ${start} → ${end}. Confirm below to block ${start===end?'this day':'these dates'}.`;
+    if(message)message.textContent=selection.invalid?'This range contains reserved, requested or blocked dates. Choose another range.':`Selected ${euroRange(start,end)}. Confirm below to block ${start===end?'this day':'these dates'}.`;
     const submit=form.querySelector('button[type="submit"]');
     if(submit)submit.disabled=selection.invalid;
   }
@@ -490,12 +550,27 @@
     const day=event.target.closest?.('[data-calendar-date]');
     if(day){event.preventDefault();pickCalendarDay(day);}
   });
-  document.addEventListener('input',e=>{if(e.target.closest('[data-live-form="request"]'))quote()});
+  document.addEventListener('input',e=>{
+    if(e.target.closest('[data-live-form="request"]'))quote();
+    const euroName=e.target.dataset?.euroDate;
+    if(euroName){
+      const form=e.target.closest('[data-live-form="block"]'),hidden=form?.querySelector(`[name="${euroName}"]`);
+      if(hidden)hidden.value=parseEuroDate(e.target.value);
+      calendarSelection=null;
+      for(const day of document.querySelectorAll?.('[data-calendar-date]')||[]){day.classList.remove('is-selected','is-invalid');day.setAttribute('aria-pressed','false');}
+      const button=form?.querySelector('button[type="submit"]');
+      if(button)button.disabled=false;
+    }
+    if(e.target.name==='price'){
+      const form=e.target.closest('[data-live-form="boat"]'),preview=form?.querySelector('[data-guest-price-preview]');
+      if(preview)preview.innerHTML=`Guests see <strong>${money(guestDailyRate(Number(e.target.value)||0))} / day</strong> (your rate + 9% Get By Boat fee).`;
+    }
+  });
   document.addEventListener('change',e=>{
     if(e.target.closest('[data-live-form="request"]'))quote();
     const boat=e.target.closest('[data-live-form="boat"]');
     if(boat)updateOwnerSkipperFee(boat);
-    if(e.target.closest('[data-live-form="block"]')&&e.target.matches?.('input[type="date"]')){
+    if(e.target.closest('[data-live-form="block"]')&&e.target.matches?.('[data-euro-date]')){
       calendarSelection=null;
       for(const day of document.querySelectorAll?.('[data-calendar-date]')||[]){day.classList.remove('is-selected','is-invalid');day.setAttribute('aria-pressed','false');}
       const blockForm=e.target.closest('[data-live-form="block"]');
@@ -641,14 +716,14 @@
     if(kind==='boat'){
       if(profile?.account_type!=='owner')throw Error('Only boat owner accounts can create listings.');
       if(f.querySelectorAll){
-        for(let step=1;step<=4;step++)if(!validateOwnerBoatStep(f,step))throw Error('Complete the required fields before saving your boat.');
+        for(let step=1;step<=3;step++)if(!validateOwnerBoatStep(f,step))throw Error('Complete the required fields before saving your boat.');
       }
       if(d.get('published')==='on'&&ownerVerificationState()!=='approved'&&!f.dataset.id)throw Error('Verify your owner account before publishing a new listing.');
       const withSkipper=d.get('with_skipper')==='on',withoutSkipper=d.get('without_skipper')==='on';
       if(!withSkipper&&!withoutSkipper)throw Error('Offer at least one rental option: with or without skipper.');
       const skipperFee=withSkipper?Number(d.get('skipper_fee_per_day')):0;
       if(!Number.isFinite(skipperFee)||(withSkipper&&skipperFee<=0)||skipperFee<0||skipperFee>10000)throw Error('Enter a skipper price per day greater than €0 (maximum €10,000).');
-      const specNames=['engine_hp','length_m','width_m','draft_m','build_year','fuel_lph','speed_knots','crew','tender_hp','renovated_year'];
+      const specNames=['engine_hp','length_m','width_m','draft_m','build_year','fuel_lph','speed_knots','crew'];
       const specs={};
       for(const name of specNames){
         const raw=String(d.get('spec_'+name)||'').trim();
@@ -657,16 +732,17 @@
         if(!Number.isFinite(number)||number<0||number>50000)throw Error('Check the technical specification values.');
         specs[name]=number;
       }
-      const engineType=String(d.get('spec_engine_type')||''),offshore=String(d.get('spec_offshore')||'');
-      if(!['','outboard','inboard','electric','none','other'].includes(engineType)||!['','yes','no'].includes(offshore))throw Error('Choose valid technical specification options.');
+      const engineType=String(d.get('spec_engine_type')||'');
+      if(!['','outboard','inboard','electric','none','other'].includes(engineType))throw Error('Choose valid technical specification options.');
       if(engineType)specs.engine_type=engineType;
-      if(offshore)specs.offshore=offshore;
       const insuranceType=String(d.get('insurance_type')||'not_specified');
       if(!['not_specified','none','third_party','comprehensive'].includes(insuranceType))throw Error('Choose a valid insurance type.');
       const deposit=Number(d.get('security_deposit')||0);
       if(!Number.isFinite(deposit)||deposit<0||deposit>100000)throw Error('Enter a refundable security deposit between €0 and €100,000.');
       let imageUrl;const file=d.get('photo');if(file?.size){if(file.size>5242880||!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('Choose a JPEG, PNG or WebP under 5 MB.');const key=`${session.user.id}/${crypto.randomUUID()}.${{'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[file.type]}`;check(await client.storage.from('boat-photos').upload(key,file,{contentType:file.type,upsert:false}));imageUrl=client.storage.from('boat-photos').getPublicUrl(key).data.publicUrl;}
-      const value={owner_id:session.user.id,name:String(d.get('name')).trim(),country:String(d.get('country')).trim(),location:String(d.get('location')).trim(),type:d.get('type'),price:Number(d.get('price')),guests:Number(d.get('guests')),description:d.get('description'),published:d.get('published')==='on',with_skipper:withSkipper,without_skipper:withoutSkipper,skipper_fee_per_day:skipperFee,specifications:specs,insurance_type:insuranceType,security_deposit:deposit,...(imageUrl?{photo_url:imageUrl}:{})};
+      const pickupLocation=String(d.get('pickup_location')||d.get('location')||'').trim();
+      if(!pickupLocation||pickupLocation.length>240)throw Error('Enter a pickup address of up to 240 characters.');
+      const value={owner_id:session.user.id,name:String(d.get('name')).trim(),country:String(d.get('country')).trim(),location:String(d.get('location')).trim(),pickup_location:pickupLocation,type:d.get('type'),price:Number(d.get('price')),guests:Number(d.get('guests')),description:d.get('description'),published:d.get('published')==='on',with_skipper:withSkipper,without_skipper:withoutSkipper,skipper_fee_per_day:skipperFee,specifications:specs,insurance_type:insuranceType,security_deposit:deposit,...(imageUrl?{photo_url:imageUrl}:{})};
       const saved=check(await(f.dataset.id?client.from('boats').update(value).eq('id',f.dataset.id).select().single():client.from('boats').insert(value).select().single()));
       const allowedFiles={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
       for(const docType of ['insurance','ownership']){
@@ -697,6 +773,7 @@
     }
     if(kind==='message'){if(!session)throw Error('Please log in to send a message.');const content=String(d.get('content')||'').trim();if(!content||content.length>2000)throw Error('Write a message of up to 2,000 characters.');const message=check(await client.from('booking_messages').insert({booking_id:f.dataset.id,sender_id:session.user.id,content}).select().single());notifyBookingEmail('message',f.dataset.id,message.id);render();toast('Message sent.');return}
     if(kind==='block'){
+      if(!rentalDayCount(d.get('start_date'),d.get('end_date')))throw Error('Use valid dates in DD.MM.YYYY format.');
       if(d.get('end_date')<d.get('start_date'))throw Error('Last day must be on or after the first day.');
       if(String(d.get('start_date'))<today())throw Error('Choose a current or future date.');
       if(calendarUnavailable.some(r=>r.start<=d.get('end_date')&&r.end>=d.get('start_date')))throw Error('This range includes unavailable dates. Choose a different period.');
@@ -717,6 +794,40 @@
       } catch(error) {if(feedback)feedback.textContent=error.message||'Sign-in could not start. Please try again.';else throw error;}
       break;
     }case 'refresh':await current();render();break;case 'auth-mode':authEmail=document.querySelector('[name="email"]')?.value||authEmail;authMode=authMode==='login'?'signup':'login';render();break;case 'logout':case 'logout-owner':{const createOwner=b.dataset.live==='logout-owner';check(await client.auth.signOut());session=null;profile=null;authStep='email';authEmail='';authNext=createOwner?'#/owner':'#/dashboard';ownerIntent=createOwner;window.GBB_ACCOUNT_LINK=null;window.GBB_ACCOUNT_ROLE=null;location.hash=loginLink(authNext);render();break}case 'reset':{const email=document.querySelector('[name="email"]')?.value;if(!email)throw Error('Enter your email address first.');check(await client.auth.resetPasswordForEmail(email,{redirectTo:authRedirect()}));toast('Check your email for the password reset link.');break}case 'accept':case 'decline':case 'cancel':{const action=b.dataset.live;const booking=check(await client.from('bookings').update({status:{accept:'awaiting_payment',decline:'declined',cancel:'cancelled'}[action]}).eq('id',b.dataset.id).select().single());if(action==='accept'||action==='decline')notifyBookingEmail(action==='accept'?'owner_accepted':'owner_declined',booking.id);render();break}case 'unblock':check(await client.from('boat_blocks').delete().eq('id',b.dataset.id).select().single());render();break}}catch(err){toast(err.message||'Please try again.')}finally{b.disabled=false}});
+  document.addEventListener('click',event=>{
+    const month=event.target.closest?.('[data-calendar-month]');
+    if(month&&calendarContext){
+      event.preventDefault();
+      const {boat,bookings,blocks}=calendarContext,panel=document.querySelector('.fleet-calendar-panel');
+      if(!panel)return;
+      const selected=month.dataset.calendarMonth;
+      panel.innerHTML=calendarMonthContent(boat,bookings,blocks,selected);
+      if(typeof history!=='undefined'&&history.replaceState)history.replaceState(null,'',`${location.pathname}${location.search}#/owner?view=calendar&boat=${encodeURIComponent(boat.id)}&month=${selected}`);
+      syncCalendarSelection();
+      return;
+    }
+    const both=event.target.closest?.('[data-rental-both]');
+    if(both){
+      event.preventDefault();
+      const form=both.closest('[data-live-form="boat"]');
+      if(!form)return;
+      const withSkipper=form.querySelector('[name="with_skipper"]'),withoutSkipper=form.querySelector('[name="without_skipper"]');
+      if(withSkipper)withSkipper.checked=true;
+      if(withoutSkipper)withoutSkipper.checked=true;
+      updateOwnerSkipperFee(form);
+      return;
+    }
+    const pickup=event.target.closest?.('[data-pickup-preview]');
+    if(pickup){
+      event.preventDefault();
+      const form=pickup.closest('[data-live-form="boat"]'),container=form?.querySelector('[data-pickup-map]');
+      if(!container)return;
+      const address=String(form.querySelector('[name="pickup_location"]')?.value||'').trim();
+      if(!address){container.textContent='Enter the pickup address to see the map.';return;}
+      const query=[address,form.querySelector('[name="location"]')?.value,form.querySelector('[name="country"]')?.value].filter(Boolean).join(', ');
+      container.innerHTML=`<iframe title="Boat pickup location map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${esc(pickupMapUrl(query))}"></iframe>`;
+    }
+  });
   document.addEventListener('click',async event=>{
     const button=event.target.closest?.('[data-live="test-email"]');
     if(!button||button.dataset?.live!=='test-email')return;

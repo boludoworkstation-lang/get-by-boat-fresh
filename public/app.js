@@ -243,12 +243,10 @@ function rentalDayCount(start,end){
  if(!Number.isFinite(first)||!Number.isFinite(last)||last<first)return null;
  return Math.round((last-first)/86400000)+1;
 }
-// Service fee schedule: interpolate between the supplied examples; cap at EUR 149.
+// Get By Boat adds a fixed 9% to the owner's net charter rate.
 function serviceFee(charterPrice){
  if(!Number.isFinite(charterPrice)||charterPrice<=0)return 0;
- const points=[[0,0],[800,30],[2400,57],[6000,111],[19600,149]];
- for(let i=1;i<points.length;i++){const [upper,fee]=points[i];if(charterPrice<=upper){const [lower,previous]=points[i-1];return Math.round((previous+(charterPrice-lower)*(fee-previous)/(upper-lower))*100)/100}}
- return 149;
+ return Math.round(charterPrice*0.09*100)/100;
 }
 const rentalMoney=n=>'€'+new Intl.NumberFormat('en-IE',{minimumFractionDigits:0,maximumFractionDigits:2}).format(n);
 function rentalPriceSummary(b){
