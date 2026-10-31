@@ -63,7 +63,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
  html=await e.route('#/account?tab=information');assert.match(html,/Owner account/);assert.match(html,/Personal profile/);assert.match(html,/Business & verification/);assert.match(html,/Security/);assert.doesNotMatch(html,/href="#\/account\?tab=payouts"|Owner verification/);
  html=await e.route('#/account?tab=business');assert.match(html,/data-live-form="owner-business"/);assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/data-live-form="owner-document"/);assert.match(html,/data-live-form="owner-submit"/);assert.match(html,/France · SIRET/);assert.match(html,/Business website \(required\)/);assert.equal((html.match(/PUBLISHING REQUIREMENTS/g)||[]).length,1);assert.match(html,/data-live="owner-jump"/);
- html=await e.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);assert.match(html,/name="published"[^>]*disabled/);
+ html=await e.route('#/owner?edit=new');assert.match(html,/You can save a draft now/);assert.match(html,/name="published"[^>]*disabled/);
  const ownerPdf={size:2400,type:'application/pdf'};
  await e.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://bateaux.example',registered_address:'12 Quai de Paris, Marseille, France'});
  assert.equal(e.state.ownerRequest.business_country,'FR');assert.equal(e.state.ownerRequest.application_state,'draft');assert.equal(e.state.uploads.length,0);
@@ -86,16 +86,16 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  // Editing a single approved field returns the application to draft without new uploads.
  await verifiedOwner.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://newcompany.example',registered_address:'12 Quai de Paris, Marseille, France'});
  assert.equal(verifiedOwner.state.uploads.length,0);assert.equal(verifiedOwner.state.ownerRequest.application_state,'draft');
- html=await verifiedOwner.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);
+ html=await verifiedOwner.route('#/owner?edit=new');assert.match(html,/You can save a draft now/);
  const changedOwnerRequest={...pendingOwnerRequest,business_website:'https://newcompany.example'};
  let changedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:changedOwnerRequest,ownerReview:reviewer.state.ownerReview});
- html=await changedOwner.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);
+ html=await changedOwner.route('#/owner?edit=new');assert.match(html,/You can save a draft now/);
  html=await e.route('#/listing/boat-1');assert.match(html,/Owner account · bookings unavailable/);assert.doesNotMatch(html,/data-live-form="request"|Save to favourites/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'without'},{id:'boat-1'});
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);assert.match(e.feedback.textContent,/Owner accounts cannot rent boats/);
  await e.submit('profile',{first_name:'Maja',last_name:'Perić'},{accountType:'customer',next:'#/bookings'});assert.equal(e.state.profile.account_type,'owner');assert.match(e.feedback.textContent,/Account roles cannot be changed/);
  html=await e.route('#/bookings');assert.match(html,/Owner accounts cannot rent boats/);
- html=await e.route('#/owner');assert.match(html,/Your fleet/);
+ html=await e.route('#/owner');assert.match(html,/Your listings/);
  // Google supplies a full name: a customer profile is created without an extra form.
  e=await environment({hash:'#/dashboard',user:{id:'google-user',user_metadata:{given_name:'Luka',family_name:'Kovač'}},profile:null});
  assert.equal(e.state.profile.account_type,'customer');assert.equal(e.state.profile.display_name,'Luka Kovač');
@@ -153,10 +153,16 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(e.feedback.textContent,/does not offer/);assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
  // Owners must select at least one option, and both values are saved to the listing.
  e=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'}});
- html=await e.route('#/owner?edit=boat-1');assert.match(html,/Rental options/);
+ html=await e.route('#/owner?edit=boat-1');assert.match(html,/Available rental options/);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null});
  assert.match(e.feedback.textContent,/at least one rental option/);assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on'});
  assert.equal(e.state.writes.filter(x=>x.table==='boats').length,1);assert.equal(e.state.writes.at(-1).value.with_skipper,true);assert.equal(e.state.writes.at(-1).value.without_skipper,true);
+ await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on',skipper_fee_per_day:'120'});
+ assert.equal(e.state.writes.at(-1).value.skipper_fee_per_day,120);
+ await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',skipper_fee_per_day:'200'});
+ assert.equal(e.state.writes.at(-1).value.skipper_fee_per_day,0);
+ e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true,skipper_fee_per_day:120}});
+ html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);
  console.log('PASS: customer/owner journeys, secure staff verification, no-skipper licence gate, skipper bookings without renter documents, rejected unavailable modes, and owner rental options.');
 })().catch(e=>{console.error(e);process.exitCode=1});
