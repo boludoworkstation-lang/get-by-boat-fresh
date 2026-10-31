@@ -200,7 +200,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  // A customer with no verification can rent WITH a skipper, but not without one.
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true}});
  html=await e.route('#/listing/boat-1');assert.match(html,/Rent with skipper/);assert.match(html,/Rent without skipper/);assert.match(html,/name="skipper"/);
- assert.match(html,/value="with" selected/);assert.match(html,/data-skipper-verification hidden/);assert.match(html,/Request to book/);
+ assert.match(html,/value="with" checked/);assert.match(html,/data-skipper-verification hidden/);assert.match(html,/Request to book/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'with'},{id:'boat-1',withSkipper:'true',withoutSkipper:'true'});
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,1);assert.equal(e.state.writes.at(-1).value.with_skipper,true);
  html=await e.route('#/listing/boat-1?skipper=without');assert.match(html,/data-skipper-verification\s*>/);assert.match(html,/Verify your licence to book<\/button>/);
@@ -208,7 +208,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,1);
  // The browser refuses a mode not offered by the boat, even with tampered form data.
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:false,without_skipper:true}});
- html=await e.route('#/listing/boat-1');assert.doesNotMatch(html,/<option value="with"/);
+ html=await e.route('#/listing/boat-1');assert.doesNotMatch(html,/name="skipper" value="with"/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'with'},{id:'boat-1',withSkipper:'false',withoutSkipper:'true'});
  assert.match(e.feedback.textContent,/does not offer/);assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
  // Owners must select at least one option, and both values are saved to the listing.
@@ -219,12 +219,18 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(e.feedback.textContent,/at least one rental option/);assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on'});
  assert.match(e.feedback.textContent,/skipper price per day/);assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);
- await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on',skipper_fee_per_day:'120'});
+ await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on',skipper_fee_per_day:'120',spec_build_year:'2015',equipment:['bimini','gps','paddleboard']});
  assert.equal(e.state.writes.filter(x=>x.table==='boats').length,1);assert.equal(e.state.writes.find(x=>x.table==='boats').value.with_skipper,true);assert.equal(e.state.writes.find(x=>x.table==='boats').value.without_skipper,true);
  assert.equal(e.state.writes.find(x=>x.table==='boats').value.skipper_fee_per_day,120);
+ assert.equal(e.state.writes.find(x=>x.table==='boats').value.specifications.build_year,2015);
+ assert.deepEqual(Array.from(e.state.writes.find(x=>x.table==='boats').value.specifications.equipment),['bimini','gps','paddleboard']);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',skipper_included_ack:'on'});
  assert.equal(e.state.writes.filter(x=>x.table==='boats').at(-1).value.skipper_fee_per_day,0);
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true,skipper_fee_per_day:120}});
- html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);assert.match(html,/\(\+€120\.00 \/ day\)/);
+ e=await environment({boatOptions:{specifications:{build_year:2015,equipment:['bimini','gps','paddleboard']},guests:8,type:'RIB'}});
+ html=await e.route('#/listing/boat-1');assert.match(html,/Year built<\/dt><dd>2015<\/dd>/);assert.doesNotMatch(html,/2,015/);assert.match(html,/Boat type<\/dt><dd>RIB/);assert.match(html,/Maximum passengers<\/dt><dd>8/);assert.match(html,/Equipment &amp; amenities/);assert.match(html,/Bimini/);assert.match(html,/Paddleboard/);
+ e=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'},boatOptions:{specifications:{equipment:['bimini','gps']}}});
+ html=await e.route('#/owner?edit=boat-1');assert.match(html,/name="equipment" value="bimini" checked/);assert.match(html,/name="equipment" value="gps" checked/);
  console.log('PASS: customer/owner journeys, secure staff verification, no-skipper licence gate, skipper bookings without renter documents, rejected unavailable modes, and owner rental options.');
 })().catch(e=>{console.error(e);process.exitCode=1});

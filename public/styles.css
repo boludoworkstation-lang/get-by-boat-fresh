@@ -636,6 +636,21 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .listing-spec-grid dt{color:#647d87;min-width:0}
 .listing-spec-grid dd{margin:0;font-weight:750;color:#214653;text-align:right;overflow-wrap:anywhere}
 .listing-detail-empty{border:1px solid #dfebef;background:#f6fafb;border-radius:12px;padding:14px 16px;margin:0;color:#67818b;font-size:13px;line-height:1.6}
+.listing-equipment-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:22px;row-gap:19px}
+.listing-equipment-group{border:1px solid #e1edef;border-radius:14px;background:#fbfdfd;padding:16px 17px}
+.listing-equipment-group h3{font-size:14px;color:#244b58;margin:0 0 12px}
+.listing-equipment-group ul{list-style:none;margin:0;padding:0;display:grid;gap:11px}
+.listing-equipment-group li{display:flex;align-items:flex-start;gap:9px;color:#55727c;font-size:13px;line-height:1.4}
+.listing-equipment-group li .icon{color:#169e9f;width:15px;height:15px;flex:none;margin-top:1px}
+.fleet-equipment-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.fleet-equipment-category{border:1px solid #d9e8ed;border-radius:13px;background:#fbfdfd;overflow:hidden;min-width:0}
+.fleet-equipment-category summary{cursor:pointer;padding:14px 16px;font-size:14px;font-weight:750;color:#244c59;display:flex;justify-content:space-between;gap:10px;align-items:center;list-style:none}
+.fleet-equipment-category summary::-webkit-details-marker{display:none}
+.fleet-equipment-category summary span{font-size:11px;font-weight:600;color:#688a93;white-space:nowrap}
+.fleet-equipment-options{border-top:1px solid #e7eff1;padding:13px;display:grid;gap:5px}
+.fleet-equipment-options label{display:flex;align-items:center;gap:9px;padding:7px 5px;border-radius:7px;font-size:12px;color:#426773;cursor:pointer}
+.fleet-equipment-options label:hover{background:#f0f8f9}
+.fleet-equipment-options input{accent-color:#08a1b7;width:16px;height:16px;flex:none}
 .listing-condition-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
 .listing-condition-grid>div{background:#f7fbfc;border:1px solid #e3edef;border-radius:14px;padding:18px}
 .listing-condition-grid h3{margin:0 0 14px;color:#244b58;font-size:15px}
@@ -653,12 +668,22 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .listing-booking-card button[type=submit]{width:100%;min-height:49px;display:flex;justify-content:center;margin:17px 0 9px}
 .listing-booking-card>small{display:block;font-size:11px;line-height:1.6;color:#708791}
 .listing-booking-card .listing-skipper-highlight{display:block;margin:12px 0;border-radius:9px}
+.listing-rental-choices{border:0;margin:0 0 18px;padding:0;min-width:0;display:grid;gap:9px}
+.listing-rental-choices legend{font-size:12px;color:#254b58;font-weight:750;margin-bottom:10px;padding:0}
+.listing-booking-card .listing-rental-choice{display:flex;align-items:center;gap:11px;border:1px solid #d8e8eb;border-radius:13px;background:#fff;padding:13px 12px;cursor:pointer;transition:border-color .15s,background-color .15s,box-shadow .15s;color:#204552}
+.listing-rental-choice:has(input:checked){border-color:#00a2bc;background:#eef9fb;box-shadow:0 0 0 2px #bcebf3}
+.listing-rental-choice>input{accent-color:#009db7;min-height:auto;width:17px;height:17px;flex:none;margin:0}
+.listing-rental-choice>span{flex:1;min-width:0;display:grid;gap:3px}
+.listing-rental-choice strong{font-size:13px;color:#194453;line-height:1.2}
+.listing-rental-choice small{font-size:11px;color:#6d8790;font-weight:500;line-height:1.45}
+.listing-rental-extra{font-size:11px;color:#087f96;text-align:right;max-width:96px;line-height:1.4}
+.listing-skipper-payment{color:#6f8791;font-size:11px;line-height:1.45;margin:2px 0 0}
 .listing-map-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:21px 21px 16px}
 .fleet-public-pickup{margin:26px 0 0!important;background:white;overflow:hidden;border:1px solid #dce9ec;border-radius:16px}
 .fleet-public-pickup .listing-map-heading h3{padding:0;font-size:20px;margin:0 0 7px;color:#173e4b}
 .fleet-public-pickup .listing-map-heading p{padding:0;display:flex;gap:6px;align-items:center;color:#4f707b;font-size:13px}
 .listing-location-badge{display:inline-flex;white-space:nowrap;border:1px solid #c8e4ed;background:#eaf8fb;color:#0b829c;border-radius:99px;padding:6px 10px;font-size:11px;font-weight:750}
-.fleet-public-map{width:100%;height:300px;background:linear-gradient(130deg,#d9eced,#c6e6ef)}
+.fleet-public-map{width:100%;height:390px;background:linear-gradient(130deg,#d9eced,#c6e6ef)}
 .fleet-public-pickup p.listing-map-disclaimer{padding:14px 20px;font-size:12px;color:#69838b;line-height:1.55}
 .listing-map-link{display:inline-flex;padding:17px 20px;align-items:center;gap:7px;color:#0086a0;font-weight:750;font-size:13px;text-decoration:none}
 .listing-map-link:hover{text-decoration:underline}
@@ -675,4 +700,4 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .fleet-pickup-actions button{padding:10px 14px!important}
 .live-search input[list]{width:100%}
 @media(max-width:880px){.listing-layout{grid-template-columns:1fr;gap:24px}.listing-booking{position:static;grid-row:1}.listing-cover .live-photo,.listing-cover .live-placeholder{height:300px}.live-listing-page>h1{font-size:32px}}
-@media(max-width:550px){.listing-condition-grid,.listing-spec-grid{grid-template-columns:1fr;gap:10px}.listing-spec-grid{gap:0}.listing-map-heading{flex-direction:column}.fleet-public-map{height:260px}.listing-booking-card{padding:22px 18px}.listing-cover .live-photo,.listing-cover .live-placeholder{height:220px}.listing-location-intro{gap:5px}.live-listing-page>h1{font-size:27px}}
+@media(max-width:550px){.listing-condition-grid,.listing-spec-grid,.listing-equipment-groups,.fleet-equipment-categories{grid-template-columns:1fr;gap:10px}.listing-spec-grid{gap:0}.listing-map-heading{flex-direction:column}.fleet-public-map{height:285px}.listing-booking-card{padding:22px 18px}.listing-cover .live-photo,.listing-cover .live-placeholder{height:220px}.listing-location-intro{gap:5px}.live-listing-page>h1{font-size:27px}}
