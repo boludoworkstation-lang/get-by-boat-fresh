@@ -219,9 +219,11 @@
   };
   const publicTownCenters={'murter,croatia':[43.82,15.59],'sydney,australia':[-33.87,151.21],'split,croatia':[43.51,16.44],'dubrovnik,croatia':[42.65,18.09],'zadar,croatia':[44.12,15.23],'trogir,croatia':[43.52,16.25]};
   const publicTownPoint=b=>{
+    const town=publicTownCenters[`${String(b.location||'').toLowerCase().trim()},${String(b.country||'').toLowerCase().trim()}`];
+    if(town)return town;
     const lat=Number(b.city_map_lat),lng=Number(b.city_map_lng);
     if(b.city_map_lat!=null&&b.city_map_lng!=null&&validPickupCoordinates(lat,lng))return [lat,lng];
-    return publicTownCenters[`${String(b.location||'').toLowerCase().trim()},${String(b.country||'').toLowerCase().trim()}`]||countryMapCenters[b.country]?.slice(0,2)||countryMapCenters.Croatia.slice(0,2);
+    return countryMapCenters[b.country]?.slice(0,2)||countryMapCenters.Croatia.slice(0,2);
   };
   const terrainTiles=map=>window.L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,subdomains:'abc',attribution:'Terrain: &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> · &copy; OpenStreetMap contributors'}).addTo(map);
   const guestMapTiles=map=>window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
@@ -374,7 +376,7 @@
     if(!container||!window.L)return;
     const lat=Number(container.dataset.lat),lng=Number(container.dataset.lng),exact=container.dataset.exact==='true';
     if(!validPickupCoordinates(lat,lng))return;
-    const map=window.L.map(container,{scrollWheelZoom:false}).setView([lat,lng],exact?12:9);
+    const map=window.L.map(container,{scrollWheelZoom:false}).setView([lat,lng],exact?12:11);
     guestMapTiles(map);
     if(exact)window.L.marker([lat,lng]).addTo(map);
     else window.L.circle([lat,lng],{radius:5000,color:'#0588c7',weight:2.5,fillColor:'#30a6df',fillOpacity:.22,interactive:false}).addTo(map);
@@ -699,7 +701,7 @@
         :`<div class="listing-rental-fixed">${hasSkipper?'✓ Professional skipper included in the boat price':'Self-drive only · skipper not available'}</div><input type="hidden" name="skipper" value="${hasSkipper?'with':'without'}">`;
       const warning=`<div class="verification-booking-block" data-skipper-verification ${needsVerification?'':'hidden'}><strong>${icon('shield')} Licence verification required</strong><p>Renting without a skipper requires staff-approved ID/passport and boat driving licence, valid through the rental dates. ${esc(verificationLabel(verificationState()))}.</p><a href="#/account?tab=verification">Go to verification ${icon('arrow')}</a></div>`;
       const included=hasSkipper&&!hasBareboat;
-      const rentalHighlights=`<div class="listing-highlight-row">${hasSkipper?`<span>${icon('ship')} Skipper ${included?'included':`available ${skipperPriceLabel}`}</span>`:''}${hasBareboat?`<span>${icon('check')} Self-drive available</span>`:''}</div>`;
+      const rentalHighlights=`<div class="listing-highlight-row">${hasBareboat?`<span>${icon('check')} ${b.licence_required===false?'No license required':'License required'}</span>`:''}${hasSkipper?`<span>${icon('ship')} Skipper ${included?'included':`available ${skipperPriceLabel}`}</span>`:''}</div>`;
       const conditions=`<section class="listing-conditions"><h2>Conditions</h2><div class="listing-condition-grid"><div><h3>Check-in & check-out</h3><dl><div><dt>Day rental check-in</dt><dd>${esc(boatClock(b.check_in_time,'09:00'))}</dd></div><div><dt>Day rental check-out</dt><dd>${esc(boatClock(b.check_out_time,'19:00'))}</dd></div></dl></div><div><h3>Boat rules</h3><dl><div><dt>Boat licence required</dt><dd>${b.licence_required===false?'No':'Yes'}</dd></div><div><dt>Pets allowed</dt><dd>${b.specifications?.pets_allowed===true?'Yes':'No'}</dd></div><div><dt>Minimum rental age</dt><dd>${Math.max(18,Number(b.minimum_rental_age)||18)} years</dd></div></dl></div></div></section>`;
       const bookingBox=isOwner?`<div class="live-card listing-booking-card"><span class="listing-price-caption">Your payout</span><h2>${money(b.price)} <small>/ day</small></h2><p>Guest price: ${money(guestDailyRate(b.price))} per day, fees included.</p><div class="verification-booking-block"><strong>Owner preview</strong><p>Owner accounts cannot rent their own boats. Use a customer account to book.</p></div><a class="btn" href="#/owner?edit=${esc(b.id)}">Edit listing</a></div>`:
         `<form data-live-form="request" data-id="${esc(b.id)}" data-price="${b.price}" data-unavailable="${esc(JSON.stringify(unavailable.map(({start_date,end_date})=>({start_date,end_date}))))}" data-check-in="${esc(boatClock(b.check_in_time,'09:00'))}" data-check-out="${esc(boatClock(b.check_out_time,'19:00'))}" data-with-skipper="${hasSkipper}" data-without-skipper="${hasBareboat}" data-skipper-fee="${Number(b.skipper_fee_per_day)||0}" data-skipper-extra="${hasBareboat&&hasSkipper}" data-verified="${verificationState()==='approved'}" data-licence-required="${b.licence_required!==false}" data-licence-expiry="${esc(verificationRequest?.licence_expiry||'')}" class="live-card live-form listing-booking-card"><span class="listing-price-caption">From</span><h2>${money(guestDailyRate(b.price))} <small>/ day</small></h2><p class="member-note">Full price shown, including booking fees. No payment is taken when you request.</p>${choices}${dateFields()}${field('Passengers','guests','number',selectedGuests,`required min="1" max="${b.guests}"`)}<div data-quote aria-live="polite"></div>${warning}<button class="btn" type="submit" ${needsVerification?'disabled':''}>${needsVerification?'Verify your licence to book':session?'Request to book':'Log in to request'}</button><p data-feedback role="status"></p><small>The owner will confirm availability before you pay.</small></form>`;

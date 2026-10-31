@@ -34,6 +34,10 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  html=await e.route('#/dashboard');assert.match(html,/member-sidebar/);assert.match(html,/Booking requests/);assert.match(html,/Welcome aboard/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Boating experience|List your boat|<footer|What should we call you/);
  html=await e.route('#/boats');assert.match(html,/€885\.53 \/ day/);assert.doesNotMatch(html,/platform fee|commission|service fee|processing allowance/i);
  html=await e.route('#/listing/boat-1');assert.match(html,/€885\.53 <small>\/ day<\/small>/);assert.doesNotMatch(html,/platform fee|commission|service fee|processing allowance/i);assert.doesNotMatch(html,/Unavailable dates/);assert.match(html,/data-public-map/);
+ assert.match(html,/Approximate 5 km area/);assert.match(html,/data-exact="false"/);assert.match(html,/blue circle shows the approximate town area/);assert.doesNotMatch(html,/Exact location unlocked/);
+ const sydneyEnvironment=await environment({boatOptions:{location:'Sydney',country:'Australia',city_map_lat:-33.9,city_map_lng:151.2}});
+ const sydneyHtml=await sydneyEnvironment.route('#/listing/boat-1');assert.match(sydneyHtml,/data-public-map data-lat="-33.87" data-lng="151.21" data-exact="false"/);
+
  assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
  html=await e.route('#/account');assert.match(html,/Personal information/);assert.match(html,/data-live-form="avatar"/);assert.doesNotMatch(html,/Boating experience/);
  html=await e.route('#/account?tab=experience');assert.match(html,/Personal information/);assert.doesNotMatch(html,/Boating experience|Your boat licences/);
@@ -241,6 +245,10 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.writes.filter(x=>x.table==='boats').at(-1).value.skipper_fee_per_day,0);
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true,skipper_fee_per_day:120}});
  html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);assert.match(html,/\(\+€120\.00 \/ day\)/);
+ assert.match(html,/License required/);assert.match(html,/Skipper available \(\+€120\.00 \/ day\)/);assert.doesNotMatch(html,/Self-drive available/);
+ const badgePosition=html.indexOf('listing-highlight-row');assert.ok(html.indexOf('License required',badgePosition)<html.indexOf('Skipper available',badgePosition));
+ e=await environment({boatOptions:{with_skipper:false,without_skipper:true,licence_required:false}});
+ html=await e.route('#/listing/boat-1');assert.match(html,/No license required/);assert.doesNotMatch(html,/Self-drive available/);
  e=await environment({boatOptions:{specifications:{build_year:2015,tank_capacity_l:150,pets_allowed:true,equipment:['bimini','gps','paddleboard']},guests:8,type:'RIB'}});
  html=await e.route('#/listing/boat-1');assert.match(html,/Year built<\/dt><dd>2015<\/dd>/);assert.doesNotMatch(html,/2,015/);assert.match(html,/Boat type<\/dt><dd>RIB/);assert.match(html,/Maximum passengers<\/dt><dd>8/);assert.match(html,/Tank capacity<\/dt><dd>150 L<\/dd>/);assert.match(html,/Equipment available on the RIB/);assert.match(html,/Bimini/);assert.match(html,/Paddle board/);assert.match(html,/Availability calendar/);assert.match(html,/Owner reviews/);
  assert.match(html,/Boat licence required<\/dt><dd>Yes<\/dd>.*Pets allowed<\/dt><dd>Yes<\/dd>.*Minimum rental age<\/dt><dd>18 years<\/dd>/);
