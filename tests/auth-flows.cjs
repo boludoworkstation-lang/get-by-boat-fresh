@@ -61,8 +61,8 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.profile.account_type,'owner');assert.equal(e.state.profile.display_name,'Maja Perić');
  html=await e.route('#/dashboard');assert.match(html,/YOUR OWNER SPACE/);assert.match(html,/My boats/);assert.doesNotMatch(html,/Everything you need for your next day at sea|Profile essentials|My bookings/);
  assert.doesNotMatch(html.match(/<header class="member-header">([\s\S]*?)<\/header>/)?.[1]||'',/Explore boats|How it works/);
- html=await e.route('#/account?tab=information');assert.match(html,/Personal information/);assert.match(html,/Business information/);assert.match(html,/Verification & documents/);assert.match(html,/Payout details/);assert.match(html,/Security/);assert.doesNotMatch(html,/Owner verification/);
- html=await e.route('#/account?tab=business');assert.match(html,/data-live-form="owner-business"/);assert.match(html,/France · SIRET/);assert.match(html,/Business website \(required\)/);
+ html=await e.route('#/account?tab=information');assert.match(html,/Owner account/);assert.match(html,/Personal profile/);assert.match(html,/Business & verification/);assert.match(html,/Security/);assert.doesNotMatch(html,/href="#\/account\?tab=payouts"|Owner verification/);
+ html=await e.route('#/account?tab=business');assert.match(html,/data-live-form="owner-business"/);assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/data-live-form="owner-document"/);assert.match(html,/data-live-form="owner-submit"/);assert.match(html,/France · SIRET/);assert.match(html,/Business website \(required\)/);assert.equal((html.match(/PUBLISHING REQUIREMENTS/g)||[]).length,1);assert.match(html,/data-live="owner-jump"/);
  html=await e.route('#/owner?edit=new');assert.match(html,/Only drafts can be saved/);assert.match(html,/name="published"[^>]*disabled/);
  const ownerPdf={size:2400,type:'application/pdf'};
  await e.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://bateaux.example',registered_address:'12 Quai de Paris, Marseille, France'});

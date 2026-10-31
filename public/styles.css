@@ -289,6 +289,35 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .owner-submit-form button[disabled]{opacity:.48;cursor:not-allowed}
 @media(max-width:1020px){.owner-documents-grid{grid-template-columns:1fr}.owner-document-head{min-height:0}}
 @media(max-width:700px){.owner-progress{grid-template-columns:1fr}}
+.owner-account-tabs{max-width:1000px;margin:0 auto 26px;gap:34px}
+.owner-account-tabs a{font-size:14px;font-weight:650;padding:15px 0 17px}
+.owner-workspace{max-width:1000px;margin:0 auto;padding-bottom:30px}
+.owner-verification-overview{max-width:none;background:linear-gradient(130deg,#f0f9fa,#fff 70%)!important;border-color:#d1e7eb!important;padding:34px}
+.owner-verification-overview h2{font-size:25px;letter-spacing:-.5px;margin-bottom:8px}
+.owner-verification-overview .verification-heading{gap:24px}
+.owner-progress{gap:12px;margin-top:25px}
+.owner-progress-step{width:100%;cursor:pointer;text-align:left;font:inherit;align-items:center;gap:13px;padding:16px;border-radius:10px;transition:background .15s,border-color .15s}
+.owner-progress-step:hover,.owner-progress-step:focus-visible{border-color:#49abb9;background:#eff9fa}
+.owner-progress-step>span:first-child{flex:none;display:grid;place-items:center;width:33px;height:33px;border-radius:50%;background:#e7eef0;color:#365f69;font-size:14px;font-weight:800}
+.owner-progress-step.complete>span:first-child{background:#c4eee1;color:#12634d}
+.owner-progress-step>span:last-child{font-size:13px;font-weight:750;line-height:1.3}
+.owner-progress-step small{display:block;color:#728a92;font-size:11px;font-weight:500;margin-top:4px}
+.owner-workspace-heading{margin:45px 0 28px}
+.owner-workspace-heading h2{font-size:23px;font-weight:720;margin:0 0 8px;color:#123f4b}
+.owner-workspace-heading p{margin:0;color:#69828a;font-size:13px;line-height:1.6}
+.owner-workflow-section{scroll-margin-top:110px;margin-bottom:35px}
+.owner-workflow-heading{display:flex;gap:15px;align-items:center;margin:0 0 16px}
+.owner-step-number{flex:none;width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:#dff5f8;color:#047e91;font-weight:800;font-size:14px}
+.owner-workflow-heading h2{font-size:19px;font-weight:750;margin:0 0 4px;color:#193f48}
+.owner-workflow-heading p{font-size:12px;color:#718891;margin:0;line-height:1.5}
+.owner-workflow-section>.profile-panel{max-width:none;width:100%;margin:0 0 18px;padding:28px 30px}
+.owner-workflow-section>.profile-panel.live-form{max-width:none}
+.owner-workflow-section>.profile-panel>h2:first-child{display:none}
+.owner-workflow-section .owner-submit-form{border:1px solid #b7e3e6;background:#f5fbfc;box-shadow:none}
+.owner-workflow-section .owner-submit-form>h2:first-child{display:block}
+.owner-workflow-section .owner-document-card label{overflow-wrap:anywhere}
+.owner-workflow-section .profile-panel .member-note{max-width:720px}
+@media(max-width:700px){.owner-verification-overview{padding:22px}.owner-account-tabs{gap:22px}.owner-account-tabs a{font-size:13px}.owner-workflow-section>.profile-panel{padding:20px 17px}.owner-workspace-heading{margin:32px 0 25px}}
 .verification-good,.verification-warning{border-radius:8px;padding:13px 16px;font-size:13px;line-height:1.7;margin:18px 0 0}
 .verification-good{background:#e9f9f0;color:#136d45}.verification-warning{background:#fff0e9;color:#935033}
 .verification-booking-block{border:1px solid #bbdfe5;border-radius:9px;background:#f0f9fa;padding:16px;margin:16px 0}

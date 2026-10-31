@@ -2,7 +2,7 @@
 (() => {
   let client, session, profile, epoch=0, recovery=false, authStep='email', authEmail='', authBackground=null, returnRoute='#/', ownerIntent=new URLSearchParams(location.search).get('owner')==='1';
   let authNext='#/dashboard', avatarUrl='',verificationRequest=null,verificationReview=null,verificationStaff=false;
-  let ownerVerificationRequest=null,ownerVerificationReview=null;
+  let ownerVerificationRequest=null,ownerVerificationReview=null,ownerScrollTarget='';
   let chatChannel=null,chatBookingId='';
   const safeNext=value=>{const v=String(value||'');return v.length<1500 && (/^#\/(dashboard|bookings|owner|account|favourites|staff|messages)$/.test(v)||/^#\/messages\?booking=[a-fA-F0-9-]{36}$/.test(v)||/^#\/listing\/[a-zA-Z0-9-]+(?:\?[^#]*)?$/.test(v))?v:'#/dashboard'};
   const loginLink=next=>'#/login?next='+encodeURIComponent(safeNext(next));
@@ -133,7 +133,7 @@
   function ownerProgress(){
     const v=ownerVerificationRequest||{},s=ownerVerificationState();
     const steps=[['Business information',!!(v.business_country&&v.legal_business_name&&v.tax_identifier&&v.registered_address&&v.business_website),'business'],['Payout details',!!(v.iban&&v.iban_holder),'payouts'],['Three verification documents',!!(v.registration_path&&v.identity_path&&v.iban_proof_path),'verification']];
-    return `<div class="profile-panel verification-intro"><div class="verification-heading"><div><span class="member-page-kicker">OWNER ACCOUNT</span><h2>Business verification</h2><p>Save your details and each document separately. When everything is ready, submit your application for staff review. New listings can be published after approval.</p></div><span class="verification-badge ${esc(s)}">${esc(verificationLabel(s))}</span></div><div class="owner-progress">${steps.map(([title,ready,target])=>`<a href="#/account?tab=${target}" class="owner-progress-step ${ready?'complete':''}"><span>${ready?'✓':'○'}</span>${title}</a>`).join('')}</div>${s==='approved'?'<p class="verification-good">Your business is approved. You can publish new boat listings. Changing approved information requires another review.</p>':''}${s==='pending'?'<p class="member-note">Your application has been submitted and is awaiting staff review. You can still edit drafts.</p>':''}${s==='rejected'&&ownerVerificationReview?.note?`<p class="verification-warning">Reviewer note: ${esc(ownerVerificationReview.note)}</p>`:''}</div>`;
+    return `<div class="profile-panel verification-intro owner-verification-overview"><div class="verification-heading"><div><span class="member-page-kicker">PUBLISHING REQUIREMENTS</span><h2>${s==='approved'?'Your business is verified':'Get your business ready to publish'}</h2><p>Complete these steps at your own pace. Save each step separately, then send everything for one staff review. You can create draft listings meanwhile.</p></div><span class="verification-badge ${esc(s)}">${esc(verificationLabel(s))}</span></div><div class="owner-progress" aria-label="Verification progress">${steps.map(([title,ready],i)=>`<button type="button" data-live="owner-jump" data-id="${['owner-business-details','owner-payout-details','owner-documents'][i]}" class="owner-progress-step ${ready?'complete':''}"><span aria-hidden="true">${ready?'✓':i+1}</span><span>${title}<small>${ready?'Saved':'To complete'}</small></span></button>`).join('')}</div>${s==='approved'?'<p class="verification-good">Your business is approved. You can publish listings. Changes to approved details or documents require another review.</p>':''}${s==='pending'?'<p class="member-note">Your application is awaiting staff review. If you make changes, remember to resubmit.</p>':''}${s==='rejected'&&ownerVerificationReview?.note?`<p class="verification-warning">Reviewer note: ${esc(ownerVerificationReview.note)}</p>`:''}</div>`;
   }
   function ownerBusinessForm(){
     const v=ownerVerificationRequest||{},code=v.business_country||'HR';
@@ -149,14 +149,22 @@
     const pieces=docs.map(([key,path,label])=>`<form class="owner-document-card live-form" data-live-form="owner-document" data-document="${key}" enctype="multipart/form-data"><div class="owner-document-head"><strong>${esc(label)}</strong><span class="verification-badge ${!v[path]?'missing':s==='approved'?'approved':'uploaded'}">${!v[path]?'Missing':s==='approved'?'Verified':'Uploaded'}</span></div>${key==='identity'?`<label>Document type<select name="identity_type"><option value="id_card" ${v.identity_type!=='passport'?'selected':''}>National ID card</option><option value="passport" ${v.identity_type==='passport'?'selected':''}>Passport</option></select></label>`:''}<label>${v[path]?'Replace document':'Select document'}<input type="file" name="document_file" accept="image/jpeg,image/png,image/webp,application/pdf" required></label><button class="btn live-secondary" type="submit">${v[path]?'Replace file':'Upload file'}</button><p data-feedback role="status"></p></form>`).join('');
     return ownerProgress()+`<section class="profile-panel"><h2>Verification & documents</h2><p class="member-note">Upload each document separately. You can replace one file without uploading the others again. Only authorised Get By Boat staff can review these private files. JPEG, PNG, WebP or PDF, up to 5 MB each.</p><div class="owner-documents-grid">${pieces}</div></section><form class="profile-panel live-form owner-submit-form" data-live-form="owner-submit"><h2>Send for staff review</h2><p class="member-note">You need complete business information, a business IBAN, all three documents and your legal profile name before submitting.</p><label class="live-check"><input type="checkbox" name="documents_own" required> I am authorised to represent the business and confirm all submitted information is accurate.</label><button class="btn" type="submit" ${!ownerComplete(v)||s==='approved'||s==='pending'?'disabled':''}>${s==='rejected'?'Resubmit for review':'Submit for review'}</button>${!ownerComplete(v)?'<p class="member-note">Complete the items above to enable submission.</p>':''}${s==='pending'?'<p class="member-note">Already submitted. You will be notified after review.</p>':''}<p data-feedback role="status"></p></form>`;
   }
+  function ownerBusinessWorkspace(){
+    const overview=ownerProgress();
+    const stages=[
+      ['01','Business information','Add the legal company or trade details, including the mandatory website.','owner-business-details',ownerBusinessForm()],
+      ['02','Payout details','Add the business bank account so the team can verify ownership.','owner-payout-details',ownerPayoutForm()],
+      ['03','Documents & review','Upload three private files separately, then submit one application.','owner-documents',ownerVerificationForm()]
+    ];
+    return `<div class="owner-workspace">${overview}<div class="owner-workspace-heading"><h2>Complete your business profile</h2><p>You do not need to finish everything today. Your saved information stays here until you're ready to submit.</p></div>${stages.map(([number,title,description,id,html])=>`<section id="${id}" class="owner-workflow-section"><div class="owner-workflow-heading"><span class="owner-step-number">${number}</span><div><h2>${title}</h2><p>${description}</p></div></div>${html.startsWith(overview)?html.slice(overview.length):html}</section>`).join('')}</div>`;
+  }
   function accountProfile(tab){
     const d=profile.details||{};
     const isOwner=profile.account_type==='owner';
     if(tab==='experience')tab='information';
-    let tabs=`<nav class="member-tabs" aria-label="Profile sections">${(isOwner?[['information','Personal information'],['business','Business information'],['verification','Verification & documents'],['payouts','Payout details'],['password','Security']]:[['verification','Verifications'],['information','Information'],['password','Password']]).map(([id,label])=>`<a href="#/account?tab=${id}" ${tab===id?'aria-current="page"':''}>${label}</a>`).join('')}</nav>`;
-    if(isOwner&&tab==='business')return tabs+ownerBusinessForm();
-    if(isOwner&&tab==='payouts')return tabs+ownerPayoutForm();
-    if(isOwner&&tab==='verification')return tabs+ownerVerificationForm();
+    if(isOwner&&['payouts','verification'].includes(tab))tab='business';
+    let tabs=`<nav class="member-tabs ${isOwner?'owner-account-tabs':''}" aria-label="Profile sections">${(isOwner?[['information','Personal profile'],['business','Business & verification'],['password','Security']]:[['verification','Verifications'],['information','Information'],['password','Password']]).map(([id,label])=>`<a href="#/account?tab=${id}" ${tab===id?'aria-current="page"':''}>${label}</a>`).join('')}</nav>`;
+    if(isOwner&&tab==='business')return tabs+ownerBusinessWorkspace();
     if(tab==='verification')return tabs+verificationForm();
     if(tab==='password')return tabs+`<form class="profile-panel live-form" data-live-form="password"><h2>Change your password</h2>${field('New password','password','password','','required minlength="10" autocomplete="new-password"')}${field('Re-enter new password','confirm','password','','required minlength="10" autocomplete="new-password"')}<button class="btn">Save password</button><p data-feedback role="status"></p></form><section class="profile-panel"><h2>Email notifications · Test</h2><p class="member-note">Send one test email to your confirmed sign-in address <strong>${esc(session.user.email||'')}</strong>. This does not create a booking or access documents. Limited to one email per day.</p>${btn('Send me a test email','test-email')}<p data-email-test-feedback role="status"></p></section><div class="profile-panel"><h2>Account support</h2><p>To request deletion of your account and personal data, contact our team from your registered email address.</p><a href="#/contact">Request account deletion</a></div>`;
     return tabs+`<form class="profile-panel live-form" data-live-form="avatar"><h2>Your profile photo</h2><div class="profile-photo-preview">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="Your profile photo">`:'<span aria-hidden="true">◎</span>'}</div><label>Select an image<input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required></label><small>JPEG, PNG or WebP. Maximum 5 MB. Your photo is stored privately.</small><button class="btn">Save photo</button><p data-feedback role="status"></p></form><form class="profile-panel live-form" data-live-form="details" data-section="information"><h2>Personal information</h2><p class="member-note">Your name is filled from Google when available, or from the details you supplied during sign-up. You can edit it here.</p><div class="live-columns">${field('First name','first_name','text',d.first_name||'','required maxlength="100" autocomplete="given-name"')}${field('Surname','last_name','text',d.last_name||'','required maxlength="100" autocomplete="family-name"')}${field('Email','email','email',session.user.email||'','readonly')}${field('Date of birth (optional)','birth_date','date',d.birth_date||'',`max="${today()}"`)}${field('Languages spoken','languages','text',d.languages||'','maxlength="150"')}${field('Telephone','phone','tel',d.phone||'','maxlength="40" autocomplete="tel"')}${field('Address','address','text',d.address||'','maxlength="200" autocomplete="street-address"')}${field('Postal code','postal_code','text',d.postal_code||'','maxlength="30" autocomplete="postal-code"')}${field('City','city','text',d.city||'','maxlength="100" autocomplete="address-level2"')}</div><p class="member-note">Your personal details are private to your account. Contact details are optional.</p><button class="btn">Save details</button><p data-feedback role="status"></p></form>`;
@@ -263,7 +271,7 @@
     }
     const guard=requireAccount();if(guard)return guard;
     if(path==='/messages')return messagesPage(params.get('booking'));
-    if(path==='/account')return page('Complete your profile',accountProfile(params.get('tab')||'information'));
+    if(path==='/account')return page(profile?.account_type==='owner'?'Owner account':'Complete your profile',accountProfile(params.get('tab')||'information'));
     if(path==='/staff')return staffPage();
     if(path==='/dashboard'){
       if(profile.account_type==='owner'){
@@ -307,7 +315,7 @@
     if(!routes(path))return false;
     // Keep the same dialog while Auth initializes; do not flash a second login design.
     app.innerHTML=showProfile?profileDialog(authNext):showAuth?loginPage():page('Get By Boat','<p role="status">Loading…</p>');focusAuth();
-    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();focusAuth();syncChatSubscription()}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
+    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
   };
   function updateBookingVerification(form,d){
     const bareboat=d.get('skipper')==='without',expiry=form.dataset.licenceExpiry;
@@ -374,6 +382,7 @@
       const save=async changes=>{
         if(Object.keys(changes).every(key=>old[key]===changes[key]))return false;
         check(await client.from('owner_verification_requests').upsert({user_id:session.user.id,...changes,application_state:'draft',submitted_at:null},{onConflict:'user_id'}).select().single());
+        ownerScrollTarget=kind==='owner-business'?'owner-business-details':kind==='owner-payouts'?'owner-payout-details':'owner-documents';
         await current();render();return true;
       };
       if(kind==='owner-business'){
@@ -415,7 +424,7 @@
       if(!ownerComplete(old))throw Error('Complete business information, payout details and all three documents first.');
       if(ownerVerificationState()==='approved'||ownerVerificationState()==='pending')throw Error('This application is already submitted.');
       check(await client.from('owner_verification_requests').upsert({user_id:session.user.id,application_state:'submitted',submitted_at:new Date().toISOString()},{onConflict:'user_id'}).select().single());
-      await current();render();toast('Application submitted. Staff will review your business before you can publish listings.');return;
+      ownerScrollTarget='owner-documents';await current();render();toast('Application submitted. Staff will review your business before you can publish listings.');return;
     }
     if(kind==='review'){
       if(!verificationStaff)throw Error('Staff review access required.');
@@ -478,7 +487,7 @@
     if(kind==='message'){if(!session)throw Error('Please log in to send a message.');const content=String(d.get('content')||'').trim();if(!content||content.length>2000)throw Error('Write a message of up to 2,000 characters.');const message=check(await client.from('booking_messages').insert({booking_id:f.dataset.id,sender_id:session.user.id,content}).select().single());notifyBookingEmail('message',f.dataset.id,message.id);render();toast('Message sent.');return}
     if(kind==='block'){if(d.get('end_date')<d.get('start_date'))throw Error('Last day must be on or after the first day.');check(await client.from('boat_blocks').insert({boat_id:f.dataset.id,start_date:d.get('start_date'),end_date:d.get('end_date')}));render();}
   }catch(err){if(feedback)feedback.textContent=err.message||'Please try again.';else toast(err.message)}finally{if(button)button.disabled=false}},true);
-  document.addEventListener('click',async e=>{const b=e.target.closest('[data-live]');if(!b)return;e.preventDefault();if(b.disabled)return;b.disabled=true;try{switch(b.dataset.live){case 'favourite':if(profile?.account_type!=='customer')throw Error('Only customer accounts can save rental favourites.');check(await client.from('favourites').upsert({user_id:session.user.id,boat_id:b.dataset.id},{onConflict:'user_id,boat_id',ignoreDuplicates:true}));toast('Saved to favourites.');break;case 'unfavourite':check(await client.from('favourites').delete().eq('user_id',session.user.id).eq('boat_id',b.dataset.id));render();break;case 'auth-close':closeAuth();break;case 'social-google':case 'social-apple':{
+  document.addEventListener('click',async e=>{const b=e.target.closest('[data-live]');if(!b)return;e.preventDefault();if(b.disabled)return;b.disabled=true;try{switch(b.dataset.live){case 'owner-jump':document.getElementById?.(b.dataset.id)?.scrollIntoView?.({block:'start',behavior:'smooth'});break;case 'favourite':if(profile?.account_type!=='customer')throw Error('Only customer accounts can save rental favourites.');check(await client.from('favourites').upsert({user_id:session.user.id,boat_id:b.dataset.id},{onConflict:'user_id,boat_id',ignoreDuplicates:true}));toast('Saved to favourites.');break;case 'unfavourite':check(await client.from('favourites').delete().eq('user_id',session.user.id).eq('boat_id',b.dataset.id));render();break;case 'auth-close':closeAuth();break;case 'social-google':case 'social-apple':{
       const provider=b.dataset.live==='social-google'?'google':'apple';
       const feedback=document.querySelector('[data-feedback]');
       if(feedback)feedback.textContent='Connecting…';
