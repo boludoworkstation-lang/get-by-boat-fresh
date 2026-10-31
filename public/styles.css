@@ -802,3 +802,24 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 @media(max-width:880px){.listing-layout{grid-template-columns:1fr;gap:24px}.listing-booking{position:static;grid-row:1}.listing-cover .live-photo,.listing-cover .live-placeholder{height:300px}.live-listing-page>h1{font-size:32px}}
 @media(max-width:550px){.listing-condition-grid,.listing-spec-grid,.listing-equipment-groups,.fleet-equipment-categories{grid-template-columns:1fr;gap:10px}.listing-spec-grid{gap:0}.listing-map-heading{flex-direction:column}.fleet-public-map{height:285px}.listing-booking-card{padding:22px 18px}.listing-cover .live-photo,.listing-cover .live-placeholder{height:220px}.listing-location-intro{gap:5px}.live-listing-page>h1{font-size:27px}}
 @media(max-width:650px){.fleet-equipment-panel{padding:17px}.fleet-equipment-heading{flex-wrap:wrap;gap:9px}.fleet-equipment-toolbar{flex-direction:column;align-items:stretch}.fleet-equipment-search{width:100%}.fleet-equipment-options{grid-template-columns:1fr}.fleet-equipment-filter{align-self:start}.fleet-equipment-nav{flex-wrap:nowrap;overflow-x:auto;padding-bottom:5px}.fleet-equipment-tab{flex:none}.listing-equipment-disclosure>.listing-equipment-groups{padding:0 10px 10px}}
+/* Owner equipment selector: category rail + compact, icon-led choices. */
+.fleet-equipment-browser{display:grid;grid-template-columns:minmax(175px,210px) minmax(0,1fr);gap:15px;align-items:start}
+.fleet-equipment-panel{background:#fff;border-color:#dce9ed;padding:24px}
+.fleet-equipment-nav{display:flex;flex-direction:column;flex-wrap:nowrap;gap:4px;margin:0;padding:8px;background:#f5f9fa;border:1px solid #e2ebee;border-radius:13px}
+.fleet-equipment-tab{width:100%;display:flex;align-items:center;gap:10px;text-align:left;justify-content:flex-start;border:1px solid transparent;border-radius:9px;padding:12px 10px;background:transparent;color:#517481;font-size:12px}
+.fleet-equipment-tab:hover{background:#fff}
+.fleet-equipment-tab[aria-pressed=true]{border-color:#bce5ec;background:#e6f7f9;color:#087f98}
+.fleet-equipment-tab .listing-amenity-icon{flex:0 0 19px;width:19px;height:19px;color:currentColor}
+.fleet-equipment-tab .fleet-equipment-tab-name{display:block;flex:1;min-width:0;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font-size:12px;font-weight:700;line-height:1.35}
+.fleet-equipment-tab [data-equipment-category-count]:not(:empty){display:inline-grid;place-items:center;flex:none;min-width:20px;height:20px;padding:0 4px;border-radius:20px;background:#cbeff3;color:#097d93;font-size:11px}
+.fleet-equipment-body{background:#fff;padding:10px;min-height:100px;border:1px solid #e2ecee;border-radius:13px}
+.fleet-equipment-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.fleet-equipment-option{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:11px!important;width:100%;min-height:54px;box-sizing:border-box;padding:10px 11px!important;border-radius:9px;font-size:12.5px!important;font-weight:650!important}
+.fleet-equipment-option .listing-amenity-icon{flex:0 0 23px;width:23px;height:23px;color:#427783}
+.fleet-equipment-option>span{flex:1;min-width:0;line-height:1.4}
+.fleet-equipment-option input[type=checkbox]{flex:0 0 18px;width:18px!important;height:18px!important;order:3;margin:0 0 0 auto!important;accent-color:#079db1;cursor:pointer}
+.fleet-equipment-option:has(input:checked) .listing-amenity-icon{color:#078ea8}
+.fleet-equipment-group h5 .listing-amenity-icon{width:18px;height:18px;margin-right:7px;vertical-align:middle}
+.fleet-equipment-panel.is-filtering .fleet-equipment-group h5{display:flex;align-items:center;gap:4px}
+@media(max-width:950px){.fleet-equipment-browser{grid-template-columns:1fr}.fleet-equipment-nav{flex-direction:row;overflow-x:auto;padding:6px;gap:5px;scrollbar-width:thin}.fleet-equipment-tab{width:auto;flex:none;white-space:nowrap;padding:10px 12px}.fleet-equipment-tab .fleet-equipment-tab-name{flex:none}}
+@media(max-width:650px){.fleet-equipment-panel{padding:16px}.fleet-equipment-options{grid-template-columns:1fr}.fleet-equipment-option{min-height:52px}.fleet-equipment-browser{gap:11px}.fleet-equipment-nav{flex-wrap:nowrap}}
