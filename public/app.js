@@ -243,17 +243,17 @@ function rentalDayCount(start,end){
  if(!Number.isFinite(first)||!Number.isFinite(last)||last<first)return null;
  return Math.round((last-first)/86400000)+1;
 }
-// Get By Boat adds a fixed 9% to the owner's net charter rate.
+// Get By Boat adds a fixed 7% to the owner's net charter rate.
 function serviceFee(charterPrice){
  if(!Number.isFinite(charterPrice)||charterPrice<=0)return 0;
- return Math.round(charterPrice*0.09*100)/100;
+ return Math.round(charterPrice*0.07*100)/100;
 }
 const rentalMoney=n=>'€'+new Intl.NumberFormat('en-IE',{minimumFractionDigits:0,maximumFractionDigits:2}).format(n);
 function rentalPriceSummary(b){
  const days=rentalDayCount(state.start,state.end);
  if(days===null)return `<p class="rental-hint">${state.start&&state.end?'Choose a return date on or after the departure date.':'Select your dates to see the total price.'}</p>`;
  const charter=b.price*days,fee=serviceFee(charter),total=Math.round((charter+fee)*100)/100;
- return `<div class="rental-breakdown"><div class="summary-line"><span>Charter price<br><small>${fmt(b.price)} × ${days} ${days===1?'day':'days'}</small></span><strong>${rentalMoney(charter)}</strong></div><div class="summary-line"><span>Service fee</span><strong>${rentalMoney(fee)}</strong></div><div class="summary-line rental-total"><span>Total</span><strong>${rentalMoney(total)}</strong></div><p class="rental-hint">${days} ${days===1?'rental day':'rental days'} · 09:00–19:00 each day<br>First and last dates included.</p></div>`;
+ return `<div class="rental-breakdown"><div class="summary-line"><span>Boat rental<br><small>${days} ${days===1?'day':'days'}</small></span><strong>${rentalMoney(total)}</strong></div><div class="summary-line rental-total"><span>Total price</span><strong>${rentalMoney(total)}</strong></div><p class="rental-hint">${days} ${days===1?'rental day':'rental days'} · 09:00–19:00 each day<br>First and last dates included.</p></div>`;
 }
 function updateRentalDates(input){
  if(!input.matches('input[type="date"][name="start"],input[type="date"][name="end"]'))return;
