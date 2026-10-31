@@ -207,8 +207,9 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  html=await e.route('#/listing/boat-1');assert.match(html,/Licence verification required/);
  // A customer with no verification can rent WITH a skipper, but not without one.
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true}});
- html=await e.route('#/listing/boat-1');assert.match(html,/Rent with skipper/);assert.match(html,/Rent without skipper/);assert.match(html,/name="skipper"/);
- assert.match(html,/value="with" checked/);assert.match(html,/data-skipper-verification hidden/);assert.match(html,/Request to book/);
+ html=await e.route('#/listing/boat-1');assert.match(html,/I need a skipper/);assert.match(html,/name="need_skipper" data-needs-skipper/);assert.match(html,/type="hidden" name="skipper" value="without"/);
+ assert.doesNotMatch(html,/type="radio" name="skipper"/);assert.match(html,/data-skipper-verification\s*>/);
+ html=await e.route('#/listing/boat-1?skipper=with');assert.match(html,/name="need_skipper" data-needs-skipper checked/);assert.match(html,/type="hidden" name="skipper" value="with"/);assert.match(html,/data-skipper-verification hidden/);assert.match(html,/Request to book/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'with'},{id:'boat-1',withSkipper:'true',withoutSkipper:'true'});
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,1);assert.equal(e.state.writes.at(-1).value.with_skipper,true);
  html=await e.route('#/listing/boat-1?skipper=without');assert.match(html,/data-skipper-verification\s*>/);assert.match(html,/Verify your licence to book<\/button>/);
@@ -216,7 +217,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,1);
  // The browser refuses a mode not offered by the boat, even with tampered form data.
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:false,without_skipper:true}});
- html=await e.route('#/listing/boat-1');assert.doesNotMatch(html,/name="skipper" value="with"/);
+ html=await e.route('#/listing/boat-1');assert.doesNotMatch(html,/name="skipper" value="with"|data-needs-skipper/);assert.match(html,/Self-drive only/);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'2',skipper:'with'},{id:'boat-1',withSkipper:'false',withoutSkipper:'true'});
  assert.match(e.feedback.textContent,/does not offer/);assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
  // Owners must select at least one option, and both values are saved to the listing.

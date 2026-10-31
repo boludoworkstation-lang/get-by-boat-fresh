@@ -788,6 +788,10 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .listing-rental-choice small{font-size:11px;color:#6d8790;font-weight:500;line-height:1.45}
 .listing-rental-extra{font-size:11px;color:#087f96;text-align:right;max-width:96px;line-height:1.4}
 .listing-skipper-payment{color:#6f8791;font-size:11px;line-height:1.45;margin:2px 0 0}
+.listing-booking-card .listing-skipper-addon{padding:17px 14px;background:#f8fcfd;align-items:center}
+.listing-skipper-addon>input[type=checkbox]{width:22px;height:22px;border-radius:6px}
+.listing-skipper-addon strong{font-size:15px;letter-spacing:-.01em}
+.listing-rental-fixed{margin:0 0 17px;border:1px solid #d5e8e9;border-radius:12px;background:#f2faf9;color:#285762;padding:14px 16px;font-size:13px;font-weight:700;line-height:1.45}
 .listing-map-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:21px 21px 16px}
 .fleet-public-pickup{margin:26px 0 0!important;background:white;overflow:hidden;border:1px solid #dce9ec;border-radius:16px}
 .fleet-public-pickup .listing-map-heading h3{padding:0;font-size:20px;margin:0 0 7px;color:#173e4b}
