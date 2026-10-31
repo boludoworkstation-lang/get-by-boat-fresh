@@ -22,7 +22,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  const ctx={console,setTimeout,URL,URLSearchParams,Intl,Date,crypto:{randomUUID:()=>'00000000-0000-4000-a000-000000000001'},fetch:async()=>({ok:true,json:async()=>({external:{google:true,apple:true}})}),FormData:class{constructor(f){this.values=f.values}get(k){return this.values[k]??null}getAll(k){return this.values[k]||[]}},location:{hash,search,pathname:'/',origin:'https://getbyboat.net'},window:{},document:{addEventListener(k,fn){(events[k]??=[]).push(fn)},querySelector(s){return s==='[data-feedback]'?feedback:null}},app:{innerHTML:''},state:{start:'',end:''},AUTH_CONFIG:{supabaseUrl:'https://example.supabase.co',supabasePublishableKey:'public'},authMode:'login',authClient:async()=>client,home:()=>'<main>Home</main>',header:()=>'<header/>',footer:()=>'<footer/>',waveLogo:()=>'<span class="logo-mark"></span>',icon:()=>'<svg></svg>',safe:s=>String(s??'').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;'),fmt:n=>String(n),toast(){},modal(){},parseRoute(){const [path,q]=ctx.location.hash.slice(1).split('?');return {path,params:new URLSearchParams(q)}},render(){ctx.window.liveRender()}};
  ctx.history={replaceState(_,__,url){const u=new URL(url,ctx.location.origin);ctx.location.hash=u.hash;ctx.location.search=u.search}};
  vm.createContext(ctx);vm.runInContext(helpers,ctx);vm.runInContext(backend,ctx);await sleep();
- return {ctx,state,feedback,async route(hash){ctx.location.hash=hash;ctx.render();await sleep();return ctx.app.innerHTML},async submit(kind,values,dataset={}){const button={disabled:false};const f={dataset:{liveForm:kind,...dataset},values,querySelector:s=>s==='[data-feedback]'?feedback:button};await events.submit[0]({target:f,preventDefault(){}});await sleep()},async click(action){const b={dataset:{live:action},disabled:false};await events.click[1]({target:{closest:()=>b},preventDefault(){}});await sleep()}};
+ return {ctx,state,feedback,events,async route(hash){ctx.location.hash=hash;ctx.render();await sleep();return ctx.app.innerHTML},async submit(kind,values,dataset={}){const button={disabled:false};const f={dataset:{liveForm:kind,...dataset},values,querySelector:s=>s==='[data-feedback]'?feedback:button};await events.submit[0]({target:f,preventDefault(){}});await sleep()},async click(action){const b={dataset:{live:action},disabled:false};await events.click[1]({target:{closest:()=>b},preventDefault(){}});await sleep()}};
 }
 (async()=>{
  // New customer: email step -> auth -> name onboarding -> customer dashboard.
@@ -85,7 +85,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(html,/Technical specifications/);assert.match(html,/Insurance & security deposit/);
  assert.match(html,/Insurance certificate \(optional\)/);assert.match(html,/Proof of boat ownership \(optional\)/);
  assert.doesNotMatch(html,/name="cabins"|name="sleeping_area"/);
- await verifiedOwner.submit('boat',{name:'Test Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'400',guests:'6',description:'Great day trip',with_skipper:'on',published:'on',spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',insurance_type:'third_party',security_deposit:'500',document_insurance:ownerPdf});
+ await verifiedOwner.submit('boat',{name:'Test Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'400',guests:'6',description:'Great day trip',with_skipper:'on',skipper_fee_per_day:'100',published:'on',spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',insurance_type:'third_party',security_deposit:'500',document_insurance:ownerPdf});
  const boatSaved=verifiedOwner.state.writes.find(x=>x.table==='boats');
  assert.equal(boatSaved.value.specifications.engine_hp,250);assert.equal(boatSaved.value.specifications.length_m,7.5);
  assert.equal(boatSaved.value.insurance_type,'third_party');assert.equal(boatSaved.value.security_deposit,500);
@@ -106,6 +106,23 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  await e.submit('profile',{first_name:'Maja',last_name:'Perić'},{accountType:'customer',next:'#/bookings'});assert.equal(e.state.profile.account_type,'owner');assert.match(e.feedback.textContent,/Account roles cannot be changed/);
  html=await e.route('#/bookings');assert.match(html,/Owner accounts cannot rent boats/);
  html=await e.route('#/owner');assert.match(html,/Your listings/);
+ html=await e.route('#/owner?view=calendar&boat=boat-1&month=2027-07');
+ assert.match(html,/data-calendar-date="2027-07-10"/);
+ assert.match(html,/click two days or drag across a range/);
+ const inputs={start_date:{value:''},end_date:{value:''}},calendarButton={disabled:false};
+ const rangeFeedback={textContent:''};
+ const blockForm={dataset:{id:'boat-1'},querySelector(sel){if(sel==='[name="start_date"]')return inputs.start_date;if(sel==='[name="end_date"]')return inputs.end_date;if(sel==='[data-feedback]')return rangeFeedback;if(sel==='button[type="submit"]')return calendarButton;return null}};
+ const selectedDays=['2027-07-10','2027-07-11','2027-07-12'].map(date=>({dataset:{calendarDate:date},classList:{toggle(){},remove(){}},setAttribute(){}}));
+ e.ctx.document.querySelector=sel=>sel==='[data-live-form="block"]'?blockForm:null;
+ e.ctx.document.querySelectorAll=()=>selectedDays;
+ e.ctx.document.elementFromPoint=(x)=>selectedDays[x]||null;
+ for(const day of selectedDays)day.closest=()=>day;
+ e.events.pointerdown[0]({target:selectedDays[0],pointerType:'mouse',button:0,preventDefault(){}});
+ e.events.pointermove[0]({clientX:2,clientY:0});e.events.pointerup[0]();
+ assert.equal(inputs.start_date.value,'2027-07-10');assert.equal(inputs.end_date.value,'2027-07-12');
+ assert.equal(calendarButton.disabled,false);assert.match(rangeFeedback.textContent,/Selected 2027-07-10/);
+ e.events.pointerdown[0]({target:selectedDays[1],pointerType:'mouse',button:0,preventDefault(){}});e.events.pointerup[0]();
+ assert.equal(inputs.start_date.value,'2027-07-11');assert.equal(inputs.end_date.value,'2027-07-11');
  // Google supplies a full name: a customer profile is created without an extra form.
  e=await environment({hash:'#/dashboard',user:{id:'google-user',user_metadata:{given_name:'Luka',family_name:'Kovač'}},profile:null});
  assert.equal(e.state.profile.account_type,'customer');assert.equal(e.state.profile.display_name,'Luka Kovač');
@@ -164,14 +181,16 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  // Owners must select at least one option, and both values are saved to the listing.
  e=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'}});
  html=await e.route('#/owner?edit=boat-1');assert.match(html,/Available rental options/);
+ assert.match(html,/Skipper price per day/);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null});
  assert.match(e.feedback.textContent,/at least one rental option/);assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on'});
- assert.equal(e.state.writes.filter(x=>x.table==='boats').length,1);assert.equal(e.state.writes.at(-1).value.with_skipper,true);assert.equal(e.state.writes.at(-1).value.without_skipper,true);
+ assert.match(e.feedback.textContent,/skipper price per day/);assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',without_skipper:'on',skipper_fee_per_day:'120'});
+ assert.equal(e.state.writes.filter(x=>x.table==='boats').length,1);assert.equal(e.state.writes.at(-1).value.with_skipper,true);assert.equal(e.state.writes.at(-1).value.without_skipper,true);
  assert.equal(e.state.writes.at(-1).value.skipper_fee_per_day,120);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null,with_skipper:'on',skipper_fee_per_day:'200'});
- assert.equal(e.state.writes.at(-1).value.skipper_fee_per_day,0);
+ assert.equal(e.state.writes.at(-1).value.skipper_fee_per_day,200);
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true,skipper_fee_per_day:120}});
  html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);
  console.log('PASS: customer/owner journeys, secure staff verification, no-skipper licence gate, skipper bookings without renter documents, rejected unavailable modes, and owner rental options.');
