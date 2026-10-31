@@ -238,7 +238,10 @@
   const listingEquipmentSection=boat=>{
     const selected=new Set(Array.isArray(boat.specifications?.equipment)?boat.specifications.equipment:[]);
     const groups=equipmentCategories.map(([group,options])=>({group,items:options.filter(([id])=>selected.has(id)).map(([,label])=>label)})).filter(({items})=>items.length);
-    return `<section class="listing-equipment"><div class="listing-section-title">${icon('check')}<h2>Equipment &amp; amenities</h2></div>${groups.length?`<div class="listing-equipment-groups">${groups.map(({group,items})=>`<div class="listing-equipment-group"><h3>${esc(group)}</h3><ul>${items.map(item=>`<li>${icon('check')} ${esc(item)}</li>`).join('')}</ul></div>`).join('')}</div>`:'<p class="listing-detail-empty">Equipment details have not been added yet. Ask the owner what is included.</p>'}</section>`;
+    const all=groups.flatMap(({items})=>items);
+    const grouped=`<div class="listing-equipment-groups">${groups.map(({group,items})=>`<div class="listing-equipment-group"><h3>${esc(group)}</h3><ul>${items.map(item=>`<li>${icon('check')} <span>${esc(item)}</span></li>`).join('')}</ul></div>`).join('')}</div>`;
+    const preview=all.length>8?`<details class="listing-equipment-disclosure"><summary aria-label="Show or hide all ${all.length} amenities"><span class="listing-equipment-highlights">${all.slice(0,6).map(item=>`<span>${icon('check')} ${esc(item)}</span>`).join('')}</span><strong><span class="listing-amenities-more">See all ${all.length} amenities</span><span class="listing-amenities-less">Show less</span>${icon('chevron')}</strong></summary>${grouped}</details>`:grouped;
+    return `<section class="listing-equipment"><div class="listing-section-title">${icon('check')}<h2>Equipment &amp; amenities</h2>${all.length?`<span class="listing-amenities-count">${all.length} included</span>`:''}</div>${all.length?`<p class="listing-equipment-intro">Included with this boat, at no extra charge.</p>${preview}`:'<p class="listing-detail-empty">Equipment has not been listed yet. Ask the owner what is included.</p>'}</section>`;
   };
   const listingSpecificationSections=boat=>{
     const specs=boat.specifications&&typeof boat.specifications==='object'&&!Array.isArray(boat.specifications)?boat.specifications:{};
@@ -330,6 +333,39 @@
     const summary=form.querySelector('[data-rental-mode-summary]');
     if(summary)summary.textContent=separate?'Both options selected — guests choose with or without skipper.':withSkipper?'With skipper only.':withoutSkipper?'Without skipper only.':'Choose at least one rental option.';
   }
+  function syncEquipmentPicker(form){
+    const picker=form?.querySelector?.('[data-equipment-picker]');
+    if(!picker)return;
+    const all=[...picker.querySelectorAll('input[name="equipment"]')];
+    const selected=all.filter(input=>input.checked).length;
+    const count=picker.querySelector('[data-equipment-count]');
+    if(count)count.textContent=`${selected} ${selected===1?'item':'items'} selected`;
+    const search=String(picker.querySelector('[data-equipment-search]')?.value||'').trim().toLocaleLowerCase();
+    const onlySelected=picker.querySelector('[data-equipment-selected-only]')?.getAttribute('aria-pressed')==='true';
+    const filtering=!!search||onlySelected;
+    const nav=picker.querySelector('[data-equipment-nav]');
+    if(nav)nav.hidden=filtering;
+    picker.classList.toggle('is-filtering',filtering);
+    const active=Number(picker.dataset.activeCategory||0);
+    let matches=0;
+    for(const group of picker.querySelectorAll('[data-equipment-group]')){
+      const index=Number(group.dataset.equipmentGroup),inputs=[...group.querySelectorAll('input[name="equipment"]')];
+      const total=inputs.filter(input=>input.checked).length;
+      const tab=picker.querySelector(`[data-equipment-category="${index}"]`);
+      if(tab){tab.setAttribute('aria-pressed',String(index===active));const badge=tab.querySelector('[data-equipment-category-count]');if(badge)badge.textContent=total?String(total):'';}
+      let groupMatches=0;
+      for(const input of inputs){
+        const option=input.closest('label'),label=option?.querySelector('span')?.textContent?.toLocaleLowerCase()||'';
+        const show=(!onlySelected||input.checked)&&(!search||label.includes(search));
+        if(option)option.hidden=!show;
+        if(show)groupMatches++;
+      }
+      if(filtering)matches+=groupMatches;
+      group.hidden=filtering?!groupMatches:index!==active;
+    }
+    const empty=picker.querySelector('[data-equipment-empty]');
+    if(empty){empty.hidden=!filtering||matches>0;empty.textContent=onlySelected&&!selected?'Nothing selected yet. Choose a category to get started.':'No matching equipment found. Try another search.';}
+  }
   const ownerStepNames=['Boat & location','Price & skipper','Photos & details'];
   function showOwnerBoatStep(form,next){
     if(!form?.querySelectorAll)return;
@@ -414,7 +450,8 @@
     const insurance=`<details class="fleet-optional-panel" ${b.insurance_type&&b.insurance_type!=='not_specified'||Number(b.security_deposit)>0?'open':''}><summary><span>${icon('shield')} Insurance & security deposit</span><small>Optional · coverage and refundable deposit</small></summary><div class="fleet-optional-content"><p class="member-note">Choose the insurance coverage and refundable deposit applicable to this boat.</p><div class="live-columns">${optionalSelect('insurance_type','Insurance coverage',insuranceTypes,b.insurance_type||'not_specified')}${number('Refundable security deposit (€)','security_deposit',b.security_deposit??0,100000,'0.01')}</div></div></details>`;
     const selectedEquipment=new Set(Array.isArray(s.equipment)?s.equipment:[]);
     const equipmentCount=[...selectedEquipment].filter(id=>allowedEquipment.has(id)).length;
-    const equipment=`<details class="fleet-optional-panel fleet-equipment-panel" ${equipmentCount?'open':''}><summary><span>${icon('check')} Equipment & amenities</span><small>${equipmentCount?`${equipmentCount} selected`:'Optional · what is onboard'}</small></summary><div class="fleet-optional-content"><p class="member-note">Select only the equipment included with this boat. Guests will see the checked items on your listing.</p><div class="fleet-equipment-categories">${equipmentCategories.map(([group,options])=>{const count=options.filter(([id])=>selectedEquipment.has(id)).length;return `<details class="fleet-equipment-category" ${count?'open':''}><summary>${esc(group)} <span>${count?`${count} selected`:'Choose equipment'}</span></summary><div class="fleet-equipment-options">${options.map(([id,label])=>`<label><input type="checkbox" name="equipment" value="${esc(id)}" ${selectedEquipment.has(id)?'checked':''}><span>${esc(label)}</span></label>`).join('')}</div></details>`;}).join('')}</div></div></details>`;
+    const firstEquipmentGroup=Math.max(0,equipmentCategories.findIndex(([,options])=>options.some(([id])=>selectedEquipment.has(id))));
+    const equipment=`<section class="fleet-equipment-panel" data-equipment-picker data-active-category="${firstEquipmentGroup}" aria-labelledby="equipment-picker-title"><div class="fleet-equipment-heading"><div><span class="fleet-equipment-eyebrow">MAKE YOUR LISTING STAND OUT</span><h4 id="equipment-picker-title">Equipment &amp; amenities</h4><p>Tick what your boat includes. Guests will only see the items you select.</p></div><span class="fleet-equipment-count" data-equipment-count aria-live="polite">${equipmentCount} ${equipmentCount===1?'item':'items'} selected</span></div><div class="fleet-equipment-toolbar"><label class="fleet-equipment-search"><span>Find equipment</span><input type="search" data-equipment-search placeholder="Search Wi-Fi, GPS, paddle board…" autocomplete="off"></label><button class="fleet-equipment-filter" type="button" data-equipment-selected-only aria-pressed="false">${icon('check')} Show selected only</button></div><div class="fleet-equipment-nav" data-equipment-nav role="group" aria-label="Equipment categories">${equipmentCategories.map(([group,options],i)=>{const count=options.filter(([id])=>selectedEquipment.has(id)).length;return `<button type="button" class="fleet-equipment-tab" data-equipment-category="${i}" aria-pressed="${i===firstEquipmentGroup}">${esc(group)} <span data-equipment-category-count>${count||''}</span></button>`;}).join('')}</div><div class="fleet-equipment-body">${equipmentCategories.map(([group,options],i)=>`<section class="fleet-equipment-group" data-equipment-group="${i}" ${i===firstEquipmentGroup?'':'hidden'}><h5>${esc(group)}</h5><div class="fleet-equipment-options">${options.map(([id,label])=>`<label class="fleet-equipment-option"><input type="checkbox" name="equipment" value="${esc(id)}" ${selectedEquipment.has(id)?'checked':''}><span>${esc(label)}</span><small>Included</small></label>`).join('')}</div></section>`).join('')}<p class="fleet-equipment-no-results" data-equipment-empty hidden>No matching equipment found. Try another search.</p></div><p class="fleet-equipment-footnote">All selected equipment will appear in the public boat listing after you save.</p></section>`;
     const closing='</section><section class="profile-panel fleet-editor-section" id="boat-publishing"';
     const canPublish=ownerVerificationState()==='approved',willPublish=canPublish||!!b.published;
     const countryField=field('Country','country','text',b.country||'','required maxlength="80"');
@@ -608,7 +645,7 @@
     if(ownerPickupMap){ownerPickupMap.map.remove();ownerPickupMap=null;}
     if(publicPickupMap){publicPickupMap.remove();publicPickupMap=null;}
     app.innerHTML=showProfile?profileDialog(authNext):showAuth?loginPage():page('Get By Boat','<p role="status">Loading…</p>');focusAuth();
-    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),1);initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
+    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),1);initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
   };
   function updateBookingVerification(form,d){
     const bareboat=d.get('skipper')==='without',expiry=form.dataset.licenceExpiry;
@@ -681,6 +718,7 @@
     if(day){event.preventDefault();pickCalendarDay(day);}
   });
   document.addEventListener('input',e=>{
+    if(e.target.matches?.('[data-equipment-search]'))syncEquipmentPicker(e.target.closest('[data-live-form="boat"]'));
     if(e.target.closest('[data-live-form="request"]'))quote();
     const euroName=e.target.dataset?.euroDate;
     if(euroName){
@@ -700,6 +738,7 @@
     if(e.target.closest('[data-live-form="request"]'))quote();
     const boat=e.target.closest('[data-live-form="boat"]');
     if(boat)updateOwnerSkipperFee(boat);
+    if(boat&&e.target.matches?.('input[name="equipment"]'))syncEquipmentPicker(boat);
     if(e.target.closest('[data-live-form="block"]')&&e.target.matches?.('[data-euro-date]')){
       calendarSelection=null;
       for(const day of document.querySelectorAll?.('[data-calendar-date]')||[]){day.classList.remove('is-selected','is-invalid');day.setAttribute('aria-pressed','false');}
@@ -948,6 +987,21 @@
       break;
     }case 'refresh':await current();render();break;case 'auth-mode':authEmail=document.querySelector('[name="email"]')?.value||authEmail;authMode=authMode==='login'?'signup':'login';render();break;case 'logout':case 'logout-owner':{const createOwner=b.dataset.live==='logout-owner';check(await client.auth.signOut());session=null;profile=null;authStep='email';authEmail='';authNext=createOwner?'#/owner':'#/dashboard';ownerIntent=createOwner;window.GBB_ACCOUNT_LINK=null;window.GBB_ACCOUNT_ROLE=null;location.hash=loginLink(authNext);render();break}case 'reset':{const email=document.querySelector('[name="email"]')?.value;if(!email)throw Error('Enter your email address first.');check(await client.auth.resetPasswordForEmail(email,{redirectTo:authRedirect()}));toast('Check your email for the password reset link.');break}case 'accept':case 'decline':case 'cancel':{const action=b.dataset.live;const booking=check(await client.from('bookings').update({status:{accept:'awaiting_payment',decline:'declined',cancel:'cancelled'}[action]}).eq('id',b.dataset.id).select().single());if(action==='accept'||action==='decline')notifyBookingEmail(action==='accept'?'owner_accepted':'owner_declined',booking.id);render();break}case 'unblock':check(await client.from('boat_blocks').delete().eq('id',b.dataset.id).select().single());render();break}}catch(err){toast(err.message||'Please try again.')}finally{b.disabled=false}});
   document.addEventListener('click',async event=>{
+    const equipmentCategory=event.target.closest?.('[data-equipment-category]');
+    if(equipmentCategory){
+      event.preventDefault();
+      const picker=equipmentCategory.closest('[data-equipment-picker]');
+      picker.dataset.activeCategory=equipmentCategory.dataset.equipmentCategory;
+      syncEquipmentPicker(equipmentCategory.closest('[data-live-form="boat"]'));
+      return;
+    }
+    const equipmentFilter=event.target.closest?.('[data-equipment-selected-only]');
+    if(equipmentFilter){
+      event.preventDefault();
+      equipmentFilter.setAttribute('aria-pressed',String(equipmentFilter.getAttribute('aria-pressed')!=='true'));
+      syncEquipmentPicker(equipmentFilter.closest('[data-live-form="boat"]'));
+      return;
+    }
     const month=event.target.closest?.('[data-calendar-month]');
     if(month&&calendarContext){
       event.preventDefault();
