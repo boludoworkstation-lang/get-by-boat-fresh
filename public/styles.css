@@ -842,3 +842,11 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .fleet-equipment-panel.is-filtering .fleet-equipment-group h5{display:flex;align-items:center;gap:4px}
 @media(max-width:950px){.fleet-equipment-browser{grid-template-columns:1fr}.fleet-equipment-nav{flex-direction:row;overflow-x:auto;padding:6px;gap:5px;scrollbar-width:thin}.fleet-equipment-tab{width:auto;flex:none;white-space:nowrap;padding:10px 12px}.fleet-equipment-tab .fleet-equipment-tab-name{flex:none}}
 @media(max-width:650px){.fleet-equipment-panel{padding:16px}.fleet-equipment-options{grid-template-columns:1fr}.fleet-equipment-option{min-height:52px}.fleet-equipment-browser{gap:11px}.fleet-equipment-nav{flex-wrap:nowrap}}
+
+/* Personal profile: compact international telephone entry and skipper summary. */
+.profile-phone-field{display:block}
+.profile-phone-inputs{display:grid;grid-template-columns:minmax(145px,1.08fr) minmax(0,1fr);gap:10px;margin-top:7px}
+.profile-panel .profile-phone-inputs select,.profile-panel .profile-phone-inputs input{min-width:0;width:100%}
+.fleet-modes{display:flex;align-items:center;gap:8px}
+.fleet-modes .skipper-cap-icon{flex:none;display:block}
+@media(max-width:520px){.profile-phone-inputs{grid-template-columns:1fr}}
