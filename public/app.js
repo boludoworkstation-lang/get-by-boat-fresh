@@ -248,7 +248,7 @@ function rentalDayCount(start,end){
 const priceCents=amount=>Math.round((Number(amount)+Number.EPSILON)*100)/100;
 function platformFee(charterPrice){
  if(!Number.isFinite(charterPrice)||charterPrice<=0)return 0;
- return priceCents(charterPrice*0.07);
+ return priceCents(charterPrice*0.09);
 }
 function processingAllowance(charterPrice){
  if(!Number.isFinite(charterPrice)||charterPrice<=0)return 0;
