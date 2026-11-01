@@ -1171,3 +1171,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-skipper-choices input[type="radio"]:checked{border-color:#0a9cb9;background:#0a9cb9}
 .rental-skipper-choices input[type="radio"]:checked::after{content:"";display:block;width:6px;height:6px;background:#fff;border-radius:50%;transform:none;border:0}
 .rental-skipper-choices input[type="radio"]:focus-visible{outline:2px solid #006f83;outline-offset:2px}
+
+/* License-free self-drive filter */
+.rental-sidebar .rental-licence-section{padding-top:13px;padding-bottom:15px}
+.rental-sidebar .rental-licence-section .rental-check{font-weight:650;color:#244650;min-height:23px}
