@@ -1230,3 +1230,20 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .listing-booking-card .booking-date-trigger small{font-size:11px}
 .listing-booking-card .booking-date-arrow{font-size:24px}
 @media(max-width:420px){.listing-booking-card{padding:20px 16px}.listing-booking-card .listing-skipper-addon{grid-template-columns:18px minmax(0,1fr);gap:10px}.listing-booking-card .listing-rental-extra{grid-column:2;text-align:left;margin-top:1px}.listing-booking-card .listing-skipper-addon{padding:12px 13px}.listing-booking-card h2{font-size:31px}}
+
+/* Click & Boat-inspired three-across boat results on desktop */
+@media(min-width:1200px){
+  .rental-card-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .rental-card-photo{height:190px}
+  .rental-card-body{padding:15px 14px 14px}
+  .rental-card h3{font-size:23px;line-height:1.2;margin-bottom:10px}
+  .rental-card-location{margin-bottom:7px}
+  .rental-card-facts{gap:7px;font-size:10px}
+  .rental-card-options{margin:12px 0;font-size:10px}
+  .rental-card-bottom{padding-top:12px;font-size:10px;gap:6px}
+  .rental-card-bottom strong{font-size:16px}
+  .rental-view-link{font-size:10px}
+}
+@media(min-width:541px) and (max-width:800px){
+  .rental-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
