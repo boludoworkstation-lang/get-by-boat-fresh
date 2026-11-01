@@ -1002,3 +1002,34 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-country-choice input:checked:after{content:'';position:absolute;inset:5px;border-radius:50%;background:#fff}
 .rental-country-choice:hover span{color:#007f99}
 .rental-country-choice input:focus-visible{outline:3px solid #9adce7;outline-offset:3px}
+
+/* Screenshot-aligned marketplace filter controls; booking remains upon request */
+.rental-sidebar .rental-price-section{padding-top:24px;padding-bottom:25px}
+.rental-price-section .rental-double-slider{margin:10px 15px 22px;height:36px}
+.rental-price-section .rental-price-fields{display:flex;align-items:center;gap:8px}
+.rental-price-section .rental-price-fields>label{flex:1;min-width:0;border:1px solid #d6dee2;border-radius:10px;padding:10px 11px;color:#28333a;font-size:11px;font-weight:650;gap:5px}
+.rental-price-section .rental-price-number{display:flex;align-items:center;gap:4px;font-size:17px;font-weight:500;white-space:nowrap}
+.rental-price-section .rental-price-number input{border:0;min-height:0;background:transparent;padding:0;width:100%;min-width:0;font-size:17px;font-weight:500;color:#26343b;outline-offset:2px}
+.rental-price-section .rental-price-number input::placeholder{color:#26343b;opacity:1}
+.rental-price-section .rental-price-dash{font-weight:800;font-size:15px}
+.rental-sidebar .rental-counter-section{padding:10px 0;border-bottom:0}
+.rental-sidebar .rental-counter-section:has(+ .rental-range-section){padding-bottom:23px;border-bottom:1px solid #e8eff1}
+.rental-counter-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.rental-counter-label{font-weight:700;font-size:12px;color:#253941;white-space:nowrap}
+.rental-counter-row .rental-guest-stepper{flex:0 0 116px;gap:4px;max-width:none}
+.rental-counter-row .rental-guest-stepper button{width:31px;height:31px;font-size:21px;color:#24292d;border-color:#cbd2d6}
+.rental-counter-row .rental-guest-stepper button:disabled{opacity:1;background:#f1f2f3;border-color:#f1f2f3}
+.rental-counter-row .rental-guest-stepper input{width:36px;flex:1;font-size:15px;font-weight:500;border-bottom:1px solid #cbd2d6;border-radius:0;padding:5px 0}
+.rental-sidebar .rental-range-section{padding:25px 0 28px}
+.rental-range-section legend{float:left;max-width:58%;margin:0;font-size:13px}
+.rental-range-section .rental-length-label{text-align:right;margin:0 0 18px;min-height:20px}
+.rental-range-section .rental-length-ticks{display:none}
+.rental-double-slider{height:38px;margin:0 14px}
+.rental-slider-track,.rental-slider-active{top:17px;height:4px}
+.rental-slider-active{background:#f366e9}
+.rental-double-slider input[type=range]{height:38px}
+.rental-double-slider input[type=range]::-webkit-slider-thumb{width:34px;height:34px;border:1px solid #cbd4e0;box-shadow:0 1px 5px #19303b12;margin-top:-15px;background-color:white;background-repeat:no-repeat;background-position:center;background-size:16px 16px}
+.rental-double-slider input[type=range]::-moz-range-thumb{width:32px;height:32px;border:1px solid #cbd4e0;background-color:white}
+.rental-double-slider input[name$="_min"]::-webkit-slider-thumb,.rental-double-slider input[name="min_length"]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23263339' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m14 5-7 7 7 7'/%3E%3C/svg%3E")}
+.rental-double-slider input[name$="_max"]::-webkit-slider-thumb,.rental-double-slider input[name="max_length"]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23263339' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m10 5 7 7-7 7'/%3E%3C/svg%3E")}
+@media(max-width:800px){.rental-counter-row .rental-guest-stepper{flex-basis:140px}.rental-counter-label{font-size:13px}}
