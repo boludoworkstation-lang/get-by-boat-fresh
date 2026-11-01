@@ -1095,3 +1095,12 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-sidebar .rental-range-section .rental-double-slider{margin-top:12px;margin-bottom:6px}
 .rental-range-section[aria-label="Year of manufacture"] .rental-range-head{margin-bottom:25px}
 @media(max-width:800px){.rental-counter-row .rental-guest-stepper{flex-basis:135px}.rental-sidebar .rental-range-section{padding-top:25px;padding-bottom:27px}}
+
+/* Balanced spacing for boat types and daily price filters */
+.rental-sidebar fieldset:has(input[name="type"]){padding-top:15px;padding-bottom:18px}
+.rental-sidebar fieldset:has(input[name="type"]) legend{margin-bottom:8px}
+.rental-sidebar fieldset:has(input[name="type"]) .rental-check-list{gap:9px}
+.rental-sidebar .rental-price-section{padding-top:16px;padding-bottom:22px}
+.rental-sidebar .rental-price-section legend{margin-bottom:4px}
+.rental-sidebar .rental-price-section .rental-double-slider{margin-top:0;margin-bottom:12px}
+.rental-sidebar .rental-price-section .rental-price-fields{margin-top:0}
