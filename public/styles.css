@@ -1104,3 +1104,43 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-sidebar .rental-price-section legend{margin-bottom:4px}
 .rental-sidebar .rental-price-section .rental-double-slider{margin-top:0;margin-bottom:12px}
 .rental-sidebar .rental-price-section .rental-price-fields{margin-top:0}
+
+
+/* Compact Click&Boat-style rental sidebar: spacing only; keep all filters functional */
+@media(min-width:1161px){.rental-layout{grid-template-columns:270px minmax(0,1fr);gap:22px}}
+@media(min-width:801px) and (max-width:1160px){.rental-layout{grid-template-columns:255px minmax(0,1fr);gap:18px}}
+.rental-sidebar{padding:17px 16px;border-radius:12px}
+.rental-sidebar-head{padding-bottom:13px}
+.rental-sidebar-head h2{font-size:18px}
+.rental-sidebar fieldset{padding-top:16px;padding-bottom:16px}
+.rental-sidebar legend{font-size:12px;margin-bottom:10px}
+.rental-sidebar fieldset:has(input[name="type"]){padding-top:15px;padding-bottom:17px}
+.rental-sidebar fieldset:has(input[name="type"]) legend{margin-bottom:10px}
+.rental-sidebar fieldset:has(input[name="type"]) .rental-check-list{gap:8px}
+.rental-check{gap:9px;font-size:12px;min-height:22px}
+.rental-check input{width:17px;height:17px;border-radius:5px}
+.rental-sidebar .rental-price-section{padding-top:16px;padding-bottom:17px}
+.rental-sidebar .rental-price-section legend{margin-bottom:5px}
+.rental-sidebar .rental-double-slider{height:34px;margin-left:1px;margin-right:1px}
+.rental-sidebar .rental-slider-track,.rental-sidebar .rental-slider-active{top:15px;height:4px}
+.rental-sidebar .rental-double-slider input[type=range]{height:34px}
+.rental-sidebar .rental-double-slider input[type=range]::-webkit-slider-thumb{width:31px;height:31px;margin-top:-14px;border-width:1.5px;background-size:15px 15px}
+.rental-sidebar .rental-double-slider input[type=range]::-moz-range-thumb{width:30px;height:30px;border-width:1.5px}
+.rental-sidebar .rental-price-section .rental-double-slider{margin-top:3px;margin-bottom:11px}
+.rental-price-section .rental-price-fields{gap:6px}
+.rental-price-section .rental-price-fields>label{padding:7px 9px;border-radius:8px;font-size:10px;gap:3px}
+.rental-price-section .rental-price-number,.rental-price-section .rental-price-number input{font-size:14px}
+.rental-sidebar .rental-counter-section{padding-top:8px;padding-bottom:8px}
+.rental-sidebar .rental-counter-section:has(+ .rental-range-section){padding-bottom:15px}
+.rental-counter-row{gap:6px}
+.rental-counter-label{font-size:12px}
+.rental-counter-row .rental-guest-stepper{flex:0 0 104px;gap:4px}
+.rental-counter-row .rental-guest-stepper button{width:28px;height:28px;font-size:19px}
+.rental-counter-row .rental-guest-stepper input{width:30px;font-size:13px;padding:3px 0}
+.rental-sidebar .rental-range-section{padding-top:17px;padding-bottom:18px}
+.rental-range-head{margin-bottom:9px}
+.rental-range-head>span,.rental-range-head .rental-length-label{font-size:12px}
+.rental-sidebar .rental-range-section .rental-double-slider{margin-top:2px;margin-bottom:0}
+.rental-range-section[aria-label="Year of manufacture"] .rental-range-head{margin-bottom:9px}
+.rental-sidebar .rental-filter-button{margin-top:12px}
+@media(max-width:800px){.rental-sidebar{padding:17px 16px}.rental-counter-row .rental-guest-stepper{flex-basis:104px}.rental-range-head>span,.rental-range-head .rental-length-label{font-size:12px}}
