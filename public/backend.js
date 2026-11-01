@@ -824,7 +824,8 @@
       const skipper=['with','without'].includes(params.get('skipper'))?params.get('skipper'):'';
       const guests=Math.max(1,Math.min(100,Number(params.get('guests'))||1));
       const minPrice=Math.max(0,Number(params.get('min_price'))||0),maxPrice=Math.max(0,Number(params.get('max_price'))||0);
-      const minLength=Math.max(0,Number(params.get('min_length'))||0);
+      const minLength=Math.max(0,Math.min(15,Number(params.get('min_length'))||0));
+      const maxLength=params.has('max_length')?Math.max(minLength,Math.min(15,Number(params.get('max_length'))||15)):15;
       const selectedEquipment=params.getAll('equipment').filter(v=>['wifi','air_conditioning','paddleboard','snorkel','wakeboard','outdoor_speakers'].includes(v));
       const sorting=['newest','price-low','price-high'].includes(params.get('sort'))?params.get('sort'):'newest';
       const startDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('start')||'')?params.get('start'):'';
@@ -837,7 +838,7 @@
         const specs=b.specifications||{};
         const length=Number(specs.length_m)||0;
         const equipped=Array.isArray(specs.equipment)?specs.equipment:[];
-        return where&&typeOk&&skipperOk&&Number(b.guests)>=guests&&(!minPrice||price>=minPrice)&&(!maxPrice||price<=maxPrice)&&(!minLength||length>=minLength)&&selectedEquipment.every(id=>equipped.includes(id));
+        return where&&typeOk&&skipperOk&&Number(b.guests)>=guests&&(!minPrice||price>=minPrice)&&(!maxPrice||price<=maxPrice)&&(!minLength||length>=minLength)&&(maxLength===15||length<=maxLength)&&selectedEquipment.every(id=>equipped.includes(id));
       });
       if(sorting==='price-low')filtered.sort((a,b)=>guestDailyRate(a.price)-guestDailyRate(b.price));
       if(sorting==='price-high')filtered.sort((a,b)=>guestDailyRate(b.price)-guestDailyRate(a.price));
@@ -874,8 +875,8 @@
               <div class="rental-sidebar-head"><h2>Filters</h2><a href="#/boats">Clear all</a></div>
               <fieldset><legend>Boat types</legend><div class="rental-check-list">${typeChoices.map(([value,label])=>checkField('type',value,label,types.includes(value))).join('')}</div></fieldset>
               <fieldset><legend>Price per day</legend><div class="rental-price-fields"><label>Min €<input type="number" min="0" step="25" name="min_price" placeholder="0" value="${minPrice||''}"></label><label>Max €<input type="number" min="0" step="25" name="max_price" placeholder="Any" value="${maxPrice||''}"></label></div></fieldset>
-              <fieldset><legend>Passengers</legend><label class="rental-select-label">At least <select name="guests">${Array.from({length:20},(_,n)=>n+1).map(n=>`<option value="${n}" ${guests===n?'selected':''}>${n} ${n===1?'person':'people'}</option>`).join('')}</select></label></fieldset>
-              <fieldset><legend>Boat length</legend><label class="rental-select-label">Minimum length <select name="min_length"><option value="">Any length</option>${[5,8,10,12,15,20].map(n=>`<option value="${n}" ${minLength===n?'selected':''}>${n} m +</option>`).join('')}</select></label></fieldset>
+              <fieldset><legend>Passengers</legend><div class="rental-guest-stepper"><button type="button" data-rental-guest-step="-1" aria-label="Decrease passengers" ${guests<=1?'disabled':''}>−</button><input name="guests" type="number" min="1" max="100" value="${guests}" aria-label="Number of passengers"><button type="button" data-rental-guest-step="1" aria-label="Increase passengers" ${guests>=100?'disabled':''}>+</button></div></fieldset>
+              <fieldset><legend>Boat length</legend><div class="rental-length-label"><output data-length-summary>${minLength} - ${maxLength===15?'15+':maxLength} m</output></div><div class="rental-double-slider" data-rental-length><div class="rental-slider-track"></div><div class="rental-slider-active" style="left:${minLength/15*100}%;right:${100-maxLength/15*100}%"></div><input type="range" name="min_length" min="0" max="15" step="1" value="${minLength}" aria-label="Minimum boat length"><input type="range" name="max_length" min="0" max="15" step="1" value="${maxLength}" aria-label="Maximum boat length"></div><div class="rental-length-ticks"><span>0 m</span><span>15+ m</span></div></fieldset>
               <fieldset><legend>Equipment</legend><div class="rental-check-list">${amenities.map(([value,label])=>checkField('equipment',value,label,selectedEquipment.includes(value))).join('')}</div></fieldset>
               <button type="submit" class="btn rental-filter-button">Show matching boats ${icon('arrow')}</button>
               <p class="rental-sidebar-note">Owners review each booking request. Online payment is not enabled yet.</p>
@@ -1118,8 +1119,10 @@
       }
     }
   });
+  document.addEventListener('click',e=>{const button=e.target.closest?.('[data-rental-guest-step]');if(!button)return;const field=button.parentElement.querySelector('input[name="guests"]');field.value=String(Math.max(1,Math.min(100,Number(field.value||1)+Number(button.dataset.rentalGuestStep))));button.parentElement.querySelectorAll('button').forEach(b=>b.disabled=Number(field.value)<=1&&Number(b.dataset.rentalGuestStep)<0||Number(field.value)>=100&&Number(b.dataset.rentalGuestStep)>0);});
+  document.addEventListener('input',e=>{const slider=e.target.closest?.('[data-rental-length]');if(!slider)return;const min=slider.querySelector('[name="min_length"]'),max=slider.querySelector('[name="max_length"]');if(e.target===min&&Number(min.value)>Number(max.value))max.value=min.value;if(e.target===max&&Number(max.value)<Number(min.value))min.value=max.value;const a=Number(min.value),b=Number(max.value);slider.querySelector('.rental-slider-active').style.left=(a/15*100)+'%';slider.querySelector('.rental-slider-active').style.right=(100-b/15*100)+'%';slider.parentElement.querySelector('[data-length-summary]').textContent=a+' - '+(b===15?'15+':b)+' m';});
   document.addEventListener('submit',async e=>{const f=e.target;if(!f.dataset.liveForm)return;e.preventDefault();syncBookingSkipperOption(f);const button=f.querySelector('button[type="submit"],button:not([type])');if(button?.disabled)return;if(button)button.disabled=true;const feedback=f.querySelector('[data-feedback]');if(feedback)feedback.textContent='Saving…';try{if(!client)throw Error('Connecting your account. Please try again in a moment.');const d=new FormData(f),kind=f.dataset.liveForm;
-    if(kind==='search'){const q=new URLSearchParams();for(const key of ['location','start','end','skipper','guests','min_price','max_price','min_length','sort']){const value=String(d.get(key)||'').trim();if(value)q.set(key,value)}for(const key of ['type','equipment'])for(const value of d.getAll(key))if(value)q.append(key,String(value));location.hash='#/boats?'+q.toString();return}
+    if(kind==='search'){const q=new URLSearchParams();for(const key of ['location','start','end','skipper','guests','min_price','max_price','min_length','max_length','sort']){const value=String(d.get(key)||'').trim();if(value)q.set(key,value)}for(const key of ['type','equipment'])for(const value of d.getAll(key))if(value)q.append(key,String(value));location.hash='#/boats?'+q.toString();return}
     if(kind==='auth'&&!recovery&&authStep==='email'){authEmail=String(d.get('email')||'').trim();authStep='password';render();return}
     if(kind==='auth'){const email=String(d.get('email')||'').trim(),password=String(d.get('password'));if(recovery){check(await client.auth.updateUser({password}));recovery=false;toast('Password updated.');}else if(authMode==='signup'){const result=check(await client.auth.signUp({email,password,options:{emailRedirectTo:authRedirect()}}));if(!result.session){feedback.textContent='Check your inbox to confirm your email. If no email arrives, contact our team through the Contact page.';return}}else check(await client.auth.signInWithPassword({email,password}));await current();location.hash=afterLogin();authStep='email';authEmail='';render();return}
     if(!session){
