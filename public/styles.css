@@ -1071,3 +1071,12 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-range-section[aria-label="Year of manufacture"] .rental-length-label{font-size:11px;white-space:nowrap}
 .rental-price-section input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .rental-price-section input[type=number]::-webkit-inner-spin-button,.rental-price-section input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+
+/* Wide Click&Boat-inspired end handles across the filter column */
+.rental-sidebar .rental-double-slider{margin-left:3px;margin-right:3px;height:48px}
+.rental-sidebar .rental-slider-track,.rental-sidebar .rental-slider-active{top:22px;height:5px}
+.rental-sidebar .rental-double-slider input[type=range]{height:48px}
+.rental-sidebar .rental-double-slider input[type=range]::-webkit-slider-thumb{width:42px;height:42px;margin-top:-19px;border:2px solid #b8d9e3;background-size:19px 19px;box-shadow:0 2px 6px #17495518}
+.rental-sidebar .rental-double-slider input[type=range]::-moz-range-thumb{width:39px;height:39px;border:2px solid #b8d9e3;box-shadow:0 2px 6px #17495518}
+.rental-sidebar .rental-range-section .rental-double-slider{margin-top:3px;margin-bottom:2px}
+.rental-sidebar .rental-price-section .rental-double-slider{margin-top:9px;margin-bottom:17px}
