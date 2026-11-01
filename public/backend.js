@@ -262,6 +262,7 @@
     'Miami, USA','Fort Lauderdale, USA','Key West, USA','Los Angeles, USA','San Diego, USA','New York, USA',
     'Nassau, Bahamas','Exuma, Bahamas','Freeport, Bahamas','Harbour Island, Bahamas'
   ];
+  window.GBB_DESTINATION_CITIES=destinationCities;
   const destinationDatalist=()=>`<datalist id="boat-destinations">${destinationCities.map(city=>`<option value="${esc(city)}"></option>`).join('')}</datalist>`;
   const countryMapCenters={Croatia:[43.8,15.9,8],Greece:[37.9,23.7,7],Spain:[39.4,-4,6],France:[43.3,5.1,7],Italy:[41.9,12.5,6],Portugal:[38.7,-9.2,7],Cyprus:[34.9,33.25,9],Turkey:[37,29,6],Malta:[35.9,14.5,11],Australia:[-25.27,133.77,4],Montenegro:[42.4,18.7,9],Albania:[40.8,19.5,9],USA:[37.1,-95.7,4],Bahamas:[24.25,-76.1,7]};
   const validPickupCoordinates=(lat,lng)=>Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=-90&&lat<=90&&lng>=-180&&lng<=180;
@@ -816,7 +817,7 @@
       const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));
       const rawSearch=(params.get('location')||params.get('country')||'').trim();
       const foldCity=text=>String(text||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().replace(/[đð]/g,'d').replace(/ı/g,'i').replace(/ł/g,'l').replace(/ø/g,'o').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ß/g,'ss').replace(/þ/g,'th').trim();
-      const searchInput=destinationCities.find(city=>foldCity(city)===foldCity(rawSearch))||destinationCities.find(city=>foldCity(city.split(',')[0])===foldCity(rawSearch))||rawSearch;
+      const searchInput=window.resolveDestinationName?.(rawSearch,destinationCities)||rawSearch;
       const search=foldCity(searchInput);
       const types=params.getAll('type').filter(v=>['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'].includes(v));
       const skipper=['with','without'].includes(params.get('skipper'))?params.get('skipper'):'';
