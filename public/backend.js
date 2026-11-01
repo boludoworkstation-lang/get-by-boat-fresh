@@ -815,7 +815,7 @@
     if(path==='/boats') {
       const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));
       const rawSearch=(params.get('location')||params.get('country')||'').trim();
-      const foldCity=text=>String(text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLocaleLowerCase().trim();
+      const foldCity=text=>String(text||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().replace(/[đð]/g,'d').replace(/ı/g,'i').replace(/ł/g,'l').replace(/ø/g,'o').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ß/g,'ss').replace(/þ/g,'th').trim();
       const searchInput=destinationCities.find(city=>foldCity(city)===foldCity(rawSearch))||destinationCities.find(city=>foldCity(city.split(',')[0])===foldCity(rawSearch))||rawSearch;
       const search=foldCity(searchInput);
       const types=params.getAll('type').filter(v=>['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'].includes(v));
