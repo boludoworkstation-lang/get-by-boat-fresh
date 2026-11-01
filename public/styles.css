@@ -960,3 +960,8 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-results-bar select{max-width:185px}.rental-card-grid{grid-template-columns:1fr;gap:15px}.rental-card-photo{height:220px}
 .rental-sidebar{padding:20px}.rental-empty{padding:55px 21px;min-height:320px}.rental-empty h2{font-size:31px}
 }
+
+/* Accent-insensitive destination suggestions */
+.destination-autocomplete{position:fixed;z-index:10000;max-height:330px;overflow-y:auto;background:#fff;border:1px solid #dbe8ec;border-radius:13px;box-shadow:0 16px 45px #073d4a30;padding:6px}
+.destination-autocomplete-option{display:block;width:100%;background:#fff;border:0;text-align:left;padding:12px 15px;color:#193e49;font-family:inherit;font-size:14px;font-weight:500;line-height:1.45;cursor:pointer;border-radius:8px}
+.destination-autocomplete-option:hover,.destination-autocomplete-option.is-active{background:#e6f7fa;color:#007f99}
