@@ -96,6 +96,32 @@
   const status=s=>({pending_owner:'Waiting for owner',awaiting_payment:'Accepted · payment not connected',confirmed:'Confirmed',cancelled:'Cancelled',declined:'Declined'}[s]||s);
   const check=({data,error})=>{if(error)throw error;return data};
   const dateFields=()=>field('First day','start_date','date',state.start||today(),`required min="${today()}"`)+field('Last day','end_date','date',state.end||state.start||today(),`required min="${today()}"`);
+  function bookingDateFields(){
+ const start=state.start||today(),end=state.end||start;
+ return '<div class="booking-date-range"><span class="booking-date-heading">Dates</span><button type="button" class="booking-date-trigger" data-booking-date-open aria-label="Choose check-in and check-out dates"><span><small>Check-in</small><strong data-booking-start-label>'+euroDate(start)+'</strong></span><span class="booking-date-arrow">›</span><span><small>Check-out</small><strong data-booking-end-label>'+euroDate(end)+'</strong></span></button><input type="hidden" name="start_date" value="'+start+'"><input type="hidden" name="end_date" value="'+end+'"></div>';
+}
+  let bookingDateDraft=null,bookingDateMonth=null;
+  function bookingCalendarDialog(){
+ const form=document.querySelector('[data-live-form="request"]');if(!form)return;
+ const unavailable=JSON.parse(form.dataset.unavailable||'[]'),month=bookingDateMonth||today().slice(0,7);
+ const dateMonth=m=>{
+  const [year,number]=m.split('-').map(Number),first=new Date(Date.UTC(year,number-1,1)),length=new Date(Date.UTC(year,number,0)).getUTCDate(),padding=(first.getUTCDay()+6)%7;
+  const title=first.toLocaleDateString('en-GB',{month:'long',year:'numeric',timeZone:'UTC'});
+  const cells=Array.from({length:padding},()=>'<span></span>');
+  for(let day=1;day<=length;day++){
+   const iso=m+'-'+String(day).padStart(2,'0'),busy=unavailable.some(r=>r.start_date<=iso&&r.end_date>=iso),past=iso<today();
+   if(busy||past){cells.push('<span class="booking-calendar-day is-disabled" title="'+(busy?'Unavailable':'Past date')+'">'+day+'</span>');continue;}
+   const start=bookingDateDraft?.start,end=bookingDateDraft?.end,selected=iso===start||iso===end,between=!!start&&!!end&&iso>start&&iso<end;
+   cells.push('<button type="button" class="booking-calendar-day '+(selected?'is-picked ':between?'is-between ':'')+'" data-booking-day="'+iso+'" aria-pressed="'+selected+'">'+day+'</button>');
+  }
+  return '<div class="booking-calendar-month"><h3>'+title+'</h3><div class="booking-calendar-weekdays">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>'<span>'+d+'</span>').join('')+'</div><div class="booking-calendar-days">'+cells.join('')+'</div></div>';
+ };
+ let dialog=document.querySelector('[data-booking-calendar-dialog]');
+ if(!dialog){dialog=document.createElement('div');dialog.className='booking-calendar-overlay';dialog.dataset.bookingCalendarDialog='';document.body.appendChild(dialog);}
+ dialog.innerHTML='<div class="booking-calendar-panel" role="dialog" aria-modal="true" aria-label="Choose rental dates"><div class="booking-calendar-toolbar"><button type="button" data-booking-month="-1" aria-label="Previous month">‹</button><span>Choose your rental dates</span><button type="button" data-booking-month="1" aria-label="Next month">›</button></div><div class="booking-calendar-months">'+dateMonth(month)+dateMonth(shiftMonth(month,1))+'</div><p class="booking-calendar-status" data-booking-calendar-status>Select the first day, then the last day.</p><div class="booking-calendar-footer"><button type="button" class="booking-calendar-clear" data-booking-date-clear>Clear dates</button><div><button type="button" class="booking-calendar-cancel" data-booking-date-close>Cancel</button><button type="button" class="btn booking-calendar-save" data-booking-date-save '+(!bookingDateDraft?.end?'disabled':'')+'>Save</button></div></div></div>';
+ if(bookingDateDraft?.start&&bookingDateDraft?.end)dialog.querySelector('[data-booking-calendar-status]').textContent=euroDate(bookingDateDraft.start)+' – '+euroDate(bookingDateDraft.end);
+}
+  function closeBookingCalendar(){document.querySelector('[data-booking-calendar-dialog]')?.remove();bookingDateDraft=null;}
   const calendarDateFields=()=>{
     const first=state.start||today(),last=state.end||first;
     return `<div class="fleet-euro-dates"><label>First day (DD.MM.YYYY)<input type="text" inputmode="numeric" data-euro-date="start_date" value="${euroDate(first)}" placeholder="DD.MM.YYYY" autocomplete="off"><input type="hidden" name="start_date" value="${first}"></label><label>Last day (DD.MM.YYYY)<input type="text" inputmode="numeric" data-euro-date="end_date" value="${euroDate(last)}" placeholder="DD.MM.YYYY" autocomplete="off"><input type="hidden" name="end_date" value="${last}"></label></div>`;
@@ -940,7 +966,7 @@
       const skipperSummary=`<div class="listing-skipper-summary">${captainCapIcon}<div><strong>${skipperHeadline}</strong><p>${skipperDescription}</p></div></div>`;
       const conditions=`<section class="listing-conditions"><h2>Conditions</h2><div class="listing-condition-grid"><div><h3>Check-in & check-out</h3><dl><div><dt>Day rental check-in</dt><dd>${esc(boatClock(b.check_in_time,'09:00'))}</dd></div><div><dt>Day rental check-out</dt><dd>${esc(boatClock(b.check_out_time,'19:00'))}</dd></div></dl></div><div><h3>Boat rules</h3><dl><div><dt>Boat licence required</dt><dd>${b.licence_required===false?'No':'Yes'}</dd></div><div><dt>Pets allowed</dt><dd>${b.specifications?.pets_allowed===true?'Yes':'No'}</dd></div><div><dt>Minimum rental age</dt><dd>${Math.max(18,Number(b.minimum_rental_age)||18)} years</dd></div></dl></div></div></section>`;
       const bookingBox=isOwner?`<div class="live-card listing-booking-card"><span class="listing-price-caption">Your payout</span><h2>${money(b.price)} <small>/ day</small></h2><p>Guest price: ${money(guestDailyRate(b.price))} per day, fees included.</p><div class="verification-booking-block"><strong>Owner preview</strong><p>Owner accounts cannot rent their own boats. Use a customer account to book.</p></div><a class="btn" href="#/owner?edit=${esc(b.id)}">Edit listing</a></div>`:
-        `<form data-live-form="request" data-id="${esc(b.id)}" data-price="${b.price}" data-unavailable="${esc(JSON.stringify(unavailable.map(({start_date,end_date})=>({start_date,end_date}))))}" data-check-in="${esc(boatClock(b.check_in_time,'09:00'))}" data-check-out="${esc(boatClock(b.check_out_time,'19:00'))}" data-with-skipper="${hasSkipper}" data-without-skipper="${hasBareboat}" data-skipper-fee="${Number(b.skipper_fee_per_day)||0}" data-skipper-extra="${hasBareboat&&hasSkipper}" data-verified="${verificationState()==='approved'}" data-licence-required="${b.licence_required!==false}" data-licence-expiry="${esc(verificationRequest?.licence_expiry||'')}" class="live-card live-form listing-booking-card"><span class="listing-price-caption">From</span><h2>${money(guestDailyRate(b.price))} <small>/ day</small></h2><p class="member-note">Full trip cost includes boat rental, booking fees and any selected skipper. No payment is taken when you request; online checkout follows owner approval once payments are enabled.</p>${choices}${dateFields()}${field('Passengers','guests','number',selectedGuests,`required min="1" max="${b.guests}"`)}<div data-quote aria-live="polite"></div>${warning}<button class="btn" type="submit" ${needsVerification?'disabled':''}>${needsVerification?'Verify your licence to book':session?'Request to book':'Log in to request'}</button><p data-feedback role="status"></p><small>The owner will confirm availability before you pay.</small></form>`;
+        `<form data-live-form="request" data-id="${esc(b.id)}" data-price="${b.price}" data-unavailable="${esc(JSON.stringify(unavailable.map(({start_date,end_date})=>({start_date,end_date}))))}" data-check-in="${esc(boatClock(b.check_in_time,'09:00'))}" data-check-out="${esc(boatClock(b.check_out_time,'19:00'))}" data-with-skipper="${hasSkipper}" data-without-skipper="${hasBareboat}" data-skipper-fee="${Number(b.skipper_fee_per_day)||0}" data-skipper-extra="${hasBareboat&&hasSkipper}" data-verified="${verificationState()==='approved'}" data-licence-required="${b.licence_required!==false}" data-licence-expiry="${esc(verificationRequest?.licence_expiry||'')}" class="live-card live-form listing-booking-card"><span class="listing-price-caption">From</span><h2>${money(guestDailyRate(b.price))} <small>/ day</small></h2><p class="member-note">Full trip cost includes boat rental, booking fees and any selected skipper. No payment is taken when you request; online checkout follows owner approval once payments are enabled.</p>${choices}${bookingDateFields()}<input type="hidden" name="guests" value="1"><div data-quote aria-live="polite"></div>${warning}<button class="btn" type="submit" ${needsVerification?'disabled':''}>${needsVerification?'Verify your licence to book':session?'Request to book':'Log in to request'}</button><p data-feedback role="status"></p><small>The owner will confirm availability before you pay.</small></form>`;
       return page(esc(b.name),`<div class="listing-location-intro">${icon('pin')} ${esc(b.location)}, ${esc(b.country)} <span>·</span> ${esc(b.type)} <span>·</span> Up to ${Number(b.guests)||1} ${(Number(b.guests)||1)===1?'passenger':'passengers'}</div><div class="live-columns listing-layout"><section class="listing-details"><div class="listing-cover">${picture(b)}</div>${rentalHighlights}${skipperSummary}${session&&!isOwner?btn('Save to favourites','favourite',b.id):''}<section class="listing-about"><h2>About this boat</h2><p class="live-description">${esc(b.description||'Ask the owner for more information about this boat.')}</p></section>${listingSpecificationSections(b)}${listingEquipmentSection(b)}${listingAvailabilityCalendar(unavailable,today().slice(0,7))}${conditions}${pickupDetails(b,exactPickup)}${listingOwnerReviews(reviews)}</section><aside class="listing-booking">${bookingBox}</aside></div>`);
     }
     const guard=requireAccount();if(guard)return guard;
@@ -1409,6 +1435,43 @@
       break;
     }case 'refresh':await current();render();break;case 'auth-mode':authEmail=document.querySelector('[name="email"]')?.value||authEmail;authMode=authMode==='login'?'signup':'login';render();break;case 'logout':case 'logout-owner':{const createOwner=b.dataset.live==='logout-owner';check(await client.auth.signOut());session=null;profile=null;authStep='email';authEmail='';authNext=createOwner?'#/owner':'#/dashboard';ownerIntent=createOwner;window.GBB_ACCOUNT_LINK=null;window.GBB_ACCOUNT_ROLE=null;authBackground=null;returnRoute='#/';document.body?.classList.remove('auth-open');if(createOwner){location.hash=loginLink(authNext);render()}else if(location.hash!=='#/'){location.hash='#/'}else render();break}case 'reset':{const email=document.querySelector('[name="email"]')?.value;if(!email)throw Error('Enter your email address first.');check(await client.auth.resetPasswordForEmail(email,{redirectTo:authRedirect()}));toast('Check your email for the password reset link.');break}case 'accept':case 'decline':case 'cancel':{const action=b.dataset.live;const booking=check(await client.from('bookings').update({status:{accept:'awaiting_payment',decline:'declined',cancel:'cancelled'}[action]}).eq('id',b.dataset.id).select().single());if(action==='accept'||action==='decline')notifyBookingEmail(action==='accept'?'owner_accepted':'owner_declined',booking.id);render();break}case 'unblock':check(await client.from('boat_blocks').delete().eq('id',b.dataset.id).select().single());render();break}}catch(err){toast(err.message||'Please try again.')}finally{b.disabled=false}});
   document.addEventListener('click',async event=>{
+    const calendarOverlay=document.querySelector('[data-booking-calendar-dialog]');
+    const openDate=event.target.closest?.('[data-booking-date-open]');
+    if(openDate){
+      event.preventDefault();
+      const form=openDate.closest('[data-live-form="request"]');
+      bookingDateDraft={start:form.querySelector('[name="start_date"]').value,end:form.querySelector('[name="end_date"]').value};
+      bookingDateMonth=bookingDateDraft.start.slice(0,7);
+      bookingCalendarDialog();return;
+    }
+    if(calendarOverlay&&event.target===calendarOverlay){closeBookingCalendar();return;}
+    if(event.target.closest?.('[data-booking-date-close]')){closeBookingCalendar();return;}
+    const monthButton=event.target.closest?.('[data-booking-month]');
+    if(monthButton&&calendarOverlay){bookingDateMonth=shiftMonth(bookingDateMonth,Number(monthButton.dataset.bookingMonth));bookingCalendarDialog();return;}
+    if(event.target.closest?.('[data-booking-date-clear]')){bookingDateDraft={start:null,end:null};bookingCalendarDialog();return;}
+    const pickedDate=event.target.closest?.('[data-booking-day]');
+    if(pickedDate&&bookingDateDraft){
+      const chosen=pickedDate.dataset.bookingDay,form=document.querySelector('[data-live-form="request"]');
+      if(!bookingDateDraft.start||bookingDateDraft.end){bookingDateDraft={start:chosen,end:null};}
+      else{
+        const start=chosen<bookingDateDraft.start?chosen:bookingDateDraft.start,end=chosen>bookingDateDraft.start?chosen:bookingDateDraft.start;
+        const unavailable=JSON.parse(form?.dataset.unavailable||'[]');
+        if(unavailable.some(r=>r.start_date<=end&&r.end_date>=start)){calendarOverlay.querySelector('[data-booking-calendar-status]').textContent='The selected range includes unavailable dates.';return;}
+        bookingDateDraft={start,end};
+      }
+      bookingCalendarDialog();return;
+    }
+    if(event.target.closest?.('[data-booking-date-save]')&&bookingDateDraft?.start&&bookingDateDraft?.end){
+      const form=document.querySelector('[data-live-form="request"]');
+      if(form){
+        form.querySelector('[name="start_date"]').value=bookingDateDraft.start;
+        form.querySelector('[name="end_date"]').value=bookingDateDraft.end;
+        form.querySelector('[data-booking-start-label]').textContent=euroDate(bookingDateDraft.start);
+        form.querySelector('[data-booking-end-label]').textContent=euroDate(bookingDateDraft.end);
+        state.start=bookingDateDraft.start;state.end=bookingDateDraft.end;quote();
+      }
+      closeBookingCalendar();return;
+    }
     const listingMonth=event.target.closest?.('[data-listing-month]');
     if(listingMonth&&listingCalendarContext){
       event.preventDefault();
