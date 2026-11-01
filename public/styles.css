@@ -1175,3 +1175,36 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 /* License-free self-drive filter */
 .rental-sidebar .rental-licence-section{padding-top:13px;padding-bottom:15px}
 .rental-sidebar .rental-licence-section .rental-check{font-weight:650;color:#244650;min-height:23px}
+
+/* Compact booking dates and two-month checkout calendar */
+.listing-booking-card .booking-date-range{margin:20px 0 16px}
+.booking-date-heading{display:block;color:#214b57;font-weight:700;margin-bottom:9px}
+.booking-date-trigger{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:72px;border:1px solid #b8d2d8;border-radius:13px;background:#fff;color:#183c49;padding:12px 18px;cursor:pointer;text-align:center;gap:12px}
+.booking-date-trigger:hover,.booking-date-trigger:focus-visible{border-color:#00a5be;outline:2px solid #b9e5ec;outline-offset:1px}
+.booking-date-trigger>span:not(.booking-date-arrow){flex:1;display:grid;gap:4px}
+.booking-date-trigger small{font-size:12px;color:#76909b;font-weight:500}
+.booking-date-trigger strong{font-size:16px;font-weight:700}
+.booking-date-arrow{font-size:28px;font-weight:300;line-height:1;color:#008ba4}
+.booking-calendar-overlay{position:fixed;inset:0;background:rgba(12,30,38,.57);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.booking-calendar-panel{background:#fff;color:#233b45;border-radius:18px;box-shadow:0 22px 65px rgba(9,28,35,.22);width:min(680px,100%);padding:22px 26px 18px;max-height:90vh;overflow-y:auto}
+.booking-calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:15px;font-size:14px;font-weight:650}
+.booking-calendar-toolbar button{width:36px;height:36px;border:1px solid #d2e1e6;border-radius:50%;background:white;font-size:26px;line-height:1;color:#254651;cursor:pointer}
+.booking-calendar-toolbar button:hover{background:#e9f6f8}
+.booking-calendar-months{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.booking-calendar-month h3{text-align:center;font-size:14px;font-weight:650;margin:0 0 15px}
+.booking-calendar-weekdays,.booking-calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;gap:3px}
+.booking-calendar-weekdays{color:#8797a0;font-size:11px;margin-bottom:12px}
+.booking-calendar-days{grid-auto-rows:34px}
+.booking-calendar-day{width:100%;min-width:0;border:0;background:transparent;border-radius:9px;color:#263b45;font-size:13px;cursor:pointer}
+.booking-calendar-day:hover{background:#e5f5f9}
+.booking-calendar-day.is-picked{background:#00a6be;color:#fff;font-weight:750}
+.booking-calendar-day.is-between{background:#d8f2f7;border-radius:0}
+.booking-calendar-day.is-disabled{display:grid;place-items:center;color:#b8c3c7;text-decoration:line-through;cursor:not-allowed;font-size:13px}
+.booking-calendar-status{font-size:12px;color:#6c8590;min-height:20px;margin:17px 0 12px}
+.booking-calendar-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:14px;border-top:1px solid #e6eff1}
+.booking-calendar-footer>div{display:flex;gap:12px;align-items:center}
+.booking-calendar-clear,.booking-calendar-cancel{border:0;background:transparent;color:#137e94;text-decoration:underline;cursor:pointer;font-size:13px}
+.booking-calendar-cancel{text-decoration:none}
+.booking-calendar-save.btn{min-width:100px;padding:10px 22px;margin:0;min-height:38px;font-size:14px}
+.booking-calendar-save.btn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:600px){.booking-calendar-panel{padding:18px 12px}.booking-calendar-months{gap:8px}.booking-calendar-days{grid-auto-rows:30px}.booking-calendar-day{font-size:12px}.booking-calendar-weekdays{font-size:10px}.booking-calendar-panel{border-radius:13px}}
