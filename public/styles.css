@@ -1247,3 +1247,18 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 @media(min-width:541px) and (max-width:800px){
   .rental-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Wide, edge-aligned boat search: keep filters left and give cards room. */
+@media (min-width: 1200px) {
+  .rental-page > .shell {width:calc(100% - 56px);max-width:1920px;margin-inline:auto}
+  .rental-layout {grid-template-columns:270px minmax(0,1fr);gap:24px}
+  .rental-card-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .rental-card-photo {height:clamp(225px,19vw,350px)}
+  .rental-card-body {padding:18px 18px 17px}
+  .rental-card h3 {font-size:26px}
+}
+@media (min-width: 1600px) {
+  .rental-page > .shell {width:calc(100% - 72px);max-width:none}
+  .rental-layout {grid-template-columns:285px minmax(0,1fr);gap:28px}
+  .rental-card-photo {height:clamp(270px,21vw,400px)}
+}
