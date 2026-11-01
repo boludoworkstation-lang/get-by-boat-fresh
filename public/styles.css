@@ -1064,3 +1064,10 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-country-choices::-webkit-scrollbar-thumb{background:#c5dce2;border-radius:6px}
 .rental-sidebar .rental-filter-button{margin-top:12px}
 @media(max-width:800px){.rental-range-head>span,.rental-range-head .rental-length-label{font-size:14px}.rental-counter-row .rental-guest-stepper{flex-basis:132px}}
+
+/* Keep the long manufacture label and range on one measured line */
+.rental-range-section[aria-label="Year of manufacture"] .rental-range-head{gap:4px;grid-template-columns:minmax(0,1fr) auto;display:grid;align-items:center}
+.rental-range-section[aria-label="Year of manufacture"] .rental-range-head>span{font-size:11px;white-space:nowrap;letter-spacing:-.025em}
+.rental-range-section[aria-label="Year of manufacture"] .rental-length-label{font-size:11px;white-space:nowrap}
+.rental-price-section input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.rental-price-section input[type=number]::-webkit-inner-spin-button,.rental-price-section input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
