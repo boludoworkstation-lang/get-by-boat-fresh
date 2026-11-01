@@ -1156,3 +1156,8 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-sidebar .rental-price-section>legend,
 .rental-sidebar fieldset:has(.rental-check-list):not(:has(input[name="type"]))>legend{transform:translateY(12px)}
 .rental-sidebar .rental-price-section>legend{margin-bottom:17px}
+
+/* Fine ocean-blue range tracks and a slightly higher daily-price slider */
+.rental-sidebar .rental-slider-track,
+.rental-sidebar .rental-slider-active{height:3px;top:15.5px}
+.rental-sidebar .rental-price-section .rental-double-slider{margin-top:-5px}
