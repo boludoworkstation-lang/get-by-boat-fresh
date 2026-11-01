@@ -1161,3 +1161,13 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-sidebar .rental-slider-track,
 .rental-sidebar .rental-slider-active{height:3px;top:15.5px}
 .rental-sidebar .rental-price-section .rental-double-slider{margin-top:-5px}
+
+/* Compact skipper preference directly below boat types */
+.rental-sidebar .rental-skipper-section{padding-top:16px;padding-bottom:16px}
+.rental-sidebar .rental-skipper-section legend{transform:translateY(10px);margin-bottom:19px}
+.rental-skipper-choices{display:flex;align-items:center;gap:25px}
+.rental-skipper-choices .rental-check{font-size:12px;gap:8px}
+.rental-skipper-choices input[type="radio"]{appearance:none;-webkit-appearance:none;border:1.5px solid #b9cdd3;border-radius:50%;width:17px;height:17px;background:#fff;display:grid;place-items:center}
+.rental-skipper-choices input[type="radio"]:checked{border-color:#0a9cb9;background:#0a9cb9}
+.rental-skipper-choices input[type="radio"]:checked::after{content:"";display:block;width:6px;height:6px;background:#fff;border-radius:50%;transform:none;border:0}
+.rental-skipper-choices input[type="radio"]:focus-visible{outline:2px solid #006f83;outline-offset:2px}
