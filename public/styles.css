@@ -1150,3 +1150,9 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-sidebar .rental-double-slider input[name="min_length"]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23263339' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m14 5-7 7 7 7'/%3E%3C/svg%3E")}
 .rental-sidebar .rental-double-slider input[name$="_max"]::-webkit-slider-thumb,
 .rental-sidebar .rental-double-slider input[name="max_length"]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23263339' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m10 5 7 7-7 7'/%3E%3C/svg%3E")}
+
+/* Align filter heading clearance below divider with Year of manufacture */
+.rental-sidebar fieldset:has(input[name="type"])>legend,
+.rental-sidebar .rental-price-section>legend,
+.rental-sidebar fieldset:has(.rental-check-list):not(:has(input[name="type"]))>legend{transform:translateY(12px)}
+.rental-sidebar .rental-price-section>legend{margin-bottom:17px}
