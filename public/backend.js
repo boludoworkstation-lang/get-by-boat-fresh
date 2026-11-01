@@ -814,9 +814,75 @@
     if(path==='/owner'&&!session)return loginPage();
     if(path==='/boats') {
       const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));
-      const searchInput=(params.get('location')||params.get('country')||'').trim(),search=searchInput.toLowerCase(),type=params.get('type')||'';
-      const filtered=boats.filter(b=>(!search||`${b.location}, ${b.country}`.toLowerCase().includes(search)||String(b.country).toLowerCase()===search)&&(!type||b.type===type));
-      return page('Discover your next <i>adventure.</i>',`<form data-live-form="search" class="live-card live-search"><label>Where would you like to go?<input type="search" name="location" list="boat-destinations" placeholder="Search by city, e.g. Dubrovnik, Croatia" autocomplete="off" value="${esc(searchInput)}"></label>${destinationDatalist()}<label>Boat type<select name="type"><option value="">Any boat</option>${['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'].map(t=>`<option ${t===type?'selected':''}>${t}</option>`).join('')}</select></label><button class="btn">Find boats</button></form><p>${filtered.length} ${filtered.length===1?'boat':'boats'} · All bookings upon request</p><div class="live-grid">${filtered.map(b=>`<a class="live-card live-boat" href="#/listing/${b.id}">${picture(b)}<h2>${esc(b.name)}</h2><p>${esc(b.location)}, ${esc(b.country)} · ${esc(b.type)} · ${b.guests} ${Number(b.guests)===1?'passenger':'passengers'}</p><p class="rental-mode-summary">${esc(rentalOptions(b))}</p><strong>${money(guestDailyRate(b.price))} / day</strong></a>`).join('')||`<div class="live-card"><h2>No boats found for this location yet.</h2><p>Try another city or browse all available boats.</p><a class="btn" href="#/boats">View all boats</a></div>`}</div>`);
+      const searchInput=(params.get('location')||params.get('country')||'').trim();
+      const search=searchInput.toLocaleLowerCase();
+      const types=params.getAll('type').filter(v=>['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'].includes(v));
+      const skipper=['with','without'].includes(params.get('skipper'))?params.get('skipper'):'';
+      const guests=Math.max(1,Math.min(100,Number(params.get('guests'))||1));
+      const minPrice=Math.max(0,Number(params.get('min_price'))||0),maxPrice=Math.max(0,Number(params.get('max_price'))||0);
+      const minLength=Math.max(0,Number(params.get('min_length'))||0);
+      const selectedEquipment=params.getAll('equipment').filter(v=>['wifi','air_conditioning','paddleboard','snorkel','wakeboard','outdoor_speakers'].includes(v));
+      const sorting=['newest','price-low','price-high'].includes(params.get('sort'))?params.get('sort'):'newest';
+      const startDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('start')||'')?params.get('start'):'';
+      const endDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('end')||'')?params.get('end'):'';
+      let filtered=boats.filter(b=>{
+        const where=!search||`${b.location||''}, ${b.country||''}`.toLocaleLowerCase().includes(search)||String(b.country||'').toLocaleLowerCase()===search;
+        const typeOk=!types.length||types.includes(b.type);
+        const skipperOk=!skipper||(skipper==='with'?b.with_skipper===true:b.without_skipper!==false);
+        const price=guestDailyRate(b.price);
+        const specs=b.specifications||{};
+        const length=Number(specs.length_m)||0;
+        const equipped=Array.isArray(specs.equipment)?specs.equipment:[];
+        return where&&typeOk&&skipperOk&&Number(b.guests)>=guests&&(!minPrice||price>=minPrice)&&(!maxPrice||price<=maxPrice)&&(!minLength||length>=minLength)&&selectedEquipment.every(id=>equipped.includes(id));
+      });
+      if(sorting==='price-low')filtered.sort((a,b)=>guestDailyRate(a.price)-guestDailyRate(b.price));
+      if(sorting==='price-high')filtered.sort((a,b)=>guestDailyRate(b.price)-guestDailyRate(a.price));
+      const fullCountry=searchInput==='USA'?'United States':searchInput;
+      const heading=searchInput?`Boat rentals in <i>${esc(fullCountry)}</i>`:'Find your next <i>day at sea.</i>';
+      const typeChoices=[['Motorboat','Motorboat'],['RIB','RIB'],['Sailboat','Sailboat'],['Catamaran','Catamaran'],['Yacht','Yacht'],['Jetski','Jetski']];
+      const amenities=[['wifi','Wi-Fi'],['air_conditioning','Air conditioning'],['paddleboard','Paddle board'],['snorkel','Snorkelling'],['wakeboard','Wakeboard'],['outdoor_speakers','External speakers']];
+      const checkField=(name,value,label,selected)=>`<label class="rental-check"><input type="checkbox" name="${name}" value="${value}" ${selected?'checked':''}><span>${label}</span></label>`;
+      const query=new URLSearchParams();
+      if(startDate)query.set('start',startDate);if(endDate)query.set('end',endDate);query.set('guests',String(guests));
+      const listingQuery=query.toString()?'?'+query.toString():'';
+      const cards=filtered.map(b=>`<a class="rental-card" href="#/listing/${encodeURIComponent(b.id)}${listingQuery}">
+        <div class="rental-card-photo">${picture(b)}<span class="rental-photo-badge">Upon request</span></div>
+        <div class="rental-card-body">
+          <div class="rental-card-location">${icon('pin')} ${esc(b.location)}, ${esc(b.country)}</div>
+          <h3>${esc(b.name)}</h3>
+          <div class="rental-card-facts"><span>${icon('ship')} ${esc(b.type)}</span><span>${icon('users')} Up to ${Number(b.guests)||1} guests</span></div>
+          <div class="rental-card-options">${icon('check')} ${esc(rentalOptions(b)||'Ask the owner about skipper options')}</div>
+          <div class="rental-card-bottom"><span>From <strong>${money(guestDailyRate(b.price))}</strong> / day</span><span class="rental-view-link">View boat ${icon('arrow')}</span></div>
+        </div>
+      </a>`).join('');
+      return `${header('boats')}<main class="rental-page">
+        <div class="shell rental-heading"><div><div class="rental-eyebrow">GET BY BOAT · EXPLORE</div><h1>${heading}</h1><p>Discover beautiful boats, compare your options and send a request directly to the owner.</p></div><span class="rental-request-note">${icon('shield')} Every booking is upon request</span></div>
+        <form class="rental-search-form shell" data-live-form="search">
+          <div class="rental-search-bar">
+            <label class="rental-where"><span>${icon('pin')} Where</span><input name="location" list="boat-destinations" type="search" placeholder="City or country" value="${esc(searchInput)}" autocomplete="off"></label>${destinationDatalist()}
+            <label><span>${icon('calendar')} From</span><input name="start" type="date" value="${esc(startDate)}"></label>
+            <label><span>${icon('calendar')} To</span><input name="end" type="date" value="${esc(endDate)}"></label>
+            <label><span>${icon('ship')} Rental type</span><select name="skipper"><option value="">With or without skipper</option><option value="with" ${skipper==='with'?'selected':''}>With skipper</option><option value="without" ${skipper==='without'?'selected':''}>Self-drive</option></select></label>
+            <button class="btn rental-search-button" type="submit">${icon('search')} Search</button>
+          </div>
+          <div class="rental-layout">
+            <aside class="rental-sidebar" aria-label="Filter boats">
+              <div class="rental-sidebar-head"><h2>Filters</h2><a href="#/boats">Clear all</a></div>
+              <fieldset><legend>Boat types</legend><div class="rental-check-list">${typeChoices.map(([value,label])=>checkField('type',value,label,types.includes(value))).join('')}</div></fieldset>
+              <fieldset><legend>Price per day</legend><div class="rental-price-fields"><label>Min €<input type="number" min="0" step="25" name="min_price" placeholder="0" value="${minPrice||''}"></label><label>Max €<input type="number" min="0" step="25" name="max_price" placeholder="Any" value="${maxPrice||''}"></label></div></fieldset>
+              <fieldset><legend>Passengers</legend><label class="rental-select-label">At least <select name="guests">${Array.from({length:20},(_,n)=>n+1).map(n=>`<option value="${n}" ${guests===n?'selected':''}>${n} ${n===1?'person':'people'}</option>`).join('')}</select></label></fieldset>
+              <fieldset><legend>Boat length</legend><label class="rental-select-label">Minimum length <select name="min_length"><option value="">Any length</option>${[5,8,10,12,15,20].map(n=>`<option value="${n}" ${minLength===n?'selected':''}>${n} m +</option>`).join('')}</select></label></fieldset>
+              <fieldset><legend>Equipment</legend><div class="rental-check-list">${amenities.map(([value,label])=>checkField('equipment',value,label,selectedEquipment.includes(value))).join('')}</div></fieldset>
+              <button type="submit" class="btn rental-filter-button">Show matching boats ${icon('arrow')}</button>
+              <p class="rental-sidebar-note">Owners review each booking request. Online payment is not enabled yet.</p>
+            </aside>
+            <section class="rental-results" aria-label="Boat search results">
+              <div class="rental-results-bar"><div><strong>${filtered.length} ${filtered.length===1?'boat':'boats'} found</strong><span>${searchInput?' · '+esc(fullCountry):' · Browse all destinations'}</span></div><button type="button" class="rental-mobile-filters" data-rental-filters-toggle aria-expanded="false">${icon('filter')} Filters</button><label>Sort by <select name="sort"><option value="newest">Newest listings</option><option value="price-low" ${sorting==='price-low'?'selected':''}>Price: low to high</option><option value="price-high" ${sorting==='price-high'?'selected':''}>Price: high to low</option></select></label></div>
+              ${cards?`<div class="rental-card-grid">${cards}</div>`:`<div class="rental-empty"><div class="rental-empty-icon">${icon('ship')}</div><h2>No boats match just yet.</h2><p>${searchInput?'We are growing our fleet in '+esc(fullCountry)+'. Try fewer filters or explore another destination.':'Try adjusting your filters or explore all available destinations.'}</p><a href="#/boats" class="btn">Explore all boats ${icon('arrow')}</a></div>`}
+            </section>
+          </div>
+        </form>
+      </main>${footer()}`;
     }
     if(path.startsWith('/listing/')) {
       for(const [key,name] of [['start','start'],['end','end']]){const value=params.get(key);if(/^\d{4}-\d{2}-\d{2}$/.test(value||''))state[name]=value;}
@@ -1049,7 +1115,7 @@
     }
   });
   document.addEventListener('submit',async e=>{const f=e.target;if(!f.dataset.liveForm)return;e.preventDefault();syncBookingSkipperOption(f);const button=f.querySelector('button[type="submit"],button:not([type])');if(button?.disabled)return;if(button)button.disabled=true;const feedback=f.querySelector('[data-feedback]');if(feedback)feedback.textContent='Saving…';try{if(!client)throw Error('Connecting your account. Please try again in a moment.');const d=new FormData(f),kind=f.dataset.liveForm;
-    if(kind==='search'){location.hash='#/boats?location='+encodeURIComponent(d.get('location'))+'&type='+encodeURIComponent(d.get('type'));return}
+    if(kind==='search'){const q=new URLSearchParams();for(const key of ['location','start','end','skipper','guests','min_price','max_price','min_length','sort']){const value=String(d.get(key)||'').trim();if(value)q.set(key,value)}for(const key of ['type','equipment'])for(const value of d.getAll(key))if(value)q.append(key,String(value));location.hash='#/boats?'+q.toString();return}
     if(kind==='auth'&&!recovery&&authStep==='email'){authEmail=String(d.get('email')||'').trim();authStep='password';render();return}
     if(kind==='auth'){const email=String(d.get('email')||'').trim(),password=String(d.get('password'));if(recovery){check(await client.auth.updateUser({password}));recovery=false;toast('Password updated.');}else if(authMode==='signup'){const result=check(await client.auth.signUp({email,password,options:{emailRedirectTo:authRedirect()}}));if(!result.session){feedback.textContent='Check your inbox to confirm your email. If no email arrives, contact our team through the Contact page.';return}}else check(await client.auth.signInWithPassword({email,password}));await current();location.hash=afterLogin();authStep='email';authEmail='';render();return}
     if(!session){
@@ -1294,6 +1360,8 @@
       calendarSelection=null;render();
     }
   }catch(err){if(feedback)feedback.textContent=err.message||'Please try again.';else toast(err.message)}finally{if(button)button.disabled=false}},true);
+  document.addEventListener('click',event=>{const button=event.target.closest?.('[data-rental-filters-toggle]');if(!button)return;event.preventDefault();const sidebar=document.querySelector('.rental-sidebar');if(!sidebar)return;const open=sidebar.classList.toggle('is-open');button.setAttribute('aria-expanded',String(open));});
+  document.addEventListener('change',event=>{if(event.target.matches?.('.rental-results-bar select[name="sort"]'))event.target.form?.requestSubmit();});
   document.addEventListener('click',async e=>{const b=e.target.closest('[data-live]');if(!b)return;e.preventDefault();if(b.disabled)return;b.disabled=true;try{switch(b.dataset.live){case 'boat-step':{const form=b.closest('[data-live-form="boat"]'),from=Number(form?.dataset.editorStep||1),to=Number(b.dataset.step||1);let valid=true;if(to>from){for(let step=from;step<to;step++)if(!validateOwnerBoatStep(form,step)){valid=false;break;}}if(valid)showOwnerBoatStep(form,to);break;}case 'boat-next':{const form=b.closest('[data-live-form="boat"]'),step=Number(form?.dataset.editorStep||1);if(validateOwnerBoatStep(form,step))showOwnerBoatStep(form,step+1);break;}case 'boat-prev':{const form=b.closest('[data-live-form="boat"]');showOwnerBoatStep(form,Number(form?.dataset.editorStep||1)-1);break;}case 'boat-jump':case 'owner-jump':document.getElementById?.(b.dataset.id)?.scrollIntoView?.({block:'start',behavior:'smooth'});break;case 'favourite':if(profile?.account_type!=='customer')throw Error('Only customer accounts can save rental favourites.');check(await client.from('favourites').upsert({user_id:session.user.id,boat_id:b.dataset.id},{onConflict:'user_id,boat_id',ignoreDuplicates:true}));toast('Saved to favourites.');break;case 'unfavourite':check(await client.from('favourites').delete().eq('user_id',session.user.id).eq('boat_id',b.dataset.id));render();break;case 'auth-close':closeAuth();break;case 'social-google':case 'social-apple':{
       const provider=b.dataset.live==='social-google'?'google':'apple';
       const feedback=document.querySelector('[data-feedback]');
