@@ -219,7 +219,7 @@ function showDestinationPicker(input){
   const requestId=++destinationSearchRequest;
   const query=foldDestination(input.value);
   if(!query){closeDestinationPicker();return;}
-  const fallback=knownDestinations().filter(city=>foldDestination(city).includes(query)||aliasesForCity(city).some(alias=>foldDestination(alias).includes(query))).slice(0,8).map(name=>({name,label:name}));
+  const fallback=suggestedDestinations.filter(city=>!city.startsWith('Athens,')&&(foldDestination(city).includes(query)||aliasesForCity(city).some(alias=>foldDestination(alias).includes(query)))).slice(0,8).map(name=>({name,label:name}));
   renderDestinationOptions(input,fallback);
   if(!AUTH_READY||query.length<2)return;
   destinationSearchTimer=setTimeout(async()=>{
