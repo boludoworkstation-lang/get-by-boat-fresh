@@ -169,7 +169,7 @@ function footer(){return `<footer class="footer"><div class="shell footer-column
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>t.classList.remove('show'),4200)}
 const suggestedDestinations=['Dubrovnik, Croatia','Split, Croatia','Trogir, Croatia','Zadar, Croatia','Murter, Croatia','Hvar, Croatia','Pula, Croatia','Šibenik, Croatia','Athens, Greece','Corfu, Greece','Mykonos, Greece','Rhodes, Greece','Barcelona, Spain','Ibiza, Spain','Palma de Mallorca, Spain','Malaga, Spain','Nice, France','Cannes, France','Marseille, France','Saint-Tropez, France','Naples, Italy','Sardinia, Italy','Amalfi, Italy','Venice, Italy','Lisbon, Portugal','Porto, Portugal','Lagos, Portugal','Limassol, Cyprus','Paphos, Cyprus','Bodrum, Turkey','Marmaris, Turkey','Valletta, Malta','Sydney, Australia','Gold Coast, Australia','Budva, Montenegro','Kotor, Montenegro','Saranda, Albania','Miami, USA','Key West, USA','Nassau, Bahamas','Exuma, Bahamas'];
 
-const foldDestination=text=>String(text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
+const foldDestination=text=>String(text||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[đð]/g,'d').replace(/ı/g,'i').replace(/ł/g,'l').replace(/ø/g,'o').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ß/g,'ss').replace(/þ/g,'th').trim();
 function canonicalDestination(text){
   const value=String(text||'').trim(),folded=foldDestination(value);
   if(!folded)return value;
