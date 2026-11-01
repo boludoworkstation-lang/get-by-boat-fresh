@@ -585,7 +585,10 @@
   }
   function updateOwnerSkipperFee(form){
     if(!form)return;
-    const withSkipper=!!form.querySelector('[name="with_skipper"]')?.checked;
+    const selectedMode=form.querySelector('[name="skipper_mode"]:checked')?.value;
+    const withInput=form.querySelector('[name="with_skipper"]'),withoutInput=form.querySelector('[name="without_skipper"]');
+    if(selectedMode&&withInput&&withoutInput){withInput.checked=selectedMode!=='self';withoutInput.checked=selectedMode!=='included';}
+    const withSkipper=!!withInput?.checked;
     const withoutSkipper=!!form.querySelector('[name="without_skipper"]')?.checked;
     const separate=withSkipper&&withoutSkipper;
     const fee=form.querySelector('[name="skipper_fee_per_day"]');
@@ -595,11 +598,11 @@
     const included=form.querySelector('[data-skipper-included]');
     if(included)included.hidden=!(withSkipper&&!withoutSkipper);
     const includedCheck=form.querySelector('[name="skipper_included_ack"]');
-    if(includedCheck)includedCheck.required=withSkipper&&!withoutSkipper;
+    if(includedCheck){includedCheck.checked=withSkipper&&!withoutSkipper;includedCheck.required=false;}
     const note=form.querySelector('[data-skipper-fee-note]');
-    if(note)note.textContent='The skipper fee is included in the guest’s online checkout after owner confirmation. Get By Boat takes no commission on the skipper fee.';
+    if(note)note.textContent='The optional skipper is paid separately at check-in. No platform commission applies to the skipper fee.';
     const summary=form.querySelector('[data-rental-mode-summary]');
-    if(summary)summary.textContent=separate?'Both options selected — guests choose with or without skipper.':withSkipper?'With skipper only.':withoutSkipper?'Without skipper only.':'Choose at least one rental option.';
+    if(summary)summary.textContent=separate?'Skipper optional · guests can also self-drive.':withSkipper?'Skipper included in boat price.':withoutSkipper?'Self-drive only.':'Choose one option.';
   }
   function syncEquipmentPicker(form){
     const picker=form?.querySelector?.('[data-equipment-picker]');
@@ -753,11 +756,16 @@
     const end=start<0?-1:markup.indexOf('</fieldset>',start);
     const countryAnchor='<div class="live-columns"><label>Country<input name="country"';
     if(start<0||end<0||!markup.includes(countryAnchor))return markup;
-    const choices=markup.slice(start,end+'</fieldset>'.length).replace('Available rental options','Choose your rental options');
+    const choices=`<fieldset class="fleet-rental-modes fleet-skipper-modes"><legend>Skipper availability</legend><label class="fleet-mode-option"><input type="radio" name="skipper_mode" value="self" ${!markup.includes('name="with_skipper" checked')&&markup.includes('name="without_skipper" checked')?'checked':''}><span><strong>Self-drive only</strong><small>Guests drive with a valid boat licence where required.</small></span></label><label class="fleet-mode-option"><input type="radio" name="skipper_mode" value="optional" ${markup.includes('name="with_skipper" checked')&&markup.includes('name="without_skipper" checked')?'checked':''}><span><strong>Skipper optional</strong><small>Guest may choose a skipper and pays the skipper directly at check-in.</small></span></label><label class="fleet-mode-option"><input type="radio" name="skipper_mode" value="included" ${markup.includes('name="with_skipper" checked')&&!markup.includes('name="without_skipper" checked')?'checked':''}><span><strong>Skipper included</strong><small>A professional skipper is included in the boat rental price.</small></span></label><input type="checkbox" name="with_skipper" ${markup.includes('name="with_skipper" checked')?'checked':''} hidden><input type="checkbox" name="without_skipper" ${markup.includes('name="without_skipper" checked')?'checked':''} hidden></fieldset>`;
     const remaining=markup.slice(0,start)+markup.slice(end+'</fieldset>'.length);
     const insertAt=remaining.indexOf(countryAnchor);
-    const callout=`<div class="fleet-rental-onboarding"><div class="fleet-rental-onboarding-heading"><h4>How can guests rent your boat?</h4><p>Select one option or both. You can set skipper pricing in the next step.</p></div>${choices}</div>`;
-    return remaining.slice(0,insertAt)+callout+remaining.slice(insertAt);
+    const feeStart=remaining.indexOf('<div class="fleet-skipper-fee"'),feeEnd=feeStart<0?-1:remaining.indexOf('</div>',feeStart)+6;
+    const feeMarkup=feeStart>=0&&feeEnd>feeStart?remaining.slice(feeStart,feeEnd):'';
+    const clean=feeMarkup?remaining.slice(0,feeStart)+remaining.slice(feeEnd):remaining;
+    const callout=`<div class="fleet-rental-onboarding"><div class="fleet-rental-onboarding-heading"><h4>How can guests rent your boat?</h4><p>Choose the skipper arrangement for this listing.</p></div>${choices}${feeMarkup}</div>`;
+    const cleanInsert=clean.indexOf(countryAnchor);
+    return clean.slice(0,cleanInsert)+callout+clean.slice(cleanInsert);
+    
   }
   function ownerReviewForm(booking,existing){
     if(booking.status!=='confirmed'||booking.end_date>=today())return '';
@@ -857,6 +865,7 @@
       const types=params.getAll('type').filter(v=>['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'].includes(v));
       const skipper=['with','without'].includes(params.get('skipper'))?params.get('skipper'):'';
       const licenceNotRequired=params.get('licence_not_required')==='1';
+      const withSkipperOnly=params.get('with_skipper_only')==='1';
       const guests=Math.max(1,Math.min(100,Number(params.get('guests'))||1));
       const minPrice=Math.max(0,Number(params.get('min_price'))||0),maxPrice=Math.max(0,Number(params.get('max_price'))||0);
       const cabins=Math.max(0,Math.min(100,Number(params.get('cabins'))||0));
@@ -885,7 +894,7 @@
         const length=Number(specs.length_m)||0;
         const hp=Number(specs.engine_hp)||0;
         const equipped=Array.isArray(specs.equipment)?specs.equipment:[];
-        return where&&typeOk&&countryOk&&yearOk&&skipperOk&&(!licenceNotRequired||(b.licence_required===false&&b.without_skipper!==false))&&Number(b.guests)>=guests&&(!cabins||Number(specs.cabins)>=cabins)&&(!berths||Number(specs.berths)>=berths)&&(!engineMin||hp>=engineMin)&&(engineMax===400||hp<=engineMax)&&(!minPrice||price>=minPrice)&&(!maxPrice||price<=maxPrice)&&(!minLength||length>=minLength)&&(maxLength===15||length<=maxLength)&&selectedEquipment.every(id=>equipped.includes(id));
+        return where&&typeOk&&countryOk&&yearOk&&skipperOk&&(!licenceNotRequired||(b.licence_required===false&&b.without_skipper!==false))&&(!withSkipperOnly||(b.with_skipper===true&&b.without_skipper===false))&&Number(b.guests)>=guests&&(!cabins||Number(specs.cabins)>=cabins)&&(!berths||Number(specs.berths)>=berths)&&(!engineMin||hp>=engineMin)&&(engineMax===400||hp<=engineMax)&&(!minPrice||price>=minPrice)&&(!maxPrice||price<=maxPrice)&&(!minLength||length>=minLength)&&(maxLength===15||length<=maxLength)&&selectedEquipment.every(id=>equipped.includes(id));
       });
       if(sorting==='price-low')filtered.sort((a,b)=>guestDailyRate(a.price)-guestDailyRate(b.price));
       if(sorting==='price-high')filtered.sort((a,b)=>guestDailyRate(b.price)-guestDailyRate(a.price));
@@ -902,8 +911,8 @@
         <div class="rental-card-body">
           <div class="rental-card-location">${icon('pin')} ${esc(b.location)}, ${esc(b.country)}</div>
           <h3>${esc(b.name)}</h3>
-          <div class="rental-card-facts"><span>${icon('ship')} ${esc(b.type)}</span><span>${icon('users')} Up to ${Number(b.guests)||1} guests</span></div>
-          <div class="rental-card-options">${icon('check')} ${esc(rentalOptions(b)||'Ask the owner about skipper options')}</div>
+          <div class="rental-card-badges"><span class="rental-card-badge">${icon('ship')} ${b.with_skipper===true?(b.without_skipper!==false?'Skipper optional':'Skipper included'):'Self-drive only'}</span><span class="rental-card-badge">${esc(b.type)}</span></div>
+          <div class="rental-card-specs">${Number(b.guests)||1} people${Number(b.specifications?.engine_hp)>0?' · '+Number(b.specifications.engine_hp)+' hp':''}${Number(b.specifications?.length_m)>0?' · '+Number(b.specifications.length_m)+' m':''}</div>
           <div class="rental-card-bottom"><span>From <strong>${money(guestDailyRate(b.price))}</strong> / day</span><span class="rental-view-link">View boat ${icon('arrow')}</span></div>
         </div>
       </a>`).join('');
@@ -921,7 +930,7 @@
             <aside class="rental-sidebar" aria-label="Filter boats">
               <div class="rental-sidebar-head"><h2>Filters</h2><a href="#/boats">Clear all</a></div>
               <fieldset><legend>Boat types</legend><div class="rental-check-list">${typeChoices.map(([value,label])=>checkField('type',value,label,types.includes(value))).join('')}</div></fieldset>
-              <fieldset class="rental-licence-section"><label class="rental-check"><input type="checkbox" name="licence_not_required" value="1" ${licenceNotRequired?'checked':''}><span>License not required</span></label></fieldset>
+              <fieldset class="rental-licence-section"><label class="rental-check"><input type="checkbox" name="licence_not_required" value="1" ${licenceNotRequired?'checked':''}><span>License not required</span></label><label class="rental-check"><input type="checkbox" name="with_skipper_only" value="1" ${withSkipperOnly?'checked':''}><span>With skipper only</span></label></fieldset>
               <fieldset class="rental-price-section"><legend>Price per day</legend><div class="rental-double-slider" data-rental-range="price"><div class="rental-slider-track"></div><div class="rental-slider-active" style="left:${Math.min(minPrice,1200)/12}%;right:${100-Math.min(maxPrice||1200,1200)/12}%"></div><input type="range" name="price_slider_min" min="0" max="1200" step="25" value="${Math.min(minPrice,1200)}" aria-label="Minimum price per day"><input type="range" name="price_slider_max" min="0" max="1200" step="25" value="${Math.min(maxPrice||1200,1200)}" aria-label="Maximum price per day"></div><div class="rental-price-fields"><label>Minimum<span class="rental-price-number">€ <input type="number" min="0" step="25" name="min_price" placeholder="0" value="${minPrice||0}"></span></label><span class="rental-price-dash">−</span><label>Maximum<span class="rental-price-number">€ <input type="number" min="0" step="25" name="max_price" placeholder="1200+" value="${maxPrice||''}"></span></label></div></fieldset>
               <fieldset class="rental-counter-section"><div class="rental-counter-row"><span class="rental-counter-label">Number of people</span><div class="rental-guest-stepper"><button type="button" data-rental-guest-step="-1" aria-label="Decrease passengers" ${guests<=1?'disabled':''}>−</button><input name="guests" type="number" min="1" max="100" value="${guests}" aria-label="Number of passengers"><button type="button" data-rental-guest-step="1" aria-label="Increase passengers" ${guests>=100?'disabled':''}>+</button></div></div></fieldset>
               <fieldset class="rental-counter-section"><div class="rental-counter-row"><span class="rental-counter-label">Number of cabins</span><div class="rental-guest-stepper"><button type="button" data-rental-step="cabins:-1" aria-label="Decrease cabins" ${cabins<=0?'disabled':''}>−</button><input name="cabins" type="number" min="0" max="100" value="${cabins}" aria-label="Number of cabins"><button type="button" data-rental-step="cabins:1" aria-label="Increase cabins" ${cabins>=100?'disabled':''}>+</button></div></div></fieldset>
@@ -956,14 +965,14 @@
       const skipperDailyFee=Math.max(0,Number(b.skipper_fee_per_day)||0);
       const skipperPriceLabel=skipperDailyFee>0?`(+${money(skipperDailyFee)} / day)`:'(price on request)';
       const choices=hasSkipper&&hasBareboat
-        ?`<div class="listing-rental-choices"><label class="listing-rental-choice listing-skipper-addon"><input type="checkbox" name="need_skipper" data-needs-skipper ${mode==='with'?'checked':''}><span><strong>I need a skipper</strong><small>Professional skipper for your trip</small></span><b class="listing-rental-extra">${skipperPriceLabel}</b></label><input type="hidden" name="skipper" value="${mode}"></div>`
+        ?`<div class="listing-rental-choices"><label class="listing-rental-choice listing-skipper-addon"><input type="checkbox" name="need_skipper" data-needs-skipper ${mode==='with'?'checked':''}><span><strong>I need a skipper</strong><small>Paid directly to the skipper at check-in</small></span><b class="listing-rental-extra">${skipperPriceLabel}</b></label><input type="hidden" name="skipper" value="${mode}"></div>`
         :`<div class="listing-rental-fixed">${hasSkipper?'Professional skipper included with boat':'Self-drive only'}</div><input type="hidden" name="skipper" value="${hasSkipper?'with':'without'}">`;
       const warning=`<div class="verification-booking-block" data-skipper-verification ${needsVerification?'':'hidden'}><strong>${icon('shield')} Licence verification required</strong><p>Renting without a skipper requires staff-approved ID/passport and boat driving licence, valid through the rental dates. ${esc(verificationLabel(verificationState()))}.</p><a href="#/account?tab=verification">Go to verification ${icon('arrow')}</a></div>`;
       const included=hasSkipper&&!hasBareboat;
       const rentalHighlights=`<div class="listing-highlight-row">${hasBareboat?`<span>${icon('check')} ${b.licence_required===false?'No license required':'License required'}</span>`:''}${hasSkipper?`<span>${icon('ship')} Skipper ${included?'included':`available ${skipperPriceLabel}`}</span>`:''}</div>`;
       const conditions=`<section class="listing-conditions"><h2>Conditions</h2><div class="listing-condition-grid"><div><h3>Check-in & check-out</h3><dl><div><dt>Day rental check-in</dt><dd>${esc(boatClock(b.check_in_time,'09:00'))}</dd></div><div><dt>Day rental check-out</dt><dd>${esc(boatClock(b.check_out_time,'19:00'))}</dd></div></dl></div><div><h3>Boat rules</h3><dl><div><dt>Boat licence required</dt><dd>${b.licence_required===false?'No':'Yes'}</dd></div><div><dt>Pets allowed</dt><dd>${b.specifications?.pets_allowed===true?'Yes':'No'}</dd></div><div><dt>Minimum rental age</dt><dd>${Math.max(18,Number(b.minimum_rental_age)||18)} years</dd></div></dl></div></div></section>`;
       const bookingBox=isOwner?`<div class="live-card listing-booking-card"><span class="listing-price-caption">Your payout</span><h2>${money(b.price)} <small>/ day</small></h2><p>Guest price: ${money(guestDailyRate(b.price))} per day, fees included.</p><div class="verification-booking-block"><strong>Owner preview</strong><p>Owner accounts cannot rent their own boats. Use a customer account to book.</p></div><a class="btn" href="#/owner?edit=${esc(b.id)}">Edit listing</a></div>`:
-        `<form data-live-form="request" data-id="${esc(b.id)}" data-price="${b.price}" data-unavailable="${esc(JSON.stringify(unavailable.map(({start_date,end_date})=>({start_date,end_date}))))}" data-check-in="${esc(boatClock(b.check_in_time,'09:00'))}" data-check-out="${esc(boatClock(b.check_out_time,'19:00'))}" data-with-skipper="${hasSkipper}" data-without-skipper="${hasBareboat}" data-skipper-fee="${Number(b.skipper_fee_per_day)||0}" data-skipper-extra="${hasBareboat&&hasSkipper}" data-verified="${verificationState()==='approved'}" data-licence-required="${b.licence_required!==false}" data-licence-expiry="${esc(verificationRequest?.licence_expiry||'')}" class="live-card live-form listing-booking-card"><span class="listing-price-caption">From</span><h2>${money(guestDailyRate(b.price))} <small>/ day</small></h2><p class="member-note">Full trip cost includes boat rental, booking fees and any selected skipper option. Payment is processed after booking approval.</p>${choices}${bookingDateFields()}<input type="hidden" name="guests" value="1"><div data-quote aria-live="polite"></div>${warning}<button class="btn" type="submit" ${needsVerification?'disabled':''}>${needsVerification?'Verify your licence to book':session?'Request to book':'Log in to request'}</button><p data-feedback role="status"></p><small>The owner will confirm availability before you pay.</small></form>`;
+        `<form data-live-form="request" data-id="${esc(b.id)}" data-price="${b.price}" data-unavailable="${esc(JSON.stringify(unavailable.map(({start_date,end_date})=>({start_date,end_date}))))}" data-check-in="${esc(boatClock(b.check_in_time,'09:00'))}" data-check-out="${esc(boatClock(b.check_out_time,'19:00'))}" data-with-skipper="${hasSkipper}" data-without-skipper="${hasBareboat}" data-skipper-fee="${Number(b.skipper_fee_per_day)||0}" data-skipper-extra="${hasBareboat&&hasSkipper}" data-verified="${verificationState()==='approved'}" data-licence-required="${b.licence_required!==false}" data-licence-expiry="${esc(verificationRequest?.licence_expiry||'')}" class="live-card live-form listing-booking-card"><span class="listing-price-caption">From</span><h2>${money(guestDailyRate(b.price))} <small>/ day</small></h2><p class="member-note">Boat rental includes booking fees. Payment is processed after booking approval. Optional skipper fees are paid at check-in.</p>${choices}${bookingDateFields()}<input type="hidden" name="guests" value="1"><div data-quote aria-live="polite"></div>${warning}<button class="btn" type="submit" ${needsVerification?'disabled':''}>${needsVerification?'Verify your licence to book':session?'Request to book':'Log in to request'}</button><p data-feedback role="status"></p><small>The owner will confirm availability before you pay.</small></form>`;
       return page(esc(b.name),`<div class="listing-location-intro">${icon('pin')} ${esc(b.location)}, ${esc(b.country)} <span>·</span> ${esc(b.type)} <span>·</span> Up to ${Number(b.guests)||1} ${(Number(b.guests)||1)===1?'passenger':'passengers'}</div><div class="live-columns listing-layout"><section class="listing-details"><div class="listing-cover">${picture(b)}</div>${rentalHighlights}${session&&!isOwner?btn('Save to favourites','favourite',b.id):''}<section class="listing-about"><h2>About this boat</h2><p class="live-description">${esc(b.description||'Ask the owner for more information about this boat.')}</p></section>${listingSpecificationSections(b)}${listingEquipmentSection(b)}${listingAvailabilityCalendar(unavailable,today().slice(0,7))}${conditions}${pickupDetails(b,exactPickup)}${listingOwnerReviews(reviews)}</section><aside class="listing-booking">${bookingBox}</aside></div>`);
     }
     const guard=requireAccount();if(guard)return guard;
@@ -1040,7 +1049,7 @@
     if(warning)warning.hidden=!blocked;
     if(button){button.disabled=blocked;button.textContent=blocked?'Verification required':session?'Send booking request':'Log in to request';}
   }
-  function quote(){const form=document.querySelector('[data-live-form="request"]');if(!form)return;syncBookingSkipperOption(form);const d=new FormData(form),n=rentalDayCount(d.get('start_date'),d.get('end_date'));updateBookingVerification(form,d);const out=form.querySelector('[data-quote]');if(!n||n<1){out.textContent='Choose a valid rental period.';return}const occupied=JSON.parse(form.dataset.unavailable||'[]').some(({start_date,end_date})=>start_date<=d.get('end_date')&&end_date>=d.get('start_date'));if(occupied){out.textContent='These dates are unavailable. Please choose another period.';const button=form.querySelector('button[type="submit"]');if(button)button.disabled=true;return}const charter=n*Number(form.dataset.price),total=guestTotal(charter),skipperExtra=d.get('skipper')==='with'&&form.dataset.skipperExtra==='true'?n*Number(form.dataset.skipperFee||0):0,tripTotal=bookingGuestTotal(charter,skipperExtra);out.innerHTML=`<p>${n} ${n===1?'day':'days'} · ${esc(form.dataset.checkIn||'09:00')} check-in · ${esc(form.dataset.checkOut||'19:00')} check-out</p><p>Boat rental (booking fees included): <strong>${money(total)}</strong></p>${skipperExtra>0?`<p><strong>Total trip cost: ${money(tripTotal)}</strong></p>`:''}${skipperExtra>0?`<p class="fleet-quote-extra">Skipper: <strong>${money(skipperExtra)}</strong> · included in your Get By Boat payment.</p>`:d.get('skipper')==='with'&&form.dataset.withoutSkipper==='false'?'<p class="fleet-quote-extra">Skipper included in the boat price.</p>':''}`;}
+  function quote(){const form=document.querySelector('[data-live-form="request"]');if(!form)return;syncBookingSkipperOption(form);const d=new FormData(form),n=rentalDayCount(d.get('start_date'),d.get('end_date'));updateBookingVerification(form,d);const out=form.querySelector('[data-quote]');if(!n||n<1){out.textContent='Choose a valid rental period.';return}const occupied=JSON.parse(form.dataset.unavailable||'[]').some(({start_date,end_date})=>start_date<=d.get('end_date')&&end_date>=d.get('start_date'));if(occupied){out.textContent='These dates are unavailable. Please choose another period.';const button=form.querySelector('button[type="submit"]');if(button)button.disabled=true;return}const charter=n*Number(form.dataset.price),total=guestTotal(charter),skipperExtra=d.get('skipper')==='with'&&form.dataset.skipperExtra==='true'?n*Number(form.dataset.skipperFee||0):0,tripTotal=total+skipperExtra;out.innerHTML=`<p>${n} ${n===1?'day':'days'} · ${esc(form.dataset.checkIn||'09:00')} check-in · ${esc(form.dataset.checkOut||'19:00')} check-out</p><p>Boat rental (booking fees included): <strong>${money(total)}</strong></p>${skipperExtra>0?`<p><strong>Total trip cost: ${money(tripTotal)}</strong></p>`:''}${skipperExtra>0?`<p class="fleet-quote-extra">Skipper: <strong>${money(skipperExtra)}</strong> · payable directly at check-in.</p>`:d.get('skipper')==='with'&&form.dataset.withoutSkipper==='false'?'<p class="fleet-quote-extra">Skipper included in the boat price.</p>':''}`;}
   function syncListingCalendarSelection(){
     const selection=listingCalendarSelection;
     if(!selection)return;
