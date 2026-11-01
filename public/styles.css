@@ -1144,3 +1144,9 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-range-section[aria-label="Year of manufacture"] .rental-range-head{margin-bottom:9px}
 .rental-sidebar .rental-filter-button{margin-top:12px}
 @media(max-width:800px){.rental-sidebar{padding:17px 16px}.rental-counter-row .rental-guest-stepper{flex-basis:104px}.rental-range-head>span,.rental-range-head .rental-length-label{font-size:12px}}
+
+/* Lighter arrow glyphs inside range-slider handles */
+.rental-sidebar .rental-double-slider input[name$="_min"]::-webkit-slider-thumb,
+.rental-sidebar .rental-double-slider input[name="min_length"]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23263339' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m14 5-7 7 7 7'/%3E%3C/svg%3E")}
+.rental-sidebar .rental-double-slider input[name$="_max"]::-webkit-slider-thumb,
+.rental-sidebar .rental-double-slider input[name="max_length"]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23263339' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m10 5 7 7-7 7'/%3E%3C/svg%3E")}
