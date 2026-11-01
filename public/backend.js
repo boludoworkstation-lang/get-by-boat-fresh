@@ -814,8 +814,10 @@
     if(path==='/owner'&&!session)return loginPage();
     if(path==='/boats') {
       const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));
-      const searchInput=(params.get('location')||params.get('country')||'').trim();
-      const search=searchInput.toLocaleLowerCase();
+      const rawSearch=(params.get('location')||params.get('country')||'').trim();
+      const foldCity=text=>String(text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLocaleLowerCase().trim();
+      const searchInput=destinationCities.find(city=>foldCity(city)===foldCity(rawSearch))||destinationCities.find(city=>foldCity(city.split(',')[0])===foldCity(rawSearch))||rawSearch;
+      const search=foldCity(searchInput);
       const types=params.getAll('type').filter(v=>['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'].includes(v));
       const skipper=['with','without'].includes(params.get('skipper'))?params.get('skipper'):'';
       const guests=Math.max(1,Math.min(100,Number(params.get('guests'))||1));
@@ -826,7 +828,7 @@
       const startDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('start')||'')?params.get('start'):'';
       const endDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('end')||'')?params.get('end'):'';
       let filtered=boats.filter(b=>{
-        const where=!search||`${b.location||''}, ${b.country||''}`.toLocaleLowerCase().includes(search)||String(b.country||'').toLocaleLowerCase()===search;
+        const where=!search||foldCity(`${b.location||''}, ${b.country||''}`).includes(search)||foldCity(b.country||'')===search;
         const typeOk=!types.length||types.includes(b.type);
         const skipperOk=!skipper||(skipper==='with'?b.with_skipper===true:b.without_skipper!==false);
         const price=guestDailyRate(b.price);
