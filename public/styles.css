@@ -864,3 +864,6 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .owner-bank-fields{margin-top:13px}
 .owner-bank-fields[hidden]{display:none!important}
 .owner-bank-fields.live-columns{align-items:start}
+
+/* Fourteen destination cards: balanced final row */
+@media(min-width:801px){.destination-grid>.destination-card:nth-last-child(-n+2){grid-column:span 2}}
