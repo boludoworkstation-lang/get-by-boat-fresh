@@ -187,13 +187,12 @@ function canonicalDestination(text){
 }
 let destinationPicker=null;
 function closeDestinationPicker(){destinationPicker?.remove();destinationPicker=null;}
-function showDestinationPicker(input){
+let destinationSearchTimer=null;
+let destinationSearchRequest=0;
+const GEO_COUNTRY_NAMES={HR:'Croatia',GR:'Greece',ES:'Spain',FR:'France',IT:'Italy',MT:'Malta',PT:'Portugal',CY:'Cyprus',ME:'Montenegro',TR:'Turkey',AL:'Albania',AU:'Australia',BS:'Bahamas',US:'United States'};
+function renderDestinationOptions(input,matches){
   closeDestinationPicker();
-  const query=foldDestination(input.value);
-  if(!query)return;
-  const options=knownDestinations();
-  const matches=options.filter(city=>foldDestination(city).includes(query)||aliasesForCity(city).some(alias=>foldDestination(alias).includes(query))).slice(0,8);
-  if(!matches.length)return;
+  if(!matches.length||!input.isConnected)return;
   const rect=input.getBoundingClientRect();
   const menu=document.createElement('div');
   menu.className='destination-autocomplete';
@@ -201,13 +200,49 @@ function showDestinationPicker(input){
   menu.style.left=Math.max(8,rect.left)+'px';
   menu.style.top=Math.min(rect.bottom+5,window.innerHeight-40)+'px';
   menu.style.width=Math.min(Math.max(250,rect.width),window.innerWidth-16)+'px';
-  matches.forEach(city=>{
-    const option=document.createElement('button');option.type='button';option.className='destination-autocomplete-option';option.setAttribute('role','option');option.textContent=city;
+  matches.forEach(item=>{
+    const option=document.createElement('button');
+    option.type='button';option.className='destination-autocomplete-option';option.setAttribute('role','option');
+    option.textContent=item.label;
     option.addEventListener('mousedown',event=>event.preventDefault());
-    option.addEventListener('click',()=>{input.value=city;input.dispatchEvent(new Event('change',{bubbles:true}));closeDestinationPicker();input.focus();});
+    option.addEventListener('click',()=>{
+      input.value=item.name;
+      input.dispatchEvent(new Event('change',{bubbles:true}));
+      closeDestinationPicker();input.focus();
+    });
     menu.appendChild(option);
   });
   document.body.appendChild(menu);destinationPicker=menu;
+}
+function showDestinationPicker(input){
+  clearTimeout(destinationSearchTimer);
+  const requestId=++destinationSearchRequest;
+  const query=foldDestination(input.value);
+  if(!query){closeDestinationPicker();return;}
+  const fallback=knownDestinations().filter(city=>foldDestination(city).includes(query)||aliasesForCity(city).some(alias=>foldDestination(alias).includes(query))).slice(0,8).map(name=>({name,label:name}));
+  renderDestinationOptions(input,fallback);
+  if(!AUTH_READY||query.length<2)return;
+  destinationSearchTimer=setTimeout(async()=>{
+    try{
+      const base=String(AUTH_CONFIG.supabaseUrl).replace(/\/$/,'');
+      const response=await fetch(base+'/rest/v1/rpc/search_geo_places',{
+        method:'POST',
+        headers:{'apikey':AUTH_CONFIG.supabasePublishableKey,'Content-Type':'application/json'},
+        body:JSON.stringify({search_query:query,result_limit:10})
+      });
+      if(!response.ok)throw new Error('Geographic search unavailable');
+      const places=await response.json();
+      if(requestId!==destinationSearchRequest||document.activeElement!==input)return;
+      if(!Array.isArray(places)||!places.length)return;
+      const unique=new Set();
+      const matches=places.filter(place=>GEO_COUNTRY_NAMES[place.country_code]).map(place=>({
+        name:place.name,
+        label:[place.name,place.region,GEO_COUNTRY_NAMES[place.country_code]].filter(Boolean).join(', '),
+        id:place.place_id
+      })).filter(place=>{if(unique.has(place.id))return false;unique.add(place.id);return true;});
+      renderDestinationOptions(input,matches);
+    }catch(error){/* Keep the existing local autocomplete when the remote search is unavailable. */}
+  },180);
 }
 document.addEventListener('focusin',event=>{const t=event.target;if(t.matches?.('input[name="location"][list]')){t.removeAttribute('list');showDestinationPicker(t)}});
 document.addEventListener('input',event=>{if(event.target.matches?.('input[name="location"]'))showDestinationPicker(event.target)});
