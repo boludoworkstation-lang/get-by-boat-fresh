@@ -170,11 +170,20 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 const suggestedDestinations=['Dubrovnik, Croatia','Split, Croatia','Trogir, Croatia','Zadar, Croatia','Murter, Croatia','Hvar, Croatia','Pula, Croatia','Šibenik, Croatia','Athens, Greece','Corfu, Greece','Mykonos, Greece','Rhodes, Greece','Barcelona, Spain','Ibiza, Spain','Palma de Mallorca, Spain','Malaga, Spain','Nice, France','Cannes, France','Marseille, France','Saint-Tropez, France','Naples, Italy','Sardinia, Italy','Amalfi, Italy','Venice, Italy','Lisbon, Portugal','Porto, Portugal','Lagos, Portugal','Limassol, Cyprus','Paphos, Cyprus','Bodrum, Turkey','Marmaris, Turkey','Valletta, Malta','Sydney, Australia','Gold Coast, Australia','Budva, Montenegro','Kotor, Montenegro','Saranda, Albania','Miami, USA','Key West, USA','Nassau, Bahamas','Exuma, Bahamas'];
 
 const foldDestination=text=>String(text||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[đð]/g,'d').replace(/ı/g,'i').replace(/ł/g,'l').replace(/ø/g,'o').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ß/g,'ss').replace(/þ/g,'th').trim();
-function canonicalDestination(text){
+const destinationAliases={"Zadar":["Zara","Zadar"],"Šibenik":["Sebenico","Sibenik"],"Dubrovnik":["Ragusa","Ragusa di Dalmazia"],"Split":["Spalato","Aspalathos"],"Trogir":["Trau","Tragurium"],"Hvar":["Lesina","Pharos"],"Pula":["Pola"],"Korčula":["Curzola","Korcula"],"Rovinj":["Rovigno"],"Poreč":["Parenzo","Porec"],"Opatija":["Abbazia"],"Biograd na Moru":["Zaravecchia"],"Athens":["Athina","Athína","Atenas","Atene","Athènes","Athen","Αθήνα"],"Corfu":["Kerkyra","Kerkira","Kérkyra","Corfù","Κέρκυρα"],"Mykonos":["Mikonos","Míkonos","Μύκονος"],"Santorini":["Thira","Thera","Santorín","Σαντορίνη"],"Rhodes":["Rodos","Rodi","Rodas","Rhodos","Ρόδος"],"Lefkada":["Lefkas","Leucade","Λευκάδα"],"Zakynthos":["Zante","Zacinto","Ζάκυνθος"],"Barcelona":["Barcelone","Barcellona"],"Ibiza":["Eivissa"],"Palma de Mallorca":["Palma","Palma di Maiorca","Palma de Majorque"],"Malaga":["Málaga","Malague"],"Valencia":["València","Valence","Valenza"],"Menorca":["Minorca","Menorque"],"Nice":["Nizza","Niza","Nizza Marittima"],"Marseille":["Marsella","Marsiglia","Marseilles","Marselha"],"Ajaccio":["Aiaccio"],"Antibes":["Antibo"],"Naples":["Napoli","Nápoles","Neapel"],"Venice":["Venezia","Venise","Venedig","Venecia","Veneza"],"Sardinia":["Sardegna","Sardaigne","Cerdeña"],"Palermo":["Palerme"],"La Spezia":["Spezia"],"Lisbon":["Lisboa","Lisbona","Lisbonne","Lissabon"],"Porto":["Oporto","O Portu"],"Faro":["Farão"],"Madeira":["Madère","Madera"],"Limassol":["Lemesos","Lemesós","Λεμεσός"],"Larnaca":["Larnaka","Lárnaka","Λάρνακα"],"Paphos":["Pafos","Páfos","Πάφος"],"Ayia Napa":["Agia Napa","Aya Napa","Αγία Νάπα"],"Bodrum":["Halikarnassos","Bodrum"],"Fethiye":["Fetiye","Telmessos"],"Marmaris":["Marmarís"],"Antalya":["Antalia"],"Göcek":["Gocek","Goecek"],"Valletta":["La Valletta","La Valette","Valeta"],"Sliema":["Tas Sliema"],"St. Julian’s":["San Giljan","San Ġiljan","Saint Julians","St Julians"],"Sydney":["Sidney","Sídney"],"Melbourne":["Melburn"],"Gold Coast":["Costa Dorada"],"Kotor":["Cattaro","Котор"],"Budva":["Budua","Будва"],"Tivat":["Teodo","Тиват"],"Herceg Novi":["Castelnuovo","Херцег Нови"],"Saranda":["Sarandë","Sarande","Santa Quaranta"],"Vlorë":["Vlora","Vlore","Valona"],"Durrës":["Durres","Durazzo","Drač"],"Miami":["Maiami"],"New York":["Nueva York","Nova Iorque","New York City"],"Los Angeles":["Los Ángeles"],"Fort Lauderdale":["Ft Lauderdale"],"Nassau":["Nasau"],"Exuma":["Exumas"],"Freeport":["Free Port"]};
+function knownDestinations(){return [...new Set([...suggestedDestinations,...(window.GBB_DESTINATION_CITIES||[]),...[...document.querySelectorAll('#boat-destinations option')].map(o=>o.value)])];}
+function aliasesForCity(city){return destinationAliases[String(city).split(',')[0]]||[];}
+function resolveDestinationName(text,candidates=knownDestinations()){
   const value=String(text||'').trim(),folded=foldDestination(value);
   if(!folded)return value;
-  const candidates=[...suggestedDestinations,...document.querySelectorAll('#boat-destinations option')].map(item=>typeof item==='string'?item:item.value);
-  return candidates.find(city=>foldDestination(city)===folded)||candidates.find(city=>foldDestination(city.split(',')[0])===folded)||value;
+  const direct=candidates.find(city=>foldDestination(city)===folded)||candidates.find(city=>foldDestination(city.split(',')[0])===folded);
+  if(direct)return direct;
+  const inputTown=foldDestination(value.split(',')[0]);
+  return candidates.find(city=>aliasesForCity(city).some(alias=>foldDestination(alias)===folded||foldDestination(alias)===inputTown))||value;
+}
+window.resolveDestinationName=resolveDestinationName;
+function canonicalDestination(text){
+  return resolveDestinationName(text);
 }
 let destinationPicker=null;
 function closeDestinationPicker(){destinationPicker?.remove();destinationPicker=null;}
@@ -182,8 +191,8 @@ function showDestinationPicker(input){
   closeDestinationPicker();
   const query=foldDestination(input.value);
   if(!query)return;
-  const options=[...new Set([...suggestedDestinations,...[...document.querySelectorAll('#boat-destinations option')].map(o=>o.value)])];
-  const matches=options.filter(city=>foldDestination(city).includes(query)).slice(0,8);
+  const options=knownDestinations();
+  const matches=options.filter(city=>foldDestination(city).includes(query)||aliasesForCity(city).some(alias=>foldDestination(alias).includes(query))).slice(0,8);
   if(!matches.length)return;
   const rect=input.getBoundingClientRect();
   const menu=document.createElement('div');
