@@ -1080,3 +1080,18 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-sidebar .rental-double-slider input[type=range]::-moz-range-thumb{width:39px;height:39px;border:2px solid #b8d9e3;box-shadow:0 2px 6px #17495518}
 .rental-sidebar .rental-range-section .rental-double-slider{margin-top:3px;margin-bottom:2px}
 .rental-sidebar .rental-price-section .rental-double-slider{margin-top:9px;margin-bottom:17px}
+
+/* More breathing room between filter labels and controls */
+@media(min-width:1161px){.rental-layout{grid-template-columns:310px minmax(0,1fr);gap:25px}}
+@media(min-width:801px) and (max-width:1160px){.rental-layout{grid-template-columns:285px minmax(0,1fr);gap:20px}}
+.rental-sidebar .rental-counter-section{padding-top:14px;padding-bottom:14px}
+.rental-counter-row{gap:17px}
+.rental-counter-row .rental-guest-stepper{flex:0 0 126px;gap:6px}
+.rental-counter-row .rental-guest-stepper button{width:34px;height:34px}
+.rental-counter-row .rental-guest-stepper input{width:40px}
+.rental-sidebar .rental-range-section{padding-top:30px;padding-bottom:32px}
+.rental-range-head{margin-bottom:25px}
+.rental-range-section .rental-double-slider{margin-top:10px}
+.rental-sidebar .rental-range-section .rental-double-slider{margin-top:12px;margin-bottom:6px}
+.rental-range-section[aria-label="Year of manufacture"] .rental-range-head{margin-bottom:25px}
+@media(max-width:800px){.rental-counter-row .rental-guest-stepper{flex-basis:135px}.rental-sidebar .rental-range-section{padding-top:25px;padding-bottom:27px}}
