@@ -2106,3 +2106,11 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 #boat-description .fleet-photo-remove input{width:13px;height:13px}
 #boat-description .fleet-photo-gallery{gap:15px!important}
 @media(max-width:700px){#boat-description .fleet-photo-card>img{touch-action:none}#boat-description .fleet-photo-actions{padding:7px;gap:5px}#boat-description .fleet-drag-handle{font-size:10px}}
+
+/* Clear photo removal with save/undo */
+#boat-description .fleet-photo-remove-button{border:0;border-left:1px solid #e7eef0;background:transparent;color:#98656b;padding:5px 3px 5px 10px;margin-left:3px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+#boat-description .fleet-photo-remove-button:hover{color:#c53f4e}
+#boat-description .fleet-photo-undo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid #b5e1e8;border-radius:12px;background:#f0fafb;color:#276271;font-size:13px;margin:0 0 20px}
+#boat-description .fleet-photo-undo[hidden]{display:none}
+#boat-description .fleet-photo-undo button{border:0;border-radius:8px;padding:8px 15px;background:#d7f1f5;color:#006f83;font-weight:800;cursor:pointer}
+#boat-description .fleet-photo-undo button:hover{background:#bde6ee}
