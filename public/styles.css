@@ -1653,3 +1653,51 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .offer-net-owner-children .offer-price-line{position:relative;margin:6px 0;font-size:12px;color:#778a91}
 .offer-net-owner-children .offer-price-line::before{content:"";position:absolute;top:50%;left:-12px;width:8px;border-top:1px solid #e5ecef}
 .offer-net-owner-children .offer-price-line strong{font-weight:550;color:#647a82}
+
+
+/* Help center */
+.faq-center{background:#fff;padding-bottom:95px}
+.faq-hero{background:linear-gradient(135deg,#ecf9fb 0%,#f7fcfc 54%,#edf8fa 100%);text-align:center;padding:79px 0 78px}
+.faq-hero .overline{color:#008ea9;font-size:11px;font-weight:800;letter-spacing:.19em}
+.faq-hero h1{font:700 clamp(36px,4.3vw,60px)/1.14 'DM Sans',sans-serif;letter-spacing:-.06em;color:#123844;margin:15px 0 14px}
+.faq-hero p{font-size:16px;color:#708b96}
+.faq-search{width:min(650px,100%);margin:34px auto 0;display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #d7e7eb;border-radius:17px;padding:0 20px;box-shadow:0 12px 30px rgba(0,100,120,.07);color:#00a1ba}
+.faq-search input{width:100%;height:62px;border:0;background:transparent;outline:none;color:#163a47;font:500 15px 'DM Sans',sans-serif}
+.faq-search input::placeholder{color:#9bafb7}
+.faq-content{max-width:1170px;padding-top:66px}
+.faq-intro{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}
+.faq-intro .overline{font-size:10px;font-weight:800;letter-spacing:.2em;color:#008ea9;margin-bottom:9px}
+.faq-intro h2{font:700 31px/1.2 'DM Sans',sans-serif;letter-spacing:-.045em;color:#173b47}
+.faq-intro>p{color:#8297a0;font-size:13px}
+.faq-roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px}
+.faq-role{display:flex;text-align:left;align-items:center;gap:19px;width:100%;padding:26px;border-radius:18px;border:1px solid #e0eaec;background:#fff;color:#193d49;transition:background .2s,border-color .2s,box-shadow .2s,transform .2s}
+.faq-role:hover{transform:translateY(-2px);border-color:#82d8e5}
+.faq-role.is-active{background:#f0fbfc;border-color:#15b1c9;box-shadow:0 8px 25px rgba(0,151,175,.09)}
+.faq-role-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:16px;background:#e8f7f9;color:#009cb7;flex:none}
+.faq-role-icon .icon{width:25px;height:25px}
+.faq-role strong{display:block;font-size:18px;font-weight:700;letter-spacing:-.025em}
+.faq-role small{display:block;color:#79909b;font-size:13px;margin-top:3px}
+.faq-role-arrow{font-size:26px;color:#00a5bf;margin-left:auto}
+.faq-results-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:58px 0 23px}
+.faq-results-title h3{font:700 26px 'DM Sans',sans-serif;letter-spacing:-.04em;color:#143a47}
+.faq-results-title span{font-size:12px;color:#8aa0a9}
+.faq-articles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.faq-topic{border:1px solid #e2ebed;border-radius:18px;background:#fff;padding:25px 25px 6px;box-shadow:0 8px 26px rgba(15,57,70,.035)}
+.faq-topic-heading{display:flex;align-items:center;gap:13px;padding-bottom:19px}
+.faq-topic-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:13px;background:#e7f8fa;color:#0099b5}
+.faq-topic-heading h4{font-size:17px;font-weight:700;color:#183c47;letter-spacing:-.02em}
+.faq-topic-heading small{color:#91a3aa;font-size:11px}
+.faq-questions details{border-top:1px solid #eef2f3}
+.faq-questions summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;font-size:13px;font-weight:600;color:#36545f;padding:17px 0;line-height:1.5}
+.faq-questions summary::-webkit-details-marker{display:none}
+.faq-plus{font-size:19px;font-weight:400;color:#00a5bd;transition:transform .2s}
+.faq-questions details[open] .faq-plus{transform:rotate(45deg)}
+.faq-questions details p{font-size:13px;line-height:1.75;color:#728a94;padding:0 22px 18px 0}
+.faq-no-results{text-align:center;padding:40px;color:#7c939b}
+.faq-no-results a{color:#009cb6;font-weight:700}
+.faq-help-cta{display:flex;justify-content:space-between;align-items:center;gap:25px;padding:36px 42px;background:#0e3642;border-radius:21px;color:#fff;margin-top:46px}
+.faq-help-cta h3{font-size:22px;letter-spacing:-.025em}
+.faq-help-cta p{font-size:13px;color:#bbd3d9;margin-top:7px}
+.faq-help-cta .btn{white-space:nowrap;border-radius:11px}
+@media(max-width:760px){.faq-hero{padding:58px 0}.faq-content{padding-top:46px}.faq-intro{display:block}.faq-intro>p{margin-top:12px}.faq-roles,.faq-articles{grid-template-columns:1fr}.faq-results-title{margin-top:45px}.faq-help-cta{padding:30px;align-items:flex-start;flex-direction:column}}
+@media(max-width:480px){.faq-search input{height:56px}.faq-role{padding:20px;gap:12px}.faq-role-icon{width:48px;height:48px}.faq-role strong{font-size:16px}.faq-role small{font-size:12px}.faq-topic{padding:20px 18px 5px}.faq-help-cta{padding:24px}.faq-intro h2{font-size:27px}}
