@@ -740,7 +740,7 @@
       .replace('Boat price per day (€)','Your payout per day (€)')
       .replace('<fieldset class="fleet-rental-modes">',`<p class="fleet-guest-rate" data-guest-price-preview>Guest price: <strong>${money(guestDailyRate(b.price||0))} for 1 day</strong> · fees included.</p><fieldset class="fleet-rental-modes">`)
       .replace('<p class="fleet-editor-hint">Check-in is at 09:00 and check-out at 19:00 for daily rentals.</p>',`<div class="live-columns">${field('Check-in time','check_in_time','time',String(b.check_in_time||'09:00').slice(0,5),'required step="900"')}${field('Check-out time','check_out_time','time',String(b.check_out_time||'19:00').slice(0,5),'required step="900"')}</div><div class="fleet-boat-rules"><h4>Boat rules</h4><div class="fleet-boat-rules-grid">${optionalSelect('licence_required','Boat licence required',[['true','Yes'],['false','No']],b.licence_required===false?'false':'true')}${optionalSelect('pets_allowed','Pets allowed',[['false','No'],['true','Yes']],s.pets_allowed===true?'true':'false')}${field('Minimum rental age (years)','minimum_rental_age','number',b.minimum_rental_age||18,'required min="18" max="100"')}</div></div>`)
-      .replace('</fieldset><div class="fleet-skipper-fee"',`<button type="button" class="fleet-offer-both" data-rental-both>✓ Offer both rental options</button><p class="fleet-rental-summary" data-rental-mode-summary></p></fieldset><label class="live-check fleet-skipper-included" data-skipper-included ${b.with_skipper&&!b.without_skipper?'':'hidden'}><input type="checkbox" name="skipper_included_ack" ${b.with_skipper&&!b.without_skipper?'checked':''}> <span><strong>Professional skipper included with boat</strong><small>For skipper-only rentals, the professional skipper is included in your boat price. No separate payment is needed for the skipper.</small></span></label><div class="fleet-skipper-fee"`)
+      .replace('</fieldset><div class="fleet-skipper-fee"',`<button type="button" class="fleet-offer-both" data-rental-both>✓ Offer both rental options</button><p class="fleet-rental-summary" data-rental-mode-summary></p></fieldset><div class="fleet-skipper-fee"`)
       .replace('Additional skipper fee per day (€)','Skipper price per day (€)')
       .replace(`min="0" max="10000" step="0.01" ${both?'required':''} ${both?'':'disabled'}`,`min="${both?'0.01':'0'}" max="10000" step="0.01" ${both?'required':''} ${both?'':'disabled'}`)
       .replace('data-skipper-fee-wrapper>','data-skipper-fee-wrapper '+(both?'':'hidden')+'>')
@@ -1350,7 +1350,7 @@
       if(d.get('published')==='on'&&ownerVerificationState()!=='approved'&&!f.dataset.id)throw Error('Verify your owner account before publishing a new listing.');
       const withSkipper=d.get('with_skipper')==='on',withoutSkipper=d.get('without_skipper')==='on';
       if(!withSkipper&&!withoutSkipper)throw Error('Offer at least one rental option: with or without skipper.');
-      if(withSkipper&&!withoutSkipper&&d.get('skipper_included_ack')!=='on')throw Error('Confirm that a professional skipper is included in your boat price.');
+      
       const requestedCountry=String(d.get('country')||'').trim();
       const country=countryLabels.find(name=>name.toLowerCase()===requestedCountry.toLowerCase())||(['United States','United States of America'].includes(requestedCountry)?'USA':'');
       if(!country)throw Error('Choose a country from the 14 available countries.');
