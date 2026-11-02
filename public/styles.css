@@ -295,7 +295,7 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .owner-verification-overview{max-width:none;background:linear-gradient(130deg,#f0f9fa,#fff 70%)!important;border-color:#d1e7eb!important;padding:34px}
 .owner-verification-overview h2{font-size:25px;letter-spacing:-.5px;margin-bottom:8px}
 .owner-verification-overview .verification-heading{gap:24px}
-.owner-progress{gap:12px;margin-top:25px}
+.owner-progress{gap:12px;margin-top:12px}
 .owner-progress-step{width:100%;cursor:pointer;text-align:left;font:inherit;align-items:center;gap:13px;padding:16px;border-radius:10px;transition:background .15s,border-color .15s}
 .owner-progress-step:hover,.owner-progress-step:focus-visible{border-color:#49abb9;background:#eff9fa}
 .owner-progress-step>span:first-child{flex:none;display:grid;place-items:center;width:33px;height:33px;border-radius:50%;background:#e7eef0;color:#365f69;font-size:14px;font-weight:800}
