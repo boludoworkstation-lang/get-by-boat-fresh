@@ -2175,3 +2175,6 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 #boat-description>.fleet-photo-upload .fleet-upload-details{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important}
 #boat-description>.fleet-photo-upload .fleet-upload-symbol{margin:0!important}
 @media(max-width:700px){#boat-description .fleet-optional-content>.live-columns{grid-template-columns:minmax(0,1fr);gap:0}#boat-description>.fleet-photo-upload{min-height:94px!important;padding:16px!important}}
+
+/* Keep security deposit field caption on one line on desktop and mobile. */
+#boat-description .fleet-insurance-fields>label:last-child{white-space:nowrap;font-size:clamp(12px,1.1vw,14px);letter-spacing:-.01em}
