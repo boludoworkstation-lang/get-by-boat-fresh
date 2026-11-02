@@ -2114,3 +2114,9 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 #boat-description .fleet-photo-undo[hidden]{display:none}
 #boat-description .fleet-photo-undo button{border:0;border-radius:8px;padding:8px 15px;background:#d7f1f5;color:#006f83;font-weight:800;cursor:pointer}
 #boat-description .fleet-photo-undo button:hover{background:#bde6ee}
+
+/* Listing thumbnails select the large photo; only the large photo opens the lightbox. */
+[data-boat-gallery] [data-gallery-select]{border-radius:11px!important;overflow:hidden;outline:2px solid transparent;outline-offset:2px;transition:outline-color .17s,opacity .17s,transform .17s;cursor:default!important}
+[data-boat-gallery] [data-gallery-select]:hover{transform:translateY(-2px);opacity:.9}
+[data-boat-gallery] [data-gallery-select][aria-pressed="true"]{outline-color:#03a5bc}
+[data-boat-gallery] [data-gallery-select] img{display:block}
