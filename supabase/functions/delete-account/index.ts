@@ -86,7 +86,27 @@ Deno.serve(async request=>{
   if(!deleted.ok){console.error('Auth user removal blocked',deleted.status);
    return reply({error:'Account deletion is blocked by linked documents or records. No account was removed.'},409,origin);}
   await fetch(query,{method:'DELETE',headers}).catch(()=>{});
-  return reply({deleted:true},200,origin);
+  // Send the final receipt only after the auth provider confirms successful deletion.
+  // Delivery failure cannot roll back a deleted account.
+  let confirmationEmailSent=false;
+  if(resend&&from&&user.email){
+   try{
+    const receipt=await fetch('https://api.resend.com/emails',{
+     method:'POST',
+     headers:{authorization:'Bearer '+resend,'content-type':'application/json',
+      'Idempotency-Key':'account-deleted:'+user.id},
+     body:JSON.stringify({
+      from,to:[user.email],
+      subject:'Get By Boat — your account has been deleted',
+      html:'<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:32px;color:#173e4b"><h1 style="color:#008da6">Get By Boat</h1><h2>Your account has been deleted</h2><p>This email confirms that your Get By Boat account was permanently deleted.</p><p>You can no longer sign in using this account. If you did not request this action, please contact our support team immediately.</p><p style="color:#69818a;font-size:13px">Thank you for being part of Get By Boat.</p></div>',
+      text:'Your Get By Boat account has been permanently deleted. You can no longer sign in using this account. If you did not request this action, contact Get By Boat support immediately.'
+     })
+    });
+    confirmationEmailSent=receipt.ok;
+    if(!receipt.ok)console.error('Account deletion receipt email failed',receipt.status);
+   }catch(emailError){console.error('Account deletion receipt email exception',emailError);}
+  }else console.error('Account deletion receipt email is not configured');
+  return reply({deleted:true,confirmation_email_sent:confirmationEmailSent},200,origin);
  }catch(error){console.error('Account deletion function error',error);
   return reply({error:'Account deletion is temporarily unavailable. Try again later.'},500,origin);}
 });
