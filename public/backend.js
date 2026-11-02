@@ -733,10 +733,13 @@
     if(empty){empty.hidden=!filtering||matches>0;empty.textContent=onlySelected&&!selected?'Nothing selected yet. Choose a category to get started.':'No matching equipment found. Try another search.';}
   }
   const ownerStepNames=['Boat & location','Price & skipper','Photos & details'];
+  const ownerStepStorageKey=()=>`gbb-owner-step:${location.hash.split('?')[0]}:${new URLSearchParams(location.hash.split('?')[1]||'').get('edit')||'new'}`;
+  function restoredOwnerBoatStep(){try{return Math.min(3,Math.max(1,Number(sessionStorage.getItem(ownerStepStorageKey()))||1))}catch{return 1}}
   function showOwnerBoatStep(form,next){
     if(!form?.querySelectorAll)return;
     const step=Math.min(3,Math.max(1,Number(next)||1));
     form.dataset.editorStep=String(step);
+    try{sessionStorage.setItem(ownerStepStorageKey(),String(step))}catch{}
     for(const section of form.querySelectorAll('[data-editor-step]'))section.hidden=Number(section.dataset.editorStep)!==step;
     for(const button of form.querySelectorAll('[data-live="boat-step"]')){
       if(Number(button.dataset.step)===step)button.setAttribute('aria-current','step');
@@ -1183,7 +1186,7 @@
     if(ownerPickupMap){ownerPickupMap.map.remove();ownerPickupMap=null;}
     if(publicPickupMap){publicPickupMap.remove();publicPickupMap=null;}
     app.innerHTML=showProfile?profileDialog(authNext):showAuth?loginPage():page('Get By Boat','<p role="status">Loading…</p>');focusAuth();
-    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),1);initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
+    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),restoredOwnerBoatStep());initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
   };
   function syncBookingSkipperOption(form){
     const checkbox=form?.querySelector('[data-needs-skipper]');
@@ -2175,6 +2178,8 @@ document.addEventListener('click',async event=>{
     // Static sample boats cannot create real requests or paid confirmations.
   document.addEventListener('submit',e=>{if(['reserve-form','checkout-form'].includes(e.target.id)){e.preventDefault();e.stopImmediatePropagation();modal('Example boat','This is an example listing. Explore the live boat catalogue to send a real booking request.');}},true);
   async function boot(){try{client=await authClient();client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});await current();if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
-  render();
+  // Wait for the persisted auth session before showing protected screens.
+  // This avoids a login/home flash during a normal authenticated refresh.
+  app.innerHTML=page('Get By Boat','<p role="status">Loading your account…</p>');
   boot();
 })();
