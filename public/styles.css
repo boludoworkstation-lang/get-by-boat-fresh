@@ -1837,3 +1837,12 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 /* Center profile photo save action below the centered avatar preview. */
 .profile-panel[data-live-form="avatar"] > button.btn{display:block;width:max-content;max-width:100%;margin:18px auto 0}
 .profile-panel[data-live-form="avatar"] > small{display:block}
+
+/* Clear distinction between login and account creation */
+.auth-mode-badge{display:inline-flex;align-items:center;gap:6px;margin:0 0 13px;padding:6px 11px;border-radius:999px;background:#e7f7fa;color:#007d94;font-size:11px;font-weight:800;letter-spacing:.12em}
+.auth-dialog-signup .auth-dialog-head{background:#f3fbfc}
+.auth-dialog-signup .auth-primary{background:#008fa8}
+.auth-dialog .auth-switch{border-top:1px solid #e4eef0;padding-top:19px;margin-top:24px}
+.auth-dialog .auth-switch button[data-live="auth-mode"]{display:block;width:100%;padding:11px 14px;border:1px solid #b5dce3;border-radius:10px;background:#f1fafb;color:#075d70;text-decoration:none;font-weight:700;font-size:14px;line-height:1.4;transition:background .2s,border-color .2s}
+.auth-dialog .auth-switch button[data-live="auth-mode"]:hover{background:#e1f4f7;border-color:#00a2bb}
+.auth-dialog-signup .auth-switch button[data-live="auth-mode"]{background:#fff;border-color:#dde8eb;color:#466a75}
