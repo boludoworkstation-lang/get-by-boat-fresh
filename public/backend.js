@@ -1451,7 +1451,7 @@
       if(!d.get('documents_own'))throw Error('Confirm you are authorised to represent the business.');
       if(!ownerComplete(old))throw Error('Complete business information, payout details and all three documents first.');
       if(ownerVerificationState()==='approved'||ownerVerificationState()==='pending')throw Error('This application is already submitted.');
-      check(await client.from('owner_verification_requests').upsert({user_id:session.user.id,application_state:'submitted',submitted_at:new Date().toISOString()},{onConflict:'user_id'}).select().single());
+      check(await client.from('owner_verification_requests').update({application_state:'submitted',submitted_at:new Date().toISOString()}).eq('user_id',session.user.id).select().single());
       ownerScrollTarget='owner-documents';await current();render();toast('Application submitted. Staff will review your business before you can publish listings.');return;
     }
     if(kind==='review'){
