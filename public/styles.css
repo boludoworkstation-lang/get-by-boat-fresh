@@ -1303,3 +1303,33 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 /* Keep insurance selector level with the refundable security deposit input. */
 .fleet-optional-content select[name="insurance_type"]{height:48px;min-height:48px;padding:12px;border-radius:8px;box-sizing:border-box}
+
+/* Tidy skipper-mode selector: three compact equal choices, no oversized native radios. */
+.fleet-rental-onboarding{padding:22px 23px 23px;border-radius:16px}
+.fleet-rental-onboarding .fleet-skipper-modes{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;
+  gap:11px;margin:17px 0 0!important;padding:0;border:0;min-width:0
+}
+.fleet-rental-onboarding .fleet-skipper-modes legend{font-size:12px;font-weight:750;color:#52737d;padding:0;margin-bottom:12px}
+.fleet-rental-onboarding .fleet-mode-option{
+  display:flex;flex-direction:row;align-items:flex-start;gap:10px;
+  min-height:122px;margin:0!important;padding:16px 14px;
+  border:1px solid #d6e5e9;border-radius:12px;background:#fff;
+  cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;
+}
+.fleet-rental-onboarding .fleet-mode-option:hover{border-color:#79c1cc}
+.fleet-rental-onboarding .fleet-mode-option:has(input:checked){
+  background:#edf9fb;border-color:#02a0b8;box-shadow:inset 0 0 0 1px #02a0b8
+}
+.fleet-rental-onboarding .fleet-mode-option>input[type=radio]{
+  appearance:none;-webkit-appearance:none;box-sizing:border-box;
+  width:18px!important;height:18px!important;min-width:18px;max-width:18px;
+  padding:0!important;margin:2px 0 0!important;border:1.5px solid #a9c2c9;border-radius:50%;
+  background:#fff;display:grid;place-items:center;flex:none;
+}
+.fleet-rental-onboarding .fleet-mode-option>input[type=radio]:checked{border:5px solid #009fb7}
+.fleet-rental-onboarding .fleet-mode-option>input[type=radio]:focus-visible{outline:2px solid #087e96;outline-offset:3px}
+.fleet-rental-onboarding .fleet-mode-option>span{display:flex;flex-direction:column;gap:7px;min-width:0}
+.fleet-rental-onboarding .fleet-mode-option strong{font-size:13px;line-height:1.3;font-weight:750}
+.fleet-rental-onboarding .fleet-mode-option small{font-size:11px;line-height:1.5;font-weight:450;color:#718a94}
+@media(max-width:900px){.fleet-rental-onboarding .fleet-skipper-modes{grid-template-columns:1fr}.fleet-rental-onboarding .fleet-mode-option{min-height:0}}
