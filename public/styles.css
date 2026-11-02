@@ -1646,3 +1646,10 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .contact-form-footer .btn{white-space:nowrap;border-radius:12px;min-height:52px}
 @media(max-width:920px){.contact-page{padding:55px 0 70px}.contact-layout{grid-template-columns:1fr;gap:32px}.contact-intro{padding:0}.contact-intro h1{font-size:50px}.contact-support{margin-top:30px}.contact-form-card{max-width:760px}}
 @media(max-width:560px){.contact-page{padding:35px 0 55px}.contact-intro h1{font-size:43px}.contact-two{grid-template-columns:1fr;gap:0}.contact-form-card{padding:24px 19px;border-radius:18px}.contact-form-footer{flex-direction:column;align-items:stretch}.contact-form-footer p{max-width:none}.contact-form-footer .btn{width:100%}}
+
+/* Price breakdown hierarchy: Net owner → Online / On spot */
+.offer-net-owner{margin-bottom:5px;font-weight:750;color:#183c48}
+.offer-net-owner-children{margin:0 0 10px 13px;padding-left:12px;border-left:1px solid #e5ecef}
+.offer-net-owner-children .offer-price-line{position:relative;margin:6px 0;font-size:12px;color:#778a91}
+.offer-net-owner-children .offer-price-line::before{content:"";position:absolute;top:50%;left:-12px;width:8px;border-top:1px solid #e5ecef}
+.offer-net-owner-children .offer-price-line strong{font-weight:550;color:#647a82}
