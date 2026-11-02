@@ -12,7 +12,7 @@ assert.match(backend,/const marker=exact\?new maps\.Marker/);
 assert.match(backend,/draggable:true,icon:blueGoogleMarkerIcon/);
 assert.match(backend,/if\(!googleMapsKey\(\)\)\{initPublicPickupMapLeaflet\(container\);return;\}/);
 assert.match(backend,/if\(!googleMapsKey\(\)\)\{initOwnerPickupMapLeaflet\(form,container\);return;\}/);
-assert.equal(fs.readFileSync('public/maps-config.js','utf8').includes("window.GBB_GOOGLE_MAPS_API_KEY = '';"),true);
+assert.match(fs.readFileSync('public/maps-config.js','utf8'),/window\.GBB_GOOGLE_MAPS_API_KEY\s*=\s*'[^']+';/);
 const styles=fs.readFileSync('public/styles.css','utf8');
 assert.ok(styles.includes('.listing-skipper-summary>.skipper-cap-icon path:first-child{fill:#e2f5f9'));
 const sleep=()=>new Promise(r=>setTimeout(r,5));
