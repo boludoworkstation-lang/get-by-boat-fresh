@@ -161,6 +161,23 @@
   function focusAuth(){const dialog=document.querySelector('.auth-dialog');document.body?.classList.toggle('auth-open',!!dialog);if(dialog)(dialog.querySelector('input[name="display_name"]')||dialog.querySelector(authStep==='password'?'input[name="password"]':'input'))?.focus();}
   document.addEventListener('keydown',event=>{const dialog=document.querySelector('.auth-dialog');if(!dialog)return;if(event.key==='Escape'){event.preventDefault();closeAuth();return}if(event.key==='Tab'){const items=[...dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),a[href],select,textarea')];const first=items[0],last=items[items.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}}});
   document.addEventListener('click',event=>{if(event.target.matches?.('[data-auth-backdrop]'))closeAuth()});
+  document.addEventListener('click',async event=>{
+    const button=event.target.closest?.('[data-verification-email]');
+    if(!button)return;
+    event.preventDefault();
+    if(button.disabled)return;
+    const feedback=button.parentElement?.querySelector('.verification-email-feedback');
+    button.disabled=true;
+    if(feedback)feedback.textContent='Sending…';
+    try{
+      const {data,error}=await client.functions.invoke('verification-approved-email',{body:{user_id:button.dataset.verificationEmail}});
+      if(error||!data?.sent)throw error||new Error(data?.error||'Email not sent');
+      if(feedback)feedback.textContent=data.already_sent?'Email already sent.':'Verification email sent.';
+    }catch(error){
+      if(feedback)feedback.textContent='Could not send email. Please try again.';
+    }finally{button.disabled=false;}
+  });
+
   document.addEventListener('click',event=>{
     const button=event.target.closest?.('[data-password-visibility]');
     if(!button)return;
@@ -895,6 +912,9 @@
       const status=current?review.status:'pending';
       const [idFile,licenceFile]=current&&['approved','rejected'].includes(status)?[null,null]:await Promise.all([client.storage.from('verification-documents').createSignedUrl(r.identity_path,300),client.storage.from('verification-documents').createSignedUrl(r.licence_path,300)]);
       const documentLink=(result,label)=>!result?`<span class="member-note">${esc(label)}: reviewed; copy scheduled for removal</span>`:result.error?`<span class="member-note">${esc(label)} unavailable (may have been deleted after review)</span>`:`<a class="member-outline-action" target="_blank" rel="noopener noreferrer" href="${esc(result.data.signedUrl)}">View ${esc(label)} · 5-minute link ${icon('arrow')}</a>`;
+      if(current&&status==='approved'){
+        return `<article class="profile-panel verification-staff-card verification-complete-card"><div class="verification-heading"><div><span class="verification-complete-eyebrow">Customer verification</span><h2>${esc(p?.display_name||'Customer')}</h2><p>Verified ${esc(review.reviewed_at?.slice(0,10)||'')}</p></div><span class="verification-badge approved">✓ Verified</span></div><div class="verification-complete-details"><span><strong>Identity</strong>${r.identity_type==='passport'?'Passport':'National ID'}</span><span><strong>Boat licence</strong>${esc(r.licence_type)}</span><span><strong>Valid until</strong>${esc(r.licence_expiry||'No expiry')}</span></div><p class="verification-complete-note">Identity and boat licence reviewed successfully.</p><button type="button" class="verification-email-action" data-verification-email="${esc(r.user_id)}">Send verification email</button><span class="verification-email-feedback" role="status"></span></article>`;
+      }
       return `<article class="profile-panel verification-staff-card"><div class="verification-heading"><div><h2>${esc(p?.display_name||'Customer')}</h2><p>Submitted ${esc(r.submitted_at?.slice(0,10)||'')} · DOB ${esc(r.birth_date)}</p></div><span class="verification-badge ${esc(status)}">${esc(verificationLabel(status))}</span></div><p><strong>Identity:</strong> ${r.identity_type==='passport'?'Passport':'National ID'} · <strong>Licence:</strong> ${esc(r.licence_type)} · <strong>Expiry:</strong> ${esc(r.licence_expiry||'Permanent / not specified')}</p>${p?.details?.birth_date?`<p>Customer profile date of birth: ${esc(p.details.birth_date)}</p>`:''}<div class="verification-document-links">${documentLink(idFile,'ID / passport')}${documentLink(licenceFile,'boat driving licence')}</div>${current&&review?.note?`<p>Previous decision note: ${esc(review.note)}</p>`:''}<form class="live-form verification-review-form" data-live-form="review" data-id="${esc(r.user_id)}"><label>Decision<select name="status" required><option value="approved">Approve documents</option><option value="rejected">Reject / request correction</option></select></label><label class="live-check"><input type="checkbox" name="identity_matches"> I checked that the ID/passport is genuine-looking and matches the customer's legal name and date of birth.</label><label class="live-check"><input type="checkbox" name="licence_matches"> I checked the licence holder matches the ID/passport, and the licence category and validity are suitable.</label><label>Message to customer (required if rejected)<textarea name="note" rows="2" maxlength="1000" placeholder="Explain which details need correction."></textarea></label><button class="btn" type="submit">Save review decision</button><p role="status" data-feedback></p></form></article>`;
     }));
     const ownerRows=check(await client.from('owner_verification_requests').select('*').eq('application_state','submitted').order('submitted_at',{ascending:false}).limit(50));
@@ -904,10 +924,13 @@
       const p=ownerProfiles.find(x=>x.id===r.user_id),review=ownerReviews.find(x=>x.user_id===r.user_id);
       const isCurrent=ownerReviewIsCurrent(r,review,p?.display_name),s=isCurrent?review.status:'pending';
       const paths=[['Registration',r.registration_path],['ID / passport',r.identity_path],['Bank account proof',r.iban_proof_path]];
-      const signed=await Promise.all(paths.map(async ([label,path])=>{
+      const signed=isCurrent&&s==='approved'?[]:await Promise.all(paths.map(async ([label,path])=>{
         const result=await client.storage.from('owner-verification-documents').createSignedUrl(path,300);
         return result.error?`<span class="member-note">${esc(label)} unavailable</span>`:`<a href="${esc(result.data.signedUrl)}" target="_blank" rel="noopener noreferrer" class="member-outline-action">View ${esc(label)} · 5-minute link ${icon('arrow')}</a>`;
       }));
+      if(isCurrent&&s==='approved'){
+        return `<article class="profile-panel verification-staff-card verification-complete-card"><div class="verification-heading"><div><span class="verification-complete-eyebrow">Business verification</span><h2>${esc(r.legal_business_name)}</h2><p>Owner: ${esc(p?.display_name||'Unknown')} · Verified ${esc(review.reviewed_at?.slice(0,10)||'')}</p></div><span class="verification-badge approved">✓ Verified</span></div><p class="verification-complete-note">Business documents reviewed and approved. No further action needed.</p></article>`;
+      }
       return `<article class="profile-panel verification-staff-card"><div class="verification-heading"><div><h2>${esc(r.legal_business_name)}</h2><p>Owner: ${esc(p?.display_name||'Unknown')} · Submitted ${esc(r.submitted_at?.slice(0,10)||'')}</p></div><span class="verification-badge ${esc(s)}">${esc(verificationLabel(s))}</span></div><p><strong>Country / registration:</strong> ${esc(r.business_country)} · ${esc(r.tax_identifier)}<br><strong>Registered address:</strong> ${esc(r.registered_address)}<br><strong>Website:</strong> <a href="${esc(r.business_website)}" target="_blank" rel="noopener noreferrer">${esc(r.business_website)}</a><br><strong>Business bank account:</strong> ${esc(r.payout_bank_details?.method==='local'?(`${r.payout_bank_details.country} · Account ${r.payout_bank_details.account_number} · Bank/routing ${r.payout_bank_details.routing_number}${r.payout_bank_details.swift_bic?' · SWIFT/BIC '+r.payout_bank_details.swift_bic:''}`):r.iban||'Not provided')} · ${esc(r.iban_holder)}<br><strong>Identity document:</strong> ${r.identity_type==='passport'?'Passport':'National ID'}</p><div class="verification-document-links">${signed.join('')}</div>${isCurrent&&review?.note?`<p>Previous decision note: ${esc(review.note)}</p>`:''}<form class="live-form verification-review-form" data-live-form="owner-review" data-id="${esc(r.user_id)}"><label>Decision<select name="status" required><option value="approved">Approve business</option><option value="rejected">Reject / request correction</option></select></label><label class="live-check"><input type="checkbox" name="registration_matches"> I checked the business registration, country and registration number (OIB / SIRET / other).</label><label class="live-check"><input type="checkbox" name="identity_matches"> I checked the owner / manager identity and authority to represent the business.</label><label class="live-check"><input type="checkbox" name="bank_matches"> I checked that the business bank account belongs to the registered business and verified its website and address.</label><label>Message to owner (required if rejected)<textarea name="note" rows="2" maxlength="1000" placeholder="Explain what needs correction"></textarea></label><button class="btn" type="submit">Save owner verification</button><p role="status" data-feedback></p></form></article>`;
     }));
     return page('Staff verification',`<p>Restricted reviewer area. Documents are private and accessible only through short-lived signed links. Approving owners unlocks publication of new listings.</p><h2>Business / owner verification (${ownerRows.length})</h2><div class="verification-staff-list">${ownerCards.join('')||'<div class="profile-panel">No owner verification requests yet.</div>'}</div><h2>Customer ID & boat licence (${rows.length})</h2><div class="verification-staff-list">${cards.join('')||'<div class="profile-panel">No customer verification requests yet.</div>'}</div>`);
@@ -1413,7 +1436,18 @@
       check(await client.from('verification_reviews').upsert({user_id:f.dataset.id,status:decision,note},{onConflict:'user_id'}).select().single());
       const docs=check(await client.from('verification_requests').select('identity_path,licence_path').eq('user_id',f.dataset.id).single());
       const cleanup=await client.storage.from('verification-documents').remove([docs.identity_path,docs.licence_path]);
-      await current();render();toast(cleanup.error?'Decision saved. Document cleanup needs staff attention.':'Decision saved. Document copies removed from private storage.');return;
+      let emailNotice='';
+      if(decision==='approved'){
+        try{
+          const {data:notice,error:emailError}=await client.functions.invoke('verification-approved-email',{body:{user_id:f.dataset.id}});
+          if(emailError||!notice?.sent)throw emailError||new Error(notice?.error||'Email not sent');
+          emailNotice=' Verification confirmation email sent.';
+        }catch(error){
+          console.warn('Verification confirmation email pending:',error?.message||error);
+          emailNotice=' Verification saved, but email delivery needs a retry.';
+        }
+      }
+      await current();render();toast((cleanup.error?'Decision saved. Document cleanup needs staff attention.':'Decision saved. Document copies removed from private storage.')+emailNotice);return;
     }
     if(kind==='owner-review'){
       if(!verificationStaff)throw Error('Staff review access required.');
