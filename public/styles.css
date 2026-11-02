@@ -1934,3 +1934,20 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .password-visibility-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;background:transparent;border:0;border-radius:8px;color:#587983;cursor:pointer}
 .password-visibility-toggle:hover,.password-visibility-toggle:focus-visible{background:#eaf8fa;color:#058fa8}
 .password-visibility-toggle[aria-pressed="true"]{color:#008eaa}
+
+/* Finished reviews: quiet, concise staff summary rather than an editable review form. */
+.verification-complete-card{padding:25px 28px;max-width:960px;border-color:#d9e9e6;box-shadow:0 5px 24px rgba(27,73,72,.035)}
+.verification-complete-card .verification-heading{align-items:flex-start;margin-bottom:17px}
+.verification-complete-card .verification-heading h2{margin:4px 0 2px;font-size:20px}
+.verification-complete-card .verification-heading p{margin:0;color:#78919b;font-size:12px}
+.verification-complete-eyebrow{font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#1296a8}
+.verification-complete-details{display:flex;flex-wrap:wrap;gap:12px 28px;padding:17px 0;border-top:1px solid #e8eff0;border-bottom:1px solid #e8eff0}
+.verification-complete-details span{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:#234a56}
+.verification-complete-details strong{color:#81969d;font-size:11px;font-weight:600}
+.verification-complete-card .verification-complete-note{margin:16px 0 0;color:#587780;font-size:12px}
+@media(max-width:600px){.verification-complete-card{padding:21px}.verification-complete-details{gap:15px}.verification-complete-details span{min-width:95px}}
+
+.verification-email-action{margin-top:12px;padding:8px 0;border:0;background:transparent;color:#078fa8;font-size:12px;font-weight:700;cursor:pointer}
+.verification-email-action:hover{text-decoration:underline}
+.verification-email-action:disabled{opacity:.55;cursor:wait}
+.verification-email-feedback{display:inline-block;margin-left:12px;color:#547c85;font-size:12px}
