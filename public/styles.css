@@ -1300,3 +1300,6 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 /* Match Engine type selector height to adjacent boat measurement fields. */
 .fleet-optional-content select[name="spec_engine_type"]{height:48px;min-height:48px;padding:12px;border-radius:8px;box-sizing:border-box}
 .verification-booking-block .verification-status-line{display:inline-block;margin-top:5px}
+
+/* Keep insurance selector level with the refundable security deposit input. */
+.fleet-optional-content select[name="insurance_type"]{height:48px;min-height:48px;padding:12px;border-radius:8px;box-sizing:border-box}
