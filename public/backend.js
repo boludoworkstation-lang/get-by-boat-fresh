@@ -923,7 +923,6 @@
             <label class="rental-where"><span>${icon('pin')} Where</span><input name="location" list="boat-destinations" type="search" placeholder="City or country" value="${esc(searchInput)}" autocomplete="off"></label>${destinationDatalist()}
             <label><span>${icon('calendar')} From</span><input name="start" type="date" value="${esc(startDate)}"></label>
             <label><span>${icon('calendar')} To</span><input name="end" type="date" value="${esc(endDate)}"></label>
-            <label><span>${icon('ship')} Rental type</span><select name="skipper"><option value="">With or without skipper</option><option value="with" ${skipper==='with'?'selected':''}>With skipper</option><option value="without" ${skipper==='without'?'selected':''}>Self-drive</option></select></label>
             <button class="btn rental-search-button" type="submit">${icon('search')} Search</button>
           </div>
           <div class="rental-layout">
