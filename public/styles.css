@@ -2092,3 +2092,17 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 #boat-description .fleet-photo-remove{font-size:11px;font-weight:650;padding-left:8px}
 @media(max-width:700px){#boat-description .fleet-photo-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}#boat-description .fleet-photo-card>img{height:130px}#boat-description .fleet-photo-actions{min-height:43px;flex-wrap:wrap}#boat-description .fleet-drag-handle{width:100%;font-size:10px}#boat-description .fleet-photo-move{width:29px;height:29px}}
 @media(max-width:420px){#boat-description .fleet-photo-gallery{grid-template-columns:1fr!important}#boat-description .fleet-photo-card>img{height:220px}#boat-description .fleet-drag-handle{width:auto}}
+
+/* Full-surface photo reorder: horizontal and vertical, mouse and touch */
+#boat-description .fleet-photo-card{border:1px solid #e4ebee;border-radius:16px;box-shadow:0 3px 15px rgba(12,56,70,.055);transition:box-shadow .16s,border-color .16s,transform .16s;cursor:default}
+#boat-description .fleet-photo-card>img{pointer-events:auto!important;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
+#boat-description .fleet-photo-card>img:active{cursor:grabbing}
+#boat-description .fleet-photo-card.is-dragging{opacity:.85;transform:scale(.97);border:2px solid #00a0b6;box-shadow:0 15px 34px rgba(5,83,103,.24);z-index:3}
+#boat-description .fleet-photo-position{border-radius:8px;padding:7px 10px;font-size:11px}
+#boat-description .fleet-photo-actions{min-height:42px;padding:7px 10px;background:#fff;gap:5px}
+#boat-description .fleet-drag-handle{font-size:11px;letter-spacing:0;color:#9aadb4}
+#boat-description .fleet-photo-move{width:28px;height:28px;font-size:20px;border:0;background:#f1f7f8;color:#39717f}
+#boat-description .fleet-photo-remove{font-size:11px;border-left:1px solid #edf0f2;color:#866772;padding-left:8px}
+#boat-description .fleet-photo-remove input{width:13px;height:13px}
+#boat-description .fleet-photo-gallery{gap:15px!important}
+@media(max-width:700px){#boat-description .fleet-photo-card>img{touch-action:none}#boat-description .fleet-photo-actions{padding:7px;gap:5px}#boat-description .fleet-drag-handle{font-size:10px}}
