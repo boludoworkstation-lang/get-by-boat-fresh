@@ -1432,16 +1432,27 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .profile-birth-month-year select{max-width:135px;padding:7px 5px;border:1px solid #dce9ec;border-radius:9px;background:#fff;color:#173e48;font-size:12px;font-weight:700}
 .profile-birth-month-year select:last-child{max-width:79px}
 
-/* Multi-language profile input: each selected language is a removable chip. */
-.profile-language-picker{border:1px solid #d8e5e8;border-radius:9px;background:#fff;min-height:52px;padding:7px 9px;display:flex;align-items:center;flex-wrap:wrap;gap:7px}
-.profile-language-picker:focus-within{border-color:#00a6bf;box-shadow:0 0 0 3px #c9f2f8}
-.profile-language-chips{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
-.profile-language-chip{display:inline-flex;align-items:center;gap:7px;background:#eaf8fa;color:#176779;border:1px solid #b7e5ed;border-radius:99px;padding:4px 9px;font-size:12px;font-weight:700;white-space:nowrap}
-.profile-language-chip button{background:none;border:0;color:#347c8c;font-size:17px;line-height:1;padding:0;cursor:pointer}
-.profile-language-chip button:hover{color:#ba4141}
-.live-form .profile-language-picker .profile-language-search{flex:1;min-width:140px;width:auto;border:0;outline:0;box-shadow:none;padding:5px 3px;background:transparent;font-size:13px}
-.live-form .profile-language-picker .profile-language-search:focus{outline:0;box-shadow:none;border:0}
-
+/* Account: clean searchable multi-language select with subtle removable tags. */
+.profile-language-label{position:relative}
+.profile-language-picker{position:relative;display:block;width:100%;min-width:0}
+.profile-language-control{height:52px;display:flex;align-items:center;gap:11px;padding:0 14px;border:1px solid #d9e6ea;border-radius:10px;background:#fff;transition:border-color .16s,box-shadow .16s}
+.profile-language-control:focus-within{border-color:#09a6c0;box-shadow:0 0 0 3px rgba(0,166,191,.10)}
+.profile-language-leading{display:flex;align-items:center;color:#009eb5}
+.profile-language-leading svg{width:19px;height:19px}
+.profile-language-chevron{margin-left:auto;color:#7899a3;font-size:19px;line-height:1;pointer-events:none}
+.live-form .profile-language-picker .profile-language-search{flex:1;width:100%;min-width:0;min-height:0;height:42px;margin:0;padding:0;border:0!important;outline:0!important;box-shadow:none!important;background:transparent;color:#214652;font:500 13px var(--sans)}
+.profile-language-search::placeholder{color:#91a2a8}
+.profile-language-chips{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:10px}
+.profile-language-chips:not(:has(.profile-language-chip)){display:none}
+.profile-language-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 9px 6px 12px;border:1px solid #cfe3e8;border-radius:8px;background:#f4fafb;color:#2a5c69;font-size:12px;font-weight:700;line-height:1.3;white-space:nowrap}
+.profile-language-chip button{display:grid;place-items:center;width:16px;height:16px;padding:0;border:0;border-radius:50%;background:transparent;color:#7197a0;font-size:17px;line-height:1;cursor:pointer}
+.profile-language-chip button:hover{background:#dceef2;color:#11667a}
+.profile-language-help{display:block;margin-top:5px;color:#8ca1aa;font-size:11px;font-weight:450;line-height:1.45}
+.profile-language-suggestions{position:absolute;top:56px;left:0;right:0;z-index:100;background:#fff;border:1px solid #d8e9ed;border-radius:12px;padding:6px;box-shadow:0 14px 35px #103f4b20;max-height:260px;overflow-y:auto}
+.profile-language-suggestions[hidden]{display:none}
+.profile-language-option{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:#254d59;text-align:left;font:600 13px var(--sans);cursor:pointer}
+.profile-language-option>span:last-child{color:#009cb8;font-size:18px;font-weight:500}
+.profile-language-option:hover,.profile-language-option:focus-visible{background:#eaf8fa;outline:none}
 
 /* Match the Boats "Where" field to the homepage destination picker. */
 .rental-search-bar .rental-where{border-radius:12px;transition:background .2s ease,box-shadow .2s ease}
