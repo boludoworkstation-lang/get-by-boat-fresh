@@ -201,10 +201,16 @@ function renderDestinationOptions(input,matches){
   menu.style.left=Math.max(8,rect.left)+'px';
   menu.style.top=Math.min(rect.bottom+5,window.innerHeight-40)+'px';
   menu.style.width=Math.min(Math.max(250,rect.width),window.innerWidth-16)+'px';
+  const heading=document.createElement('div');heading.className='destination-autocomplete-heading';heading.textContent='Explore destinations';menu.appendChild(heading);
   matches.forEach(item=>{
     const option=document.createElement('button');
     option.type='button';option.className='destination-autocomplete-option';option.setAttribute('role','option');
-    option.textContent=item.label;
+    const isCountry=searchableCountries.includes(item.name);
+    const marker=document.createElement('span');marker.className='destination-option-icon '+(isCountry?'is-country':'');marker.setAttribute('aria-hidden','true');marker.textContent=isCountry?'◎':'⌖';
+    const copy=document.createElement('span');copy.className='destination-option-copy';
+    const title=document.createElement('strong');title.textContent=isCountry?item.name:String(item.label||item.name).split(',')[0];
+    const detail=document.createElement('small');detail.textContent=isCountry?'Country':String(item.label||'').split(',').slice(1).join(',').trim()||'Destination';
+    copy.append(title,detail);option.append(marker,copy);
     option.addEventListener('mousedown',event=>event.preventDefault());
     option.addEventListener('click',()=>{
       input.value=item.name;
