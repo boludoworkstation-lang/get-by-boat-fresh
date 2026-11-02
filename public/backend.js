@@ -548,7 +548,7 @@
     const exact=!!exactPickup;
     const address=exact?String(exactPickup.pickup_address||boat.location||'').trim():'';
     const mapsQuery=exactCoordinates?exactCoordinates.join(','):[address,boat.location,boat.country].filter(Boolean).join(', ');
-    return `<section class="fleet-public-pickup"><div class="listing-map-heading"><div><h3>${exact?'Your meeting point':'Where is the boat?'}</h3><p>${icon('pin')} ${exact?esc(address):esc(boat.location+', '+boat.country)}</p></div><span class="listing-location-badge">${exact?'Exact location unlocked':'Approximate 5 km area'}</span></div><div class="fleet-public-map" data-public-map data-lat="${coordinates[0]}" data-lng="${coordinates[1]}" data-exact="${exact&&!!exactCoordinates}" role="img" aria-label="${exact?'Exact pickup map':'Approximate city area shown with a blue 5 kilometre circle'}"></div>${exact?`<a class="listing-map-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery)}">${icon('pin')} Get directions in Google Maps ↗</a>`:'<p class="listing-map-disclaimer">The blue circle shows the approximate town area. The exact marina and meeting address are shared after payment and booking confirmation.</p>'}</section>`;
+    return `<section class="fleet-public-pickup"><div class="listing-map-heading"><div><h3>${exact?'Your meeting point':'Where is the boat?'}</h3><p>${icon('pin')} ${exact?esc(address):esc(boat.location+', '+boat.country)}</p></div><span class="listing-location-badge">${exact?'Exact location unlocked':'Approximate 5 km area'}</span></div><div class="fleet-public-map" data-public-map data-lat="${coordinates[0]}" data-lng="${coordinates[1]}" data-exact="${exact&&!!exactCoordinates}" role="img" aria-label="${exact?'Exact pickup map':'Approximate boat area shown as a pink circle'}"></div>${exact?`<a class="listing-map-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery)}">${icon('pin')} Get directions in Google Maps ↗</a>`:'<p class="listing-map-disclaimer">The shaded circle shows the approximate town area. The exact marina and meeting address are shared after payment and booking confirmation.</p>'}</section>`;
   };
   function initPublicPickupMapLeaflet(container){
     if(!container?.isConnected||!window.L)return;
@@ -557,7 +557,7 @@
     const map=window.L.map(container,{scrollWheelZoom:false}).setView([lat,lng],exact?12:10);
     guestMapTiles(map);
     if(exact)window.L.marker([lat,lng]).addTo(map);
-    else window.L.circle([lat,lng],{radius:5000,color:'#0588c7',weight:2.5,fillColor:'#30a6df',fillOpacity:.22,interactive:false}).addTo(map);
+    else window.L.circle([lat,lng],{radius:5000,color:'#e477b6',weight:2.5,fillColor:'#f3a6d0',fillOpacity:.27,interactive:false}).addTo(map);
     publicPickupMap=map;
     setTimeout(()=>map.invalidateSize(),0);
   }
@@ -573,7 +573,7 @@
       const center={lat,lng};
       const map=new maps.Map(container,{center,zoom:exact?12:10,mapTypeId:'terrain',mapTypeControl:false,streetViewControl:false,fullscreenControl:false,zoomControl:true,gestureHandling:'cooperative'});
       const marker=exact?new maps.Marker({map,position:center,icon:blueGoogleMarkerIcon(maps),title:'Boat pickup point'}):null;
-      const circle=!exact?new maps.Circle({map,center,radius:5000,strokeColor:'#0588c7',strokeOpacity:1,strokeWeight:2.5,fillColor:'#30a6df',fillOpacity:.22,clickable:false}):null;
+      const circle=!exact?new maps.Circle({map,center,radius:5000,strokeColor:'#e477b6',strokeOpacity:1,strokeWeight:2.5,fillColor:'#f3a6d0',fillOpacity:.27,clickable:false}):null;
       publicPickupMap={remove(){marker?.setMap(null);circle?.setMap(null);maps.event.clearInstanceListeners(map);}};
     });
   }
