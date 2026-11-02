@@ -1831,3 +1831,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .footer-social-links a:hover,.footer-social-links a:focus-visible{transform:translateY(-2px);background:#158ca0;border-color:#48b5c6;box-shadow:0 6px 18px #031c2255;color:#fff}
 .footer-social-links a:focus-visible{outline:2px solid #b5f2fc;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.footer-social-links a{transition:none}.footer-social-links a:hover{transform:none}}
+
+/* Center profile photo save action below the centered avatar preview. */
+.profile-panel[data-live-form="avatar"] > button.btn{display:block;width:max-content;max-width:100%;margin:18px auto 0}
+.profile-panel[data-live-form="avatar"] > small{display:block}
