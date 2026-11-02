@@ -1595,3 +1595,19 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 @media(max-width:1300px){.message-workspace .booking-messenger-three{grid-template-columns:minmax(215px,24%) minmax(0,1fr) minmax(245px,25%)}.message-workspace .booking-thread{padding:26px 7%}.message-workspace .booking-compose{padding-left:7%;padding-right:7%}}
 @media(max-width:950px){.message-workspace{height:auto;min-height:calc(100dvh - 60px)}.message-workspace .booking-messenger-three{display:grid;grid-template-columns:minmax(200px,30%) minmax(0,1fr);height:auto;min-height:calc(100dvh - 60px)}.message-workspace .booking-conversations{max-height:calc(100dvh - 60px)}.message-workspace .booking-chat{min-height:600px}.message-workspace .booking-details{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid #e5e8e9;border-left:0}.message-workspace .booking-details-heading,.message-workspace .booking-detail-footnote{grid-column:1/-1}}
 @media(max-width:640px){.message-app-header{padding:0 14px}.message-app-header nav{gap:12px}.message-app-header nav>a:not(.member-mini-avatar){font-size:11px}.message-workspace .booking-messenger-three{display:flex;flex-direction:column}.message-workspace .booking-conversations{max-height:230px;flex:none}.message-workspace .booking-chat{min-height:500px}.message-workspace .booking-details{display:block}.message-workspace .booking-thread{padding:20px}.message-workspace .booking-compose{padding:12px 15px}}
+
+/* Special offer controls in the booking detail rail */
+.booking-offer-section{padding:23px 22px;border-bottom:1px solid #edf1f2;background:#f7fbfc}
+.booking-offer-title{display:block;font-size:16px;color:#183c48;margin:3px 0 16px}
+.offer-price-line{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin:11px 0;font-size:12px;color:#5b737c}
+.offer-price-line strong{font-weight:700;color:#244855;white-space:nowrap}
+.offer-price-total{border-top:1px solid #e0e9ec;padding-top:13px;margin-top:15px;font-weight:750;color:#183c48}
+.offer-price-total strong{font-size:15px;color:#006f89}
+.booking-offer-expiry{font-size:11px;line-height:1.6;color:#667e87;margin:16px 0 0}
+.booking-offer-accept{width:100%;margin-top:14px;justify-content:center}
+.booking-offer-form{padding:23px 22px;display:flex;flex-direction:column;gap:14px;border-bottom:1px solid #edf1f2;background:#fff}
+.booking-offer-form h3{font-size:16px;color:#173c47;line-height:1.4;margin:0 0 3px}
+.booking-offer-form label{font-size:12px;color:#3e606c;font-weight:700;display:flex;flex-direction:column;gap:7px}
+.booking-offer-form input,.booking-offer-form select{width:100%;min-height:40px;padding:9px 11px;border:1px solid #d7e4e8;border-radius:8px;color:#193f4a;background:#fff;font:inherit;font-size:13px}
+.booking-offer-form .btn{width:100%;justify-content:center}
+.booking-offer-form [data-feedback]{margin:0;font-size:11px;color:#64808b}
