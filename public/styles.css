@@ -1794,3 +1794,29 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .how-hero::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(3,43,54,.65),rgba(3,52,64,.18) 66%,rgba(0,72,83,.04));pointer-events:none}
 .how-hero>.shell,.how-hero>.how-photo-credit{position:relative;z-index:2}
 .how-hero>.how-photo-credit{position:absolute}
+
+/* Owner fleet display choices: current cards, compact grid, horizontal list */
+.fleet-layout-switch{display:inline-flex;align-items:center;gap:3px;padding:4px;background:#e9f1f3;border:1px solid #dce9ec;border-radius:12px;flex-shrink:0}
+.fleet-layout-option{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 11px;border-radius:9px;font-size:12px;font-weight:750;color:#68838b;white-space:nowrap;transition:background .15s,color .15s}
+.fleet-layout-option span:first-child{font-size:17px;line-height:1}
+.fleet-layout-option:hover{background:#f9fcfd;color:#076f83}
+.fleet-layout-option[aria-current=true]{background:#fff;color:#057c92;box-shadow:0 2px 9px #164b5a17}
+.fleet-layout-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fleet-layout-grid .fleet-card-photo{height:155px}
+.fleet-layout-grid .fleet-card-body{padding:16px}
+.fleet-layout-grid .fleet-card-head{flex-direction:column;gap:5px}
+.fleet-layout-grid .fleet-card-head h3{font-size:17px}
+.fleet-layout-grid .fleet-daily{font-size:16px}
+.fleet-layout-grid .fleet-specs{gap:8px;flex-wrap:wrap}
+.fleet-layout-grid .fleet-card-actions{gap:5px;padding-top:11px}
+.fleet-layout-grid .fleet-card-actions .btn{padding:8px 10px;min-height:34px}
+.fleet-layout-list{display:flex;flex-direction:column;gap:13px}
+.fleet-layout-list .fleet-card{display:grid;grid-template-columns:minmax(180px,245px) minmax(0,1fr);align-items:stretch}
+.fleet-layout-list .fleet-card-photo{height:100%;min-height:195px}
+.fleet-layout-list .fleet-card-body{padding:17px 22px;display:flex;flex-direction:column;justify-content:center}
+.fleet-layout-list .fleet-card-head h3{font-size:20px}
+.fleet-layout-list .fleet-card-actions{padding-top:10px;margin-top:9px}
+.fleet-layout-list .fleet-location{margin:7px 0}
+.fleet-layout-list .fleet-modes{margin:7px 0}
+@media(max-width:1150px){.fleet-list-head{flex-wrap:wrap}.fleet-layout-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.fleet-layout-grid{grid-template-columns:1fr}.fleet-layout-switch{width:100%;justify-content:space-between}.fleet-layout-option{flex:1}.fleet-layout-list .fleet-card{grid-template-columns:115px minmax(0,1fr)}.fleet-layout-list .fleet-card-photo{min-height:185px}.fleet-layout-list .fleet-card-body{padding:13px}.fleet-layout-list .fleet-card-head{flex-direction:column;gap:4px}.fleet-layout-list .fleet-card-head h3{font-size:16px}.fleet-layout-list .fleet-daily{font-size:14px}.fleet-layout-list .fleet-card-actions{gap:5px}.fleet-layout-list .fleet-card-actions .btn{width:auto;min-height:32px;padding:7px 9px;flex:0 0 auto}.fleet-layout-list .fleet-specs,.fleet-layout-list .fleet-modes{display:none}.fleet-layout-list .fleet-link{font-size:11px}}
