@@ -1441,3 +1441,11 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .profile-language-chip button:hover{color:#ba4141}
 .live-form .profile-language-picker .profile-language-search{flex:1;min-width:140px;width:auto;border:0;outline:0;box-shadow:none;padding:5px 3px;background:transparent;font-size:13px}
 .live-form .profile-language-picker .profile-language-search:focus{outline:0;box-shadow:none;border:0}
+
+
+/* Match the Boats "Where" field to the homepage destination picker. */
+.rental-search-bar .rental-where{border-radius:12px;transition:background .2s ease,box-shadow .2s ease}
+.rental-search-bar .rental-where:focus-within{background:#f1fbfc;box-shadow:inset 0 0 0 1px #5bc5d2}
+.rental-search-bar .rental-where input{color:#1c4552;font-weight:650}
+.rental-search-bar .rental-where input::placeholder{color:#8a9da3;font-weight:450}
+.rental-search-bar .rental-where input:focus{outline:none}
