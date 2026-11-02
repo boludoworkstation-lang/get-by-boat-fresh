@@ -1846,3 +1846,12 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .auth-dialog .auth-switch button[data-live="auth-mode"]{display:block;width:100%;padding:11px 14px;border:1px solid #b5dce3;border-radius:10px;background:#f1fafb;color:#075d70;text-decoration:none;font-weight:700;font-size:14px;line-height:1.4;transition:background .2s,border-color .2s}
 .auth-dialog .auth-switch button[data-live="auth-mode"]:hover{background:#e1f4f7;border-color:#00a2bb}
 .auth-dialog-signup .auth-switch button[data-live="auth-mode"]{background:#fff;border-color:#dde8eb;color:#466a75}
+
+/* Self-service account deletion */
+.account-danger-zone{border:1px solid #f1c2c2;background:#fffafa}
+.account-danger-zone h2{color:#a62222}
+.account-delete-check{display:flex!important;align-items:flex-start;gap:10px;margin:16px 0}
+.account-delete-check input{width:17px!important;height:17px!important;flex:none;margin-top:3px}
+.account-delete-button{background:#bf2929!important;border-color:#bf2929!important;color:#fff!important}
+.account-delete-button:hover{background:#a91c1c!important}
+.account-delete-button:disabled{opacity:.6;cursor:wait}
