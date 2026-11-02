@@ -1124,6 +1124,14 @@
     const day=event.target.closest?.('[data-calendar-date]');
     if(day){event.preventDefault();pickCalendarDay(day);}
   });
+  // Browser number inputs normally allow scientific notation (e/E); boat specs use plain numbers only.
+  const isBoatSpecNumber=target=>target?.matches?.('input[type="number"]')&&!!target.closest?.('[data-live-form="boat"] .fleet-optional-panel');
+  document.addEventListener('keydown',event=>{
+    if(isBoatSpecNumber(event.target)&&['e','E','+','-'].includes(event.key))event.preventDefault();
+  });
+  document.addEventListener('beforeinput',event=>{
+    if(isBoatSpecNumber(event.target)&&event.data&&/[eE+\-]/.test(event.data))event.preventDefault();
+  });
   document.addEventListener('input',e=>{
     if(e.target.matches?.('[data-equipment-search]'))syncEquipmentPicker(e.target.closest('[data-live-form="boat"]'));
     if(e.target.closest('[data-live-form="request"]'))quote();
