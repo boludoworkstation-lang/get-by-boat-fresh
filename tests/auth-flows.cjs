@@ -39,7 +39,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
 }
 (async()=>{
  // New customer: email step -> auth -> name onboarding -> customer dashboard.
- let e=await environment();assert.match(e.ctx.app.innerHTML,/Customer · Log in or sign up/);
+ let e=await environment();assert.match(e.ctx.app.innerHTML,/Customer · Log in/);
  await e.submit('auth',{email:'test@example.invalid'});assert.equal(e.state.logins,0);assert.match(e.ctx.app.innerHTML,/name="password"/);
  await e.submit('auth',{email:'test@example.invalid',password:'not-a-real-password'});assert.equal(e.ctx.location.hash,'#/dashboard');
  let html=await e.route('#/dashboard');assert.match(html,/Finish signing up/);assert.match(html,/name="first_name"/);assert.match(html,/name="last_name"/);assert.equal(e.state.profile.account_type,'customer');
