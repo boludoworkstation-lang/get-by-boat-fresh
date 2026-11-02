@@ -906,7 +906,8 @@
       const query=new URLSearchParams();
       if(startDate)query.set('start',startDate);if(endDate)query.set('end',endDate);query.set('guests',String(guests));
       const listingQuery=query.toString()?'?'+query.toString():'';
-      const cards=filtered.map(b=>`<a class="rental-card" href="#/listing/${encodeURIComponent(b.id)}${listingQuery}">
+      const favoriteBoatIds=session&&profile?.account_type==='customer'?new Set(check(await client.from('favourites').select('boat_id').eq('user_id',session.user.id)).map(row=>row.boat_id)):new Set();
+      const cards=filtered.map(b=>`<article class="rental-card-shell"><a class="rental-card" href="#/listing/${encodeURIComponent(b.id)}${listingQuery}">
         <div class="rental-card-photo">${picture(b)}<span class="rental-photo-badge">Upon request</span></div>
         <div class="rental-card-body">
           <div class="rental-card-location">${icon('pin')} ${esc(b.location)}, ${esc(b.country)}</div>
@@ -915,7 +916,7 @@
           <div class="rental-card-specs"><span><strong>${Number(b.guests)||1}</strong> ${(Number(b.guests)||1)===1?'person':'people'}</span>${Number(b.specifications?.engine_hp)>0?`<span><strong>${Number(b.specifications.engine_hp)}</strong> HP</span>`:''}${Number(b.specifications?.length_m)>0?`<span><strong>${Number(b.specifications.length_m)}</strong> m</span>`:''}</div>
           <div class="rental-card-bottom"><span>From <strong>${money(guestDailyRate(b.price))}</strong> / day</span><span class="rental-view-link">View boat ${icon('arrow')}</span></div>
         </div>
-      </a>`).join('');
+      </a><button type="button" class="rental-favorite ${favoriteBoatIds.has(b.id)?'is-saved':''}" data-live="${favoriteBoatIds.has(b.id)?'unfavourite':'favourite'}" data-id="${esc(b.id)}" aria-label="${favoriteBoatIds.has(b.id)?'Remove from favorites':'Add to favorites'}" aria-pressed="${favoriteBoatIds.has(b.id)}" title="${favoriteBoatIds.has(b.id)?'Remove from favorites':'Add to favorites'}">${icon('heart')}</button></article>`).join('');
       return `${header('boats')}<main class="rental-page">
         <div class="shell rental-heading"><div><div class="rental-eyebrow">GET BY BOAT · EXPLORE</div><h1>${heading}</h1><p>Discover beautiful boats, compare your options and send a request directly to the owner.</p></div><span class="rental-request-note">${icon('shield')} Every booking is upon request</span></div>
         <form class="rental-search-form shell" data-live-form="search">
