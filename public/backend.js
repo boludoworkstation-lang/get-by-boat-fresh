@@ -26,6 +26,7 @@
     return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===iso?iso:'';
   };
   const field=(label,name,type='text',value='',extra='')=>`<label>${esc(label)}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;
+  const passwordChangeField=(label,name)=>`<label class="password-change-field">${esc(label)}<span class="password-change-control"><input name="${name}" type="password" required minlength="10" autocomplete="off" autocapitalize="off" spellcheck="false" data-password-input><button type="button" class="password-visibility-toggle" data-password-visibility aria-label="Show ${esc(label.toLowerCase())}" aria-pressed="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></span></label>`;
   const profileBirthField=(value='',label='Date of birth (optional)',name='birth_date')=>`<label>${esc(label)}<input class="profile-birth-input" name="${name}" type="date" value="${esc(value)}" tabindex="-1"><button type="button" class="profile-birth-trigger" data-profile-birth-open="${name}" aria-label="Choose ${esc(label)}">${value?esc(value.split('-').reverse().join('/')):'dd/mm/yyyy'} ${icon('calendar')}</button></label>`;
   const profileLanguageOptions=['Albanian','Arabic','Armenian','Azerbaijani','Belarusian','Bosnian','Bulgarian','Catalan','Chinese','Corsican','Croatian','Czech','Danish','Dutch','English','Estonian','Faroese','Finnish','French','Georgian','German','Greek','Hungarian','Icelandic','Italian','Japanese','Korean','Latvian','Lithuanian','Luxembourgish','Macedonian','Maltese','Montenegrin','Norwegian','Polish','Portuguese','Romanian','Russian','Serbian','Slovak','Slovenian','Spanish','Swedish','Turkish','Ukrainian'];
   const profileLanguageSuggestions=()=>`<datalist id="profile-language-suggestions">${profileLanguageOptions.map(language=>`<option value="${esc(language)}"></option>`).join('')}</datalist>`;
@@ -160,6 +161,18 @@
   function focusAuth(){const dialog=document.querySelector('.auth-dialog');document.body?.classList.toggle('auth-open',!!dialog);if(dialog)(dialog.querySelector('input[name="display_name"]')||dialog.querySelector(authStep==='password'?'input[name="password"]':'input'))?.focus();}
   document.addEventListener('keydown',event=>{const dialog=document.querySelector('.auth-dialog');if(!dialog)return;if(event.key==='Escape'){event.preventDefault();closeAuth();return}if(event.key==='Tab'){const items=[...dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),a[href],select,textarea')];const first=items[0],last=items[items.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}}});
   document.addEventListener('click',event=>{if(event.target.matches?.('[data-auth-backdrop]'))closeAuth()});
+  document.addEventListener('click',event=>{
+    const button=event.target.closest?.('[data-password-visibility]');
+    if(!button)return;
+    const input=button.closest('.password-change-control')?.querySelector('[data-password-input]');
+    if(!input)return;
+    const show=input.type==='password';
+    input.type=show?'text':'password';
+    button.setAttribute('aria-pressed',String(show));
+    button.setAttribute('aria-label',(show?'Hide ':'Show ')+(input.name==='confirm'?'confirmation password':'new password'));
+    input.focus({preventScroll:true});
+  });
+
   const profileForm=(next='#/bookings')=>{
     const destination=safeNext(next),owner=profile?.account_type==='owner';
     const names=identityNames(session?.user),d=profile?.details||{};
@@ -288,7 +301,7 @@
     let tabs=`<nav class="member-tabs ${isOwner?'owner-account-tabs':''}" aria-label="Profile sections">${(isOwner?[['information','Personal profile'],['business','Business & verification'],['password','Security']]:[['information','Information'],['verification','Verification'],['password','Password']]).map(([id,label])=>`<a href="#/account?tab=${id}" ${tab===id?'aria-current="page"':''}>${label}</a>`).join('')}</nav>`;
     if(isOwner&&tab==='business')return tabs+ownerBusinessWorkspace();
     if(tab==='verification')return tabs+verificationForm();
-    if(tab==='password')return tabs+`<form class="profile-panel live-form" data-live-form="password"><h2>Change your password</h2>${field('New password','password','password','','required minlength="10" autocomplete="new-password"')}${field('Re-enter new password','confirm','password','','required minlength="10" autocomplete="new-password"')}<button class="btn">Save password</button><p data-feedback role="status"></p></form><section class="profile-panel account-danger-zone"><div class="account-danger-intro"><h2>Delete account</h2><p>Want to leave Get By Boat? You can request permanent deletion of your account.</p></div><details class="account-delete-details"><summary>Continue to account deletion <span aria-hidden="true">›</span></summary><div class="account-delete-expanded"><p class="account-delete-notice">Account deletion is permanent. If you have a reservation, you must wait 24 hours after your final check-out.</p><div class="account-delete-email"><div><strong>Email verification</strong><p>We'll send a 6-digit code to <b>${esc(session.user.email||'')}</b>.</p></div></div><div class="account-code-row"><button type="button" class="btn live-secondary account-code-send" data-live="deletion-send-code">Send verification code</button><p data-delete-code-feedback role="status" aria-live="polite"></p></div><form data-live-form="delete-account" class="live-form account-delete-code-form" hidden><label class="account-delete-type">Verification code<input name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required placeholder="6-digit code"></label><p class="account-delete-hint">Valid for 10 minutes.</p><label class="account-delete-check"><input type="checkbox" name="understand" required><span>I understand that this action is permanent.</span></label><div class="account-delete-actions"><button type="submit" class="btn account-delete-button">Delete account permanently</button></div><p data-feedback role="status" aria-live="polite"></p></form></div></details></section>`;
+    if(tab==='password')return tabs+`<form class="profile-panel live-form" data-live-form="password"><h2>Change your password</h2>${passwordChangeField('New password','password')}${passwordChangeField('Re-enter new password','confirm')}<button class="btn">Save password</button><p data-feedback role="status"></p></form><section class="profile-panel account-danger-zone"><div class="account-danger-intro"><h2>Delete account</h2><p>Want to leave Get By Boat? You can request permanent deletion of your account.</p></div><details class="account-delete-details"><summary>Continue to account deletion <span aria-hidden="true">›</span></summary><div class="account-delete-expanded"><p class="account-delete-notice">Account deletion is permanent. If you have a reservation, you must wait 24 hours after your final check-out.</p><div class="account-delete-email"><div><strong>Email verification</strong><p>We'll send a 6-digit code to <b>${esc(session.user.email||'')}</b>.</p></div></div><div class="account-code-row"><button type="button" class="btn live-secondary account-code-send" data-live="deletion-send-code">Send verification code</button><p data-delete-code-feedback role="status" aria-live="polite"></p></div><form data-live-form="delete-account" class="live-form account-delete-code-form" hidden><label class="account-delete-type">Verification code<input name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required placeholder="6-digit code"></label><p class="account-delete-hint">Valid for 10 minutes.</p><label class="account-delete-check"><input type="checkbox" name="understand" required><span>I understand that this action is permanent.</span></label><div class="account-delete-actions"><button type="submit" class="btn account-delete-button">Delete account permanently</button></div><p data-feedback role="status" aria-live="polite"></p></form></div></details></section>`;
     return tabs+`<form class="profile-panel live-form" data-live-form="avatar"><h2>Your profile photo</h2><div class="profile-photo-preview">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="Your profile photo">`:'<span aria-hidden="true">◎</span>'}</div><label>Select an image<input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required></label><small style="font-size:12px">JPEG, PNG or WebP. Maximum 5 MB. Your photo is stored privately.</small><button class="btn">Save photo</button><p data-feedback role="status"></p></form><form class="profile-panel live-form" data-live-form="details" data-section="information"><h2>Personal information</h2><p class="member-note">Your name is filled from Google when available, or from the details you supplied during sign-up. You can edit it here.</p><div class="live-columns">${field('First name','first_name','text',d.first_name||'','required maxlength="100" autocomplete="given-name"')}${field('Surname','last_name','text',d.last_name||'','required maxlength="100" autocomplete="family-name"')}${field('Email','email','email',session.user.email||'','readonly')}${profileBirthField(d.birth_date||'')}${profileLanguagesField(d.languages||'')}${profilePhoneField(d.phone||'')}${field('Address','address','text',d.address||'','maxlength="200" autocomplete="street-address"')}${field('Postal code','postal_code','text',d.postal_code||'','maxlength="30" autocomplete="postal-code"')}${field('City','city','text',d.city||'','maxlength="100" autocomplete="address-level2"')}</div>${profileLanguageSuggestions()}<p class="member-note">Your personal details are private to your account.</p><button class="btn">Save details</button><p data-feedback role="status"></p></form>`;
   }
   const rentalOptions=b=>[b.with_skipper?'Rent with skipper':null,b.without_skipper!==false?'Rent without skipper':null].filter(Boolean).join(' · ');
@@ -1418,7 +1431,23 @@
       try{check(await client.from('profiles').update({avatar_path:key}).eq('id',session.user.id).select().single());}catch(error){await client.storage.from('profile-photos').remove([key]);throw error;}
       if(old)await client.storage.from('profile-photos').remove([old]);await current();render();return;
     }
-    if(kind==='password'){const password=String(d.get('password')||'');if(password.length<10)throw Error('Use at least 10 characters.');if(password!==d.get('confirm'))throw Error('The passwords do not match.');check(await client.auth.updateUser({password}));f.reset();feedback.textContent='Password updated.';return;}
+    if(kind==='password'){
+      const password=String(d.get('password')||'');
+      if(password.length<10)throw Error('Use at least 10 characters.');
+      if(password!==d.get('confirm'))throw Error('The passwords do not match.');
+      check(await client.auth.updateUser({password}));
+      f.reset();
+      feedback.textContent='Password updated. Sending security confirmation…';
+      try{
+        const {data:notice,error:notificationError}=await client.functions.invoke('password-changed-email',{body:{}});
+        if(notificationError||!notice?.sent)throw notificationError||new Error(notice?.error||'Email not sent');
+        feedback.textContent='Password updated. A confirmation email has been sent to your registered address.';
+      }catch(error){
+        console.warn('Password confirmation notification failed:',error?.message||error);
+        feedback.textContent='Password updated, but the confirmation email could not be sent. Your new password is active.';
+      }
+      return;
+    }
     if(kind==='profile'){
       const first=namePart(d.get('first_name')),last=namePart(d.get('last_name'));
       if(!first||!last)throw Error('Please enter your first name and surname.');
