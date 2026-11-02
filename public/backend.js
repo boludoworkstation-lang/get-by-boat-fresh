@@ -1872,7 +1872,7 @@ document.addEventListener('click',async event=>{
       await client.auth.signOut().catch(()=>{});
       session=null;profile=null;window.GBB_ACCOUNT_LINK=null;window.GBB_ACCOUNT_ROLE=null;
       location.hash='#/';render();
-      alert('Your Get By Boat account has been deleted.');
+      alert(data.confirmation_email_sent?'Your Get By Boat account has been deleted. A confirmation email has been sent.':'Your Get By Boat account has been deleted. We could not send the confirmation email.');
     }catch(error){
       if(feedback)feedback.textContent=error.message||'Unable to delete account.';
       if(submit)submit.disabled=false;
