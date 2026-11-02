@@ -1244,32 +1244,6 @@
   document.addEventListener('input',e=>{const slider=e.target.closest?.('[data-rental-range="year"]');if(!slider)return;const min=slider.querySelector('[name="year_min"]'),max=slider.querySelector('[name="year_max"]');if(e.target===min&&Number(min.value)>Number(max.value))max.value=min.value;if(e.target===max&&Number(max.value)<Number(min.value))min.value=max.value;const a=Number(min.value),b=Number(max.value);slider.querySelector('.rental-slider-active').style.left=((a-2006)/20*100)+'%';slider.querySelector('.rental-slider-active').style.right=((2026-b)/20*100)+'%';slider.parentElement.querySelector('[data-year-summary]').textContent=a+' - '+b;});
   document.addEventListener('input',e=>{const slider=e.target.closest?.('[data-rental-range="price"]')||e.target.closest?.('.rental-price-section')?.querySelector('[data-rental-range="price"]');if(!slider)return;const section=slider.closest('.rental-price-section'),left=slider.querySelector('[name="price_slider_min"]'),right=slider.querySelector('[name="price_slider_max"]'),minInput=section.querySelector('[name="min_price"]'),maxInput=section.querySelector('[name="max_price"]');if(e.target===left){if(Number(left.value)>Number(right.value))right.value=left.value;minInput.value=left.value;}if(e.target===right){if(Number(right.value)<Number(left.value))left.value=right.value;minInput.value=left.value;maxInput.value=Number(right.value)===1200?'':right.value;}if(e.target===minInput){left.value=Math.min(1200,Math.max(0,Number(minInput.value)||0));if(Number(left.value)>Number(right.value))right.value=left.value;}if(e.target===maxInput){right.value=Math.min(1200,Math.max(0,Number(maxInput.value)||1200));if(Number(right.value)<Number(left.value))left.value=right.value;}slider.querySelector('.rental-slider-active').style.left=Number(left.value)/12+'%';slider.querySelector('.rental-slider-active').style.right=(100-Number(right.value)/12)+'%';});
   let searchRefreshId=0;
-  document.addEventListener('submit',async event=>{
-    const form=event.target;
-    if(form?.dataset?.liveForm!=='delete-account')return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const feedback=form.querySelector('[data-feedback]');
-    const submit=form.querySelector('button[type="submit"]');
-    const confirmation=form.querySelector('[name="confirmation"]')?.value?.trim();
-    const acknowledged=form.querySelector('[name="understand"]')?.checked;
-    if(confirmation!=='DELETE'||!acknowledged){if(feedback)feedback.textContent='Type DELETE and check the confirmation box.';return;}
-    if(!window.confirm('Permanently delete your Get By Boat account? This cannot be undone.'))return;
-    if(submit)submit.disabled=true;
-    if(feedback)feedback.textContent='Deleting your account…';
-    try{
-      if(!client||!session)throw Error('Please sign in again.');
-      const {data,error}=await client.functions.invoke('delete-account',{body:{confirmation:'DELETE'}});
-      if(error||!data?.deleted)throw Error(data?.error||error?.context?.error||error?.message||'Unable to delete this account.');
-      await client.auth.signOut().catch(()=>{});
-      session=null;profile=null;window.GBB_ACCOUNT_LINK=null;window.GBB_ACCOUNT_ROLE=null;
-      location.hash='#/';render();
-      alert('Your Get By Boat account has been deleted.');
-    }catch(error){
-      if(feedback)feedback.textContent=error.message||'Unable to delete account.';
-      if(submit)submit.disabled=false;
-    }
-  },true);
   document.addEventListener('submit',async e=>{const f=e.target;if(!f.dataset.liveForm)return;e.preventDefault();syncBookingSkipperOption(f);const button=f.querySelector('button[type="submit"],button:not([type])');if(button?.disabled&&f.dataset.liveForm!=='search')return;if(button&&f.dataset.liveForm!=='search')button.disabled=true;const feedback=f.querySelector('[data-feedback]');if(feedback)feedback.textContent='Saving…';try{if(!client)throw Error('Connecting your account. Please try again in a moment.');const d=new FormData(f),kind=f.dataset.liveForm;
     if(kind==='search'){
       const q=new URLSearchParams();
@@ -1860,7 +1834,33 @@
     }catch(error){if(feedback)feedback.textContent=error.message||'Unable to send test email.';}
     finally{button.disabled=false;}
   },true);
-  // Static sample boats cannot create real requests or paid confirmations.
+document.addEventListener('submit',async event=>{
+    const form=event.target;
+    if(form?.dataset?.liveForm!=='delete-account')return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const feedback=form.querySelector('[data-feedback]');
+    const submit=form.querySelector('button[type="submit"]');
+    const confirmation=form.querySelector('[name="confirmation"]')?.value?.trim();
+    const acknowledged=form.querySelector('[name="understand"]')?.checked;
+    if(confirmation!=='DELETE'||!acknowledged){if(feedback)feedback.textContent='Type DELETE and check the confirmation box.';return;}
+    if(!window.confirm('Permanently delete your Get By Boat account? This cannot be undone.'))return;
+    if(submit)submit.disabled=true;
+    if(feedback)feedback.textContent='Deleting your account…';
+    try{
+      if(!client||!session)throw Error('Please sign in again.');
+      const {data,error}=await client.functions.invoke('delete-account',{body:{confirmation:'DELETE'}});
+      if(error||!data?.deleted)throw Error(data?.error||error?.context?.error||error?.message||'Unable to delete this account.');
+      await client.auth.signOut().catch(()=>{});
+      session=null;profile=null;window.GBB_ACCOUNT_LINK=null;window.GBB_ACCOUNT_ROLE=null;
+      location.hash='#/';render();
+      alert('Your Get By Boat account has been deleted.');
+    }catch(error){
+      if(feedback)feedback.textContent=error.message||'Unable to delete account.';
+      if(submit)submit.disabled=false;
+    }
+  },true);
+    // Static sample boats cannot create real requests or paid confirmations.
   document.addEventListener('submit',e=>{if(['reserve-form','checkout-form'].includes(e.target.id)){e.preventDefault();e.stopImmediatePropagation();modal('Example boat','This is an example listing. Explore the live boat catalogue to send a real booking request.');}},true);
   async function boot(){try{client=await authClient();client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});await current();if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
   render();
