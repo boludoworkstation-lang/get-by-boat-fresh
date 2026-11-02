@@ -1824,41 +1824,65 @@
     if(output)output.textContent=event.target.files?.length?event.target.files.length+' photo'+(event.target.files.length===1?'':'s')+' selected':'JPG, PNG or WebP · Up to 5 MB each';
   });
 
-  // Reorder using the entire photo surface, including touch and vertical grid moves.
+
+  // Pointer-based sorting works from every pixel of a photo on desktop and touch.
   let photoPointerDrag=null;
   document.addEventListener('pointerdown',event=>{
-    if(event.button!==0||!event.isPrimary)return;
-    const image=event.target.closest?.('.fleet-photo-card > img');
-    if(!image)return;
+    if(event.pointerType==='mouse'&&event.button!==0)return;
+    const image=event.target.closest?.('.fleet-photo-card img');
+    if(!image||!image.closest('#boat-description'))return;
     const card=image.closest('.fleet-photo-card');
-    photoPointerDrag={card,image,id:event.pointerId,x:event.clientX,y:event.clientY,moved:false};
+    photoPointerDrag={card,image,id:event.pointerId,x:event.clientX,y:event.clientY,moved:false,ghost:null};
     try{image.setPointerCapture(event.pointerId);}catch(_){}
-  });
+  },true);
   document.addEventListener('pointermove',event=>{
     const drag=photoPointerDrag;
     if(!drag||drag.id!==event.pointerId)return;
-    if(!drag.moved&&Math.hypot(event.clientX-drag.x,event.clientY-drag.y)<7)return;
-    drag.moved=true;drag.card.classList.add('is-dragging');
+    if(!drag.moved&&Math.hypot(event.clientX-drag.x,event.clientY-drag.y)<5)return;
     event.preventDefault();
-    const hovered=document.elementFromPoint(event.clientX,event.clientY)?.closest?.('.fleet-photo-card');
-    if(!hovered||hovered===drag.card||hovered.parentElement!==drag.card.parentElement)return;
+    if(!drag.moved){
+      drag.moved=true;
+      drag.card.classList.add('is-dragging');
+      const ghost=drag.image.cloneNode();
+      ghost.className='fleet-photo-drag-ghost';
+      ghost.style.cssText='position:fixed;width:150px;height:105px;object-fit:cover;border-radius:12px;pointer-events:none;z-index:99999;box-shadow:0 15px 35px rgba(0,0,0,.25);opacity:.92;left:0;top:0;';
+      document.body.appendChild(ghost);
+      drag.ghost=ghost;
+    }
+    if(drag.ghost)drag.ghost.style.transform='translate('+(event.clientX-75)+'px,'+(event.clientY-52)+'px)';
     const gallery=drag.card.parentElement;
+    if(!gallery)return;
+    const others=Array.from(gallery.querySelectorAll('.fleet-photo-card')).filter(card=>card!==drag.card);
+    let nearest=null,best=Infinity;
+    for(const card of others){
+      const bounds=card.getBoundingClientRect();
+      const cx=bounds.left+bounds.width/2,cy=bounds.top+bounds.height/2;
+      const distance=Math.hypot(event.clientX-cx,event.clientY-cy);
+      if(distance<best){best=distance;nearest=card;}
+    }
+    if(!nearest)return;
+    const currentBounds=drag.card.getBoundingClientRect();
+    const ownDistance=Math.hypot(event.clientX-(currentBounds.left+currentBounds.width/2),event.clientY-(currentBounds.top+currentBounds.height/2));
+    if(best>=ownDistance)return;
+    const bounds=gallery.getBoundingClientRect();
+    if(event.clientX<bounds.left-40||event.clientX>bounds.right+40||event.clientY<bounds.top-40||event.clientY>bounds.bottom+40)return;
     const cards=Array.from(gallery.children);
-    const from=cards.indexOf(drag.card),to=cards.indexOf(hovered);
-    if(from<0||to<0)return;
-    gallery.insertBefore(drag.card,to<from?hovered:hovered.nextSibling);
+    const from=cards.indexOf(drag.card),to=cards.indexOf(nearest);
+    if(from<0||to<0||from===to)return;
+    gallery.insertBefore(drag.card,to<from?nearest:nearest.nextSibling);
     updateBoatPhotoOrder(gallery);
-  },{passive:false});
+  },{capture:true,passive:false});
   function finishPhotoPointerDrag(event){
     const drag=photoPointerDrag;
     if(!drag||drag.id!==event.pointerId)return;
+    drag.ghost?.remove();
     drag.card.classList.remove('is-dragging');
-    if(drag.moved)updateBoatPhotoOrder(drag.card.parentElement);
+    if(drag.moved){event.preventDefault();updateBoatPhotoOrder(drag.card.parentElement);}
     try{drag.image.releasePointerCapture(event.pointerId);}catch(_){}
     photoPointerDrag=null;
   }
-  document.addEventListener('pointerup',finishPhotoPointerDrag);
-  document.addEventListener('pointercancel',finishPhotoPointerDrag);
+  document.addEventListener('pointerup',finishPhotoPointerDrag,true);
+  document.addEventListener('pointercancel',finishPhotoPointerDrag,true);
   document.addEventListener('dragstart',event=>{
     const card=event.target.closest?.('.fleet-photo-card[draggable="true"]');
     if(!card)return;
