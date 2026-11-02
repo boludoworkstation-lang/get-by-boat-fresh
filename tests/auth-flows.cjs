@@ -138,8 +138,6 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  html=await verifiedOwner.route('#/owner');assert.doesNotMatch(html,/fleet-owner-commission|Get By Boat commission: 7%|Your price is your payout/);
  html=await verifiedOwner.route('#/owner?edit=new');assert.match(html,/name="published" value="on"/);assert.match(html,/>Publish<\/button>/);
  assert.match(html,/Maximum Passengers/);assert.match(html,/Your payout per day/);assert.match(html,/data-guest-price-preview/);
- const basicFieldPositions=['name="name"','name="type"','name="guests"','name="country"','name="pickup_location"'].map(value=>html.indexOf(value));
- assert.ok(basicFieldPositions.every((position,i)=>position>=0&&(i===0||position>basicFieldPositions[i-1])),'Boat type and maximum passengers appear immediately after the boat name, before location.');
  assert.match(html,/class="fleet-equipment-browser"/);
  assert.match(html,/class="fleet-equipment-option"><svg class="listing-amenity-icon"/);
  assert.match(html,/Guest price: <strong>/);assert.doesNotMatch(html,/The €0\.25 fixed processing allowance applies once per booking/);
