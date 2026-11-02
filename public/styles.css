@@ -1284,3 +1284,9 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-card-specs span{display:inline-flex;align-items:baseline;gap:4px;white-space:nowrap}
 .rental-card-specs span+span::before{content:"";width:3px;height:3px;margin:0 10px 2px 9px;border-radius:50%;background:#9bb3bc;align-self:center}
 .rental-card-specs strong{color:#264b57;font-weight:750;font-variant-numeric:tabular-nums}
+
+/* Align the filter panel's right edge with the search bar's left edge on wide screens. */
+@media(min-width:1600px){
+  .rental-search-form>.rental-layout{grid-template-columns:265px minmax(0,1fr)}
+  .rental-sidebar{box-sizing:border-box;min-width:0;width:100%;padding-inline:18px}
+}
