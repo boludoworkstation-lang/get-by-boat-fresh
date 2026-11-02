@@ -1855,3 +1855,28 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .account-delete-button{background:#bf2929!important;border-color:#bf2929!important;color:#fff!important}
 .account-delete-button:hover{background:#a91c1c!important}
 .account-delete-button:disabled{opacity:.6;cursor:wait}
+
+/* Compact, progressive account deletion section */
+.account-danger-zone{max-width:1024px;border:1px solid #e1e8eb!important;background:#fff!important;padding:27px 30px!important;box-shadow:0 12px 32px rgba(22,55,65,.025)}
+.account-danger-top{display:flex;align-items:flex-start;gap:17px}
+.account-danger-symbol{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:12px;background:#fff1ef;color:#b73733;font-size:21px;font-weight:750}
+.account-danger-intro{min-width:0;flex:1}
+.account-danger-zone .account-danger-intro h2{margin:0 0 7px!important;font-size:20px;color:#283f48!important;font-weight:700}
+.account-danger-intro p{margin:0;color:#6a7f88;line-height:1.6;font-size:14px;max-width:680px}
+.account-delete-details{margin:18px 0 0 55px}
+.account-delete-details>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;cursor:pointer;color:#b63333;font-size:13px;font-weight:700;border:1px solid #e6c5c5;border-radius:9px;padding:10px 14px;background:#fff;transition:background .2s,border-color .2s}
+.account-delete-details>summary::-webkit-details-marker{display:none}
+.account-delete-details>summary:hover{background:#fff6f5;border-color:#d99999}
+.account-delete-details>summary span{font-size:21px;line-height:10px;transition:transform .2s}
+.account-delete-details[open]>summary span{transform:rotate(90deg)}
+.account-delete-expanded{max-width:690px;margin-top:20px;border-top:1px solid #edf1f2;padding-top:20px}
+.account-delete-notice{display:flex;flex-direction:column;gap:7px;border-radius:10px;background:#fff8f5;border:1px solid #f4e5dc;padding:15px 17px;color:#73594d;font-size:13px;line-height:1.55}
+.account-delete-notice strong{color:#71463a}
+.account-danger-zone .account-delete-type{display:block;margin-top:18px;font-size:13px;font-weight:600}
+.account-delete-type input{display:block;margin-top:9px;max-width:410px}
+.account-danger-zone label.account-delete-check{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;grid-template-columns:none!important;gap:11px!important;margin:17px 0!important;font-size:13px;font-weight:500;color:#405963}
+.account-danger-zone .account-delete-check input{appearance:auto!important;display:block!important;width:17px!important;min-width:17px!important;height:17px!important;margin:0!important;padding:0!important;flex:0 0 17px}
+.account-delete-check span{line-height:1.5}
+.account-delete-actions{margin-top:7px}
+.account-delete-button{padding:12px 17px!important;border-radius:9px!important;font-size:13px!important;box-shadow:none!important}
+@media(max-width:650px){.account-danger-zone{padding:22px 18px!important}.account-delete-details{margin-left:0}.account-danger-top{gap:12px}.account-danger-symbol{flex-basis:34px;height:34px}}
