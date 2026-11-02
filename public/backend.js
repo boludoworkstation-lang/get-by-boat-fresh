@@ -288,7 +288,7 @@
     let tabs=`<nav class="member-tabs ${isOwner?'owner-account-tabs':''}" aria-label="Profile sections">${(isOwner?[['information','Personal profile'],['business','Business & verification'],['password','Security']]:[['information','Information'],['verification','Verification'],['password','Password']]).map(([id,label])=>`<a href="#/account?tab=${id}" ${tab===id?'aria-current="page"':''}>${label}</a>`).join('')}</nav>`;
     if(isOwner&&tab==='business')return tabs+ownerBusinessWorkspace();
     if(tab==='verification')return tabs+verificationForm();
-    if(tab==='password')return tabs+`<form class="profile-panel live-form" data-live-form="password"><h2>Change your password</h2>${field('New password','password','password','','required minlength="10" autocomplete="new-password"')}${field('Re-enter new password','confirm','password','','required minlength="10" autocomplete="new-password"')}<button class="btn">Save password</button><p data-feedback role="status"></p></form><section class="profile-panel account-danger-zone"><div class="account-danger-top"><div class="account-danger-symbol" aria-hidden="true">!</div><div class="account-danger-intro"><h2>Delete your account</h2><p>Need to leave Get By Boat? You can request permanent deletion of your account and personal profile.</p></div></div><details class="account-delete-details"><summary>Continue to account deletion <span aria-hidden="true">›</span></summary><div class="account-delete-expanded"><p class="account-delete-notice"><strong>Before you continue</strong><span>This action cannot be undone. If you have bookings or boat listings, deletion may be restricted until they are resolved. A booking must be checked out for at least 24 hours before deletion is allowed.</span></p><form data-live-form="delete-account" class="live-form"><label class="account-delete-type">To confirm, type <strong>DELETE</strong><input name="confirmation" autocomplete="off" spellcheck="false" required placeholder="Type DELETE"></label><label class="account-delete-check"><input type="checkbox" name="understand" required><span>I understand that my account will be permanently deleted.</span></label><div class="account-delete-actions"><button type="submit" class="btn account-delete-button">Permanently delete account</button></div><p data-feedback role="status" aria-live="polite"></p></form></div></details></section>`;
+    if(tab==='password')return tabs+`<form class="profile-panel live-form" data-live-form="password"><h2>Change your password</h2>${field('New password','password','password','','required minlength="10" autocomplete="new-password"')}${field('Re-enter new password','confirm','password','','required minlength="10" autocomplete="new-password"')}<button class="btn">Save password</button><p data-feedback role="status"></p></form><section class="profile-panel account-danger-zone"><div class="account-danger-top"><div class="account-danger-symbol" aria-hidden="true">!</div><div class="account-danger-intro"><h2>Delete your account</h2><p>Want to leave Get By Boat? You can request permanent deletion of your account.</p></div></div><details class="account-delete-details"><summary>Continue to account deletion <span aria-hidden="true">›</span></summary><div class="account-delete-expanded"><p class="account-delete-notice"><strong>Before you continue</strong><span>Deleting your account cannot be undone. If you have a reservation, deletion is available 24 hours after your final check-out.</span></p><div class="account-delete-email"><span class="account-delete-email-icon" aria-hidden="true">✉</span><div><strong>Verify your email address</strong><p>We’ll send a 6-digit verification code to your registered email, <b>${esc(session.user.email||'')}</b>.</p></div></div><button type="button" class="btn live-secondary account-code-send" data-live="deletion-send-code">Send verification code</button><p data-delete-code-feedback role="status" aria-live="polite"></p><form data-live-form="delete-account" class="live-form account-delete-code-form" hidden><label class="account-delete-type">Verification code<input name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required placeholder="Enter 6-digit code"></label><p class="member-note">Code expires after 10 minutes. Never share it with anyone.</p><label class="account-delete-check"><input type="checkbox" name="understand" required><span>I understand that deleting my account is permanent.</span></label><div class="account-delete-actions"><button type="submit" class="btn account-delete-button">Permanently delete account</button></div><p data-feedback role="status" aria-live="polite"></p></form></div></details></section>`;
     return tabs+`<form class="profile-panel live-form" data-live-form="avatar"><h2>Your profile photo</h2><div class="profile-photo-preview">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="Your profile photo">`:'<span aria-hidden="true">◎</span>'}</div><label>Select an image<input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required></label><small style="font-size:12px">JPEG, PNG or WebP. Maximum 5 MB. Your photo is stored privately.</small><button class="btn">Save photo</button><p data-feedback role="status"></p></form><form class="profile-panel live-form" data-live-form="details" data-section="information"><h2>Personal information</h2><p class="member-note">Your name is filled from Google when available, or from the details you supplied during sign-up. You can edit it here.</p><div class="live-columns">${field('First name','first_name','text',d.first_name||'','required maxlength="100" autocomplete="given-name"')}${field('Surname','last_name','text',d.last_name||'','required maxlength="100" autocomplete="family-name"')}${field('Email','email','email',session.user.email||'','readonly')}${profileBirthField(d.birth_date||'')}${profileLanguagesField(d.languages||'')}${profilePhoneField(d.phone||'')}${field('Address','address','text',d.address||'','maxlength="200" autocomplete="street-address"')}${field('Postal code','postal_code','text',d.postal_code||'','maxlength="30" autocomplete="postal-code"')}${field('City','city','text',d.city||'','maxlength="100" autocomplete="address-level2"')}</div>${profileLanguageSuggestions()}<p class="member-note">Your personal details are private to your account.</p><button class="btn">Save details</button><p data-feedback role="status"></p></form>`;
   }
   const rentalOptions=b=>[b.with_skipper?'Rent with skipper':null,b.without_skipper!==false?'Rent without skipper':null].filter(Boolean).join(' · ');
@@ -1834,22 +1834,40 @@
     }catch(error){if(feedback)feedback.textContent=error.message||'Unable to send test email.';}
     finally{button.disabled=false;}
   },true);
-document.addEventListener('submit',async event=>{
+document.addEventListener('click',async event=>{
+    const button=event.target.closest?.('[data-live="deletion-send-code"]');
+    if(!button)return;
+    event.preventDefault();event.stopImmediatePropagation?.();
+    if(button.disabled)return;
+    const area=button.closest('.account-delete-expanded');
+    const feedback=area?.querySelector('[data-delete-code-feedback]');
+    button.disabled=true;if(feedback)feedback.textContent='Sending your verification code…';
+    try{
+      if(!client||!session)throw Error('Please sign in again.');
+      const {data,error}=await client.functions.invoke('delete-account',{body:{action:'request'}});
+      if(error||!data?.sent)throw Error(data?.error||error?.message||'Unable to send verification code.');
+      area?.querySelector('.account-delete-code-form')?.removeAttribute('hidden');
+      if(feedback)feedback.textContent='Code sent. Check your inbox or spam folder.';
+      button.textContent='Send a new code';
+    }catch(error){if(feedback)feedback.textContent=error.message||'Email verification is unavailable.';}
+    finally{button.disabled=false;}
+  },true);
+  document.addEventListener('submit',async event=>{
     const form=event.target;
     if(form?.dataset?.liveForm!=='delete-account')return;
     event.preventDefault();
     event.stopImmediatePropagation();
     const feedback=form.querySelector('[data-feedback]');
     const submit=form.querySelector('button[type="submit"]');
-    const confirmation=form.querySelector('[name="confirmation"]')?.value?.trim();
+    const code=form.querySelector('[name="code"]')?.value?.trim();
     const acknowledged=form.querySelector('[name="understand"]')?.checked;
-    if(confirmation!=='DELETE'||!acknowledged){if(feedback)feedback.textContent='Type DELETE and check the confirmation box.';return;}
+    if(!/^\d{6}$/.test(code||'')||!acknowledged){if(feedback)feedback.textContent='Enter the 6-digit email code and confirm your choice.';return;}
     if(!window.confirm('Permanently delete your Get By Boat account? This cannot be undone.'))return;
     if(submit)submit.disabled=true;
     if(feedback)feedback.textContent='Deleting your account…';
     try{
       if(!client||!session)throw Error('Please sign in again.');
-      const {data,error}=await client.functions.invoke('delete-account',{body:{confirmation:'DELETE'}});
+      const {data,error}=await client.functions.invoke('delete-account',{body:{action:'confirm',code}});
       if(error||!data?.deleted)throw Error(data?.error||error?.context?.error||error?.message||'Unable to delete this account.');
       await client.auth.signOut().catch(()=>{});
       session=null;profile=null;window.GBB_ACCOUNT_LINK=null;window.GBB_ACCOUNT_ROLE=null;
