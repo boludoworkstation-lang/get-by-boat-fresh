@@ -2165,3 +2165,13 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-favorite.is-saved .icon,.rental-favorite[aria-pressed="true"] .icon{fill:#00a4bc!important;stroke:#fff;stroke-width:2.6;filter:drop-shadow(0 1px 4px rgba(0,0,0,.42))}
 .listing-action.is-saved,.listing-action[aria-pressed="true"]{color:#009eb6!important}
 .listing-action.is-saved .icon,.listing-action[aria-pressed="true"] .icon{fill:#00a4bc!important;stroke:#008ca4}
+
+/* Fix: photo studio's narrow 360px .live-columns rule must not affect technical and insurance panels. */
+#boat-description .fleet-optional-content>.live-columns{width:100%;max-width:none!important;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:22px;row-gap:0;margin:8px 0 14px}
+#boat-description .fleet-optional-content>.live-columns>label{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;gap:8px;min-width:0;width:100%;margin:9px 0 15px;line-height:1.35}
+#boat-description .fleet-optional-content>.live-columns input,#boat-description .fleet-optional-content>.live-columns select{width:100%!important;min-width:0;max-width:100%;box-sizing:border-box;height:48px;min-height:48px;overflow:hidden;text-overflow:ellipsis}
+#boat-description .fleet-insurance-fields{max-width:none!important}
+#boat-description>.fleet-photo-upload{flex-direction:row!important;justify-content:flex-start!important;align-items:center!important;text-align:left!important;min-height:94px!important;padding:17px 20px!important}
+#boat-description>.fleet-photo-upload .fleet-upload-details{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important}
+#boat-description>.fleet-photo-upload .fleet-upload-symbol{margin:0!important}
+@media(max-width:700px){#boat-description .fleet-optional-content>.live-columns{grid-template-columns:minmax(0,1fr);gap:0}#boat-description>.fleet-photo-upload{min-height:94px!important;padding:16px!important}}
