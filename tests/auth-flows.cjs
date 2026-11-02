@@ -4,7 +4,7 @@ const helpers=source.slice(source.indexOf('function rentalDayCount('),source.ind
 const backend=fs.readFileSync('public/backend.js','utf8');
 assert.ok(backend.includes('setView([lat,lng],exact?12:10)'));
 const pageHtml=fs.readFileSync('public/index.html','utf8');
-assert.match(pageHtml,/<script src="maps-config\.js\?v=1\.0\.0" defer><\/script>/);
+assert.match(pageHtml,/<script src="maps-config\.js\?v=1\.0\.1" defer><\/script>/);
 assert.ok(pageHtml.indexOf('maps-config.js')<pageHtml.indexOf('backend.js'));
 assert.match(backend,/mapTypeId:'terrain'/);
 assert.match(backend,/radius:5000,strokeColor:'#0588c7'/);
