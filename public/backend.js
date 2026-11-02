@@ -912,7 +912,7 @@
         <div class="rental-card-body">
           <div class="rental-card-location">${icon('pin')} ${esc(b.location)}, ${esc(b.country)}</div>
           <h3>${esc(b.name)}</h3>
-          <div class="rental-card-badges"><span class="rental-card-badge">${icon('ship')} ${b.with_skipper===true?(b.without_skipper!==false?'Skipper optional':'Skipper included'):'Self-drive only'}</span><span class="rental-card-badge">${esc(b.type)}</span></div>
+          <div class="rental-card-badges"><span class="rental-card-badge">${icon('ship')} ${b.with_skipper===true?(b.without_skipper!==false?'Skipper optional':'Skipper included'):'Self-drive only'}</span><span class="rental-card-badge">${esc(b.type)}</span>${b.specifications?.pets_allowed===true?`<span class="rental-card-badge">${icon('check')} Pets allowed</span>`:''} </div>
           <div class="rental-card-specs"><span><strong>${Number(b.guests)||1}</strong> ${(Number(b.guests)||1)===1?'person':'people'}</span>${Number(b.specifications?.engine_hp)>0?`<span><strong>${Number(b.specifications.engine_hp)}</strong> HP</span>`:''}${Number(b.specifications?.length_m)>0?`<span><strong>${Number(b.specifications.length_m)}</strong> m</span>`:''}</div>
           <div class="rental-card-bottom"><span>From <strong>${money(guestDailyRate(b.price))}</strong> / day</span><span class="rental-view-link">View boat ${icon('arrow')}</span></div>
         </div>
