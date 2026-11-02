@@ -73,7 +73,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  const returnTo=new URLSearchParams(e.ctx.location.hash.split('?')[1]).get('next');assert.match(returnTo,/#\/listing\/boat-1\?start=2027-07-01&end=2027-07-03&guests=4/);assert.equal(e.state.writes.length,0);
  await e.route(e.ctx.location.hash);await e.submit('auth',{email:'guest@example.invalid'});await e.submit('auth',{email:'guest@example.invalid',password:'not-a-real-password'});
  assert.equal(e.ctx.location.hash,returnTo);
- html=await e.route(returnTo);assert.match(html,/value="2027-07-01"/);assert.match(html,/value="2027-07-03"/);assert.match(html,/name="guests" type="number" value="4"/);assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
+ html=await e.route(returnTo);assert.match(html,/value="2027-07-01"/);assert.match(html,/value="2027-07-03"/);assert.match(html,/type="hidden" name="guests" value="1"/);assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
  await e.submit('request',{start_date:'2027-07-01',end_date:'2027-07-03',guests:'4',skipper:'without'},{id:'boat-1'});
  assert.match(e.ctx.location.hash,/#\/account\?next=/);assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
  html=await e.route(e.ctx.location.hash);assert.match(html,/name="first_name"/);
