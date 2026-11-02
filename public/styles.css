@@ -1278,3 +1278,9 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-card-specs{color:#6e858d;font-size:12px;margin:0 0 15px}
 .rental-sidebar .rental-licence-section{display:grid;gap:14px}
 @media(max-width:1199px){.rental-search-form>.rental-layout{width:auto;margin-left:0}}
+
+/* Polished capacity / horsepower / boat-length summary */
+.rental-card-specs{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:2px 0 16px;color:#6b838b;font-size:12px;letter-spacing:.005em;line-height:1.55}
+.rental-card-specs span{display:inline-flex;align-items:baseline;gap:4px;white-space:nowrap}
+.rental-card-specs span+span::before{content:"";width:3px;height:3px;margin:0 10px 2px 9px;border-radius:50%;background:#9bb3bc;align-self:center}
+.rental-card-specs strong{color:#264b57;font-weight:750;font-variant-numeric:tabular-nums}
