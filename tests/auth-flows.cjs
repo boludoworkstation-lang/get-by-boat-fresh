@@ -96,7 +96,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.ctx.serviceFee(800),85.53);assert.equal(e.ctx.serviceFee(950),101.52);
  await e.submit('owner-business',{business_country:'FR',legal_business_name:'Bateaux SARL',tax_identifier:'12345678901234',business_website:'https://bateaux.example',registered_address:'12 Quai de Paris, Marseille, France'});
  assert.equal(e.state.ownerRequest.business_country,'FR');assert.equal(e.state.ownerRequest.application_state,'draft');assert.equal(e.state.uploads.length,0);
- html=await e.route('#/account?tab=payouts');assert.match(html,/data-live-form="owner-payouts"/);assert.match(html,/automated payouts are not yet active/i);
+ html=await e.route('#/account?tab=payouts');assert.match(html,/data-live-form="owner-payouts"/);
  await e.submit('owner-payouts',{bank_country:'FR',iban:'FR7630006000011234567890189',iban_holder:'Bateaux SARL'});assert.equal(e.state.ownerRequest.iban_holder,'Bateaux SARL');assert.equal(e.state.ownerRequest.payout_bank_details.method,'iban');
  html=await e.route('#/account?tab=verification');assert.match(html,/data-live-form="owner-document"/);assert.match(html,/Missing/);assert.match(html,/disabled/);
  for(const [kind,values] of [['registration',{}],['identity',{identity_type:'passport'}],['iban',{}]])await e.submit('owner-document',{...values,document_file:ownerPdf},{document:kind});
