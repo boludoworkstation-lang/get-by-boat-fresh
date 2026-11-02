@@ -2178,3 +2178,20 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 /* Keep security deposit field caption on one line on desktop and mobile. */
 #boat-description .fleet-insurance-fields>label:last-child{white-space:nowrap;font-size:clamp(12px,1.1vw,14px);letter-spacing:-.01em}
+
+/* Fix selected-only/search equipment layout: sidebar removed => content takes full width. */
+.fleet-equipment-panel.is-filtering .fleet-equipment-browser{display:block!important;grid-template-columns:minmax(0,1fr)!important;width:100%;min-width:0}
+.fleet-equipment-panel.is-filtering .fleet-equipment-body{display:block;width:100%;max-width:none;min-width:0;box-sizing:border-box;border:0;background:transparent;padding:0}
+.fleet-equipment-panel.is-filtering .fleet-equipment-group{display:block;width:100%;min-width:0;padding:17px 0 20px;border-bottom:1px solid #e1edef}
+.fleet-equipment-panel.is-filtering .fleet-equipment-group:last-of-type{border-bottom:0}
+.fleet-equipment-panel.is-filtering .fleet-equipment-group h5{display:flex!important;align-items:center;gap:9px;margin:0 0 14px;color:#254d5b;font-size:15px;font-weight:800;line-height:1.35}
+.fleet-equipment-panel.is-filtering .fleet-equipment-group h5 .listing-amenity-icon{width:22px;height:22px;flex:none;color:#087f96}
+.fleet-equipment-panel.is-filtering .fleet-equipment-options{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:11px!important;width:100%}
+.fleet-equipment-panel.is-filtering .fleet-equipment-option{display:flex!important;flex-direction:row!important;align-items:center!important;gap:12px!important;width:100%!important;min-width:0;min-height:64px;padding:13px 15px!important;box-sizing:border-box;border:1px solid #d9e9ed;border-radius:12px;background:#fff;color:#325767;font-size:13px!important;line-height:1.4;overflow:hidden}
+.fleet-equipment-panel.is-filtering .fleet-equipment-option:has(input:checked){border-color:#8acbd5;background:#eefafb}
+.fleet-equipment-panel.is-filtering .fleet-equipment-option .listing-amenity-icon{flex:0 0 24px;width:24px;height:24px}
+.fleet-equipment-panel.is-filtering .fleet-equipment-option>span{display:block;flex:1;min-width:0;overflow-wrap:anywhere;white-space:normal}
+.fleet-equipment-panel.is-filtering .fleet-equipment-option input[type=checkbox]{position:static!important;display:block;flex:0 0 18px;width:18px!important;height:18px!important;margin:0 0 0 auto!important}
+.fleet-equipment-panel.is-filtering .fleet-equipment-option[hidden],.fleet-equipment-panel.is-filtering .fleet-equipment-group[hidden]{display:none!important}
+@media(max-width:1050px){.fleet-equipment-panel.is-filtering .fleet-equipment-options{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:620px){.fleet-equipment-panel.is-filtering .fleet-equipment-options{grid-template-columns:1fr!important}.fleet-equipment-panel.is-filtering .fleet-equipment-option{min-height:58px;padding:11px 13px!important}}
