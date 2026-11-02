@@ -1611,3 +1611,38 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .booking-offer-form input,.booking-offer-form select{width:100%;min-height:40px;padding:9px 11px;border:1px solid #d7e4e8;border-radius:8px;color:#193f4a;background:#fff;font:inherit;font-size:13px}
 .booking-offer-form .btn{width:100%;justify-content:center}
 .booking-offer-form [data-feedback]{margin:0;font-size:11px;color:#64808b}
+
+
+/* Contact page */
+.contact-page{background:linear-gradient(150deg,#f2fafb 0%,#fff 48%,#f8fbfb 100%);padding:88px 0 105px}
+.contact-layout{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(44px,6vw,100px);align-items:start;max-width:1200px}
+.contact-intro{padding:28px 0}
+.contact-intro .overline{color:#008ca7;letter-spacing:.18em;font-size:11px;font-weight:800;margin-bottom:27px}
+.contact-intro h1{font:600 clamp(46px,5vw,72px)/1.06 'DM Sans',sans-serif;letter-spacing:-.065em;color:#123744;margin:0 0 26px}
+.contact-intro h1 em{font-style:normal;color:#00a8c6}
+.contact-intro>p{font-size:16px;line-height:1.75;color:#68818c;max-width:425px}
+.contact-support{display:flex;align-items:center;gap:16px;margin-top:54px;padding:22px 0;border-top:1px solid #dce9ec;border-bottom:1px solid #dce9ec}
+.contact-support-icon{width:48px;height:48px;border-radius:15px;background:#e4f8fa;color:#009ab5;display:grid;place-items:center}
+.contact-support>div{display:grid;gap:2px}
+.contact-support strong{font-size:13px;color:#163744}
+.contact-support a{font-size:15px;color:#009bb6;font-weight:600}
+.contact-faq-link{margin-top:25px;color:#7e929a;font-size:13px}
+.contact-faq-link a{color:#008ea9;font-weight:700;margin-left:4px}
+.contact-form-card{background:#fff;border:1px solid #dfebee;box-shadow:0 22px 65px rgba(15,67,78,.08);border-radius:25px;padding:clamp(26px,4vw,45px)}
+.contact-form-heading>span{font-size:10px;letter-spacing:.2em;font-weight:800;color:#00a8c6}
+.contact-form-heading h2{font:700 30px/1.2 'DM Sans',sans-serif;letter-spacing:-.045em;color:#153844;margin:10px 0 7px}
+.contact-form-heading p{font-size:13px;color:#82959e;margin-bottom:30px}
+.contact-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.contact-field{display:flex;flex-direction:column;gap:9px;margin-bottom:20px}
+.contact-field>span{font-size:12px;font-weight:700;color:#31515e}
+.contact-field input,.contact-field select,.contact-field textarea{display:block;width:100%;border:1px solid #d7e4e7;background:#fafdfd;border-radius:12px;padding:14px 15px;color:#183b48;font:500 14px/1.5 'DM Sans',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;min-width:0}
+.contact-field input,.contact-field select{height:51px}
+.contact-field textarea{resize:vertical;min-height:142px}
+.contact-field input:focus,.contact-field select:focus,.contact-field textarea:focus{border-color:#00a8c6;box-shadow:0 0 0 3px rgba(0,168,198,.12)}
+.contact-field input::placeholder,.contact-field textarea::placeholder{color:#9badb4}
+.contact-field select:disabled{opacity:.55}
+.contact-form-footer{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-top:5px}
+.contact-form-footer p{font-size:11px;line-height:1.55;color:#8b9ba3;max-width:245px}
+.contact-form-footer .btn{white-space:nowrap;border-radius:12px;min-height:52px}
+@media(max-width:920px){.contact-page{padding:55px 0 70px}.contact-layout{grid-template-columns:1fr;gap:32px}.contact-intro{padding:0}.contact-intro h1{font-size:50px}.contact-support{margin-top:30px}.contact-form-card{max-width:760px}}
+@media(max-width:560px){.contact-page{padding:35px 0 55px}.contact-intro h1{font-size:43px}.contact-two{grid-template-columns:1fr;gap:0}.contact-form-card{padding:24px 19px;border-radius:18px}.contact-form-footer{flex-direction:column;align-items:stretch}.contact-form-footer p{max-width:none}.contact-form-footer .btn{width:100%}}
