@@ -1607,14 +1607,14 @@
     const [year,month]=String(yearMonth||initial.slice(0,7)).split('-').map(Number);
     const first=new Date(year,month-1,1),days=new Date(year,month,0).getDate(),offset=(first.getDay()+6)%7;
     const monthOptions=Array.from({length:12},(_,i)=>'<option value="'+(i+1)+'" '+(i+1===month?'selected':'')+'>'+new Date(2000,i,1).toLocaleDateString('en-GB',{month:'long'})+'</option>').join('');
-    const yearOptions=Array.from({length:lastYear-1899},(_,i)=>lastYear-i).map(y=>'<option value="'+y+'" '+(y===year?'selected':'')+'>'+y+'</option>').join('');
+    const yearOptions=Array.from({length:lastYear-1899},(_,i)=>lastYear-i).map(y=>'<button type="button" role="option" aria-selected="'+(y===year)+'" class="profile-birth-year-option '+(y===year?'is-selected':'')+'" data-profile-birth-year-choice="'+y+'">'+y+'</button>').join('');
     const grid=Array.from({length:Math.ceil((offset+days)/7)*7},(_,i)=>{
       const d=i-offset+1;if(d<1||d>days)return '<span class="rental-cal-blank"></span>';
       const value=rentalCalendarISO(year,month-1,d);
       return '<button type="button" class="rental-cal-day '+(value===input.value?'is-selected':'')+'" data-profile-birth-day="'+value+'" '+(isExpiry?value<today()? 'disabled':'':value>today()?'disabled':'')+'>'+d+'</button>';
     }).join('');
     const popup=document.createElement('div');popup.className='rental-calendar-popover profile-birth-calendar';popup.dataset.profileBirthCalendar='';
-    popup.innerHTML='<div class="rental-cal-head"><div class="profile-birth-month-year"><select data-profile-birth-month aria-label="Month">'+monthOptions+'</select><select data-profile-birth-year aria-label="Year">'+yearOptions+'</select></div><div><button type="button" data-profile-birth-nav="-1" aria-label="Previous month">‹</button><button type="button" data-profile-birth-nav="1" aria-label="Next month">›</button></div></div><div class="rental-cal-weekdays">'+['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>'<span>'+d+'</span>').join('')+'</div><div class="rental-cal-grid">'+grid+'</div><div class="rental-cal-foot"><button type="button" data-profile-birth-today>Today</button><button type="button" data-profile-birth-clear>Clear</button></div>';
+    popup.innerHTML='<div class="rental-cal-head"><div class="profile-birth-month-year"><select data-profile-birth-month aria-label="Month">'+monthOptions+'</select><details class="profile-birth-year-picker"><summary aria-label="Choose year" aria-haspopup="listbox">'+year+'</summary><div class="profile-birth-year-list" role="listbox" aria-label="Year">'+yearOptions+'</div></details></div><div><button type="button" data-profile-birth-nav="-1" aria-label="Previous month">‹</button><button type="button" data-profile-birth-nav="1" aria-label="Next month">›</button></div></div><div class="rental-cal-weekdays">'+['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>'<span>'+d+'</span>').join('')+'</div><div class="rental-cal-grid">'+grid+'</div><div class="rental-cal-foot"><button type="button" data-profile-birth-today>Today</button><button type="button" data-profile-birth-clear>Clear</button></div>';
     document.body.appendChild(popup);
     const rect=trigger.getBoundingClientRect();
     popup.style.left=Math.max(12,Math.min(rect.left,innerWidth-popup.offsetWidth-12))+'px';
@@ -1626,6 +1626,16 @@
     if(trigger){event.preventDefault();openProfileBirthCalendar(trigger);return;}
     const popup=event.target.closest?.('[data-profile-birth-calendar]');
     if(!popup){closeProfileBirthCalendar();return;}
+    const yearChoice=event.target.closest?.('[data-profile-birth-year-choice]');
+    if(yearChoice){
+      const month=Number(popup.querySelector('[data-profile-birth-month]').value);
+      openProfileBirthCalendar(popup._trigger,rentalCalendarISO(Number(yearChoice.dataset.profileBirthYearChoice),month-1,1).slice(0,7));
+      return;
+    }
+    if(event.target.closest?.('.profile-birth-year-picker > summary')){
+      requestAnimationFrame(()=>popup.querySelector('.profile-birth-year-option.is-selected')?.scrollIntoView({block:'center',inline:'nearest'}));
+      return;
+    }
     const nav=event.target.closest?.('[data-profile-birth-nav]');
     if(nav){const d=new Date(popup._year,popup._month-1+Number(nav.dataset.profileBirthNav),1);if(d.getFullYear()>=1900&&d.getFullYear()<=(popup._trigger.dataset.profileBirthOpen==='licence_expiry'?new Date().getFullYear()+50:new Date().getFullYear()))openProfileBirthCalendar(popup._trigger,rentalCalendarISO(d.getFullYear(),d.getMonth(),1).slice(0,7));return;}
     const day=event.target.closest?.('[data-profile-birth-day]'),clear=event.target.closest?.('[data-profile-birth-clear]'),todayButton=event.target.closest?.('[data-profile-birth-today]');
@@ -1636,9 +1646,9 @@
     }
   });
   document.addEventListener('change',event=>{
-    if(!event.target.matches?.('[data-profile-birth-month],[data-profile-birth-year]'))return;
+    if(!event.target.matches?.('[data-profile-birth-month]'))return;
     const popup=event.target.closest('[data-profile-birth-calendar]');if(!popup)return;
-    const year=Number(popup.querySelector('[data-profile-birth-year]').value),month=Number(popup.querySelector('[data-profile-birth-month]').value);
+    const year=popup._year,month=Number(popup.querySelector('[data-profile-birth-month]').value);
     openProfileBirthCalendar(popup._trigger,rentalCalendarISO(year,month-1,1).slice(0,7));
   });
   document.addEventListener('keydown',event=>{if(event.key==='Escape')closeProfileBirthCalendar();});
