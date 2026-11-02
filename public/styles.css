@@ -1999,3 +1999,26 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
   .verification-complete-details span{min-width:0;padding:11px 15px;gap:4px}
   .verification-complete-details span+span{border-left:0;border-top:1px solid #e5edeb}
 }
+
+/* Owner listing step 3: clear, friendly photo management */
+#boat-description .live-columns{max-width:430px;gap:18px;margin-bottom:22px}
+#boat-description>.live-columns label{margin-bottom:0}
+#boat-description>label:has(textarea){display:block;margin:0 0 26px;font-weight:700}
+#boat-description textarea[name="description"]{display:block;width:100%;min-height:145px;max-height:340px;margin-top:8px;padding:16px 18px;border:1px solid #d7e5e9;border-radius:14px;font-size:15px;line-height:1.6;font-weight:450;resize:vertical;box-sizing:border-box}
+#boat-description textarea[name="description"]:focus{outline:3px solid #b5eef4;border-color:#00a4bc}
+#boat-description .fleet-photo-gallery{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))!important;gap:16px!important;margin:20px 0 12px!important}
+#boat-description .fleet-photo-gallery>label{position:relative;display:flex!important;flex-direction:column;overflow:hidden;border:1px solid #e0eaed;border-radius:16px;background:#f8fbfc;box-shadow:0 4px 13px rgba(17,61,72,.06);margin:0;transition:border-color .18s,box-shadow .18s}
+#boat-description .fleet-photo-gallery>label:first-child:before{content:"Cover photo";position:absolute;top:10px;left:10px;background:#008ea8;color:#fff;padding:6px 10px;border-radius:20px;font-weight:700;font-size:11px;z-index:1;box-shadow:0 2px 8px rgba(0,0,0,.16)}
+#boat-description .fleet-photo-gallery img{width:100%!important;height:145px!important;display:block;object-fit:cover!important;border-radius:0!important}
+#boat-description .fleet-photo-gallery>label>span{display:flex!important;align-items:center;justify-content:center;min-height:43px;padding:5px 8px;font-size:13px!important;font-weight:700;color:#516c76;cursor:pointer;background:#fff;transition:background .18s,color .18s}
+#boat-description .fleet-photo-gallery input[name="remove_photo"]{width:17px;height:17px;margin:0 7px 0 0;accent-color:#db6262;cursor:pointer}
+#boat-description .fleet-photo-gallery>label:has(input:checked){border-color:#d95a5a;box-shadow:0 0 0 2px #f5b3b3}
+#boat-description .fleet-photo-gallery>label:has(input:checked) img{opacity:.42}
+#boat-description .fleet-photo-gallery>label:has(input:checked)>span{background:#fff0f0;color:#b33333}
+#boat-description>p.member-note{margin:8px 0 24px;font-size:13px;line-height:1.5}
+#boat-description>label:has(input[type="file"]){display:block;padding:22px;border:2px dashed #abdbe4;border-radius:16px;background:#f3fafc;font-size:16px;font-weight:750;color:#146273;transition:border-color .18s,background .18s}
+#boat-description>label:has(input[type="file"]):hover{border-color:#00a4bc;background:#eaf8fb}
+#boat-description input[type="file"]{display:block;width:100%;margin-top:14px;font-size:13px;font-weight:500;color:#5f7b84;cursor:pointer}
+#boat-description input[type="file"]::file-selector-button{border:0;border-radius:9px;background:#00a2b8;color:white;font:inherit;font-weight:750;padding:11px 17px;margin-right:12px;cursor:pointer}
+#boat-description input[type="file"]::file-selector-button:hover{background:#007c91}
+@media(max-width:700px){#boat-description .fleet-photo-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}#boat-description .fleet-photo-gallery img{height:120px!important}#boat-description .fleet-photo-gallery>label:first-child:before{font-size:10px;padding:4px 7px}#boat-description textarea[name="description"]{min-height:130px}}
