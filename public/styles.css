@@ -1558,7 +1558,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 /* Full-screen, reference-aligned three-panel messaging */
 .message-app-header{height:60px;padding:0 24px;position:sticky;top:0}
 .message-app-header .member-brand{display:flex;align-items:center;gap:10px;font-size:21px}
-.message-app-header .member-brand span{font:700 20px/1.2 inherit;letter-spacing:-.5px;margin:0;color:#173d49}
+.message-app-header .member-brand span{font-family:inherit;font-size:20px;font-weight:700;line-height:1.2;letter-spacing:-.5px;margin:0;color:#173d49}
 .message-app-header nav{gap:30px}
 .message-app-header nav>a:not(.member-mini-avatar){font-size:13px;color:#63767f;font-weight:650}
 .message-app-header nav>a[aria-current="page"]{color:#008da6}
