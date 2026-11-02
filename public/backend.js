@@ -965,7 +965,7 @@
       const skipperDailyFee=Math.max(0,Number(b.skipper_fee_per_day)||0);
       const skipperPriceLabel=skipperDailyFee>0?`(+${money(skipperDailyFee)} / day)`:'(price on request)';
       const choices=hasSkipper&&hasBareboat
-        ?`<div class="listing-rental-choices"><label class="listing-rental-choice listing-skipper-addon"><input type="checkbox" name="need_skipper" data-needs-skipper ${mode==='with'?'checked':''}><span><strong>I need a skipper</strong><small>Paid directly to the skipper at check-in</small></span><b class="listing-rental-extra">${skipperPriceLabel}</b></label><input type="hidden" name="skipper" value="${mode}"></div>`
+        ?`<div class="listing-rental-choices"><label class="listing-rental-choice listing-skipper-addon"><input type="checkbox" name="need_skipper" data-needs-skipper ${mode==='with'?'checked':''}><span><strong>I need a skipper</strong></span><b class="listing-rental-extra">${skipperPriceLabel}</b></label><input type="hidden" name="skipper" value="${mode}"></div>`
         :`<div class="listing-rental-fixed">${hasSkipper?'Professional skipper included with boat':'Self-drive only'}</div><input type="hidden" name="skipper" value="${hasSkipper?'with':'without'}">`;
       const warning=`<div class="verification-booking-block" data-skipper-verification ${needsVerification?'':'hidden'}><strong>${icon('shield')} Licence verification required</strong><p>Renting without a skipper requires staff-approved ID/passport and boat driving licence, valid through the rental dates. ${esc(verificationLabel(verificationState()))}.</p><a href="#/account?tab=verification">Go to verification ${icon('arrow')}</a></div>`;
       const included=hasSkipper&&!hasBareboat;
