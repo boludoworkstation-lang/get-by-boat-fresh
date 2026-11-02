@@ -1512,3 +1512,13 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 /* Keep the first How it works description on one line on desktop. */
 @media(min-width:1100px){.how-grid{grid-template-columns:calc((100% - 88px) / 3 + 163px) calc((100% - 88px) / 3 - 163px) minmax(0,1fr)}.how-grid>div:first-child p{white-space:nowrap;font-size:11px;letter-spacing:-.01em}}
+
+/* Requested rental dates in the booking conversation */
+.booking-dates-banner{display:flex;align-items:center;gap:15px;margin:18px 26px 4px;padding:17px 19px;border:1px solid #cfe9ed;background:#f2fafb;border-radius:14px;color:#173e4b}
+.booking-dates-icon{display:grid;place-items:center;width:46px;height:46px;flex:none;border-radius:12px;background:#def3f7;color:#0094ad}
+.booking-dates-icon .icon{width:23px;height:23px}
+.booking-dates-banner>div{min-width:0}
+.booking-dates-label{display:block;color:#57808a;font-size:10px;font-weight:800;letter-spacing:1.2px;margin-bottom:5px}
+.booking-dates-banner strong{display:block;font-size:19px;font-weight:760;line-height:1.35;letter-spacing:-.3px}
+.booking-dates-separator{color:#65a1ad;font-weight:500;padding:0 5px}
+@media(max-width:600px){.booking-dates-banner{margin:14px 17px 3px;padding:14px;gap:12px}.booking-dates-icon{width:40px;height:40px}.booking-dates-banner strong{font-size:16px}}
