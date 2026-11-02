@@ -1554,3 +1554,44 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 @media(max-width:1200px){.booking-messenger-three{grid-template-columns:minmax(205px,240px) minmax(0,1fr) minmax(220px,245px)}.booking-detail-group{padding:19px 16px}.booking-details-heading{padding:22px 16px}}
 @media(max-width:920px){.booking-messenger-three{grid-template-columns:minmax(200px,255px) minmax(0,1fr)}.booking-messenger-three .booking-conversations{border-bottom:0;border-right:1px solid #e3ebee;max-height:none}.booking-details{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-left:0;border-top:1px solid #e3ebee}.booking-details-heading{grid-column:1/-1}.booking-detail-footnote{grid-column:1/-1}.booking-detail-group{border-right:1px solid #edf1f2}}
 @media(max-width:640px){.booking-messenger-three{display:flex;flex-direction:column}.booking-messenger-three .booking-conversations{max-height:250px;overflow:auto;border-right:0;border-bottom:1px solid #e3ebee}.booking-details{display:block}.booking-messenger-three .booking-thread{min-height:250px}.booking-messenger-three .booking-chat-heading{padding:19px}.booking-detail-dates strong{font-size:16px}}
+
+/* Full-screen, reference-aligned three-panel messaging */
+.message-app-header{height:60px;padding:0 24px;position:sticky;top:0}
+.message-app-header .member-brand{display:flex;align-items:center;gap:10px;font-size:21px}
+.message-app-header .member-brand span{font:700 20px/1.2 inherit;letter-spacing:-.5px;margin:0;color:#173d49}
+.message-app-header nav{gap:30px}
+.message-app-header nav>a:not(.member-mini-avatar){font-size:13px;color:#63767f;font-weight:650}
+.message-app-header nav>a[aria-current="page"]{color:#008da6}
+.message-workspace{height:calc(100dvh - 60px);min-height:550px;background:#fff}
+.message-workspace .booking-messenger-three{height:100%;min-height:0;margin:0;border:0;border-radius:0;box-shadow:none;grid-template-columns:minmax(240px,18.75%) minmax(0,62.5%) minmax(260px,18.75%)}
+.message-workspace .booking-conversations{padding:0;border-right:1px solid #e5e8e9;overflow-y:auto;max-height:none}
+.message-workspace .booking-conversations h2{position:sticky;top:0;z-index:1;background:#fff;padding:23px 22px 19px;border-bottom:1px solid #eee;margin:0;font-size:20px}
+.message-workspace .booking-conversation{padding:17px 18px;border-radius:0;border:0;border-bottom:1px solid #f0f0f0;margin:0;gap:14px}
+.message-workspace .booking-conversation:hover,.message-workspace .booking-conversation.selected{background:#f2f7f8;border-color:#edf1f2}
+.message-workspace .booking-conversation-icon{height:50px;width:50px;background:#777;color:white;font-size:21px}
+.message-workspace .booking-conversation strong{font-size:13px;font-weight:650}
+.message-workspace .booking-conversation small{font-size:11px;color:#777}
+.message-workspace .booking-conversation-top time{font-size:10px;color:#8c8c8c}
+.message-workspace .booking-chat{height:100%;min-height:0}
+.message-workspace .booking-chat-heading{height:61px;min-height:61px;padding:10px 24px;display:flex;align-items:center;border-bottom:1px solid #e8eaeb}
+.message-workspace .booking-chat-heading .member-eyebrow,.message-workspace .booking-chat-heading p{display:none}
+.message-workspace .booking-chat-heading h2{font-size:19px;font-weight:700;margin:0;color:#25292c}
+.message-workspace .booking-thread{min-height:0;max-height:none;overflow:auto;flex:1;background:#fff;padding:35px max(25px,12%);gap:24px}
+.message-workspace .booking-message-bubble{max-width:min(100%,620px);background:#f4f4f4;color:#343434;border-radius:16px 16px 16px 4px;padding:15px 18px}
+.message-workspace .booking-message.outgoing .booking-message-bubble{background:#3c3c3c;color:#fff;border-radius:16px 16px 4px 16px}
+.message-workspace .booking-message-bubble p{font-size:14px;line-height:1.5}
+.message-workspace .booking-compose{flex:none;border-top:1px solid #e9ecee;padding:12px max(20px,12%) 16px}
+.message-workspace .booking-compose label{display:none}
+.message-workspace .booking-compose textarea{min-height:48px;height:48px;border-radius:25px;padding:12px 17px;resize:vertical;border-color:#e0e5e7}
+.message-workspace .booking-compose-actions{margin-top:8px}
+.message-workspace .booking-compose-actions>span{display:none}
+.message-workspace .booking-compose-actions .btn{min-height:35px;padding:7px 16px}
+.message-workspace .booking-details{overflow:auto;border-left:1px solid #e5e8e9}
+.message-workspace .booking-details-heading{min-height:61px;padding:17px 22px;border-bottom:1px solid #e9ebec}
+.message-workspace .booking-details-heading h2{margin:0 0 13px;font-size:19px}
+.message-workspace .booking-detail-group{padding:23px 22px}
+.message-workspace .booking-detail-label{font-size:10px}
+.message-workspace .booking-detail-dates strong{font-size:17px}
+@media(max-width:1300px){.message-workspace .booking-messenger-three{grid-template-columns:minmax(215px,24%) minmax(0,1fr) minmax(245px,25%)}.message-workspace .booking-thread{padding:26px 7%}.message-workspace .booking-compose{padding-left:7%;padding-right:7%}}
+@media(max-width:950px){.message-workspace{height:auto;min-height:calc(100dvh - 60px)}.message-workspace .booking-messenger-three{display:grid;grid-template-columns:minmax(200px,30%) minmax(0,1fr);height:auto;min-height:calc(100dvh - 60px)}.message-workspace .booking-conversations{max-height:calc(100dvh - 60px)}.message-workspace .booking-chat{min-height:600px}.message-workspace .booking-details{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid #e5e8e9;border-left:0}.message-workspace .booking-details-heading,.message-workspace .booking-detail-footnote{grid-column:1/-1}}
+@media(max-width:640px){.message-app-header{padding:0 14px}.message-app-header nav{gap:12px}.message-app-header nav>a:not(.member-mini-avatar){font-size:11px}.message-workspace .booking-messenger-three{display:flex;flex-direction:column}.message-workspace .booking-conversations{max-height:230px;flex:none}.message-workspace .booking-chat{min-height:500px}.message-workspace .booking-details{display:block}.message-workspace .booking-thread{padding:20px}.message-workspace .booking-compose{padding:12px 15px}}
