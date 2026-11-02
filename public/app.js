@@ -191,6 +191,8 @@ function closeDestinationPicker(){destinationPicker?.remove();destinationPicker=
 let destinationSearchTimer=null;
 let destinationSearchRequest=0;
 const GEO_COUNTRY_NAMES={HR:'Croatia',GR:'Greece',ES:'Spain',FR:'France',IT:'Italy',MT:'Malta',PT:'Portugal',CY:'Cyprus',ME:'Montenegro',TR:'Turkey',AL:'Albania',AU:'Australia',BS:'Bahamas',US:'United States'};
+const GEO_US_STATES={"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","DC":"District of Columbia"};
+const formatGeoRegion=place=>place.country_code==='US'?(GEO_US_STATES[place.region]||place.region):place.country_code==='AU'?String(place.region||'').split('-').map(part=>part.charAt(0).toUpperCase()+part.slice(1)).join(' '):'';
 function renderDestinationOptions(input,matches){
   closeDestinationPicker();
   if(!matches.length||!input.isConnected)return;
@@ -246,7 +248,7 @@ function showDestinationPicker(input){
       const unique=new Set();
       const matches=places.filter(place=>GEO_COUNTRY_NAMES[place.country_code]).map(place=>({
         name:place.name,
-        label:[place.name,place.region,GEO_COUNTRY_NAMES[place.country_code]].filter(Boolean).join(', '),
+        label:[place.name,formatGeoRegion(place),GEO_COUNTRY_NAMES[place.country_code]].filter(Boolean).join(', '),
         id:place.place_id
       })).filter(place=>{if(unique.has(place.id))return false;unique.add(place.id);return true;});
       renderDestinationOptions(input,[...countryMatches,...matches].slice(0,12));
