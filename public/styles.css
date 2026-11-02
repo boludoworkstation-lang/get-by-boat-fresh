@@ -1509,3 +1509,6 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .owner-workflow-section .owner-submit-form{background:linear-gradient(120deg,#f5fbfc,#fff)!important;border-color:#c9e5e9!important;border-radius:15px}
 @media(max-width:1020px){.owner-documents-panel .owner-document-head{min-height:0}}
 @media(max-width:700px){.owner-documents-intro{flex-direction:column;gap:12px}.owner-workflow-section .owner-documents-panel{padding:22px 17px}.owner-documents-panel .owner-documents-grid{margin-top:18px}}
+
+/* Keep the first How it works description on one line on desktop. */
+@media(min-width:1100px){.how-grid>div:first-child p{white-space:nowrap;font-size:11px;letter-spacing:-.01em}}
