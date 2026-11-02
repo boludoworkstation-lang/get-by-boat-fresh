@@ -18,6 +18,26 @@ function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
 
+
+// Shared, email-client-safe Get By Boat transactional design.
+function brandedEmail(title, content, actionLabel = '', actionUrl = '') {
+  const action = actionLabel && actionUrl
+    ? '<tr><td style="padding:8px 36px 24px"><a href="' + actionUrl + '" style="display:inline-block;background:#008fa5;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;line-height:20px;padding:13px 23px;border-radius:9px">' + actionLabel + '</a></td></tr>'
+    : '';
+  return '<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta charset="UTF-8"></head>' +
+    '<body style="margin:0;padding:0;background:#f2f7f8;font-family:Arial,Helvetica,sans-serif;color:#153c49">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f2f7f8"><tr><td align="center" style="padding:38px 14px">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;background:#ffffff;border:1px solid #e1ecef;border-radius:16px;overflow:hidden">' +
+    '<tr><td style="height:6px;background:#008fa5;font-size:0;line-height:0">&nbsp;</td></tr>' +
+    '<tr><td style="padding:31px 36px 12px"><a href="https://getbyboat.net/" style="text-decoration:none;color:#008fa5;font-size:23px;font-weight:800;letter-spacing:-.6px">Get By Boat</a></td></tr>' +
+    '<tr><td style="padding:10px 36px 0"><h1 style="font-size:25px;line-height:32px;letter-spacing:-.6px;font-weight:750;margin:0 0 14px;color:#153c49">' + title + '</h1></td></tr>' +
+    '<tr><td style="padding:0 36px 15px;font-size:15px;line-height:24px;color:#425d68">' + content + '</td></tr>' +
+    action +
+    '<tr><td style="padding:0 36px 30px"><div style="border-top:1px solid #e7eff1;padding-top:18px;color:#7b929a;font-size:12px;line-height:19px">This is an automated message from Get By Boat.<br>Need help? <a href="https://getbyboat.net/#/contact" style="color:#008fa5;text-decoration:underline">Contact support</a>.</div></td></tr>' +
+    '</table><div style="font-size:12px;color:#93a6ad;line-height:19px;padding:19px 12px;text-align:center">Get By Boat &middot; Your next holiday starts at sea.<br><a href="https://getbyboat.net/" style="color:#7896a1;text-decoration:none">getbyboat.net</a></div>' +
+    '</td></tr></table></body></html>';
+}
+
 Deno.serve(async request => {
   const origin = request.headers.get('origin') || '';
   if (origin && !allowedOrigins.has(origin)) return reply({error:'Origin not allowed'}, 403);
@@ -85,7 +105,7 @@ Deno.serve(async request => {
     };
     const headline = descriptions[eventType];
     const url = 'https://getbyboat.net/#/messages?booking='+bookingId;
-    const html = '<div style="font-family:Arial,sans-serif;color:#173e4b;max-width:580px;margin:auto;padding:32px"><h1 style="color:#008da6">Get By Boat</h1><h2>'+escapeHtml(headline)+'</h2><p>Boat: <strong>'+escapeHtml(booking.boats.name)+'</strong></p><p>Sign in to see the booking and conversation.</p><p><a href="'+url+'" style="background:#008da6;color:white;text-decoration:none;padding:12px 18px;border-radius:6px;display:inline-block">View booking</a></p><p style="font-size:12px;color:#637b84">This is an automated booking update. No identity documents or private messages are included.</p></div>';
+    const html = brandedEmail(escapeHtml(headline), '<p style="margin:0 0 14px">Boat: <strong style="color:#153c49">'+escapeHtml(booking.boats.name)+'</strong></p><p style="margin:0 0 14px">Sign in to view your booking and conversation.</p><p style="margin:0;color:#7b929a;font-size:13px">No private messages, identity documents or licence files are included in this email.</p>', 'View booking', url);
     const send = await fetch('https://api.resend.com/emails', {method:'POST',headers:{authorization:'Bearer '+resendKey,'content-type':'application/json','Idempotency-Key':eventKey},body:JSON.stringify({from:sender,to:[recipient],subject:'Get By Boat — '+headline,html})});
     if (!send.ok) {
       // Avoid recording the event as delivered; it can be retried after configuration is fixed.
