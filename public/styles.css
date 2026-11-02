@@ -1431,3 +1431,13 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .profile-birth-month-year{display:flex;gap:7px;min-width:0}
 .profile-birth-month-year select{max-width:135px;padding:7px 5px;border:1px solid #dce9ec;border-radius:9px;background:#fff;color:#173e48;font-size:12px;font-weight:700}
 .profile-birth-month-year select:last-child{max-width:79px}
+
+/* Multi-language profile input: each selected language is a removable chip. */
+.profile-language-picker{border:1px solid #d8e5e8;border-radius:9px;background:#fff;min-height:52px;padding:7px 9px;display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.profile-language-picker:focus-within{border-color:#00a6bf;box-shadow:0 0 0 3px #c9f2f8}
+.profile-language-chips{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.profile-language-chip{display:inline-flex;align-items:center;gap:7px;background:#eaf8fa;color:#176779;border:1px solid #b7e5ed;border-radius:99px;padding:4px 9px;font-size:12px;font-weight:700;white-space:nowrap}
+.profile-language-chip button{background:none;border:0;color:#347c8c;font-size:17px;line-height:1;padding:0;cursor:pointer}
+.profile-language-chip button:hover{color:#ba4141}
+.live-form .profile-language-picker .profile-language-search{flex:1;min-width:140px;width:auto;border:0;outline:0;box-shadow:none;padding:5px 3px;background:transparent;font-size:13px}
+.live-form .profile-language-picker .profile-language-search:focus{outline:0;box-shadow:none;border:0}
