@@ -1,5 +1,6 @@
 /* Live marketplace. Authorization and prices are enforced by database policies/triggers. */
 (() => {
+  let authReady=false;
   let client, session, profile, epoch=0, recovery=false, authStep='email', authEmail='', authBackground=null, returnRoute='#/', ownerIntent=new URLSearchParams(location.search).get('owner')==='1';
   let authNext='#/dashboard', avatarUrl='',verificationRequest=null,verificationReview=null,verificationStaff=false,superAdmin=false;
   let ownerVerificationRequest=null,ownerVerificationReview=null,ownerScrollTarget='';
@@ -1167,6 +1168,7 @@
   }
   const routes=p=>['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/messages'].includes(p)||p.startsWith('/listing/');
   window.liveRender=()=>{
+    if(!authReady){app.innerHTML=page('Get By Boat','<p role="status">Loading your account…</p>');return true;}
     const {path,params}=parseRoute();const token=++epoch;
     if(path==='/login'){authNext=safeNext(params.get('next')||(params.get('owner')==='1'||new URLSearchParams(location.search).get('owner')==='1'?'#/owner':'#/dashboard'))}
     else if(path==='/owner')authNext='#/owner';
@@ -2177,7 +2179,7 @@ document.addEventListener('click',async event=>{
   },true);
     // Static sample boats cannot create real requests or paid confirmations.
   document.addEventListener('submit',e=>{if(['reserve-form','checkout-form'].includes(e.target.id)){e.preventDefault();e.stopImmediatePropagation();modal('Example boat','This is an example listing. Explore the live boat catalogue to send a real booking request.');}},true);
-  async function boot(){try{client=await authClient();client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});await current();if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
+  async function boot(){try{client=await authClient();client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});await current();if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}authReady=true;render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
   // Wait for the persisted auth session before showing protected screens.
   // This avoids a login/home flash during a normal authenticated refresh.
   app.innerHTML=page('Get By Boat','<p role="status">Loading your account…</p>');
