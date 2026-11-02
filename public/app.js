@@ -206,7 +206,7 @@ function renderDestinationOptions(input,matches){
     const option=document.createElement('button');
     option.type='button';option.className='destination-autocomplete-option';option.setAttribute('role','option');
     const isCountry=searchableCountries.includes(item.name);
-    const marker=document.createElement('span');marker.className='destination-option-icon '+(isCountry?'is-country':'');marker.setAttribute('aria-hidden','true');marker.textContent=isCountry?'◎':'⌖';
+    const marker=document.createElement('span');marker.className='destination-option-icon '+(isCountry?'is-country':'');marker.setAttribute('aria-hidden','true');marker.innerHTML=isCountry?'<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a16 16 0 0 0 0 18M12 3a16 16 0 0 1 0 18"/></svg>':'<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.1 4.9-4.9 2.1 2.1-4.9z" fill="currentColor" fill-opacity=".2"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></svg>';
     const copy=document.createElement('span');copy.className='destination-option-copy';
     const title=document.createElement('strong');title.textContent=isCountry?item.name:String(item.label||item.name).split(',')[0];
     const detail=document.createElement('small');detail.textContent=isCountry?'Country':String(item.label||'').split(',').slice(1).join(',').trim()||'Destination';
