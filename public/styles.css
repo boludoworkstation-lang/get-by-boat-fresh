@@ -2195,3 +2195,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .fleet-equipment-panel.is-filtering .fleet-equipment-option[hidden],.fleet-equipment-panel.is-filtering .fleet-equipment-group[hidden]{display:none!important}
 @media(max-width:1050px){.fleet-equipment-panel.is-filtering .fleet-equipment-options{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:620px){.fleet-equipment-panel.is-filtering .fleet-equipment-options{grid-template-columns:1fr!important}.fleet-equipment-panel.is-filtering .fleet-equipment-option{min-height:58px;padding:11px 13px!important}}
+
+/* Keep the complete Navigation equipment category on one line. */
+@media(min-width:951px){.fleet-equipment-panel:not(.is-filtering) .fleet-equipment-browser{grid-template-columns:260px minmax(0,1fr)}}
+.fleet-equipment-panel:not(.is-filtering) .fleet-equipment-tab .fleet-equipment-tab-name{white-space:nowrap;overflow:visible;line-height:1.25}
