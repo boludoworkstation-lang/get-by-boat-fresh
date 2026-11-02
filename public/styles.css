@@ -1298,5 +1298,5 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 }
 
 /* Match Engine type selector height to adjacent boat measurement fields. */
-.fleet-optional-content select[name="spec_engine_type"]{height:52px;min-height:52px;padding:12px;border-radius:8px;box-sizing:border-box}
+.fleet-optional-content select[name="spec_engine_type"]{height:100px;min-height:100px;padding:20px;border-radius:8px;box-sizing:border-box}
 .verification-booking-block .verification-status-line{display:inline-block;margin-top:5px}
