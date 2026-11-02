@@ -908,7 +908,7 @@
       const listingQuery=query.toString()?'?'+query.toString():'';
       const favoriteBoatIds=session&&profile?.account_type==='customer'?new Set(check(await client.from('favourites').select('boat_id').eq('user_id',session.user.id)).map(row=>row.boat_id)):new Set();
       const cards=filtered.map(b=>`<article class="rental-card-shell"><a class="rental-card" href="#/listing/${encodeURIComponent(b.id)}${listingQuery}">
-        <div class="rental-card-photo">${picture(b)}<span class="rental-photo-badge">Upon request</span></div>
+        <div class="rental-card-photo">${picture(b)}</div>
         <div class="rental-card-body">
           <div class="rental-card-location">${icon('pin')} ${esc(b.location)}, ${esc(b.country)}</div>
           <h3>${esc(b.name)}</h3>
