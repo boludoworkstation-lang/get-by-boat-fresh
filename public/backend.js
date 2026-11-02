@@ -107,9 +107,9 @@
       const owner=profile?.account_type==='owner',initial=esc((profile?.display_name||'G').slice(0,1).toUpperCase());
       return `<header class="member-header message-app-header"><a class="member-brand" href="#/">${waveLogo()}<span>Get By Boat</span></a><nav aria-label="Main navigation"><a href="#/${owner?'owner':'bookings'}">${owner?'My boats':'My bookings'}</a><a href="#/messages" aria-current="page">Messages</a><a href="#/account">My account</a><a class="member-mini-avatar" href="#/account" aria-label="My profile">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="">`:initial}</a></nav></header><main class="message-workspace">${body}</main>`;
     }
-    if(session&&['/dashboard','/bookings','/owner','/account','/favourites','/staff','/messages'].includes(path)){
+    if(session&&['/dashboard','/bookings','/owner','/account','/favourites','/staff','/reservations','/messages'].includes(path)){
       const isOwner=profile?.account_type==='owner';
-      const links=superAdmin?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/staff','Staff verification','shield']]:verificationStaff?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/staff','Staff verification','shield']]:[['/dashboard','Overview','dashboard'],['/account','My profile','user'],...(isOwner?[['/owner','My boats','ship'],['/owner?view=requests','Booking requests','mail']]:[['/bookings','My bookings','calendar'],['/favourites','Saved boats','heart']]),['/messages','Messages','message']];
+      const links=superAdmin?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/reservations','Reservations','calendar'],['/staff','Staff verification','shield']]:verificationStaff?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/staff','Staff verification','shield']]:[['/dashboard','Overview','dashboard'],['/account','My profile','user'],...(isOwner?[['/owner','My boats','ship'],['/owner?view=requests','Booking requests','mail']]:[['/bookings','My bookings','calendar'],['/favourites','Saved boats','heart']]),['/messages','Messages','message']];
       const memberName=esc(profile?.display_name||'Traveller');
       const initials=esc((profile?.display_name||'G').slice(0,1).toUpperCase());
       return `<header class="member-header"><a class="member-brand" href="#/">${waveLogo()}<span>Get By Boat</span></a><nav aria-label="Top navigation"><span class="member-locale">EN · EUR</span>${isOwner?`<a class="member-host-link" href="#/owner">${icon('plus')} My boats</a>`:''}<a class="member-mini-avatar" href="#/account" aria-label="My profile">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="">`:initials}</a></nav></header><main class="member-shell"><aside class="member-sidebar"><div class="member-side-label">MY ACCOUNT</div><a href="#/account" class="member-identity">${avatarUrl?`<img class="member-avatar" src="${esc(avatarUrl)}" alt="Your profile photo">`:`<div class="member-avatar member-avatar-empty" aria-hidden="true">${initials}</div>`}<span><strong>${memberName}</strong><small>${superAdmin?'Super Admin':verificationStaff?'Staff account':isOwner?'Boat owner':'Traveller account'}</small></span>${icon('chevron')}</a><nav aria-label="Account navigation">${links.map(([href,label,symbol])=>`<a href="#${href}" ${path===href.split('?')[0]&&(href.includes('?')?params.get('view')==='requests':!params.get('view'))?'aria-current="page"':''}>${icon(symbol)}<span>${label}</span></a>`).join('')}</nav><div class="member-side-bottom"><a href="#/contact">${icon('headset')} Help & support</a><button type="button" data-live="logout">${icon('arrow')} Log out</button></div></aside><section class="member-main">${path==='/dashboard'||(path==='/owner'&&params.has('edit'))?'':`<div class="member-page-kicker">YOUR GET BY BOAT ACCOUNT</div><h1>${title}</h1>`}${body}</section></main>`;
@@ -936,8 +936,31 @@
     }));
     return page('Staff verification',`<p>Restricted reviewer area. Documents are private and accessible only through short-lived signed links. Approving owners unlocks publication of new listings.</p><h2>Business / owner verification (${ownerRows.length})</h2><div class="verification-staff-list">${ownerCards.join('')||'<div class="profile-panel">No owner verification requests yet.</div>'}</div><h2>Customer ID & boat licence (${rows.length})</h2><div class="verification-staff-list">${cards.join('')||'<div class="profile-panel">No customer verification requests yet.</div>'}</div>`);
   }
-  async function route(){const {path,params}=parseRoute();if(!['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/messages'].includes(path)&&!path.startsWith('/listing/'))return null;
-    if(!client)return ['/login','/owner','/bookings','/account','/dashboard','/favourites','/staff','/messages'].includes(path)?loginPage():page('Welcome aboard.','<p>Connecting your account…</p>');
+  async function adminReservationsPage(){
+    if(!superAdmin)return page('Reservations','<div class="profile-panel"><h2>Access restricted</h2><p>Only the Super Admin can view all reservations.</p></div>');
+    const rows=check(await client.rpc('super_admin_reservations'));
+    const confirmed=rows.filter(r=>r.status==='confirmed');
+    const sum=(list,key)=>list.reduce((total,r)=>total+(Number(r[key])||0),0);
+    const summary=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:20px 0 28px">
+      <div class="profile-panel" style="margin:0"><span class="member-page-kicker">ALL REQUESTS</span><h2>${rows.length}</h2><p>Reservation requests</p></div>
+      <div class="profile-panel" style="margin:0"><span class="member-page-kicker">CONFIRMED BOOKINGS</span><h2>${confirmed.length}</h2><p>Accepted reservations</p></div>
+      <div class="profile-panel" style="margin:0"><span class="member-page-kicker">PLATFORM COMMISSION</span><h2>${money(sum(confirmed,'commission'))}</h2><p>On confirmed reservations</p></div>
+      <div class="profile-panel" style="margin:0"><span class="member-page-kicker">OWNER PAYOUT</span><h2>${money(sum(confirmed,'charter_price'))}</h2><p>On confirmed reservations</p></div>
+    </div>`;
+    if(!rows.length)return page('Reservations',`<p>View reservations, rental dates and the financial breakdown in one place.</p>${summary}<div class="profile-panel" style="text-align:center;padding:45px 20px"><h2>No reservations yet</h2><p>New booking requests will appear here automatically.</p></div>`);
+    const tr=rows.map(r=>`<tr>
+      <td style="padding:14px 12px"><strong>${esc(r.boat_name||'Boat')}</strong><br><small>${esc(r.customer_name||'Traveller')} · ${esc(r.owner_name||'Owner')}</small></td>
+      <td style="padding:14px 12px;white-space:nowrap">${esc(euroDate(r.start_date))} – ${esc(euroDate(r.end_date))}</td>
+      <td style="padding:14px 12px"><span class="member-status">${esc(status(r.status))}</span></td>
+      <td style="padding:14px 12px;text-align:right">${money(r.total||0)}</td>
+      <td style="padding:14px 12px;text-align:right">${money(r.commission||0)}</td>
+      <td style="padding:14px 12px;text-align:right">${money(r.processing_fee||0)}</td>
+      <td style="padding:14px 12px;text-align:right"><strong>${money(r.charter_price||0)}</strong></td>
+    </tr>`).join('');
+    return page('Reservations',`<p>All reservation requests, dates and financial breakdown. Amounts for pending requests are estimates until payment is confirmed.</p>${summary}<section class="profile-panel" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left;min-width:950px"><thead><tr style="border-bottom:1px solid #dce8ed"><th style="padding:14px 12px">Boat / traveller / owner</th><th style="padding:14px 12px">Rental dates</th><th style="padding:14px 12px">Status</th><th style="padding:14px 12px;text-align:right">Guest total</th><th style="padding:14px 12px;text-align:right">Commission</th><th style="padding:14px 12px;text-align:right">Processing</th><th style="padding:14px 12px;text-align:right">Owner net</th></tr></thead><tbody>${tr}</tbody></table></section>`);
+  }
+  async function route(){const {path,params}=parseRoute();if(!['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/reservations','/messages'].includes(path)&&!path.startsWith('/listing/'))return null;
+    if(!client)return ['/login','/owner','/bookings','/account','/dashboard','/favourites','/staff','/reservations','/messages'].includes(path)?loginPage():page('Welcome aboard.','<p>Connecting your account…</p>');
     if(path==='/login'&&session&&!recovery){location.hash=afterLogin();return !profile?profileDialog(authNext):page('Welcome back.','<p>Opening your account…</p>')}
     if(path==='/login')return loginPage();
     if(path==='/owner'&&!session)return loginPage();
@@ -1065,6 +1088,7 @@
     if(path==='/messages')return messagesPage(params.get('booking'));
     if(path==='/account')return page(profile?.account_type==='owner'?'Owner account':'Complete your profile',accountProfile(params.get('tab')||'information'));
     if(path==='/staff')return staffPage();
+    if(path==='/reservations')return adminReservationsPage();
     if(path==='/dashboard'){
       if(profile.account_type==='owner'){
         const boats=check(await client.from('boats').select('*').eq('owner_id',session.user.id).order('created_at',{ascending:false}));
@@ -1113,7 +1137,7 @@
     window.GBB_ACCOUNT_LINK=session?'#/dashboard':null;
     window.GBB_ACCOUNT_ROLE=profile?.account_type||null;
     const showProfile=false;
-    const showAuth=path==='/login'||(!session&&['/owner','/bookings','/account','/dashboard','/favourites','/staff','/messages'].includes(path));
+    const showAuth=path==='/login'||(!session&&['/owner','/bookings','/account','/dashboard','/favourites','/staff','/reservations','/messages'].includes(path));
     if(showAuth){if(!authBackground)authBackground=returnRoute==='#/'?home():app.innerHTML||home()}
     else{returnRoute=location.hash||'#/';authBackground=null;document.body?.classList.remove('auth-open')}
     if(!routes(path))return false;
