@@ -708,6 +708,9 @@
     const filtering=!!search||onlySelected;
     const nav=picker.querySelector('[data-equipment-nav]');
     if(nav)nav.hidden=filtering;
+    const browser=picker.querySelector('.fleet-equipment-browser'),body=picker.querySelector('.fleet-equipment-body');
+    if(browser){browser.style.display=filtering?'block':'';browser.style.gridTemplateColumns=filtering?'minmax(0,1fr)':'';}
+    if(body){body.style.width=filtering?'100%':'';body.style.minWidth=filtering?'0':'';body.style.boxSizing=filtering?'border-box':'';}
     picker.classList.toggle('is-filtering',filtering);
     const active=Number(picker.dataset.activeCategory||0);
     let matches=0;
