@@ -155,7 +155,7 @@
   const photo=url=>{try{const u=new URL(url);return u.origin===AUTH_CONFIG.supabaseUrl&&u.pathname.startsWith('/storage/v1/object/public/boat-photos/')?u.href:''}catch{return ''}};
   const picture=b=>photo(b.photo_url)?`<img class="live-photo" src="${esc(photo(b.photo_url))}" alt="${esc(b.name)}" loading="lazy">`:'<div class="live-placeholder">A day at sea awaits</div>';
   let galleryLightbox=null;
-  function closeBoatGallery(){if(galleryLightbox){galleryLightbox.remove();galleryLightbox=null;document.body.style.overflow='';}}
+  function closeBoatGallery(){if(galleryLightbox){galleryLightbox.overlay.remove();galleryLightbox=null;document.body.style.overflow='';}}
   function openBoatGallery(urls,index=0){
     closeBoatGallery();
     if(!urls.length)return;
