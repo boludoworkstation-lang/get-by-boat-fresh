@@ -1195,8 +1195,32 @@
   document.addEventListener('input',e=>{const slider=e.target.closest?.('[data-rental-range="engine"]');if(!slider)return;const min=slider.querySelector('[name="engine_min"]'),max=slider.querySelector('[name="engine_max"]');if(e.target===min&&Number(min.value)>Number(max.value))max.value=min.value;if(e.target===max&&Number(max.value)<Number(min.value))min.value=max.value;const a=Number(min.value),b=Number(max.value);slider.querySelector('.rental-slider-active').style.left=(a/400*100)+'%';slider.querySelector('.rental-slider-active').style.right=(100-b/400*100)+'%';slider.parentElement.querySelector('[data-range-summary]').textContent=a+' - '+(b===400?'400+':b)+' hp';});
   document.addEventListener('input',e=>{const slider=e.target.closest?.('[data-rental-range="year"]');if(!slider)return;const min=slider.querySelector('[name="year_min"]'),max=slider.querySelector('[name="year_max"]');if(e.target===min&&Number(min.value)>Number(max.value))max.value=min.value;if(e.target===max&&Number(max.value)<Number(min.value))min.value=max.value;const a=Number(min.value),b=Number(max.value);slider.querySelector('.rental-slider-active').style.left=((a-2006)/20*100)+'%';slider.querySelector('.rental-slider-active').style.right=((2026-b)/20*100)+'%';slider.parentElement.querySelector('[data-year-summary]').textContent=a+' - '+b;});
   document.addEventListener('input',e=>{const slider=e.target.closest?.('[data-rental-range="price"]')||e.target.closest?.('.rental-price-section')?.querySelector('[data-rental-range="price"]');if(!slider)return;const section=slider.closest('.rental-price-section'),left=slider.querySelector('[name="price_slider_min"]'),right=slider.querySelector('[name="price_slider_max"]'),minInput=section.querySelector('[name="min_price"]'),maxInput=section.querySelector('[name="max_price"]');if(e.target===left){if(Number(left.value)>Number(right.value))right.value=left.value;minInput.value=left.value;}if(e.target===right){if(Number(right.value)<Number(left.value))left.value=right.value;minInput.value=left.value;maxInput.value=Number(right.value)===1200?'':right.value;}if(e.target===minInput){left.value=Math.min(1200,Math.max(0,Number(minInput.value)||0));if(Number(left.value)>Number(right.value))right.value=left.value;}if(e.target===maxInput){right.value=Math.min(1200,Math.max(0,Number(maxInput.value)||1200));if(Number(right.value)<Number(left.value))left.value=right.value;}slider.querySelector('.rental-slider-active').style.left=Number(left.value)/12+'%';slider.querySelector('.rental-slider-active').style.right=(100-Number(right.value)/12)+'%';});
-  document.addEventListener('submit',async e=>{const f=e.target;if(!f.dataset.liveForm)return;e.preventDefault();syncBookingSkipperOption(f);const button=f.querySelector('button[type="submit"],button:not([type])');if(button?.disabled)return;if(button)button.disabled=true;const feedback=f.querySelector('[data-feedback]');if(feedback)feedback.textContent='Saving…';try{if(!client)throw Error('Connecting your account. Please try again in a moment.');const d=new FormData(f),kind=f.dataset.liveForm;
-    if(kind==='search'){const q=new URLSearchParams();for(const key of ['location','start','end','skipper','licence_not_required','with_skipper_only','guests','cabins','berths','min_price','max_price','min_length','max_length','engine_min','engine_max','year_min','year_max','country','sort']){const value=String(d.get(key)||'').trim();if(value)q.set(key,value)}for(const key of ['type','equipment'])for(const value of d.getAll(key))if(value)q.append(key,String(value));location.hash='#/boats?'+q.toString();return}
+  let searchRefreshId=0;
+  document.addEventListener('submit',async e=>{const f=e.target;if(!f.dataset.liveForm)return;e.preventDefault();syncBookingSkipperOption(f);const button=f.querySelector('button[type="submit"],button:not([type])');if(button?.disabled&&f.dataset.liveForm!=='search')return;if(button&&f.dataset.liveForm!=='search')button.disabled=true;const feedback=f.querySelector('[data-feedback]');if(feedback)feedback.textContent='Saving…';try{if(!client)throw Error('Connecting your account. Please try again in a moment.');const d=new FormData(f),kind=f.dataset.liveForm;
+    if(kind==='search'){
+      const q=new URLSearchParams();
+      for(const key of ['location','start','end','skipper','licence_not_required','with_skipper_only','guests','cabins','berths','min_price','max_price','min_length','max_length','engine_min','engine_max','year_min','year_max','country','sort']){
+        const value=String(d.get(key)||'').trim();if(value)q.set(key,value);
+      }
+      for(const key of ['type','equipment'])for(const value of d.getAll(key))if(value)q.append(key,String(value));
+      const nextHash='#/boats?'+q.toString();
+      const results=f.querySelector('.rental-results');
+      if(!results){location.hash=nextHash;return;}
+      const requestId=++searchRefreshId,renderEpoch=epoch;
+      history.replaceState(history.state,'',location.pathname+location.search+nextHash);
+      results.setAttribute('aria-busy','true');
+      try{
+        const html=await route();
+        if(requestId!==searchRefreshId||renderEpoch!==epoch||!f.isConnected||parseRoute().path!=='/boats')return;
+        const container=document.createElement('div');container.innerHTML=html||'';
+        const fresh=container.querySelector('.rental-results');
+        if(!fresh)throw Error('Could not refresh boat results.');
+        results.innerHTML=fresh.innerHTML;
+      }finally{
+        if(requestId===searchRefreshId&&f.isConnected)results.removeAttribute('aria-busy');
+      }
+      return;
+    }
     if(kind==='auth'&&!recovery&&authStep==='email'){authEmail=String(d.get('email')||'').trim();authStep='password';render();return}
     if(kind==='auth'){const email=String(d.get('email')||'').trim(),password=String(d.get('password'));if(recovery){check(await client.auth.updateUser({password}));recovery=false;toast('Password updated.');}else if(authMode==='signup'){const result=check(await client.auth.signUp({email,password,options:{emailRedirectTo:authRedirect()}}));if(!result.session){feedback.textContent='Check your inbox to confirm your email. If no email arrives, contact our team through the Contact page.';return}}else check(await client.auth.signInWithPassword({email,password}));await current();location.hash=afterLogin();authStep='email';authEmail='';render();return}
     if(!session){
