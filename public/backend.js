@@ -102,6 +102,10 @@
   const nav=()=>`<nav class="live-nav"><a href="#/boats">Explore boats</a>${profile?.account_type==='owner'?'<a href="#/owner">My boats</a>':'<a href="#/bookings">My bookings</a>'}${session?'<a href="#/account">My profile</a>'+btn('Log out','logout'):'<a href="#/login">Log in</a>'}</nav>`;
   const page=(title,body)=>{
     const {path,params}=parseRoute();
+    if(session&&path==='/messages'){
+      const owner=profile?.account_type==='owner',initial=esc((profile?.display_name||'G').slice(0,1).toUpperCase());
+      return `<header class="member-header message-app-header"><a class="member-brand" href="#/">${waveLogo()}<span>Get By Boat</span></a><nav aria-label="Main navigation"><a href="#/${owner?'owner':'bookings'}">${owner?'My boats':'My bookings'}</a><a href="#/messages" aria-current="page">Messages</a><a href="#/account">My account</a><a class="member-mini-avatar" href="#/account" aria-label="My profile">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="">`:initial}</a></nav></header><main class="message-workspace">${body}</main>`;
+    }
     if(session&&['/dashboard','/bookings','/owner','/account','/favourites','/staff','/messages'].includes(path)){
       const isOwner=profile?.account_type==='owner';
       const links=[['/dashboard','Overview','dashboard'],['/account','My profile','user'],...(isOwner?[['/owner','My boats','ship'],['/owner?view=requests','Booking requests','mail']]:[['/bookings','My bookings','calendar'],['/favourites','Saved boats','heart']]),['/messages','Messages','message'],...(verificationStaff?[['/staff','Staff verification','shield']]:[])];
