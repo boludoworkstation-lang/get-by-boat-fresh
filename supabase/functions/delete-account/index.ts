@@ -14,6 +14,25 @@ const digest=async(input)=>{
  const bytes=new TextEncoder().encode(input);
  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
 };
+// Shared, email-client-safe Get By Boat transactional design.
+function brandedEmail(title, content, actionLabel = '', actionUrl = '') {
+  const action = actionLabel && actionUrl
+    ? '<tr><td style="padding:8px 36px 24px"><a href="' + actionUrl + '" style="display:inline-block;background:#008fa5;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;line-height:20px;padding:13px 23px;border-radius:9px">' + actionLabel + '</a></td></tr>'
+    : '';
+  return '<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta charset="UTF-8"></head>' +
+    '<body style="margin:0;padding:0;background:#f2f7f8;font-family:Arial,Helvetica,sans-serif;color:#153c49">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f2f7f8"><tr><td align="center" style="padding:38px 14px">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;background:#ffffff;border:1px solid #e1ecef;border-radius:16px;overflow:hidden">' +
+    '<tr><td style="height:6px;background:#008fa5;font-size:0;line-height:0">&nbsp;</td></tr>' +
+    '<tr><td style="padding:31px 36px 12px"><a href="https://getbyboat.net/" style="text-decoration:none;color:#008fa5;font-size:23px;font-weight:800;letter-spacing:-.6px">Get By Boat</a></td></tr>' +
+    '<tr><td style="padding:10px 36px 0"><h1 style="font-size:25px;line-height:32px;letter-spacing:-.6px;font-weight:750;margin:0 0 14px;color:#153c49">' + title + '</h1></td></tr>' +
+    '<tr><td style="padding:0 36px 15px;font-size:15px;line-height:24px;color:#425d68">' + content + '</td></tr>' +
+    action +
+    '<tr><td style="padding:0 36px 30px"><div style="border-top:1px solid #e7eff1;padding-top:18px;color:#7b929a;font-size:12px;line-height:19px">This is an automated message from Get By Boat.<br>Need help? <a href="https://getbyboat.net/#/contact" style="color:#008fa5;text-decoration:underline">Contact support</a>.</div></td></tr>' +
+    '</table><div style="font-size:12px;color:#93a6ad;line-height:19px;padding:19px 12px;text-align:center">Get By Boat &middot; Your next holiday starts at sea.<br><a href="https://getbyboat.net/" style="color:#7896a1;text-decoration:none">getbyboat.net</a></div>' +
+    '</td></tr></table></body></html>';
+}
+
 Deno.serve(async request=>{
  const origin=request.headers.get('origin')||'';
  if(origin&&!allowedOrigins.has(origin))return reply({error:'Origin not allowed'},403,origin);
@@ -59,7 +78,7 @@ Deno.serve(async request=>{
    const email=await fetch('https://api.resend.com/emails',{
     method:'POST',headers:{authorization:'Bearer '+resend,'content-type':'application/json'},
     body:JSON.stringify({from,to:[user.email],subject:'Get By Boat — account deletion verification code',
-      html:'<div style="font-family:Arial,sans-serif;max-width:540px;margin:auto;padding:30px;color:#173e4b"><h2>Confirm account deletion</h2><p>Enter this code on Get By Boat to confirm your request:</p><p style="font-size:30px;font-weight:800;letter-spacing:8px">'+code+'</p><p>This code expires in 10 minutes. If you did not request account deletion, ignore this email.</p></div>'})
+      html:brandedEmail('Confirm account deletion', '<p style="margin:0 0 14px">Use this verification code to confirm your request to permanently delete your Get By Boat account.</p><div style="background:#eef8fa;border:1px solid #d7edf1;border-radius:10px;text-align:center;padding:21px 12px;margin:20px 0;font-size:32px;font-weight:800;letter-spacing:8px;color:#153c49">'+code+'</div><p style="margin:0 0 14px">This code expires in <strong>10 minutes</strong>.</p><p style="margin:0;color:#6d8791;font-size:13px">If you did not request account deletion, you can safely ignore this email.</p>')})
    });
    if(!email.ok){console.error('Resend account deletion email failed',email.status);
      return reply({error:'Email could not be delivered. Please try again later.'},502,origin);}
@@ -98,7 +117,7 @@ Deno.serve(async request=>{
      body:JSON.stringify({
       from,to:[user.email],
       subject:'Get By Boat — your account has been deleted',
-      html:'<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:32px;color:#173e4b"><h1 style="color:#008da6">Get By Boat</h1><h2>Your account has been deleted</h2><p>This email confirms that your Get By Boat account was permanently deleted.</p><p>You can no longer sign in using this account. If you did not request this action, please contact our support team immediately.</p><p style="color:#69818a;font-size:13px">Thank you for being part of Get By Boat.</p></div>',
+      html:brandedEmail('Your account has been deleted', '<p style="margin:0 0 14px">This confirms your Get By Boat account has been permanently deleted.</p><p style="margin:0 0 14px">You can no longer sign in using this account. If you did not request this action, please contact our support team immediately.</p><p style="margin:0;color:#7b929a;font-size:13px">Thank you for being part of Get By Boat.</p>'),
       text:'Your Get By Boat account has been permanently deleted. You can no longer sign in using this account. If you did not request this action, contact Get By Boat support immediately.'
      })
     });
