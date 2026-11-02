@@ -548,7 +548,7 @@ body.auth-open{overflow:hidden}.auth-background{pointer-events:none;user-select:
 .fleet-boat-rules h4{margin:0 0 15px;color:#1e4c59;font-size:17px}
 .fleet-boat-rules-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
 .fleet-boat-rules-grid>label{min-width:0;margin:0;display:block}
-.fleet-boat-rules-grid select{display:block;width:100%;min-height:48px;padding:12px;border:1px solid #d8e5e8;border-radius:8px;background:#fff;color:#173e48;font:inherit;box-sizing:border-box}
+.fleet-editor-section .fleet-boat-rules-grid select,.fleet-editor-section .fleet-boat-rules-grid input[type="number"]{display:block;width:100%;height:52px;min-height:52px;box-sizing:border-box;padding:12px 14px;border:1px solid #d8e5e8;border-radius:8px;background:#fff;color:#173e48;font:inherit;line-height:26px}
 @media(max-width:850px){.fleet-boat-rules-grid{grid-template-columns:1fr}}
 .fleet-skipper-fee{padding:22px 24px;margin-top:19px}
 .fleet-skipper-fee label{max-width:320px}
@@ -1422,3 +1422,12 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .destination-option-copy small{font-size:11px;color:#83979d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .destination-autocomplete-option:hover .destination-option-icon,.destination-autocomplete-option.is-active .destination-option-icon{background:#d5f0f5}
 .destination-autocomplete-option:focus-visible{outline:2px solid #00a6bf;outline-offset:-2px}
+
+/* Account birthday picker: same calendar language as boat search. */
+.profile-birth-input{display:none!important}
+.live-form .profile-birth-trigger{width:100%;height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid #d8e5e8;border-radius:8px;background:#fff;text-align:left;color:#173e48;font:inherit;cursor:pointer}
+.profile-birth-trigger svg{width:18px;height:18px;color:#009fb7}
+.profile-birth-trigger:hover,.profile-birth-trigger:focus-visible{border-color:#00a6bf}
+.profile-birth-month-year{display:flex;gap:7px;min-width:0}
+.profile-birth-month-year select{max-width:135px;padding:7px 5px;border:1px solid #dce9ec;border-radius:9px;background:#fff;color:#173e48;font-size:12px;font-weight:700}
+.profile-birth-month-year select:last-child{max-width:79px}
