@@ -35,8 +35,8 @@
     return `<label class="profile-language-label">Languages spoken
       <div class="language-selector" data-profile-language-picker>
         <button type="button" class="language-selector-trigger" data-language-toggle aria-expanded="false">
-          <span class="language-selector-symbol">◎</span><span class="language-selector-summary" data-language-summary>${esc(summary)}</span>
-          <span class="language-selector-count" data-language-count ${selected.length?'':'hidden'}>${selected.length} selected</span>
+          <span class="language-selector-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.6 2.5 4 5.5 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.5-4-9s1.4-6.5 4-9z"></path></svg></span><span class="language-selector-summary" data-language-summary>${esc(summary)}</span>
+          
           <span class="language-selector-caret" aria-hidden="true">⌄</span>
         </button>
         <div class="language-selector-popover" data-language-popover hidden>
