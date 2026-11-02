@@ -1460,3 +1460,56 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-search-bar .rental-where input{color:#1c4552;font-weight:650}
 .rental-search-bar .rental-where input::placeholder{color:#8a9da3;font-weight:450}
 .rental-search-bar .rental-where input:focus{outline:none}
+
+
+/* Premium How it works experience */
+.how-page{background:#fff;overflow:hidden}
+.how-premium-hero{position:relative;isolation:isolate;min-height:620px;display:flex;align-items:center;color:#fff;background:#064a5b}
+.how-hero-image{position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,rgba(3,39,52,.87) 0%,rgba(3,50,62,.64) 42%,rgba(3,53,66,.1) 100%),url('assets/yacht-main.webp') center 53%/cover no-repeat}
+.how-premium-hero:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(1,42,55,.28),transparent 40%)}
+.how-hero-content{width:100%;padding-top:90px;padding-bottom:115px}
+.how-eyebrow,.how-section-kicker{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:#00a5bd}
+.how-eyebrow{color:#8de5ec;margin-bottom:24px}
+.how-hero-content h1{font:400 clamp(55px,7.5vw,112px)/.98 var(--serif);letter-spacing:-.045em;max-width:780px}
+.how-hero-content h1 i{font-weight:400;color:#b7f0ed}
+.how-hero-content p{font-size:15px;line-height:1.8;max-width:465px;color:#e3f1f1;margin:28px 0 31px}
+.how-hero-actions,.how-cta-actions{display:flex;align-items:center;flex-wrap:wrap;gap:26px}
+.how-text-link{display:inline-flex;align-items:center;gap:11px;color:#fff;font-size:13px;font-weight:700}
+.how-text-link span{font-size:20px;color:#91e2e8}
+.how-hero-bottom{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:clamp(25px,8vw,120px);padding:20px;background:#053d4b87;border-top:1px solid #ffffff30;backdrop-filter:blur(8px)}
+.how-hero-bottom span{font-size:10px;font-weight:800;letter-spacing:.22em;color:#d9f5f5}
+.how-intro{display:grid;grid-template-columns:1.1fr .9fr;gap:8%;align-items:end;padding-top:105px;padding-bottom:70px}
+.how-intro h2,.how-note-grid h2,.how-final-cta h2{font:400 clamp(42px,5.1vw,74px)/1.07 var(--serif);letter-spacing:-.04em;color:#123e4b;margin-top:17px}
+.how-intro h2 i,.how-note-grid h2 i{color:#078da5;font-weight:400}
+.how-intro>p{max-width:465px;color:#687f87;font-size:15px;line-height:1.9;padding-bottom:9px}
+.how-process{display:grid;gap:30px;padding-bottom:110px}
+.how-step{display:grid;grid-template-columns:1fr 1fr;min-height:390px;border-radius:24px;overflow:hidden;background:#f1f8f8;border:1px solid #e5f0f0}
+.how-step-reverse .how-step-photo{order:2}
+.how-step-photo{min-height:360px;background-color:#d8e9ec;background-size:cover;background-position:center}
+.how-step-one{background-image:url('assets/yacht-spain.webp')}
+.how-step-two{background-image:url('assets/yacht-deck.webp')}
+.how-step-three{background-image:url('assets/yacht-lagoon.webp')}
+.how-step-four{background-image:url('assets/yacht-main.webp')}
+.how-step-copy{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(30px,5vw,73px)}
+.how-step-index{color:#009cb5;font-size:11px;font-weight:850;letter-spacing:.17em}
+.how-step-copy h3{font:400 clamp(36px,4.2vw,61px)/1.06 var(--serif);letter-spacing:-.035em;color:#123e4b;margin:20px 0}
+.how-step-copy h3 i{color:#008da6;font-weight:400}
+.how-step-copy p{color:#637e86;font-size:14px;line-height:1.9;max-width:420px}
+.how-step-tag{display:inline-flex;align-items:center;gap:8px;color:#15768a;background:#e0f2f4;border-radius:30px;padding:10px 14px;font-size:11px;font-weight:700;margin-top:23px}
+.how-step-tag svg{width:15px;height:15px}
+.how-note-section{background:#eef8f9;padding:95px 0}
+.how-note-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:9%;align-items:start}
+.how-note-cards{display:grid;gap:13px}
+.how-note-cards>div{padding:24px 27px;border:1px solid #dcecee;border-radius:17px;background:white;box-shadow:0 6px 20px #123c4b06}
+.how-note-cards>div>span{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:#e3f7f9;color:#028fa7;margin-bottom:12px}
+.how-note-cards>div>span svg{width:20px;height:20px}
+.how-note-cards h3{font-size:16px;color:#164653;margin-bottom:7px}
+.how-note-cards p{font-size:13px;line-height:1.75;color:#71878d}
+.how-final-cta{text-align:center;padding:110px 0 120px;background:#fff}
+.how-final-cta h2{font-size:clamp(49px,6.4vw,88px)}
+.how-final-cta h2 i{color:#078da5}
+.how-final-cta p{color:#6d838a;font-size:15px;margin:22px auto 30px}
+.how-final-cta .how-cta-actions{justify-content:center}
+.how-owner-link{display:inline-flex;align-items:center;gap:8px;color:#0b7a92;font-size:13px;font-weight:800}
+@media(max-width:760px){.how-premium-hero{min-height:570px}.how-hero-image{background-position:58% center}.how-hero-content{padding-top:90px;padding-bottom:90px}.how-hero-content h1{font-size:clamp(51px,11vw,75px)}.how-intro,.how-note-grid{grid-template-columns:1fr;gap:25px}.how-intro{padding-top:70px;padding-bottom:40px}.how-step{grid-template-columns:1fr;min-height:0}.how-step-reverse .how-step-photo{order:0}.how-step-photo{min-height:240px}.how-step-copy{padding:35px 28px 39px}.how-process{gap:20px;padding-bottom:70px}.how-note-section{padding:70px 0}.how-final-cta{padding:75px 0 85px}.how-hero-bottom{gap:22px}.how-hero-bottom span{font-size:8px;letter-spacing:.12em}}
+@media(max-width:420px){.how-hero-actions{gap:18px}.how-hero-content p{font-size:13px}.how-hero-bottom{gap:15px}.how-hero-bottom span{font-size:7px}}
