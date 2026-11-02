@@ -923,8 +923,8 @@
         <form class="rental-search-form shell" data-live-form="search">
           <div class="rental-search-bar">
             <label class="rental-where"><span>${icon('pin')} Where</span><input name="location" list="boat-destinations" type="search" placeholder="City or country" value="${esc(searchInput)}" autocomplete="off"></label>${destinationDatalist()}
-            <label><span>${icon('calendar')} From</span><input name="start" type="date" value="${esc(startDate)}"></label>
-            <label><span>${icon('calendar')} To</span><input name="end" type="date" value="${esc(endDate)}"></label>
+            <label class="rental-date-field"><span>${icon('calendar')} From</span><input name="start" type="hidden" value="${esc(startDate)}"><button type="button" class="rental-date-trigger" data-rental-date-open="start" aria-label="Select start date">${startDate?formatRentalDate(startDate):'dd/mm/yyyy'} ${icon('calendar')}</button></label>
+            <label class="rental-date-field"><span>${icon('calendar')} To</span><input name="end" type="hidden" value="${esc(endDate)}"><button type="button" class="rental-date-trigger" data-rental-date-open="end" aria-label="Select end date">${endDate?formatRentalDate(endDate):'dd/mm/yyyy'} ${icon('calendar')}</button></label>
             <button class="btn rental-search-button" type="submit">${icon('search')} Search</button>
           </div>
           <div class="rental-layout">
@@ -1471,6 +1471,54 @@
       calendarSelection=null;render();
     }
   }catch(err){if(feedback)feedback.textContent=err.message||'Please try again.';else toast(err.message)}finally{if(button)button.disabled=false}},true);
+  const formatRentalDate=value=>{const [y,m,d]=String(value||'').split('-');return y&&m&&d?d+'/'+m+'/'+y:'dd/mm/yyyy';};
+  let rentalCalendarMonth=null;
+  const rentalCalendarISO=(y,m,d)=>y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+  function closeRentalCalendar(){document.querySelector('[data-rental-calendar]')?.remove();}
+  function openRentalCalendar(trigger){
+    closeRentalCalendar();
+    const field=trigger.dataset.rentalDateOpen,form=trigger.closest('form'),input=form?.querySelector('input[name="'+field+'"]');
+    if(!input)return;
+    const now=new Date(),todayISO=rentalCalendarISO(now.getFullYear(),now.getMonth(),now.getDate());
+    const chosen=input.value||form.querySelector('input[name="start"]')?.value||todayISO;
+    rentalCalendarMonth=rentalCalendarMonth&&trigger.dataset.rentalCalendarMonth==='keep'?rentalCalendarMonth:chosen.slice(0,7);
+    const [year,month]=rentalCalendarMonth.split('-').map(Number);
+    const first=new Date(year,month-1,1),days=new Date(year,month,0).getDate(),offset=(first.getDay()+6)%7;
+    const minDate=field==='end'?(form.querySelector('input[name="start"]')?.value||todayISO):todayISO;
+    const grid=Array.from({length:Math.ceil((offset+days)/7)*7},(_,i)=>{
+      const day=i-offset+1;if(day<1||day>days)return '<span class="rental-cal-blank"></span>';
+      const value=rentalCalendarISO(year,month-1,day);
+      return '<button type="button" class="rental-cal-day '+(value===input.value?'is-selected ':'')+(value===todayISO?'is-today':'')+'" data-rental-date-value="'+value+'" '+(value<minDate?'disabled':'')+'>'+day+'</button>';
+    }).join('');
+    const calendar=document.createElement('div');calendar.className='rental-calendar-popover';calendar.dataset.rentalCalendar=field;
+    calendar.innerHTML='<div class="rental-cal-head"><strong>'+first.toLocaleDateString('en-GB',{month:'long',year:'numeric'})+'</strong><div><button type="button" data-rental-cal-nav="-1" aria-label="Previous month">‹</button><button type="button" data-rental-cal-nav="1" aria-label="Next month">›</button></div></div><div class="rental-cal-weekdays">'+['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>'<span>'+d+'</span>').join('')+'</div><div class="rental-cal-grid">'+grid+'</div><div class="rental-cal-foot"><button type="button" data-rental-cal-today>Today</button><button type="button" data-rental-cal-clear>Clear</button></div>';
+    document.body.appendChild(calendar);
+    const rect=trigger.getBoundingClientRect(),width=calendar.offsetWidth;
+    calendar.style.left=Math.max(12,Math.min(rect.left,innerWidth-width-12))+'px';
+    calendar.style.top=(rect.bottom+calendar.offsetHeight+8<innerHeight?rect.bottom+8:Math.max(8,rect.top-calendar.offsetHeight-8))+'px';
+    calendar._trigger=trigger;
+  }
+  document.addEventListener('click',event=>{
+    const trigger=event.target.closest?.('[data-rental-date-open]');
+    if(trigger){event.preventDefault();rentalCalendarMonth=null;openRentalCalendar(trigger);return;}
+    const calendar=event.target.closest?.('[data-rental-calendar]');
+    if(!calendar){closeRentalCalendar();return;}
+    const input=calendar._trigger?.closest('form')?.querySelector('input[name="'+calendar.dataset.rentalCalendar+'"]');
+    if(!input)return;
+    const nav=event.target.closest('[data-rental-cal-nav]');
+    if(nav){const [y,m]=rentalCalendarMonth.split('-').map(Number),next=new Date(y,m-1+Number(nav.dataset.rentalCalNav),1);rentalCalendarMonth=next.getFullYear()+'-'+String(next.getMonth()+1).padStart(2,'0');calendar._trigger.dataset.rentalCalendarMonth='keep';openRentalCalendar(calendar._trigger);return;}
+    const day=event.target.closest('[data-rental-date-value]'),today=event.target.closest('[data-rental-cal-today]'),clear=event.target.closest('[data-rental-cal-clear]');
+    if(day||today||clear){
+      const value=clear?'':today?(()=>{const now=new Date(),todayValue=rentalCalendarISO(now.getFullYear(),now.getMonth(),now.getDate()),startValue=input.form.querySelector('input[name="start"]')?.value||'';return calendar.dataset.rentalCalendar==='end'&&startValue>todayValue?startValue:todayValue})():day.dataset.rentalDateValue;
+      input.value=value;
+      calendar._trigger.innerHTML=formatRentalDate(value)+' '+icon('calendar');
+      const form=input.form,start=form.querySelector('input[name="start"]'),end=form.querySelector('input[name="end"]');
+      if(start.value&&end.value&&end.value<start.value){end.value='';const endButton=form.querySelector('[data-rental-date-open="end"]');if(endButton)endButton.innerHTML='dd/mm/yyyy '+icon('calendar');}
+      input.dispatchEvent(new Event('change',{bubbles:true}));closeRentalCalendar();
+      if(day&&calendar.dataset.rentalCalendar==='start'){const endButton=form.querySelector('[data-rental-date-open="end"]');if(endButton&&!end.value)openRentalCalendar(endButton);}
+    }
+  });
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeRentalCalendar();});
   document.addEventListener('click',event=>{const button=event.target.closest?.('[data-rental-filters-toggle]');if(!button)return;event.preventDefault();const sidebar=document.querySelector('.rental-sidebar');if(!sidebar)return;const open=sidebar.classList.toggle('is-open');button.setAttribute('aria-expanded',String(open));});
   document.addEventListener('change',event=>{if(event.target.matches?.('.rental-results-bar select[name="sort"], .rental-sidebar input, .rental-sidebar select'))event.target.form?.requestSubmit();});
   document.addEventListener('click',async e=>{const b=e.target.closest('[data-live]');if(!b)return;e.preventDefault();if(b.disabled)return;b.disabled=true;try{switch(b.dataset.live){case 'boat-step':{const form=b.closest('[data-live-form="boat"]'),from=Number(form?.dataset.editorStep||1),to=Number(b.dataset.step||1);let valid=true;if(to>from){for(let step=from;step<to;step++)if(!validateOwnerBoatStep(form,step)){valid=false;break;}}if(valid)showOwnerBoatStep(form,to);break;}case 'boat-next':{const form=b.closest('[data-live-form="boat"]'),step=Number(form?.dataset.editorStep||1);if(validateOwnerBoatStep(form,step))showOwnerBoatStep(form,step+1);break;}case 'boat-prev':{const form=b.closest('[data-live-form="boat"]');showOwnerBoatStep(form,Number(form?.dataset.editorStep||1)-1);break;}case 'boat-jump':case 'owner-jump':document.getElementById?.(b.dataset.id)?.scrollIntoView?.({block:'start',behavior:'smooth'});break;case 'share-listing':{const url=location.origin+location.pathname+'#/listing/'+encodeURIComponent(b.dataset.id);if(navigator.share){try{await navigator.share({title:b.dataset.title||'Get By Boat',url});}catch(error){if(error?.name!=='AbortError')throw error;}}else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(url);toast('Listing link copied.');}else{window.prompt('Copy listing link:',url);}break;}case 'favourite':if(!session){location.hash='#/login?next='+encodeURIComponent(location.hash);break;}if(profile?.account_type!=='customer')throw Error('Only customer accounts can save rental favourites.');check(await client.from('favourites').upsert({user_id:session.user.id,boat_id:b.dataset.id},{onConflict:'user_id,boat_id',ignoreDuplicates:true}));toast('Saved to favourites.');render();break;case 'unfavourite':check(await client.from('favourites').delete().eq('user_id',session.user.id).eq('boat_id',b.dataset.id));render();break;case 'auth-close':closeAuth();break;case 'social-google':case 'social-apple':{
