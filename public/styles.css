@@ -1522,3 +1522,35 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .booking-dates-banner strong{display:block;font-size:19px;font-weight:760;line-height:1.35;letter-spacing:-.3px}
 .booking-dates-separator{color:#65a1ad;font-weight:500;padding:0 5px}
 @media(max-width:600px){.booking-dates-banner{margin:14px 17px 3px;padding:14px;gap:12px}.booking-dates-icon{width:40px;height:40px}.booking-dates-banner strong{font-size:16px}}
+
+/* Three-panel messaging workspace */
+.booking-messenger-three{grid-template-columns:minmax(230px,275px) minmax(0,1fr) minmax(235px,280px);min-height:640px;margin:8px 0 24px;border-radius:15px;box-shadow:0 12px 30px rgba(5,53,67,.04)}
+.booking-messenger-three .booking-conversations{background:#fff;padding:18px 10px}
+.booking-messenger-three .booking-conversations h2{font-size:19px;padding:10px 13px 21px}
+.booking-messenger-three .booking-conversation{padding:14px 10px;gap:11px;border-bottom:1px solid #eef2f3;border-radius:8px;margin-bottom:2px}
+.booking-messenger-three .booking-conversation-icon{height:39px;width:39px;background:#e8eff1;border-radius:50%;color:#365861;font-size:17px;font-weight:760}
+.booking-messenger-three .booking-conversation>span:nth-child(2){gap:5px}
+.booking-conversation-top{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}
+.booking-conversation-top strong{min-width:0}
+.booking-conversation-top time{font-size:10px;color:#82969d;white-space:nowrap;flex:none}
+.booking-messenger-three .booking-chat-heading{padding:22px 25px 19px}
+.booking-messenger-three .booking-chat-heading h2{font-size:20px}
+.booking-messenger-three .booking-thread{background:#fff;max-height:none;min-height:360px;padding:25px 23px;gap:20px}
+.booking-messenger-three .booking-message-bubble{border-radius:15px;padding:14px 17px}
+.booking-messenger-three .booking-compose{border-top:1px solid #ebf1f3;background:#fff}
+.booking-details{display:flex;flex-direction:column;min-width:0;border-left:1px solid #e3ebee;background:#fff}
+.booking-details-heading{padding:25px 20px 21px;border-bottom:1px solid #edf1f2}
+.booking-details-heading h2{font-size:18px;color:#173c47;margin:0 0 13px}
+.booking-details-heading .live-status{display:inline-flex}
+.booking-detail-group{padding:22px 20px;border-bottom:1px solid #edf1f2}
+.booking-detail-label{display:block;margin-bottom:13px;color:#77949e;font-weight:800;font-size:10px;letter-spacing:1.1px}
+.booking-detail-boat,.booking-detail-row,.booking-detail-dates{display:flex;align-items:flex-start;gap:12px;color:#244853;font-size:13px;line-height:1.5}
+.booking-detail-boat .icon,.booking-detail-row .icon,.booking-detail-dates .icon{width:18px;height:18px;flex:none;color:#009bb4}
+.booking-detail-boat strong{font-size:14px;line-height:1.35}
+.booking-detail-dates>div{display:flex;flex-direction:column;gap:7px;min-width:0}
+.booking-detail-dates strong{font-size:17px;color:#173f4b;letter-spacing:-.25px;line-height:1.3}
+.booking-detail-date-arrow{font-size:17px;color:#80a6b0;line-height:1}
+.booking-detail-footnote{padding:20px;color:#8aa0a8;font-size:11px;line-height:1.6;margin-top:auto}
+@media(max-width:1200px){.booking-messenger-three{grid-template-columns:minmax(205px,240px) minmax(0,1fr) minmax(220px,245px)}.booking-detail-group{padding:19px 16px}.booking-details-heading{padding:22px 16px}}
+@media(max-width:920px){.booking-messenger-three{grid-template-columns:minmax(200px,255px) minmax(0,1fr)}.booking-messenger-three .booking-conversations{border-bottom:0;border-right:1px solid #e3ebee;max-height:none}.booking-details{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-left:0;border-top:1px solid #e3ebee}.booking-details-heading{grid-column:1/-1}.booking-detail-footnote{grid-column:1/-1}.booking-detail-group{border-right:1px solid #edf1f2}}
+@media(max-width:640px){.booking-messenger-three{display:flex;flex-direction:column}.booking-messenger-three .booking-conversations{max-height:250px;overflow:auto;border-right:0;border-bottom:1px solid #e3ebee}.booking-details{display:block}.booking-messenger-three .booking-thread{min-height:250px}.booking-messenger-three .booking-chat-heading{padding:19px}.booking-detail-dates strong{font-size:16px}}
