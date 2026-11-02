@@ -1523,3 +1523,11 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .how-owner-link{display:inline-flex;align-items:center;gap:8px;color:#0b7a92;font-size:13px;font-weight:800}
 @media(max-width:760px){.how-premium-hero{min-height:570px}.how-hero-image{background-position:58% center}.how-hero-content{padding-top:90px;padding-bottom:90px}.how-hero-content h1{font-size:clamp(51px,11vw,75px)}.how-intro,.how-note-grid{grid-template-columns:1fr;gap:25px}.how-intro{padding-top:70px;padding-bottom:40px}.how-step{grid-template-columns:1fr;min-height:0}.how-step-reverse .how-step-photo{order:0}.how-step-photo{min-height:240px}.how-step-copy{padding:35px 28px 39px}.how-process{gap:20px;padding-bottom:70px}.how-note-section{padding:70px 0}.how-final-cta{padding:75px 0 85px}.how-hero-bottom{gap:22px}.how-hero-bottom span{font-size:8px;letter-spacing:.12em}}
 @media(max-width:420px){.how-hero-actions{gap:18px}.how-hero-content p{font-size:13px}.how-hero-bottom{gap:15px}.how-hero-bottom span{font-size:7px}}
+
+/* Simplified languages field: understated globe, label and dropdown only. */
+.language-selector-trigger{gap:12px;height:50px;border-radius:9px}
+.language-selector-symbol{width:20px;height:20px;display:grid;place-items:center;flex:none;border:0;border-radius:0;background:transparent;color:#0099b1;font-size:inherit}
+.language-selector-symbol svg{display:block;width:20px;height:20px}
+.language-selector-summary{font-weight:600;font-size:13px}
+.language-selector-caret{font-size:18px}
+.language-selector-count{display:none!important}
