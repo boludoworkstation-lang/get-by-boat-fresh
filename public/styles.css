@@ -1287,6 +1287,12 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 /* Align the filter panel's right edge with the search bar's left edge on wide screens. */
 @media(min-width:1600px){
-  .rental-search-form>.rental-layout{grid-template-columns:265px minmax(0,1fr)}
+  .rental-search-form>.rental-layout{grid-template-columns:247px minmax(0,1fr)}
   .rental-sidebar{box-sizing:border-box;min-width:0;width:100%;padding-inline:18px}
+}
+
+/* Fine alignment of sidebar edge with the search input's starting guide. */
+@media(min-width:1600px){
+ .rental-search-form>.rental-layout{column-gap:28px}
+ .rental-sidebar{padding-inline:16px}
 }
