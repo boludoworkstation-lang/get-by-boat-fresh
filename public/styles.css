@@ -1376,3 +1376,25 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .fleet-rental-onboarding .fleet-mode-option strong{font-size:14px;line-height:1.3;font-weight:800;color:#1b4652;margin-bottom:7px}
 .fleet-rental-onboarding .fleet-mode-option small{font-size:12px;line-height:1.55;font-weight:450;color:#718b94}
 @media(max-width:900px){.fleet-rental-onboarding .fleet-skipper-modes{grid-template-columns:1fr}.fleet-rental-onboarding .fleet-mode-option{min-height:0;padding:17px}.fleet-rental-onboarding .fleet-mode-symbol{margin-bottom:10px}}
+
+
+/* Get By Boat rental date picker */
+.rental-date-field{min-width:0}
+.rental-date-trigger{appearance:none;border:0;background:transparent;padding:7px 0 2px;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;font:inherit;font-weight:600;color:#173e4c;cursor:pointer}
+.rental-date-trigger svg{width:18px;height:18px;color:#079eb5;flex:none}
+.rental-date-trigger:hover{color:#009fbc}
+.rental-calendar-popover{position:fixed;z-index:99999;width:min(340px,calc(100vw - 24px));padding:19px;background:#fff;border:1px solid #dbe9ed;border-radius:20px;box-shadow:0 20px 60px rgba(11,55,70,.18),0 4px 14px rgba(11,55,70,.06);color:#173d4a}
+.rental-cal-head,.rental-cal-head>div,.rental-cal-foot{display:flex;align-items:center;justify-content:space-between}
+.rental-cal-head{margin-bottom:19px}.rental-cal-head strong{font-size:17px;letter-spacing:-.3px}.rental-cal-head>div{gap:7px}
+.rental-cal-head button{width:32px;height:32px;border:1px solid #e2ebed;background:#f8fbfb;border-radius:10px;font-size:23px;line-height:1;cursor:pointer;color:#176779}
+.rental-cal-head button:hover{background:#eaf8fa}
+.rental-cal-weekdays,.rental-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;gap:4px}
+.rental-cal-weekdays{color:#81959c;font-size:11px;font-weight:700;margin-bottom:9px;text-transform:uppercase}
+.rental-cal-grid .rental-cal-day{aspect-ratio:1;border:0;border-radius:11px;background:transparent;color:#234955;font-size:13px;font-weight:600;cursor:pointer}
+.rental-cal-grid .rental-cal-day:hover:not(:disabled){background:#e6f7fa;color:#008eaa}
+.rental-cal-grid .rental-cal-day.is-today{box-shadow:inset 0 0 0 1.5px #10abc2}
+.rental-cal-grid .rental-cal-day.is-selected{background:#00a6bf;color:#fff;box-shadow:none}
+.rental-cal-grid .rental-cal-day:disabled{color:#c0cbd0;cursor:not-allowed}
+.rental-cal-foot{border-top:1px solid #edf2f3;margin-top:13px;padding-top:13px}
+.rental-cal-foot button{border:0;background:transparent;color:#008fa9;font-size:12px;font-weight:700;cursor:pointer;padding:5px}
+.rental-cal-head button:focus-visible,.rental-cal-day:focus-visible,.rental-cal-foot button:focus-visible,.rental-date-trigger:focus-visible{outline:2px solid #00a6bf;outline-offset:2px}
