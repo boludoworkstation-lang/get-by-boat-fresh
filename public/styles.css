@@ -1355,3 +1355,24 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-card-shell:hover{transform:translateY(-4px)}
 .rental-card-shell:hover>.rental-card{transform:none;box-shadow:0 14px 34px #123c4b1b}
 .rental-card-shell{transition:transform .2s}
+
+/* Refined owner rental-mode selector */
+.fleet-rental-onboarding{background:#fff;border:1px solid #e0e9ed;border-radius:18px;padding:23px 24px 24px;box-shadow:0 4px 18px rgba(18,59,72,.035)}
+.fleet-rental-onboarding-heading h4{font-size:20px;letter-spacing:-.02em}
+.fleet-rental-onboarding-heading p{font-size:13px;margin-top:6px}
+.fleet-rental-onboarding .fleet-skipper-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch;margin:15px 0 0!important}
+.fleet-rental-onboarding .fleet-skipper-modes legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.fleet-rental-onboarding .fleet-mode-option{position:relative;display:block;min-height:174px;margin:0!important;padding:20px 17px 18px;border:1.5px solid #dce8ec;border-radius:15px;background:#fff;box-shadow:0 3px 12px rgba(12,49,64,.025);transition:background .16s,border-color .16s,box-shadow .16s,transform .16s}
+.fleet-rental-onboarding .fleet-mode-option:hover{border-color:#8bbec9;transform:translateY(-2px);box-shadow:0 9px 23px rgba(12,49,64,.08)}
+.fleet-rental-onboarding .fleet-mode-option:has(input:checked){background:#f0fbfc;border-color:#00a4bd;box-shadow:inset 0 0 0 1px #00a4bd,0 7px 20px rgba(0,148,174,.07)}
+.fleet-rental-onboarding .fleet-mode-option>input[type=radio]{position:absolute!important;width:1px!important;height:1px!important;min-width:0!important;max-width:1px!important;opacity:0;pointer-events:none;margin:0!important;padding:0!important;border:0!important}
+.fleet-rental-onboarding .fleet-mode-option:has(input:focus-visible){outline:3px solid #62c5d5;outline-offset:3px}
+.fleet-rental-onboarding .fleet-mode-option::after{content:'';position:absolute;right:16px;top:18px;width:17px;height:17px;border:1.5px solid #b7cdd3;border-radius:50%;background:#fff;box-sizing:border-box}
+.fleet-rental-onboarding .fleet-mode-option:has(input:checked)::after{border:5px solid #009db7}
+.fleet-rental-onboarding .fleet-mode-option>.fleet-mode-copy{display:flex;flex-direction:column;gap:0;min-width:0}
+.fleet-rental-onboarding .fleet-mode-symbol{display:grid;place-items:center;width:37px;height:37px;border-radius:11px;background:#eaf4f6;color:#087d93;margin:0 0 14px}
+.fleet-rental-onboarding .fleet-mode-symbol .icon{width:19px;height:19px}
+.fleet-rental-onboarding .fleet-mode-option:has(input:checked) .fleet-mode-symbol{background:#d8f3f7;color:#008da5}
+.fleet-rental-onboarding .fleet-mode-option strong{font-size:14px;line-height:1.3;font-weight:800;color:#1b4652;margin-bottom:7px}
+.fleet-rental-onboarding .fleet-mode-option small{font-size:12px;line-height:1.55;font-weight:450;color:#718b94}
+@media(max-width:900px){.fleet-rental-onboarding .fleet-skipper-modes{grid-template-columns:1fr}.fleet-rental-onboarding .fleet-mode-option{min-height:0;padding:17px}.fleet-rental-onboarding .fleet-mode-symbol{margin-bottom:10px}}
