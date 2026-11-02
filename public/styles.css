@@ -2159,3 +2159,9 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .fleet-editor-section .fleet-optional-panel summary{padding:18px 21px}
 .fleet-editor-section .fleet-optional-panel[open] summary{background:#eff9fb}
 @media(max-width:760px){.fleet-editor-page,.fleet-editor-form{max-width:100%}.member-main .fleet-editor-section{padding:22px 19px;margin-bottom:15px;border-radius:15px}.fleet-editor-navigation{gap:5px;padding:6px}.fleet-editor-navigation button{font-size:11px;padding:10px 4px;min-height:70px}.fleet-editor-header{display:block}.fleet-editor-section-heading h3{font-size:18px}}
+
+/* Saved favorites use Get By Boat blue on cards and listing details. */
+.rental-favorite.is-saved,.rental-favorite[aria-pressed="true"]{color:#00a4bc!important}
+.rental-favorite.is-saved .icon,.rental-favorite[aria-pressed="true"] .icon{fill:#00a4bc!important;stroke:#fff;stroke-width:2.6;filter:drop-shadow(0 1px 4px rgba(0,0,0,.42))}
+.listing-action.is-saved,.listing-action[aria-pressed="true"]{color:#009eb6!important}
+.listing-action.is-saved .icon,.listing-action[aria-pressed="true"] .icon{fill:#00a4bc!important;stroke:#008ca4}
