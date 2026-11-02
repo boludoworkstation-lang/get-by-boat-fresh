@@ -2120,3 +2120,18 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 [data-boat-gallery] [data-gallery-select]:hover{transform:translateY(-2px);opacity:.9}
 [data-boat-gallery] [data-gallery-select][aria-pressed="true"]{outline-color:#03a5bc}
 [data-boat-gallery] [data-gallery-select] img{display:block}
+
+/* Insurance controls: equal, full-width columns that do not clip selected options. */
+.fleet-editor-section .fleet-insurance-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:end;width:100%}
+.fleet-editor-section .fleet-insurance-fields>label{display:flex;flex-direction:column;gap:9px;min-width:0;margin:10px 0 0;line-height:1.35}
+.fleet-editor-section .fleet-insurance-fields select,.fleet-editor-section .fleet-insurance-fields input{display:block;width:100%;min-width:0;max-width:100%;height:52px;min-height:52px;box-sizing:border-box;padding:11px 14px;font-size:15px;text-overflow:ellipsis}
+@media(max-width:680px){.fleet-editor-section .fleet-insurance-fields{grid-template-columns:minmax(0,1fr);gap:15px}}
+
+/* Compact photo-upload tile in Description & photos. */
+#boat-description>label.fleet-photo-upload:has(input[type="file"]){min-height:108px!important;height:auto!important;padding:18px 22px!important;justify-content:flex-start!important;gap:16px!important;border-radius:15px!important}
+#boat-description .fleet-upload-symbol{width:52px!important;height:52px!important;border-radius:14px!important;font-size:29px!important}
+#boat-description .fleet-upload-details{min-width:0}
+#boat-description .fleet-upload-details strong{font-size:16px!important}
+#boat-description .fleet-upload-details small{font-size:13px!important}
+#boat-description .fleet-upload-details em{margin-top:3px!important;font-size:11px!important}
+@media(max-width:560px){#boat-description>label.fleet-photo-upload:has(input[type="file"]){padding:16px!important;min-height:102px!important;gap:12px!important}#boat-description .fleet-upload-symbol{width:45px!important;height:45px!important}}
