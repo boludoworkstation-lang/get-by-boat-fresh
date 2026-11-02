@@ -1,7 +1,7 @@
 /* Live marketplace. Authorization and prices are enforced by database policies/triggers. */
 (() => {
   let client, session, profile, epoch=0, recovery=false, authStep='email', authEmail='', authBackground=null, returnRoute='#/', ownerIntent=new URLSearchParams(location.search).get('owner')==='1';
-  let authNext='#/dashboard', avatarUrl='',verificationRequest=null,verificationReview=null,verificationStaff=false;
+  let authNext='#/dashboard', avatarUrl='',verificationRequest=null,verificationReview=null,verificationStaff=false,superAdmin=false;
   let ownerVerificationRequest=null,ownerVerificationReview=null,ownerScrollTarget='';
   let chatChannel=null,chatBookingId='';
   let calendarSelection=null,calendarUnavailable=[],calendarContext=null,ownerPickupMap=null,publicPickupMap=null,listingCalendarContext=null,listingCalendarSelection=null;
@@ -109,10 +109,10 @@
     }
     if(session&&['/dashboard','/bookings','/owner','/account','/favourites','/staff','/messages'].includes(path)){
       const isOwner=profile?.account_type==='owner';
-      const links=[['/dashboard','Overview','dashboard'],['/account','My profile','user'],...(isOwner?[['/owner','My boats','ship'],['/owner?view=requests','Booking requests','mail']]:[['/bookings','My bookings','calendar'],['/favourites','Saved boats','heart']]),['/messages','Messages','message'],...(verificationStaff?[['/staff','Staff verification','shield']]:[])];
+      const links=superAdmin?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/staff','Staff verification','shield']]:verificationStaff?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/staff','Staff verification','shield']]:[['/dashboard','Overview','dashboard'],['/account','My profile','user'],...(isOwner?[['/owner','My boats','ship'],['/owner?view=requests','Booking requests','mail']]:[['/bookings','My bookings','calendar'],['/favourites','Saved boats','heart']]),['/messages','Messages','message']];
       const memberName=esc(profile?.display_name||'Traveller');
       const initials=esc((profile?.display_name||'G').slice(0,1).toUpperCase());
-      return `<header class="member-header"><a class="member-brand" href="#/">${waveLogo()}<span>Get By Boat</span></a><nav aria-label="Top navigation"><span class="member-locale">EN · EUR</span>${isOwner?`<a class="member-host-link" href="#/owner">${icon('plus')} My boats</a>`:''}<a class="member-mini-avatar" href="#/account" aria-label="My profile">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="">`:initials}</a></nav></header><main class="member-shell"><aside class="member-sidebar"><div class="member-side-label">MY ACCOUNT</div><a href="#/account" class="member-identity">${avatarUrl?`<img class="member-avatar" src="${esc(avatarUrl)}" alt="Your profile photo">`:`<div class="member-avatar member-avatar-empty" aria-hidden="true">${initials}</div>`}<span><strong>${memberName}</strong><small>${isOwner?'Boat owner':'Traveller account'}</small></span>${icon('chevron')}</a><nav aria-label="Account navigation">${links.map(([href,label,symbol])=>`<a href="#${href}" ${path===href.split('?')[0]&&(href.includes('?')?params.get('view')==='requests':!params.get('view'))?'aria-current="page"':''}>${icon(symbol)}<span>${label}</span></a>`).join('')}</nav><div class="member-side-bottom"><a href="#/contact">${icon('headset')} Help & support</a><button type="button" data-live="logout">${icon('arrow')} Log out</button></div></aside><section class="member-main">${path==='/dashboard'||(path==='/owner'&&params.has('edit'))?'':`<div class="member-page-kicker">YOUR GET BY BOAT ACCOUNT</div><h1>${title}</h1>`}${body}</section></main>`;
+      return `<header class="member-header"><a class="member-brand" href="#/">${waveLogo()}<span>Get By Boat</span></a><nav aria-label="Top navigation"><span class="member-locale">EN · EUR</span>${isOwner?`<a class="member-host-link" href="#/owner">${icon('plus')} My boats</a>`:''}<a class="member-mini-avatar" href="#/account" aria-label="My profile">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="">`:initials}</a></nav></header><main class="member-shell"><aside class="member-sidebar"><div class="member-side-label">MY ACCOUNT</div><a href="#/account" class="member-identity">${avatarUrl?`<img class="member-avatar" src="${esc(avatarUrl)}" alt="Your profile photo">`:`<div class="member-avatar member-avatar-empty" aria-hidden="true">${initials}</div>`}<span><strong>${memberName}</strong><small>${superAdmin?'Super Admin':verificationStaff?'Staff account':isOwner?'Boat owner':'Traveller account'}</small></span>${icon('chevron')}</a><nav aria-label="Account navigation">${links.map(([href,label,symbol])=>`<a href="#${href}" ${path===href.split('?')[0]&&(href.includes('?')?params.get('view')==='requests':!params.get('view'))?'aria-current="page"':''}>${icon(symbol)}<span>${label}</span></a>`).join('')}</nav><div class="member-side-bottom"><a href="#/contact">${icon('headset')} Help & support</a><button type="button" data-live="logout">${icon('arrow')} Log out</button></div></aside><section class="member-main">${path==='/dashboard'||(path==='/owner'&&params.has('edit'))?'':`<div class="member-page-kicker">YOUR GET BY BOAT ACCOUNT</div><h1>${title}</h1>`}${body}</section></main>`;
     }
     if(path.startsWith('/listing/'))return `${header('boats')}<main class="shell live-page live-listing-page"><a class="listing-back" href="#/boats">← All boats</a><h1>${title}</h1>${body}</main>${footer()}`;
     if(path==='/boats')return `${header('boats')}<main class="shell live-page live-discovery-page"><h1>${title}</h1>${body}</main>${footer()}`;
@@ -224,9 +224,10 @@
         }
       }
     }
-    verificationRequest=null;verificationReview=null;ownerVerificationRequest=null;ownerVerificationReview=null;verificationStaff=false;
+    verificationRequest=null;verificationReview=null;ownerVerificationRequest=null;ownerVerificationReview=null;verificationStaff=false;superAdmin=false;
     if(session){
       verificationStaff=!!check(await client.rpc('is_verification_staff'));
+      superAdmin=!!check(await client.rpc('is_super_admin'));
       verificationRequest=check(await client.from('verification_requests').select('*').eq('user_id',session.user.id).maybeSingle());
       verificationReview=check(await client.from('verification_reviews').select('*').eq('user_id',session.user.id).maybeSingle());
       if(profile?.account_type==='owner'){
