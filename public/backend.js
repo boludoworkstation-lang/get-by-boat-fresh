@@ -32,7 +32,7 @@
   const profileLanguageSuggestions=()=>`<datalist id="profile-language-suggestions">${profileLanguageOptions.map(language=>`<option value="${esc(language)}"></option>`).join('')}</datalist>`;
   const profileLanguagesField=value=>{
     const selected=String(value||'').split(/[,;]+/).map(v=>v.trim()).filter(Boolean);
-    const summary=selected.length?selected.slice(0,2).join(', ')+(selected.length>2?' +'+(selected.length-2):''):'Choose your languages';
+    const summary=selected.length?selected.slice(0,4).join(', ')+(selected.length>4?' +'+(selected.length-4):''):'Choose your languages';
     return `<label class="profile-language-label">Languages spoken
       <div class="language-selector" data-profile-language-picker>
         <button type="button" class="language-selector-trigger" data-language-toggle aria-expanded="false">
@@ -1614,7 +1614,7 @@
   function refreshProfileLanguagePicker(picker){
     if(!picker)return;
     const selected=selectedProfileLanguages(picker),summary=picker.querySelector('[data-language-summary]'),count=picker.querySelector('[data-language-count]');
-    summary.textContent=selected.length?selected.slice(0,2).join(', ')+(selected.length>2?' +'+(selected.length-2):''):'Choose your languages';
+    summary.textContent=selected.length?selected.slice(0,4).join(', ')+(selected.length>4?' +'+(selected.length-4):''):'Choose your languages';
     if(count){count.hidden=!selected.length;count.textContent=selected.length+' selected';}
     const picked=picker.querySelector('[data-language-picked]');if(picked)picked.textContent=selected.length+' selected';
     const list=picker.querySelector('[data-profile-language-suggestions]'),search=picker.querySelector('.profile-language-search');
@@ -1644,7 +1644,7 @@
       event.preventDefault();
       const picker=choice.closest('[data-profile-language-picker]'),selected=selectedProfileLanguages(picker),name=choice.dataset.languageChoice;
       const next=selected.some(value=>value.toLowerCase()===name.toLowerCase())?selected.filter(value=>value.toLowerCase()!==name.toLowerCase()):[...selected,name];
-      picker.querySelector('input[name="languages"]').value=next.join(', ');refreshProfileLanguagePicker(picker);return;
+      picker.querySelector('input[name="languages"]').value=next.join(', ');const search=picker.querySelector('.profile-language-search');if(search)search.value='';refreshProfileLanguagePicker(picker);search?.focus();return;
     }
     const clear=event.target.closest?.('[data-language-clear]');
     if(clear){event.preventDefault();const picker=clear.closest('[data-profile-language-picker]');picker.querySelector('input[name="languages"]').value='';refreshProfileLanguagePicker(picker);return;}
