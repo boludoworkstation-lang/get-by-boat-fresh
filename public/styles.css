@@ -2077,3 +2077,18 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 #boat-description>p.fleet-photo-upload-hint{margin:10px 0 0;font-size:12px;text-align:center;color:#81969e}
 @media(max-width:760px){#boat-description .fleet-photo-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important}#boat-description .fleet-photo-card>img{height:135px}#boat-description .fleet-photo-actions{padding:8px;gap:5px}#boat-description .fleet-photo-remove{padding-left:5px}#boat-description .fleet-drag-handle{font-size:11px}#boat-description>label.fleet-photo-upload{min-height:140px}}
 @media(max-width:420px){#boat-description .fleet-photo-gallery{grid-template-columns:1fr!important}#boat-description .fleet-photo-card>img{height:220px}#boat-description .fleet-drag-handle{width:auto}#boat-description>label.fleet-photo-upload{padding:19px!important}}
+
+/* Whole-photo drag handle and lighter photo cards */
+#boat-description .fleet-photo-gallery{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))!important;gap:15px!important}
+#boat-description .fleet-photo-card{border-radius:17px;border:1px solid #e1e9eb;background:#fff;box-shadow:0 4px 16px rgba(14,54,69,.055);cursor:grab;user-select:none;-webkit-user-select:none}
+#boat-description .fleet-photo-card:active{cursor:grabbing}
+#boat-description .fleet-photo-card>img{display:block;width:100%;height:185px;object-fit:cover;pointer-events:none;-webkit-user-drag:none;user-select:none}
+#boat-description .fleet-photo-card .fleet-photo-position{pointer-events:none;box-shadow:none;letter-spacing:.015em}
+#boat-description .fleet-photo-card:hover{box-shadow:0 10px 28px rgba(14,54,69,.12);border-color:#7fc6d3}
+#boat-description .fleet-photo-card.is-dragging{opacity:.5;outline:2px dashed #00a0b7;outline-offset:3px;box-shadow:none}
+#boat-description .fleet-photo-actions{border-top:1px solid #edf2f4;min-height:50px;padding:8px 10px;gap:6px}
+#boat-description .fleet-drag-handle{font-weight:650;font-size:11px;color:#8299a0;letter-spacing:0}
+#boat-description .fleet-photo-move{width:30px;height:30px;border-radius:9px;background:#f0f7f9;font-size:21px}
+#boat-description .fleet-photo-remove{font-size:11px;font-weight:650;padding-left:8px}
+@media(max-width:700px){#boat-description .fleet-photo-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}#boat-description .fleet-photo-card>img{height:130px}#boat-description .fleet-photo-actions{min-height:43px;flex-wrap:wrap}#boat-description .fleet-drag-handle{width:100%;font-size:10px}#boat-description .fleet-photo-move{width:29px;height:29px}}
+@media(max-width:420px){#boat-description .fleet-photo-gallery{grid-template-columns:1fr!important}#boat-description .fleet-photo-card>img{height:220px}#boat-description .fleet-drag-handle{width:auto}}
