@@ -1399,3 +1399,9 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-cal-foot{border-top:1px solid #edf2f3;margin-top:13px;padding-top:13px}
 .rental-cal-foot button{border:0;background:transparent;color:#008fa9;font-size:12px;font-weight:700;cursor:pointer;padding:5px}
 .rental-cal-head button:focus-visible,.rental-cal-day:focus-visible,.rental-cal-foot button:focus-visible,.rental-date-trigger:focus-visible{outline:2px solid #00a6bf;outline-offset:2px}
+
+/* Reuse the rental calendar on the homepage search. */
+.search-field.home-date-field .rental-date-trigger{height:27px;width:100%;padding:0;min-width:0;font:500 12px var(--sans);color:#516d76;white-space:nowrap}
+.search-field.home-date-field .rental-date-trigger svg{width:15px;height:15px;flex:none}
+.search-field.home-date-field .rental-date-trigger:hover{color:#009fbc}
+@media(max-width:700px){.search-field.home-date-field .rental-date-trigger{font-size:12px}}
