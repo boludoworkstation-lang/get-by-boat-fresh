@@ -440,7 +440,7 @@
   const equipmentCategories=[
     ['Outdoor equipment',[['bimini','Bimini'],['outdoor_shower','Outdoor shower'],['outdoor_table','External table'],['outdoor_speakers','External speakers'],['teak_deck','Teak deck'],['bow_sundeck','Bow sundeck'],['aft_sundeck','Aft sundeck'],['swim_platform','Bathing platform'],['swim_ladder','Bathing ladder']]],
     ['Extra comforts',[['air_conditioning','Air conditioning'],['heating','Heating'],['electric_toilet','Toilet'],['bed_linen','Bed linen'],['bath_towels','Bath towels'],['wifi','Wi-Fi'],['usb','USB socket'],['tv','TV']]],
-    ['Navigation equipment',[['dinghy','Dinghy'],['bow_thruster','Bow thruster'],['electric_windlass','Electric windlass'],['autopilot','Autopilot'],['gps','GPS'],['depth_sounder','Depth sounder'],['vhf','VHF'],['satellite_phone','Satellite phone'],['guides_maps','Map']]],
+    ['Navigation',[['dinghy','Dinghy'],['bow_thruster','Bow thruster'],['electric_windlass','Electric windlass'],['autopilot','Autopilot'],['gps','GPS'],['depth_sounder','Depth sounder'],['vhf','VHF'],['satellite_phone','Satellite phone'],['guides_maps','Map']]],
     ['Kitchen',[['fridge','Fridge'],['freezer','Freezer'],['oven','Oven/stovetop'],['bbq','BBQ grill'],['microwave','Microwave'],['coffee_machine','Coffee machine'],['ice_machine','Ice machine'],['ice_box','Ice box']]],
     ['Leisure activities',[['paddleboard','Paddle board'],['kayak','Kayak'],['snorkel','Snorkelling equipment'],['fishing','Fishing equipment'],['diving','Diving equipment'],['seabob','Seabob']]],
     ['Onboard energy',[['generator','Generator'],['power_220v','220V power outlet']]],
