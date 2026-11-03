@@ -2370,3 +2370,70 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
   .message-workspace .booking-compose-actions .btn { min-height: 46px; }
 }
 
+
+
+/* Subtle Get By Boat branding on listing photographs (60% opacity). */
+.rental-card-photo:has(img.live-photo),
+.fleet-card-photo:has(img.live-photo),
+.listing-cover:has(img),
+.fleet-photo-card:has(img),
+button[data-gallery-select]:has(img),
+.live-card:has(> img.live-photo),
+.gbb-watermark-lightbox {
+  position: relative;
+}
+.rental-card-photo:has(img.live-photo)::after,
+.fleet-card-photo:has(img.live-photo)::after,
+.listing-cover:has(img)::after,
+.fleet-photo-card:has(img)::after,
+button[data-gallery-select]:has(img)::after,
+.live-card:has(> img.live-photo)::after,
+.gbb-watermark-lightbox::after {
+  content: "GET BY BOAT";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  padding: 5px 8px;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 5px;
+  background: rgba(10,49,62,.48);
+  color: #fff;
+  font: 700 10px/1.2 Arial, sans-serif;
+  letter-spacing: .09em;
+  opacity: .6;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+button[data-gallery-select]:has(img)::after {
+  top: 5px;
+  right: 5px;
+  padding: 3px 4px;
+  font-size: 6px;
+  border-radius: 3px;
+}
+.gbb-watermark-lightbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 85vh;
+}
+.gbb-watermark-lightbox img {
+  display: block;
+  max-width: 100%;
+  max-height: 85vh;
+}
+@media (max-width:600px) {
+  .rental-card-photo:has(img.live-photo)::after,
+  .fleet-card-photo:has(img.live-photo)::after,
+  .listing-cover:has(img)::after,
+  .fleet-photo-card:has(img)::after,
+  .gbb-watermark-lightbox::after {
+    top: 8px;
+    right: 8px;
+    padding: 4px 6px;
+    font-size: 8px;
+  }
+}
