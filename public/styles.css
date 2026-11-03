@@ -2265,3 +2265,17 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
   text-decoration:underline;text-decoration-thickness:1.5px;
   text-underline-offset:3px;text-decoration-color:#4b9eae;
 }
+
+
+/* Improve listing-card legibility without altering the boat name heading. */
+.rental-card .rental-card-location { font-size: 13px; line-height: 1.45; }
+.rental-card .rental-card-location .icon { width: 15px; height: 15px; }
+.rental-card .rental-card-badge { font-size: 12px; line-height: 1.3; padding: 6px 9px; }
+.rental-card .rental-card-badge .icon { width: 14px; height: 14px; }
+.rental-card .rental-card-specs { font-size: 13px; line-height: 1.6; }
+.rental-card .rental-card-facts { font-size: 13px; line-height: 1.5; }
+.rental-card .rental-card-options { font-size: 13px; line-height: 1.5; }
+.rental-card .rental-card-bottom { font-size: 12px; line-height: 1.5; }
+.rental-card .rental-card-bottom strong { font-size: 19px; }
+.rental-card .rental-view-link { font-size: 12px; }
+.rental-card .rental-view-link .icon { width: 14px; height: 14px; }
