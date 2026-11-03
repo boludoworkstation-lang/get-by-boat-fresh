@@ -2372,7 +2372,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 
 
-/* Subtle Get By Boat branding on listing photographs (60% opacity). */
+/* Get By Boat wave-only watermark: small, upper left, 60% opacity. */
 .rental-card-photo:has(img.live-photo),
 .fleet-card-photo:has(img.live-photo),
 .listing-cover:has(img),
@@ -2389,29 +2389,24 @@ button[data-gallery-select]:has(img),
 button[data-gallery-select]:has(img)::after,
 .live-card:has(> img.live-photo)::after,
 .gbb-watermark-lightbox::after {
-  content: "GET BY BOAT";
+  content: "";
   position: absolute;
   top: 12px;
-  right: 12px;
+  left: 12px;
+  right: auto;
   z-index: 3;
-  padding: 5px 8px;
-  border: 1px solid rgba(255,255,255,.55);
-  border-radius: 5px;
-  background: rgba(10,49,62,.48);
-  color: #fff;
-  font: 700 10px/1.2 Arial, sans-serif;
-  letter-spacing: .09em;
+  width: 38px;
+  height: 29px;
+  background: url("/assets/boat-photo-watermark.svg") center / contain no-repeat;
   opacity: .6;
   pointer-events: none;
   user-select: none;
-  white-space: nowrap;
 }
 button[data-gallery-select]:has(img)::after {
-  top: 5px;
-  right: 5px;
-  padding: 3px 4px;
-  font-size: 6px;
-  border-radius: 3px;
+  top: 4px;
+  left: 4px;
+  width: 19px;
+  height: 15px;
 }
 .gbb-watermark-lightbox {
   display: inline-flex;
@@ -2432,8 +2427,8 @@ button[data-gallery-select]:has(img)::after {
   .fleet-photo-card:has(img)::after,
   .gbb-watermark-lightbox::after {
     top: 8px;
-    right: 8px;
-    padding: 4px 6px;
-    font-size: 8px;
+    left: 8px;
+    width: 30px;
+    height: 23px;
   }
 }
