@@ -916,20 +916,13 @@
   }
   function customerBookings(rows,reviews=[]){
     if(!rows.length)return '<div class="booking-empty"><h3>No bookings yet</h3><p>Explore boats and send your first booking request.</p><a class="btn live-secondary" href="#/boats">Explore boats</a></div>';
-    return '<div class="customer-bookings-list">'+rows.map(r=>{
+    return '<div class="booking-list-table"><div class="booking-list-columns" aria-hidden="true"><span>BOAT / STATUS</span><span>RENTAL DATES</span><span>DETAILS</span><span>TOTAL PRICE</span><span></span></div>'+rows.map(r=>{
       const review=ownerReviewForm(r,reviews.find(item=>item.booking_id===r.id));
       const badge=['awaiting_payment','confirmed'].includes(r.status)?'is-approved':r.status==='declined'?'is-declined':'';
-      const dates=esc(euroRange(r.start_date,r.end_date));
       const checkIn=esc(boatClock(r.boats?.check_in_time,'09:00'));
       const checkOut=esc(boatClock(r.boats?.check_out_time,'18:00'));
-      const skipperNote=r.with_skipper&&Number(r.skipper_fee_total)>0?'Skipper fee '+money(r.skipper_fee_total)+' included in total':r.with_skipper?'Skipper included in boat price':'Self-drive';
-      return `<article class="customer-booking-card">
-        <div class="customer-booking-heading"><div><span class="customer-booking-eyebrow">BOAT RESERVATION</span><h3>${esc(r.boats?.name||'Boat reservation')}</h3></div><span class="live-status ${badge}">${esc(status(r.status))}</span></div>
-        <div class="customer-booking-details"><div class="customer-booking-detail"><span>${icon('calendar')} RENTAL DATES</span><strong>${dates}</strong></div><div class="customer-booking-detail"><span>${icon('clock')} CHECK-IN / CHECK-OUT</span><strong>${checkIn} – ${checkOut}</strong></div><div class="customer-booking-detail"><span>${icon('user')} PASSENGERS</span><strong>${Number(r.guests)||1}</strong></div><div class="customer-booking-detail"><span>${icon('ship')} RENTAL OPTION</span><strong>${r.with_skipper?'With skipper':'Without skipper'}</strong></div></div>
-        <div class="customer-booking-bottom"><div class="customer-booking-price"><span>TOTAL BOAT PRICE</span><strong>${money(r.total)}</strong><small>${skipperNote}</small></div><div class="customer-booking-actions"><a class="btn live-secondary" href="#/messages?booking=${esc(r.id)}">${icon('message')} Message owner</a>${['pending_owner','awaiting_payment'].includes(r.status)?btn('Cancel request','cancel',r.id):''}</div></div>
-        ${r.status==='awaiting_payment'?'<p class="customer-booking-notice">Your dates are held. Online payment is not available yet. This is not a paid, confirmed booking.</p>':''}
-        <div class="customer-booking-id">Request ID: ${esc(r.id)}</div>${review}
-      </article>`;
+      const note=r.with_skipper&&Number(r.skipper_fee_total)>0?'Skipper included: '+money(r.skipper_fee_total):r.with_skipper?'Skipper included':'Self-drive';
+      return `<article class="booking-list-row"><div class="booking-list-main"><strong>${esc(r.boats?.name||'Boat reservation')}</strong><span class="live-status ${badge}">${esc(status(r.status))}</span></div><div class="booking-list-dates"><strong>${esc(euroRange(r.start_date,r.end_date))}</strong><small>${checkIn} check-in · ${checkOut} check-out</small></div><div class="booking-list-rental"><strong>${r.with_skipper?'With skipper':'Without skipper'}</strong><small>${esc(r.guests)} ${Number(r.guests)===1?'passenger':'passengers'}</small></div><div class="booking-list-total"><strong>${money(r.total)}</strong><small>${note}</small></div><div class="booking-list-actions"><a class="btn live-secondary" href="#/messages?booking=${esc(r.id)}" title="Message owner">${icon('message')} <span>Message</span></a>${['pending_owner','awaiting_payment'].includes(r.status)?btn('Cancel','cancel',r.id):''}</div>${r.status==='awaiting_payment'?'<p class="booking-list-alert">Your dates are held, but payment is not connected. This is not yet a paid, confirmed booking.</p>':''}<div class="booking-list-reference">Request ${esc(r.id)}</div>${review}</article>`;
     }).join('')+'</div>';
   }
   function requests(rows,owner=false,reviews=[]){return rows.length?rows.map(r=>{
