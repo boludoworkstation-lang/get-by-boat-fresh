@@ -216,7 +216,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  e.events.pointerdown[0]({target:selectedDays[1],pointerType:'mouse',button:0,preventDefault(){}});e.events.pointerup[0]();
  assert.equal(inputs.start_date.value,'2027-07-11');assert.equal(inputs.end_date.value,'2027-07-11');
  const nextMonth={dataset:{calendarMonth:'2027-08'},closest(sel){return sel==='[data-calendar-month]'?this:null}};
- e.events.click[2]({target:nextMonth,preventDefault(){}});
+ e.events.click.find(fn=>String(fn).includes("const month=event.target.closest?.('[data-calendar-month]')"))({target:nextMonth,preventDefault(){}});
  assert.match(calendarPanel.innerHTML,/August 2027/);
  assert.match(e.ctx.location.hash,/month=2027-08/);assert.equal(inputs.start_date.value,'2027-07-11');
  // Google supplies a full name: a customer profile is created without an extra form.
