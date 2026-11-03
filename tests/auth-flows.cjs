@@ -137,7 +137,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  let verifiedOwner=await environment({hash:'#/owner?edit=new',user:{id:'new-owner'},profile:{display_name:'Maja Perić',account_type:'owner'},ownerRequest:pendingOwnerRequest,ownerReview:reviewer.state.ownerReview});
  html=await verifiedOwner.route('#/owner');assert.doesNotMatch(html,/fleet-owner-commission|Get By Boat commission: 7%|Your price is your payout/);
  html=await verifiedOwner.route('#/owner?edit=new');assert.match(html,/name="published" value="on"/);assert.match(html,/>Publish<\/button>/);
- assert.match(html,/Maximum Passengers/);assert.match(html,/Your payout per day/);assert.match(html,/data-guest-price-preview/);
+ assert.match(html,/name="type"/);assert.match(html,/Your payout per day/);assert.match(html,/data-guest-price-preview/);
  assert.match(html,/class="fleet-equipment-browser"/);
  assert.match(html,/class="fleet-equipment-option"><svg class="listing-amenity-icon"/);
  assert.match(html,/Guest price: <strong>/);assert.doesNotMatch(html,/The €0\.25 fixed processing allowance applies once per booking/);
