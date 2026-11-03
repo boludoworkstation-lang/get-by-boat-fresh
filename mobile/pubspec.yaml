@@ -1,15 +1,16 @@
 name: get_by_boat
-description: Get By Boat mobile marketplace for Android and iOS.
+description: Get By Boat — iOS and Android boat rental marketplace.
 publish_to: none
-version: 0.1.0+1
+version: 0.2.0+2
 
 environment:
-  sdk: ">=3.4.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   supabase_flutter: 2.18.3
+  url_launcher: 6.3.2
 
 dev_dependencies:
   flutter_test:
