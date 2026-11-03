@@ -9,7 +9,7 @@ const mist = Color(0xFFF2F8FA);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(url: supabaseUrl, anonKey: supabasePublishableKey);
+  await Supabase.initialize(url: supabaseUrl, publishableKey: supabasePublishableKey);
   runApp(const GetByBoatApp());
 }
 
