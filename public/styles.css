@@ -2290,3 +2290,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .rental-card .rental-card-bottom { font-size: 14px; }
 .rental-card .rental-card-bottom strong { font-size: 20px; }
 .rental-card .rental-view-link { font-size: 14px; }
+
+/* Booking status badges: accepted/confirmed in green, declined in red. */
+.live-status.is-approved{background:#e2f5e9;color:#197645;border:1px solid #b9e7c9;font-weight:700}
+.live-status.is-declined{background:#fff0f0;color:#b44949;border:1px solid #f1caca;font-weight:700}
