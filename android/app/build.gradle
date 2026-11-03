@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application'
+}
+
+def releaseStore = System.getenv('ANDROID_KEYSTORE_PATH')
+def releaseStorePass = System.getenv('ANDROID_KEYSTORE_PASSWORD')
+def releaseAlias = System.getenv('ANDROID_KEY_ALIAS')
+def releaseKeyPass = System.getenv('ANDROID_KEY_PASSWORD')
+def signingReady = [releaseStore, releaseStorePass, releaseAlias, releaseKeyPass].every { it != null && it.trim() }
+
+android {
+    namespace 'net.getbyboat.app'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'net.getbyboat.app'
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        release {
+            if (signingReady) {
+                storeFile file(releaseStore)
+                storePassword releaseStorePass
+                keyAlias releaseAlias
+                keyPassword releaseKeyPass
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (signingReady) signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+}
