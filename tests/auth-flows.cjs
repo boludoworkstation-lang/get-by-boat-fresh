@@ -277,7 +277,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(e.feedback.textContent,/does not offer/);assert.equal(e.state.writes.filter(x=>x.table==='bookings').length,0);
  // Owners must select at least one option, and both values are saved to the listing.
  e=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'}});
- html=await e.route('#/owner?edit=boat-1');assert.match(html,/Choose your rental options/);
+ html=await e.route('#/owner?edit=boat-1');assert.match(html,/Skipper availability/);
  assert.match(html,/Skipper price per day/);
  await e.submit('boat',{name:'Boat',country:'Croatia',location:'Split',type:'Motorboat',price:'800',guests:'6',cabins:'1',description:'',photo:null});
  assert.match(e.feedback.textContent,/at least one rental option/);assert.equal(e.state.writes.filter(x=>x.table==='boats').length,0);
