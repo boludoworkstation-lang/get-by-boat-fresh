@@ -27,6 +27,9 @@ jobs:
       - name: Resolve packages
         working-directory: mobile
         run: flutter pub get
+      - name: Generate branded app icon
+        working-directory: mobile
+        run: python3 tool/generate_ios_icon.py
       - name: Analyze Dart code
         working-directory: mobile
         run: flutter analyze --no-fatal-infos
