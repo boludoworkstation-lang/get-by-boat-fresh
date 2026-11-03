@@ -1289,11 +1289,33 @@ const PAGE_SIZE=12;
     return page('My Boats',ownerFleet(boats,rows,['published','drafts'].includes(params.get('filter'))?params.get('filter'):'all',params.get('layout')||'grid'));
   }
   const routes=p=>['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/messages'].includes(p)||p.startsWith('/listing/');
-  let rentalPageJump=false;
-  document.addEventListener('click',e=>{if(e.target.closest?.('a[data-rental-page]'))rentalPageJump=true;});
+const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('page');q.sort();return q.toString();};
+  let lastBoatsKey=null,lastBoatsPage=null;
+  function refreshPagedBoatCards(results,token,pageNumber){
+    results.setAttribute('aria-busy','true');
+    route().then(html=>{
+      if(token!==epoch||!results.isConnected||parseRoute().path!=='/boats')return;
+      const container=document.createElement('div');container.innerHTML=html||'';
+      const fresh=container.querySelector('.rental-results');
+      if(!fresh)throw Error('Could not refresh boat results.');
+      results.innerHTML=fresh.innerHTML;
+      lastBoatsPage=pageNumber;
+      results.querySelector('.rental-results-bar')?.scrollIntoView({block:'start',behavior:'instant'});
+    }).catch(error=>{
+      if(token===epoch&&results.isConnected){
+        console.warn('Pagination update failed',error);
+        toast('Could not load that page. Please try again.');
+      }
+    }).finally(()=>{
+      if(token===epoch&&results.isConnected)results.removeAttribute('aria-busy');
+    });
+  }
   window.liveRender=()=>{
     if(!authReady){app.innerHTML=accountLoading;return true;}
-    const {path,params}=parseRoute();const token=++epoch;if(path!=='/boats')rentalPageJump=false;
+    const {path,params}=parseRoute();const token=++epoch;
+    const pageNumber=params.get('page')||'1';
+    const currentResults=path==='/boats'?app.querySelector('.rental-results'):null;
+    if(currentResults&&lastBoatsKey===boatsResultsKey(params)&&lastBoatsPage!==pageNumber){refreshPagedBoatCards(currentResults,token,pageNumber);return true;}
     if(path==='/login'){authNext=safeNext(params.get('next')||(params.get('owner')==='1'||new URLSearchParams(location.search).get('owner')==='1'?'#/owner':'#/dashboard'))}
     else if(path==='/owner')authNext='#/owner';
     else if(path==='/staff')authNext='#/staff';
@@ -1312,7 +1334,7 @@ const PAGE_SIZE=12;
     if(ownerPickupMap){ownerPickupMap.map.remove();ownerPickupMap=null;}
     if(publicPickupMap){publicPickupMap.remove();publicPickupMap=null;}
     app.innerHTML=showProfile?profileDialog(authNext):showAuth?loginPage():accountLoading;focusAuth();
-    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),restoredOwnerBoatStep());initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}if(rentalPageJump){rentalPageJump=false;app.querySelector('.rental-results-bar')?.scrollIntoView({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
+    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),restoredOwnerBoatStep());initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}if(path==='/boats'){lastBoatsKey=boatsResultsKey(params);lastBoatsPage=pageNumber;}else{lastBoatsKey=null;lastBoatsPage=null;}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
   };
   function syncBookingSkipperOption(form){
     const checkbox=form?.querySelector('[data-needs-skipper]');
@@ -1494,6 +1516,7 @@ const PAGE_SIZE=12;
         const fresh=container.querySelector('.rental-results');
         if(!fresh)throw Error('Could not refresh boat results.');
         results.innerHTML=fresh.innerHTML;
+        lastBoatsKey=boatsResultsKey(q);lastBoatsPage='1';
       }finally{
         if(requestId===searchRefreshId&&f.isConnected)results.removeAttribute('aria-busy');
       }
