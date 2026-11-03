@@ -916,25 +916,19 @@
   }
   function customerBookings(rows,reviews=[]){
     if(!rows.length)return '<div class="booking-empty"><h3>No bookings yet</h3><p>Explore boats and send your first booking request.</p><a class="btn live-secondary" href="#/boats">Explore boats</a></div>';
-    return '<div class="customer-reservation-stack">'+rows.map(r=>{
+    return '<div class="customer-bookings-list">'+rows.map(r=>{
       const review=ownerReviewForm(r,reviews.find(item=>item.booking_id===r.id));
       const badge=['awaiting_payment','confirmed'].includes(r.status)?'is-approved':r.status==='declined'?'is-declined':'';
-      const rowState=['awaiting_payment','confirmed'].includes(r.status)?'is-approved':r.status==='declined'?'is-declined':'';
-      const boatName=esc(r.boats?.name||'Boat reservation');
-      const nameInitial=(r.boats?.name||'B').trim().charAt(0).toUpperCase();
+      const dates=esc(euroRange(r.start_date,r.end_date));
       const checkIn=esc(boatClock(r.boats?.check_in_time,'09:00'));
       const checkOut=esc(boatClock(r.boats?.check_out_time,'18:00'));
-      return `<article class="customer-reservation ${rowState}">
-        <div class="customer-reservation-identity"><div class="customer-reservation-avatar" aria-hidden="true">${esc(nameInitial)}</div><div class="customer-reservation-boat"><span class="customer-reservation-eyebrow">BOOKING REQUEST</span><a href="#/listing/${esc(r.boat_id)}">${boatName}</a><span class="live-status ${badge}">${esc(status(r.status))}</span></div></div>
-        <div class="customer-reservation-facts">
-          <div><span>${icon('calendar')} RENTAL DATES</span><strong>${esc(euroRange(r.start_date,r.end_date))}</strong></div>
-          <div><span>${icon('clock')} CHECK-IN / OUT</span><strong>${checkIn} – ${checkOut}</strong></div>
-          <div><span>${icon('user')} GUESTS</span><strong>${esc(r.guests)} ${Number(r.guests)===1?'person':'people'}</strong></div>
-          <div><span>${icon('ship')} RENTAL OPTION</span><strong>${r.with_skipper?'With skipper':'Without skipper'}</strong></div>
-        </div>
-        <div class="customer-reservation-side"><div class="customer-reservation-amount"><span>TOTAL PRICE</span><strong>${money(r.total)}</strong></div><a class="btn live-secondary customer-reservation-message" href="#/messages?booking=${esc(r.id)}">${icon('message')} Open conversation</a>${['pending_owner','awaiting_payment'].includes(r.status)?btn('Cancel request','cancel',r.id):''}</div>
-        ${r.status==='awaiting_payment'?'<div class="customer-reservation-note">Dates are held; payment is not connected. This is not yet a paid, confirmed booking.</div>':''}
-        ${review}
+      const skipperNote=r.with_skipper&&Number(r.skipper_fee_total)>0?'Skipper fee '+money(r.skipper_fee_total)+' included in total':r.with_skipper?'Skipper included in boat price':'Self-drive';
+      return `<article class="customer-booking-card">
+        <div class="customer-booking-heading"><div><span class="customer-booking-eyebrow">BOAT RESERVATION</span><h3>${esc(r.boats?.name||'Boat reservation')}</h3></div><span class="live-status ${badge}">${esc(status(r.status))}</span></div>
+        <div class="customer-booking-details"><div class="customer-booking-detail"><span>${icon('calendar')} RENTAL DATES</span><strong>${dates}</strong></div><div class="customer-booking-detail"><span>${icon('clock')} CHECK-IN / CHECK-OUT</span><strong>${checkIn} – ${checkOut}</strong></div><div class="customer-booking-detail"><span>${icon('user')} PASSENGERS</span><strong>${Number(r.guests)||1}</strong></div><div class="customer-booking-detail"><span>${icon('ship')} RENTAL OPTION</span><strong>${r.with_skipper?'With skipper':'Without skipper'}</strong></div></div>
+        <div class="customer-booking-bottom"><div class="customer-booking-price"><span>TOTAL BOAT PRICE</span><strong>${money(r.total)}</strong><small>${skipperNote}</small></div><div class="customer-booking-actions"><a class="btn live-secondary" href="#/messages?booking=${esc(r.id)}">${icon('message')} Message owner</a>${['pending_owner','awaiting_payment'].includes(r.status)?btn('Cancel request','cancel',r.id):''}</div></div>
+        ${r.status==='awaiting_payment'?'<p class="customer-booking-notice">Your dates are held. Online payment is not available yet. This is not a paid, confirmed booking.</p>':''}
+        <div class="customer-booking-id">Request ID: ${esc(r.id)}</div>${review}
       </article>`;
     }).join('')+'</div>';
   }
