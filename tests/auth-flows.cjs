@@ -24,7 +24,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  client.from=table=>{
    if(!['owner_verification_requests','owner_verification_reviews'].includes(table))return originalFrom(table);
    const ownerRow=()=>table==='owner_verification_requests'?state.ownerRequest:state.ownerReview;
-   const q={select(){return q},eq(){return q},in(){return q},order(){return q},limit(){return q},upsert(value){
+   const q={select(){return q},eq(){return q},neq(){return q},in(){return q},order(){return q},limit(){return q},update(value){state.writes.push({table,value});if(table==='owner_verification_requests')state.ownerRequest={...state.ownerRequest,...value};else state.ownerReview={...state.ownerReview,...value};return q},upsert(value){
      state.writes.push({table,value});
      if(table==='owner_verification_requests')state.ownerRequest={...state.ownerRequest,...value};
      else state.ownerReview={...value,reviewed_name:state.profile.display_name,reviewed_request:Object.fromEntries(Object.entries(state.ownerRequest).filter(([k])=>k!=='application_state'))};
