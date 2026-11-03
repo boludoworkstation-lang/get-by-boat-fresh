@@ -2202,3 +2202,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 /* Category names are text, not count badges; prevent the generic span badge rule styling them. */
 .fleet-equipment-tab span.fleet-equipment-tab-name:not(:empty){display:block!important;flex:1 1 auto;min-width:0;width:auto;height:auto;min-height:0;padding:0!important;margin:0;border:0;border-radius:0;background:transparent!important;color:inherit;font-size:12px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:visible;place-items:unset;text-align:left}
+
+/* Owner booking requests and unread-message notification counts. */
+.member-sidebar nav a .member-nav-count{display:inline-grid!important;place-items:center!important;flex:0 0 auto!important;min-width:21px;width:auto;height:21px;margin-left:auto;padding:0 6px;border-radius:999px;background:#d7f3f9;color:#007c98;font-size:11px!important;font-weight:800!important;line-height:1;text-align:center}
+.member-sidebar nav a[aria-current=page] .member-nav-count{background:#009bb7;color:#fff}

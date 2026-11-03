@@ -114,12 +114,32 @@
       const links=superAdmin?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/reservations','Reservations','calendar'],['/staff','Staff verification','shield']]:verificationStaff?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/staff','Staff verification','shield']]:[['/dashboard','Overview','dashboard'],['/account','My profile','user'],...(isOwner?[['/owner','My boats','ship'],['/owner?view=requests','Booking requests','mail']]:[['/bookings','My bookings','calendar'],['/favourites','Saved boats','heart']]),['/messages','Messages','message']];
       const memberName=esc(profile?.display_name||'Traveller');
       const initials=esc((profile?.display_name||'G').slice(0,1).toUpperCase());
-      return `<header class="member-header"><a class="member-brand" href="#/">${waveLogo()}<span>Get By Boat</span></a><nav aria-label="Top navigation"><span class="member-locale">EN · EUR</span>${isOwner?`<a class="member-host-link" href="#/owner">${icon('plus')} My boats</a>`:''}<a class="member-mini-avatar" href="#/account" aria-label="My profile">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="">`:initials}</a></nav></header><main class="member-shell"><aside class="member-sidebar"><div class="member-side-label">MY ACCOUNT</div><a href="#/account" class="member-identity">${avatarUrl?`<img class="member-avatar" src="${esc(avatarUrl)}" alt="Your profile photo">`:`<div class="member-avatar member-avatar-empty" aria-hidden="true">${initials}</div>`}<span><strong>${memberName}</strong><small>${superAdmin?'Super Admin':verificationStaff?'Staff account':isOwner?'Boat owner':'Traveller account'}</small></span>${icon('chevron')}</a><nav aria-label="Account navigation">${links.map(([href,label,symbol])=>`<a href="#${href}" ${path===href.split('?')[0]&&(href.includes('?')?params.get('view')==='requests':!params.get('view'))?'aria-current="page"':''}>${icon(symbol)}<span>${label}</span></a>`).join('')}</nav><div class="member-side-bottom"><a href="#/contact">${icon('headset')} Help & support</a><button type="button" data-live="logout">${icon('arrow')} Log out</button></div></aside><section class="member-main">${path==='/dashboard'||(path==='/owner'&&params.has('edit'))?'':`<div class="member-page-kicker">YOUR GET BY BOAT ACCOUNT</div><h1>${title}</h1>`}${body}</section></main>`;
+      return `<header class="member-header"><a class="member-brand" href="#/">${waveLogo()}<span>Get By Boat</span></a><nav aria-label="Top navigation"><span class="member-locale">EN · EUR</span>${isOwner?`<a class="member-host-link" href="#/owner">${icon('plus')} My boats</a>`:''}<a class="member-mini-avatar" href="#/account" aria-label="My profile">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="">`:initials}</a></nav></header><main class="member-shell"><aside class="member-sidebar"><div class="member-side-label">MY ACCOUNT</div><a href="#/account" class="member-identity">${avatarUrl?`<img class="member-avatar" src="${esc(avatarUrl)}" alt="Your profile photo">`:`<div class="member-avatar member-avatar-empty" aria-hidden="true">${initials}</div>`}<span><strong>${memberName}</strong><small>${superAdmin?'Super Admin':verificationStaff?'Staff account':isOwner?'Boat owner':'Traveller account'}</small></span>${icon('chevron')}</a><nav aria-label="Account navigation">${links.map(([href,label,symbol])=>`<a href="#${href}" ${path===href.split('?')[0]&&(href.includes('?')?params.get('view')==='requests':!params.get('view'))?'aria-current="page"':''} ${label==='Booking requests'?'data-sidebar-notification="requests"':label==='Messages'?'data-sidebar-notification="messages"':''}>${icon(symbol)}<span>${label}</span>${label==='Booking requests'?sidebarBadge(sidebarNotifications.requests):label==='Messages'?sidebarBadge(sidebarNotifications.messages):''}</a>`).join('')}</nav><div class="member-side-bottom"><a href="#/contact">${icon('headset')} Help & support</a><button type="button" data-live="logout">${icon('arrow')} Log out</button></div></aside><section class="member-main">${path==='/dashboard'||(path==='/owner'&&params.has('edit'))?'':`<div class="member-page-kicker">YOUR GET BY BOAT ACCOUNT</div><h1>${title}</h1>`}${body}</section></main>`;
     }
     if(path.startsWith('/listing/'))return `${header('boats')}<main class="shell live-page live-listing-page"><a class="listing-back" href="#/boats">← All boats</a><h1>${title}</h1>${body}</main>${footer()}`;
     if(path==='/boats')return `${header('boats')}<main class="shell live-page live-discovery-page"><h1>${title}</h1>${body}</main>${footer()}`;
     return `${header()}<main class="shell live-page">${nav()}<h1>${title}</h1>${body}</main>${footer()}`;
   };
+  const sidebarNotifications={requests:0,messages:0};
+  const sidebarBadge=count=>count>0?`<span class="member-nav-count" aria-label="${count} unread">${count>99?'99+':count}</span>`:'';
+  const updateSidebarNotificationBadges=()=>{
+    document.querySelectorAll('[data-sidebar-notification]').forEach(link=>{
+      const count=sidebarNotifications[link.dataset.sidebarNotification]||0;
+      link.querySelector('.member-nav-count')?.remove();
+      if(count)link.insertAdjacentHTML('beforeend',sidebarBadge(count));
+    });
+  };
+  async function refreshSidebarNotifications(){
+    if(!client||!session?.user||!profile||superAdmin||verificationStaff)return;
+    const owner=profile.account_type==='owner';
+    const requests=owner?client.from('bookings').select('id',{count:'exact',head:true}).eq('status','pending_owner'):Promise.resolve({count:0,error:null});
+    const messages=client.from('booking_messages').select('id',{count:'exact',head:true}).neq('sender_id',session.user.id).is('read_at',null);
+    const [a,b]=await Promise.all([requests,messages]);
+    if(a.error||b.error)throw a.error||b.error;
+    sidebarNotifications.requests=a.count||0;
+    sidebarNotifications.messages=b.count||0;
+    updateSidebarNotificationBadges();
+  }
   const errorText=e=>esc(e?.message||'Something went wrong. Please try again.');
   const status=s=>({pending_owner:'Waiting for owner',awaiting_payment:'Accepted · payment not connected',confirmed:'Confirmed',cancelled:'Cancelled',declined:'Declined'}[s]||s);
   const check=({data,error})=>{if(error)throw error;return data};
@@ -1026,6 +1046,9 @@
     if(path==='/login'&&session&&!recovery){location.hash=afterLogin();return !profile?profileDialog(authNext):page('Welcome back.','<p>Opening your account…</p>')}
     if(path==='/login')return loginPage();
     if(path==='/owner'&&!session)return loginPage();
+    if(session&&profile&&['/dashboard','/owner','/account','/bookings','/favourites','/messages'].includes(path)&&!superAdmin&&!verificationStaff){
+      try{await refreshSidebarNotifications()}catch(error){console.warn('Notification counts unavailable',error?.message||error)}
+    }
     if(path==='/boats') {
       const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));
       const rawSearch=(params.get('location')||params.get('country')||'').trim();
@@ -2253,6 +2276,11 @@ document.addEventListener('click',async event=>{
     // Static sample boats cannot create real requests or paid confirmations.
   document.addEventListener('submit',e=>{if(['reserve-form','checkout-form'].includes(e.target.id)){e.preventDefault();e.stopImmediatePropagation();modal('Example boat','This is an example listing. Explore the live boat catalogue to send a real booking request.');}},true);
   async function boot(){try{client=await authClient();client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});await current();if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}authReady=true;render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
+  setInterval(()=>{
+    const active=parseRoute().path;
+    if(!session||!['/dashboard','/owner','/account','/bookings','/favourites','/messages'].includes(active))return;
+    refreshSidebarNotifications().catch(()=>{});
+  },20000);
   // Wait for the persisted auth session before showing protected screens.
   // This avoids a login/home flash during a normal authenticated refresh.
   app.innerHTML=accountLoading;
