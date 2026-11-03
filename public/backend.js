@@ -1314,7 +1314,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
     if(!authReady){app.innerHTML=accountLoading;return true;}
     const {path,params}=parseRoute();const token=++epoch;
     const pageNumber=params.get('page')||'1';
-    const currentResults=path==='/boats'?app.querySelector('.rental-results'):null;
+    const currentResults=path==='/boats'?app.querySelector?.('.rental-results'):null;
     if(currentResults&&lastBoatsKey===boatsResultsKey(params)&&lastBoatsPage!==pageNumber){refreshPagedBoatCards(currentResults,token,pageNumber);return true;}
     if(path==='/login'){authNext=safeNext(params.get('next')||(params.get('owner')==='1'||new URLSearchParams(location.search).get('owner')==='1'?'#/owner':'#/dashboard'))}
     else if(path==='/owner')authNext='#/owner';
