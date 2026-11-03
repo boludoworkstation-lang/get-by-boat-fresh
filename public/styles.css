@@ -2206,3 +2206,17 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 /* Owner booking requests and unread-message notification counts. */
 .member-sidebar nav a .member-nav-count{display:inline-grid!important;place-items:center!important;flex:0 0 auto!important;min-width:21px;width:auto;height:21px;margin-left:auto;padding:0 6px;border-radius:999px;background:#d7f3f9;color:#007c98;font-size:11px!important;font-weight:800!important;line-height:1;text-align:center}
 .member-sidebar nav a[aria-current=page] .member-nav-count{background:#009bb7;color:#fff}
+
+/* Booking requests: quiet success and declined color treatments. */
+.owner-request-card.is-accepted{border-color:#bde4cc;box-shadow:0 7px 22px rgba(34,139,85,.07)}
+.owner-request-card.is-accepted .owner-request-card-top{background:linear-gradient(110deg,#f4fbf6 0%,#fff 80%);border-top:3px solid #45a876;padding-top:17px}
+.owner-request-card.is-accepted .owner-request-guest-avatar{background:#e3f5e9;color:#207d49}
+.owner-request-card.is-accepted .owner-request-card-top .live-status{background:#e2f5e9;color:#197645;border:1px solid #b9e7c9;font-weight:750}
+.owner-request-card.is-accepted .owner-request-info{background:#f8fcf9}
+.owner-request-card.is-accepted .owner-request-price strong{color:#248656}
+.owner-request-card.is-declined{border-color:#f0c9c9;box-shadow:0 7px 22px rgba(183,73,73,.055)}
+.owner-request-card.is-declined .owner-request-card-top{background:linear-gradient(110deg,#fff6f6 0%,#fff 80%);border-top:3px solid #d87070;padding-top:17px}
+.owner-request-card.is-declined .owner-request-guest-avatar{background:#fce8e8;color:#b94e4e}
+.owner-request-card.is-declined .owner-request-card-top .live-status{background:#fff0f0;color:#b44949;border:1px solid #f1caca;font-weight:750}
+.owner-request-card.is-declined .owner-request-info{background:#fffbfb}
+.owner-request-card.is-declined .owner-request-price strong{color:#a85b5b}
