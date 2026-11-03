@@ -1,5 +1,6 @@
 /* Live marketplace. Authorization and prices are enforced by database policies/triggers. */
 (() => {
+  const accountLoading='<main role="status" aria-live="polite" style="min-height:100dvh;display:grid;place-items:center;background:#f7fbfc;color:#164453;font-family:inherit"><div style="display:flex;align-items:center;gap:12px;font-size:19px;font-weight:600"><span aria-hidden="true" style="width:19px;height:19px;border:2px solid #b6dce4;border-top-color:#009ab6;border-radius:50%;animation:gbb-loading-spin .85s linear infinite"></span>Get By Boat</div><style>@keyframes gbb-loading-spin{to{transform:rotate(360deg)}}</style></main>';
   let authReady=false;
   let client, session, profile, epoch=0, recovery=false, authStep='email', authEmail='', authBackground=null, returnRoute='#/', ownerIntent=new URLSearchParams(location.search).get('owner')==='1';
   let authNext='#/dashboard', avatarUrl='',verificationRequest=null,verificationReview=null,verificationStaff=false,superAdmin=false;
@@ -1168,7 +1169,7 @@
   }
   const routes=p=>['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/messages'].includes(p)||p.startsWith('/listing/');
   window.liveRender=()=>{
-    if(!authReady){app.innerHTML=page('Get By Boat','<p role="status">Loading your account…</p>');return true;}
+    if(!authReady){app.innerHTML=accountLoading;return true;}
     const {path,params}=parseRoute();const token=++epoch;
     if(path==='/login'){authNext=safeNext(params.get('next')||(params.get('owner')==='1'||new URLSearchParams(location.search).get('owner')==='1'?'#/owner':'#/dashboard'))}
     else if(path==='/owner')authNext='#/owner';
@@ -1187,7 +1188,7 @@
     // Keep the same dialog while Auth initializes; do not flash a second login design.
     if(ownerPickupMap){ownerPickupMap.map.remove();ownerPickupMap=null;}
     if(publicPickupMap){publicPickupMap.remove();publicPickupMap=null;}
-    app.innerHTML=showProfile?profileDialog(authNext):showAuth?loginPage():page('Get By Boat','<p role="status">Loading…</p>');focusAuth();
+    app.innerHTML=showProfile?profileDialog(authNext):showAuth?loginPage():accountLoading;focusAuth();
     route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),restoredOwnerBoatStep());initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
   };
   function syncBookingSkipperOption(form){
@@ -2182,6 +2183,6 @@ document.addEventListener('click',async event=>{
   async function boot(){try{client=await authClient();client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});await current();if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}authReady=true;render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
   // Wait for the persisted auth session before showing protected screens.
   // This avoids a login/home flash during a normal authenticated refresh.
-  app.innerHTML=page('Get By Boat','<p role="status">Loading your account…</p>');
+  app.innerHTML=accountLoading;
   boot();
 })();
