@@ -293,7 +293,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.equal(e.state.writes.filter(x=>x.table==='boats').at(-1).value.skipper_fee_per_day,0);
  e=await environment({hash:'#/listing/boat-1',user:verifiedUser,profile:verifiedProfile,boatOptions:{with_skipper:true,without_skipper:true,skipper_fee_per_day:120}});
  html=await e.route('#/listing/boat-1');assert.match(html,/data-skipper-fee="120"/);assert.match(html,/data-skipper-extra="true"/);assert.match(html,/\(\+€120\.00 \/ day\)/);
- assert.match(html,/License required/);assert.match(html,/Skipper available \(\+€120\.00 \/ day\)/);assert.match(html,/With or without a skipper/);assert.match(html,/A boat licence is required if you are sailing without a skipper\./);assert.doesNotMatch(html,/Self-drive available/);
+ assert.match(html,/License required/);assert.match(html,/Skipper available/);assert.doesNotMatch(html,/Skipper available \(\+€/);assert.doesNotMatch(html,/With or without a skipper/);assert.match(html,/A boat licence is required if you are sailing without a skipper\./);assert.doesNotMatch(html,/Self-drive available/);
  const badgePosition=html.indexOf('listing-highlight-row');assert.ok(html.indexOf('License required',badgePosition)<html.indexOf('Skipper available',badgePosition));
  e=await environment({boatOptions:{with_skipper:false,without_skipper:true,licence_required:false}});
  html=await e.route('#/listing/boat-1');assert.match(html,/No license required/);assert.doesNotMatch(html,/Self-drive available/);assert.match(html,/No boat licence is required to drive this boat/);
