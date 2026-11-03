@@ -1,0 +1,38 @@
+name: iOS app checks
+
+on:
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/ios-app.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate iOS runner
+        working-directory: mobile
+        run: flutter create --platforms=ios --org net.getbyboat .
+      - name: Resolve packages
+        working-directory: mobile
+        run: flutter pub get
+      - name: Analyze Dart code
+        working-directory: mobile
+        run: flutter analyze --no-fatal-infos
+      - name: Run unit tests
+        working-directory: mobile
+        run: flutter test
+      - name: Build for iOS simulator
+        working-directory: mobile
+        run: flutter build ios --simulator --debug
