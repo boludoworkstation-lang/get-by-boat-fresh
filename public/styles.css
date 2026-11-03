@@ -2432,3 +2432,42 @@ button[data-gallery-select]:has(img)::after {
     height: 23px;
   }
 }
+
+/* Four boat cards per row on desktop. Keep list mode and smaller screens unchanged. */
+@media (min-width: 1200px) {
+  .rental-page .rental-card-grid:not(.is-list) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .rental-page .rental-card-grid:not(.is-list) .rental-card-photo {
+    height: clamp(175px, 15vw, 265px);
+  }
+  .rental-page .rental-card-grid:not(.is-list) .rental-card-body {
+    padding: 15px 13px 14px;
+  }
+  .rental-page .rental-card-grid:not(.is-list) .rental-card h3 {
+    font-size: 19px !important;
+    line-height: 1.22;
+  }
+  .rental-page .rental-card-grid:not(.is-list) .rental-card-badges {
+    gap: 4px;
+    margin: 8px 0;
+  }
+  .rental-page .rental-card-grid:not(.is-list) .rental-card-badge {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+  .rental-page .rental-card-grid:not(.is-list) .rental-card-specs {
+    font-size: 11px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+  .rental-page .rental-card-grid:not(.is-list) .rental-card-specs span + span::before {
+    margin-right: 6px;
+    margin-left: 6px;
+  }
+  .rental-page .rental-card-grid:not(.is-list) .rental-card-bottom {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
