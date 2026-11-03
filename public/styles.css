@@ -2324,3 +2324,23 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .booking-empty h3{margin:0 0 8px}.booking-empty p{color:#66808b}
 @media(max-width:960px){.customer-booking-details{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:20px}}
 @media(max-width:620px){.customer-booking-heading{padding:19px 18px 15px;align-items:flex-start;flex-direction:column;gap:10px}.customer-booking-heading h3{font-size:19px}.customer-booking-details{margin:0 18px 17px;gap:16px 12px}.customer-booking-detail strong{font-size:13px}.customer-booking-bottom{padding:0 18px 18px;align-items:stretch;flex-direction:column;gap:18px}.customer-booking-actions{justify-content:stretch}.customer-booking-actions .btn{flex:1;justify-content:center}.customer-booking-notice{margin:0 18px 14px}.customer-booking-id{padding:10px 18px}.customer-bookings-intro{align-items:flex-start}.customer-bookings-intro p{max-width:210px}}
+
+
+/* Messaging workspace: improve legibility across conversation list, chat and booking details. */
+.message-workspace .booking-conversation strong { font-size: 15px; }
+.message-workspace .booking-conversation small { font-size: 13px; line-height: 1.45; }
+.message-workspace .booking-conversation-top time { font-size: 12px; }
+.message-workspace .booking-chat-heading h2 { font-size: 21px; }
+.message-workspace .booking-message-bubble p { font-size: 16px; line-height: 1.6; }
+.message-workspace .booking-message-bubble small { font-size: 12px; }
+.message-workspace .booking-compose textarea { font-size: 15px; }
+.message-workspace .booking-compose-actions .btn { font-size: 14px; }
+.message-workspace .booking-details-heading .live-status { font-size: 13px; }
+.message-workspace .booking-detail-label { font-size: 12px; }
+.message-workspace .booking-detail-boat,
+.message-workspace .booking-detail-row,
+.message-workspace .booking-detail-dates { font-size: 15px; line-height: 1.55; }
+.message-workspace .booking-detail-boat strong { font-size: 16px; }
+.message-workspace .booking-detail-dates strong { font-size: 18px; }
+.message-workspace .booking-detail-footnote { font-size: 13px; }
+.message-workspace .booking-details .offer-price-line { font-size: 14px; }
