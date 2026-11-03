@@ -2258,3 +2258,10 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 /* Booking request: make the reserved boat unmistakable. */
 .owner-requests-workspace .owner-request-identity p{font-size:15px;font-weight:800;line-height:1.35;color:#087d96;letter-spacing:-.025em;margin-top:5px}
 @media(min-width:1020px){.owner-requests-workspace .owner-request-identity p{font-size:15px}}
+
+/* Make the booked boat instantly identifiable in each request. */
+.owner-request-card .owner-request-identity p{
+  font-size:15px;font-weight:800;line-height:1.4;color:#164f60;
+  text-decoration:underline;text-decoration-thickness:1.5px;
+  text-underline-offset:3px;text-decoration-color:#4b9eae;
+}
