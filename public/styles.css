@@ -2372,7 +2372,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 
 
-/* Get By Boat wave and name watermark: upper left, readable on light and dark photos. */
+/* Get By Boat wave-only watermark: small, upper left, 60% opacity. */
 .rental-card-photo:has(img.live-photo),
 .fleet-card-photo:has(img.live-photo),
 .listing-cover:has(img),
@@ -2395,18 +2395,18 @@ button[data-gallery-select]:has(img)::after,
   left: 12px;
   right: auto;
   z-index: 3;
-  width: 100px;
-  height: 61px;
+  width: 38px;
+  height: 29px;
   background: url("/assets/boat-photo-watermark.svg") center / contain no-repeat;
-  opacity: .92;
+  opacity: .6;
   pointer-events: none;
   user-select: none;
 }
 button[data-gallery-select]:has(img)::after {
   top: 4px;
   left: 4px;
-  width: 44px;
-  height: 27px;
+  width: 19px;
+  height: 15px;
 }
 .gbb-watermark-lightbox {
   display: inline-flex;
@@ -2428,8 +2428,8 @@ button[data-gallery-select]:has(img)::after {
   .gbb-watermark-lightbox::after {
     top: 8px;
     left: 8px;
-    width: 76px;
-    height: 46px;
+    width: 30px;
+    height: 23px;
   }
 }
 
