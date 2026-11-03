@@ -1003,9 +1003,28 @@
       <div class="member-dashboard-columns"><section class="member-panel"><div class="member-panel-head"><div><span class="member-eyebrow">YOUR FLEET</span><h2>My boats</h2></div><a href="#/owner">Manage all ${icon('arrow')}</a></div>${boats.length?boats.slice(0,3).map(b=>`<a class="member-booking-preview" href="#/owner?edit=${b.id}"><div class="member-booking-icon">${icon('ship')}</div><div><strong>${esc(b.name)}</strong><span>${esc(b.location)} · ${b.published?'Published':'Draft'}</span></div>${icon('arrow')}</a>`).join(''):`<div class="member-card-empty"><h3>Your first boat is waiting</h3><p>Create a listing and start welcoming guests.</p><a class="member-inline-link" href="#/owner?edit=new">List your boat ${icon('arrow')}</a></div>`}</section>
       <aside class="member-panel member-profile-panel"><div class="member-panel-head"><div><span class="member-eyebrow">GUESTS ABOARD</span><h2>Booking requests</h2></div></div><p class="member-panel-intro">${pending} ${pending===1?'request needs':'requests need'} your response.</p><a class="member-outline-action" href="#/owner?view=requests">Manage guest requests ${icon('arrow')}</a><p class="member-note">Owner accounts can list boats and manage requests. To rent a boat yourself, use a separate customer account.</p></aside></div></div>`;
   }
+  function filterStaffVerifications(){
+    const toolbar=document.querySelector?.('[data-staff-verification-filters]');
+    if(!toolbar)return;
+    const name=(toolbar.querySelector('[data-staff-search]')?.value||'').trim().toLocaleLowerCase();
+    const status=toolbar.querySelector('[data-staff-status]')?.value||'all';
+    let visible=0;
+    for(const card of document.querySelectorAll?.('.verification-staff-card')||[]){
+      const heading=card.querySelector('.verification-heading');
+      const badge=card.querySelector('.verification-badge');
+      const decision=badge?.classList.contains('approved')?'approved':badge?.classList.contains('rejected')?'rejected':'pending';
+      const matches=(!name||(heading?.textContent||'').toLocaleLowerCase().includes(name))&&(status==='all'||status===decision);
+      card.hidden=!matches;
+      if(matches)visible++;
+    }
+    const count=toolbar.querySelector('[data-staff-result-count]');
+    if(count)count.textContent=visible+' '+(visible===1?'verification':'verifications')+' found';
+    const empty=document.querySelector?.('[data-staff-no-results]');
+    if(empty)empty.hidden=visible!==0;
+  }
   async function staffPage(){
     if(!verificationStaff)return page('Staff verification','<div class="profile-panel"><h2>Access restricted</h2><p>Only authorised Get By Boat reviewers can access private verification documents.</p></div>');
-    const rows=check(await client.from('verification_requests').select('*').order('submitted_at',{ascending:false}).limit(50));
+    const rows=check(await client.from('verification_requests').select('*').order('submitted_at',{ascending:false}).limit(1000));
     const reviews=rows.length?check(await client.from('verification_reviews').select('*').in('user_id',rows.map(r=>r.user_id))):[];
     const profiles=rows.length?check(await client.from('profiles').select('id,display_name,details').in('id',rows.map(r=>r.user_id))):[];
     const cards=await Promise.all(rows.map(async r=>{
@@ -1019,7 +1038,7 @@
       }
       return `<article class="profile-panel verification-staff-card"><div class="verification-heading"><div><h2>${esc(p?.display_name||'Customer')}</h2><p>Submitted ${esc(r.submitted_at?.slice(0,10)||'')} · DOB ${esc(r.birth_date)}</p></div><span class="verification-badge ${esc(status)}">${esc(verificationLabel(status))}</span></div><p><strong>Identity:</strong> ${r.identity_type==='passport'?'Passport':'National ID'} · <strong>Licence:</strong> ${esc(r.licence_type)} · <strong>Expiry:</strong> ${esc(r.licence_expiry||'Permanent / not specified')}</p>${p?.details?.birth_date?`<p>Customer profile date of birth: ${esc(p.details.birth_date)}</p>`:''}<div class="verification-document-links">${documentLink(idFile,'ID / passport')}${documentLink(licenceFile,'boat driving licence')}</div>${current&&review?.note?`<p>Previous decision note: ${esc(review.note)}</p>`:''}<form class="live-form verification-review-form" data-live-form="review" data-id="${esc(r.user_id)}"><label>Decision<select name="status" required><option value="approved">Approve documents</option><option value="rejected">Reject / request correction</option></select></label><label class="live-check"><input type="checkbox" name="identity_matches"> I checked that the ID/passport is genuine-looking and matches the customer's legal name and date of birth.</label><label class="live-check"><input type="checkbox" name="licence_matches"> I checked the licence holder matches the ID/passport, and the licence category and validity are suitable.</label><label>Message to customer (required if rejected)<textarea name="note" rows="2" maxlength="1000" placeholder="Explain which details need correction."></textarea></label><button class="btn" type="submit">Save review decision</button><p role="status" data-feedback></p></form></article>`;
     }));
-    const ownerRows=check(await client.from('owner_verification_requests').select('*').eq('application_state','submitted').order('submitted_at',{ascending:false}).limit(50));
+    const ownerRows=check(await client.from('owner_verification_requests').select('*').eq('application_state','submitted').order('submitted_at',{ascending:false}).limit(1000));
     const ownerReviews=ownerRows.length?check(await client.from('owner_verification_reviews').select('*').in('user_id',ownerRows.map(r=>r.user_id))):[];
     const ownerProfiles=ownerRows.length?check(await client.from('profiles').select('id,display_name').in('id',ownerRows.map(r=>r.user_id))):[];
     const ownerCards=await Promise.all(ownerRows.map(async r=>{
@@ -1035,7 +1054,7 @@
       }
       return `<article class="profile-panel verification-staff-card"><div class="verification-heading"><div><h2>${esc(r.legal_business_name)}</h2><p>Owner: ${esc(p?.display_name||'Unknown')} · Submitted ${esc(r.submitted_at?.slice(0,10)||'')}</p></div><span class="verification-badge ${esc(s)}">${esc(verificationLabel(s))}</span></div><p><strong>Country / registration:</strong> ${esc(r.business_country)} · ${esc(r.tax_identifier)}<br><strong>Registered address:</strong> ${esc(r.registered_address)}<br><strong>Website:</strong> <a href="${esc(r.business_website)}" target="_blank" rel="noopener noreferrer">${esc(r.business_website)}</a><br><strong>Business bank account:</strong> ${esc(r.payout_bank_details?.method==='local'?(`${r.payout_bank_details.country} · Account ${r.payout_bank_details.account_number} · Bank/routing ${r.payout_bank_details.routing_number}${r.payout_bank_details.swift_bic?' · SWIFT/BIC '+r.payout_bank_details.swift_bic:''}`):r.iban||'Not provided')} · ${esc(r.iban_holder)}<br><strong>Identity document:</strong> ${r.identity_type==='passport'?'Passport':'National ID'}</p><div class="verification-document-links">${signed.join('')}</div>${isCurrent&&review?.note?`<p>Previous decision note: ${esc(review.note)}</p>`:''}<form class="live-form verification-review-form" data-live-form="owner-review" data-id="${esc(r.user_id)}"><label>Decision<select name="status" required><option value="approved">Approve business</option><option value="rejected">Reject / request correction</option></select></label><label class="live-check"><input type="checkbox" name="registration_matches"> I checked the business registration, country and registration number (OIB / SIRET / other).</label><label class="live-check"><input type="checkbox" name="identity_matches"> I checked the owner / manager identity and authority to represent the business.</label><label class="live-check"><input type="checkbox" name="bank_matches"> I checked that the business bank account belongs to the registered business and verified its website and address.</label><label>Message to owner (required if rejected)<textarea name="note" rows="2" maxlength="1000" placeholder="Explain what needs correction"></textarea></label><button class="btn" type="submit">Save owner verification</button><p role="status" data-feedback></p></form></article>`;
     }));
-    return page('Staff verification',`<p>Restricted reviewer area. Documents are private and accessible only through short-lived signed links. Approving owners unlocks publication of new listings.</p><h2>Business / owner verification (${ownerRows.length})</h2><div class="verification-staff-list">${ownerCards.join('')||'<div class="profile-panel">No owner verification requests yet.</div>'}</div><h2>Customer ID & boat licence (${rows.length})</h2><div class="verification-staff-list">${cards.join('')||'<div class="profile-panel">No customer verification requests yet.</div>'}</div>`);
+    return page('Staff verification',`<p>Restricted reviewer area. Documents are private and accessible only through short-lived signed links. Approving owners unlocks publication of new listings.</p><div class="staff-verification-filters" data-staff-verification-filters><label>Search by name<input type="search" data-staff-search placeholder="Enter customer or owner name" autocomplete="off" aria-label="Search verification by name"></label><label>Verification status<select data-staff-status aria-label="Filter verification status"><option value="all">All statuses</option><option value="approved">Verified</option><option value="rejected">Rejected</option><option value="pending">In progress</option></select></label><span class="staff-filter-count" data-staff-result-count>${ownerRows.length+rows.length} verifications</span></div><div class="profile-panel staff-filter-no-results" data-staff-no-results hidden>No matching verification requests. Try another name or status.</div><h2>Business / owner verification (${ownerRows.length})</h2><div class="verification-staff-list">${ownerCards.join('')||'<div class="profile-panel">No owner verification requests yet.</div>'}</div><h2>Customer ID & boat licence (${rows.length})</h2><div class="verification-staff-list">${cards.join('')||'<div class="profile-panel">No customer verification requests yet.</div>'}</div>`);
   }
   async function adminReservationsPage(){
     if(!superAdmin)return page('Reservations','<div class="profile-panel"><h2>Access restricted</h2><p>Only the Super Admin can view all reservations.</p></div>');
@@ -1394,6 +1413,7 @@ const PAGE_SIZE=12;
     if(isBoatSpecNumber(event.target)&&event.data&&(/[eE+\-]/.test(event.data)||(isWholeBoatSpec(event.target)&&/[.,]/.test(event.data))))event.preventDefault();
   });
   document.addEventListener('input',e=>{
+    if(e.target.matches?.('[data-staff-search]'))filterStaffVerifications();
     if(isWholeBoatSpec(e.target)&&/[.,]/.test(e.target.value))e.target.value=e.target.value.split(/[.,]/)[0];
     if(e.target.matches?.('[data-equipment-search]'))syncEquipmentPicker(e.target.closest('[data-live-form="boat"]'));
     if(e.target.closest('[data-live-form="request"]'))quote();
@@ -1412,6 +1432,7 @@ const PAGE_SIZE=12;
     }
   });
   document.addEventListener('change',e=>{
+    if(e.target.matches?.('[data-staff-status]'))filterStaffVerifications();
     if(e.target.closest('[data-live-form="request"]'))quote();
     const ownerBusiness=e.target.closest('[data-live-form="owner-business"]');
     if(ownerBusiness&&e.target.name==='business_country')syncOwnerBusinessCountry(ownerBusiness);
