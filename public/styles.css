@@ -1571,7 +1571,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .message-workspace .booking-messenger-three{height:100%;min-height:0;margin:0;border:0;border-radius:0;box-shadow:none;grid-template-columns:minmax(240px,18.75%) minmax(0,62.5%) minmax(260px,18.75%)}
 .message-workspace .booking-conversations{padding:0;border-right:1px solid #e5e8e9;overflow-y:auto;max-height:none}
 .message-workspace .booking-conversations h2{position:sticky;top:0;z-index:1;background:#fff;padding:23px 22px 19px;border-bottom:1px solid #eee;margin:0;font-size:20px}
-.message-workspace .booking-messages-back{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin-right:9px;border:1px solid #d7e8ed;border-radius:10px;background:#f0f8fa;color:#087f9a;font-size:23px;line-height:1;text-decoration:none;vertical-align:middle;transition:background .15s,border-color .15s}
+.message-workspace .booking-messages-back{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;margin-right:6px;border:1px solid #d7e8ed;border-radius:7px;background:#f0f8fa;color:#087f9a;font-size:17px;line-height:1;text-decoration:none;vertical-align:middle;transition:background .15s,border-color .15s}
 .message-workspace .booking-messages-back:hover,.message-workspace .booking-messages-back:focus-visible{background:#d9f1f6;border-color:#9ed3df;outline-offset:2px}
 .message-workspace .booking-conversation{padding:17px 18px;border-radius:0;border:0;border-bottom:1px solid #f0f0f0;margin:0;gap:14px}
 .message-workspace .booking-conversation:hover,.message-workspace .booking-conversation.selected{background:#f2f7f8;border-color:#edf1f2}
