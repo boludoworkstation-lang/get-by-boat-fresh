@@ -2346,3 +2346,26 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .message-workspace .booking-detail-dates strong { font-size: 18px; }
 .message-workspace .booking-detail-footnote { font-size: 13px; }
 .message-workspace .booking-details .offer-price-line { font-size: 14px; }
+
+
+/* Larger message composer: generous typing area and a clear send action. */
+.message-workspace .booking-compose textarea {
+  height: 124px;
+  min-height: 124px;
+  font-size: 17px;
+  line-height: 1.55;
+  padding: 16px 19px;
+  border-radius: 18px;
+}
+.message-workspace .booking-compose-actions .btn {
+  min-height: 49px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 750;
+  border-radius: 10px;
+}
+.message-workspace .booking-compose-actions { margin-top: 12px; }
+@media (max-width: 640px) {
+  .message-workspace .booking-compose textarea { height: 112px; min-height: 112px; }
+  .message-workspace .booking-compose-actions .btn { min-height: 46px; }
+}
