@@ -2372,67 +2372,6 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 
 
-/* Get By Boat wave-only watermark: small, upper left, 60% opacity. */
-.rental-card-photo:has(img.live-photo),
-.fleet-card-photo:has(img.live-photo),
-.listing-cover:has(img),
-.fleet-photo-card:has(img),
-button[data-gallery-select]:has(img),
-.live-card:has(> img.live-photo),
-.gbb-watermark-lightbox {
-  position: relative;
-}
-.rental-card-photo:has(img.live-photo)::after,
-.fleet-card-photo:has(img.live-photo)::after,
-.listing-cover:has(img)::after,
-.fleet-photo-card:has(img)::after,
-button[data-gallery-select]:has(img)::after,
-.live-card:has(> img.live-photo)::after,
-.gbb-watermark-lightbox::after {
-  content: "";
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  right: auto;
-  z-index: 3;
-  width: 38px;
-  height: 29px;
-  background: url("/assets/boat-photo-watermark.svg") center / contain no-repeat;
-  opacity: .6;
-  pointer-events: none;
-  user-select: none;
-}
-button[data-gallery-select]:has(img)::after {
-  top: 4px;
-  left: 4px;
-  width: 19px;
-  height: 15px;
-}
-.gbb-watermark-lightbox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 100%;
-  max-height: 85vh;
-}
-.gbb-watermark-lightbox img {
-  display: block;
-  max-width: 100%;
-  max-height: 85vh;
-}
-@media (max-width:600px) {
-  .rental-card-photo:has(img.live-photo)::after,
-  .fleet-card-photo:has(img.live-photo)::after,
-  .listing-cover:has(img)::after,
-  .fleet-photo-card:has(img)::after,
-  .gbb-watermark-lightbox::after {
-    top: 8px;
-    left: 8px;
-    width: 30px;
-    height: 23px;
-  }
-}
-
 /* Use three cards up to 2399px; four only on very wide desktop viewports. */
 @media (min-width: 2400px) {
   .rental-page .rental-card-grid:not(.is-list) {
