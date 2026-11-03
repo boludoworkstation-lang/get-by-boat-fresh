@@ -2433,8 +2433,8 @@ button[data-gallery-select]:has(img)::after {
   }
 }
 
-/* Four boat cards only on screens at least 1800px wide; laptops keep three. */
-@media (min-width: 1800px) {
+/* Use three cards up to 2399px; four only on very wide desktop viewports. */
+@media (min-width: 2400px) {
   .rental-page .rental-card-grid:not(.is-list) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
