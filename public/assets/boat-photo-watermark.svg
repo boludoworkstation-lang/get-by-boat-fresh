@@ -1,8 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="112" height="68" viewBox="0 0 112 68" fill="none">
-  <rect x="1" y="1" width="110" height="66" rx="10" fill="#FFFFFF" fill-opacity=".90" stroke="#FFFFFF" stroke-opacity=".65"/>
-  <g transform="translate(32 3)">
-    <path d="M4 18C13 18 16 7 24 7s11 11 20 11" stroke="#00A8C6" stroke-width="5" stroke-linecap="round"/>
-    <path d="M4 28c9 0 12-11 20-11s11 11 20 11" stroke="#006C87" stroke-width="5" stroke-linecap="round"/>
-  </g>
-  <text x="56" y="58" fill="#174451" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="-.15" text-anchor="middle">Get By Boat</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 36" width="48" height="36" fill="none"><path d="M4 18C13 18 16 7 24 7s11 11 20 11" stroke="#00A8C6" stroke-width="5" stroke-linecap="round"/><path d="M4 28c9 0 12-11 20-11s11 11 20 11" stroke="#006C87" stroke-width="5" stroke-linecap="round"/></svg>
