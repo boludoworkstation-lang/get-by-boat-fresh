@@ -2254,3 +2254,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
   .owner-request-card.is-declined .owner-request-card-top{border-left:4px solid #d87070!important}
   .owner-request-card.is-pending .owner-request-card-top{border-left:4px solid #009fba!important}
 }
+
+/* Booking request: make the reserved boat unmistakable. */
+.owner-requests-workspace .owner-request-identity p{font-size:15px;font-weight:800;line-height:1.35;color:#087d96;letter-spacing:-.025em;margin-top:5px}
+@media(min-width:1020px){.owner-requests-workspace .owner-request-identity p{font-size:15px}}
