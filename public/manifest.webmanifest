@@ -1,0 +1,24 @@
+{
+  "id": "/",
+  "name": "Get By Boat",
+  "short_name": "Get By Boat",
+  "description": "Discover and rent boats in beautiful coastal destinations.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5fbff",
+  "theme_color": "#006a83",
+  "categories": [
+    "travel",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "/assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
