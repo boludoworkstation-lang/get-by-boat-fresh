@@ -260,17 +260,36 @@
       }
     }
     verificationRequest=null;verificationReview=null;ownerVerificationRequest=null;ownerVerificationReview=null;verificationStaff=false;superAdmin=false;
+    // Independent account checks run together to avoid serial network round trips on refresh.
+    avatarUrl='';
     if(session){
-      verificationStaff=!!check(await client.rpc('is_verification_staff'));
-      superAdmin=!!check(await client.rpc('is_super_admin'));
-      verificationRequest=check(await client.from('verification_requests').select('*').eq('user_id',session.user.id).maybeSingle());
-      verificationReview=check(await client.from('verification_reviews').select('*').eq('user_id',session.user.id).maybeSingle());
-      if(profile?.account_type==='owner'){
-        ownerVerificationRequest=check(await client.from('owner_verification_requests').select('*').eq('user_id',session.user.id).maybeSingle());
-        ownerVerificationReview=check(await client.from('owner_verification_reviews').select('*').eq('user_id',session.user.id).maybeSingle());
+      const userId=session.user.id;
+      const owner=profile?.account_type==='owner';
+      const requests=[
+        client.rpc('is_verification_staff'),
+        client.rpc('is_super_admin'),
+        client.from('verification_requests').select('*').eq('user_id',userId).maybeSingle(),
+        client.from('verification_reviews').select('*').eq('user_id',userId).maybeSingle(),
+        ...(owner?[
+          client.from('owner_verification_requests').select('*').eq('user_id',userId).maybeSingle(),
+          client.from('owner_verification_reviews').select('*').eq('user_id',userId).maybeSingle()
+        ]:[]),
+        ...(profile?.avatar_path?[client.storage.from('profile-photos').createSignedUrl(profile.avatar_path,3600)]:[])
+      ];
+      const results=await Promise.all(requests);
+      verificationStaff=!!check(results[0]);
+      superAdmin=!!check(results[1]);
+      verificationRequest=check(results[2]);
+      verificationReview=check(results[3]);
+      if(owner){
+        ownerVerificationRequest=check(results[4]);
+        ownerVerificationReview=check(results[5]);
+      }
+      if(profile?.avatar_path){
+        const avatarResult=results[owner?6:4];
+        if(!avatarResult.error)avatarUrl=avatarResult.data.signedUrl;
       }
     }
-    avatarUrl='';if(profile?.avatar_path){const result=await client.storage.from('profile-photos').createSignedUrl(profile.avatar_path,3600);if(!result.error)avatarUrl=result.data.signedUrl;}
   }
   const requireAccount=()=>!session?loginPage():!hasProfileName(profile)?profileDialog(authNext):null;
   function verificationForm(){
