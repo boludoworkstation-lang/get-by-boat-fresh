@@ -1583,7 +1583,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .message-workspace .booking-chat-heading h2{font-size:19px;font-weight:700;margin:0;color:#25292c}
 .message-workspace .booking-thread{min-height:0;max-height:none;overflow:auto;flex:1;background:#fff;padding:35px max(25px,12%);gap:24px}
 .message-workspace .booking-message-bubble{max-width:min(100%,620px);background:#f4f4f4;color:#343434;border-radius:16px 16px 16px 4px;padding:15px 18px}
-.message-workspace .booking-message.outgoing .booking-message-bubble{background:#3c3c3c;color:#fff;border-radius:16px 16px 4px 16px}
+.message-workspace .booking-message.outgoing .booking-message-bubble{background:#dceff5;color:#174455;border:1px solid #b8e1ed;border-radius:16px 16px 4px 16px}
 .message-workspace .booking-message-bubble p{font-size:14px;line-height:1.5}
 .message-workspace .booking-compose{flex:none;border-top:1px solid #e9ecee;padding:12px max(20px,12%) 16px}
 .message-workspace .booking-compose label{display:none}
