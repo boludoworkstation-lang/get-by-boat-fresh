@@ -2294,3 +2294,23 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 /* Booking status badges: accepted/confirmed in green, declined in red. */
 .live-status.is-approved{background:#e2f5e9;color:#197645;border:1px solid #b9e7c9;font-weight:700}
 .live-status.is-declined{background:#fff0f0;color:#b44949;border:1px solid #f1caca;font-weight:700}
+
+
+/* Messaging workspace: improve legibility across conversation list, chat and booking details. */
+.message-workspace .booking-conversation strong { font-size: 15px; }
+.message-workspace .booking-conversation small { font-size: 13px; line-height: 1.45; }
+.message-workspace .booking-conversation-top time { font-size: 12px; }
+.message-workspace .booking-chat-heading h2 { font-size: 21px; }
+.message-workspace .booking-message-bubble p { font-size: 16px; line-height: 1.6; }
+.message-workspace .booking-message-bubble small { font-size: 12px; }
+.message-workspace .booking-compose textarea { font-size: 15px; }
+.message-workspace .booking-compose-actions .btn { font-size: 14px; }
+.message-workspace .booking-details-heading .live-status { font-size: 13px; }
+.message-workspace .booking-detail-label { font-size: 12px; }
+.message-workspace .booking-detail-boat,
+.message-workspace .booking-detail-row,
+.message-workspace .booking-detail-dates { font-size: 15px; line-height: 1.55; }
+.message-workspace .booking-detail-boat strong { font-size: 16px; }
+.message-workspace .booking-detail-dates strong { font-size: 18px; }
+.message-workspace .booking-detail-footnote { font-size: 13px; }
+.message-workspace .booking-details .offer-price-line { font-size: 14px; }
