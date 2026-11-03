@@ -2220,3 +2220,13 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 .owner-request-card.is-declined .owner-request-card-top .live-status{background:#fff0f0;color:#b44949;border:1px solid #f1caca;font-weight:750}
 .owner-request-card.is-declined .owner-request-info{background:#fffbfb}
 .owner-request-card.is-declined .owner-request-price strong{color:#a85b5b}
+
+/* Inbox counters must stand out on both normal and active sidebar rows. */
+.member-sidebar nav a .member-nav-count,
+.member-sidebar nav a[aria-current=page] .member-nav-count{
+  min-width:24px;height:24px;padding:0 7px;
+  background:#006d8a;color:#fff;
+  border:1px solid #005b75;
+  box-shadow:0 2px 7px rgba(0,82,111,.18);
+  font-size:12px!important;font-weight:800!important
+}
