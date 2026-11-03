@@ -1,0 +1,167 @@
+/* Get By Boat: mobile-only layout refinements.
+   Desktop styles intentionally remain in styles.css. */
+@media (max-width: 800px) {
+  /* A calm, accessible navigation that stays within the viewport. */
+  .site-head { position: sticky; top: 0; z-index: 100; }
+  .mobile-menu-btn { width: 44px; height: 44px; border-radius: 12px; }
+  .mobile-menu { top: 100%; max-height: min(78dvh, 650px); overflow-y: auto; overscroll-behavior: contain; padding: 9px 18px 16px; border-top: 1px solid #e7eff1; border-radius: 0 0 18px 18px; }
+  .mobile-menu a { display: flex; align-items: center; min-height: 48px; padding: 12px 10px; font-size: 14px; }
+  .mobile-menu a:last-child { border-bottom: 0; }
+
+  /* Search fields: larger text, clearer targets, no iOS focus zoom. */
+  .search-widget, .rental-search-bar { border-radius: 16px; }
+  .search-widget .search-field { min-width: 0; }
+  .search-widget .search-field input,
+  .search-widget .search-field select,
+  .rental-search-bar input,
+  .rental-search-bar select { font-size: 16px; line-height: 1.35; }
+  .search-widget .rental-date-trigger,
+  .rental-search-bar .rental-date-trigger { min-height: 32px; font-size: 15px; }
+  .search-widget .btn-search,
+  .rental-search-button { min-height: 48px; border-radius: 11px; }
+
+  .rental-results-bar { align-items: center; }
+  .rental-mobile-filters { min-height: 44px; padding: 10px 16px; border-radius: 11px; font-size: 13px; }
+  .rental-mobile-filters .icon { width: 17px; height: 17px; }
+  .rental-results-bar select { min-height: 44px; font-size: 14px; }
+  .rental-sidebar.is-open { max-height: min(78dvh, 800px); overflow-y: auto; overscroll-behavior: contain; box-shadow: 0 12px 28px #123c4b12; }
+  .rental-sidebar .rental-check { min-height: 36px; font-size: 13px; }
+  .rental-sidebar .rental-filter-button { position: sticky; bottom: 0; z-index: 2; min-height: 46px; box-shadow: 0 -7px 15px #ffffffd9; }
+
+  /* Booking and owner forms should never require sideways scrolling. */
+  .member-shell, .member-main, .member-main .profile-panel,
+  .fleet-home, .fleet-editor-page, .fleet-editor-form,
+  .listing-layout, .listing-details, .listing-booking { min-width: 0; max-width: 100%; }
+  .member-sidebar nav { scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; padding-bottom: 3px; }
+  .member-sidebar nav::-webkit-scrollbar { display: none; }
+  .member-sidebar nav a { min-height: 44px; scroll-snap-align: start; border-radius: 10px; }
+  .member-sidebar nav a span { font-size: 13px; }
+  .member-sidebar nav a[aria-current=page] { background: #e5f7fa; }
+  .member-main input:not([type=checkbox]):not([type=radio]):not([type=range]),
+  .member-main select, .member-main textarea,
+  .auth-dialog input:not([type=checkbox]), .auth-dialog select,
+  .contact-field input, .contact-field select, .contact-field textarea { font-size: 16px; }
+  .member-main .live-columns > *, .fleet-editor-section .live-columns > * { min-width: 0; }
+  .fleet-editor-navigation { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+  .listing-booking-card { border-radius: 16px; }
+  .booking-date-trigger { min-height: 54px; }
+  .booking-calendar-panel { max-width: calc(100vw - 24px); }
+}
+
+@media (max-width: 640px) {
+  .shell { width: calc(100% - 32px); }
+  .hero { min-height: 0; }
+  .hero-inner { padding-top: 48px; padding-bottom: 28px; }
+  .hero-copy h1 { font-size: clamp(42px, 11vw, 58px); line-height: 1.06; letter-spacing: -.05em; }
+  .hero-copy p { max-width: 35ch; font-size: 14px; line-height: 1.6; }
+  .hero-search-wrap { margin-top: 25px; }
+  .search-widget { padding: 10px; box-shadow: 0 12px 34px #002b3a2b; }
+  .search-field { min-height: 66px; margin: 3px; padding: 10px; border-radius: 9px; }
+  .search-field > span { font-size: 11px; }
+  .search-widget .rental-date-trigger { font-size: 14px; gap: 4px; }
+  .search-widget .rental-date-trigger svg { width: 16px; }
+  .hero-promises { gap: 8px 14px; }
+  .section { padding: 50px 0; }
+  .section-header h2 { font-size: clamp(33px, 9vw, 42px); line-height: 1.1; }
+  .destination-grid { gap: 12px; }
+  .destination-card { height: 210px; border-radius: 13px; }
+  .destination-copy { left: 13px; right: 8px; bottom: 14px; }
+  .destination-copy h3 { font-size: clamp(21px, 6vw, 28px); line-height: 1.13; overflow-wrap: anywhere; }
+
+  /* Compact discovery heading and genuine one-column boat cards. */
+  .rental-page { padding: 24px 0 58px; }
+  .rental-heading { margin-bottom: 18px; }
+  .rental-heading h1 { font-size: clamp(34px, 9vw, 43px); line-height: 1.1; }
+  .rental-heading p { font-size: 13px; margin-top: 10px; }
+  .rental-request-note { margin-top: 13px; max-width: 100%; white-space: normal; line-height: 1.4; }
+  .rental-search-bar { margin-bottom: 18px; }
+  .rental-search-bar label { min-height: 62px; }
+  .rental-search-bar label > span { font-size: 11px; }
+  .rental-results-bar { margin-bottom: 14px; }
+  .rental-results-bar > div:first-child { min-width: 0; flex: 1 1 55%; }
+  .rental-results-bar > label { margin-top: 3px; }
+  .rental-card-grid { grid-template-columns: minmax(0,1fr); gap: 14px; }
+  .rental-card { border-radius: 17px; }
+  .rental-card-photo { height: clamp(210px, 63vw, 280px); }
+  .rental-card-body { padding: 17px 17px 18px; }
+  .rental-card h3 { font-size: 25px; margin-bottom: 10px; line-height: 1.2; }
+  .rental-card .rental-card-location { font-size: 13px; }
+  .rental-card .rental-card-badge { font-size: 12px; }
+  .rental-card .rental-card-specs { font-size: 13px; }
+  .rental-card .rental-card-bottom { font-size: 13px; gap: 8px; }
+  .rental-card .rental-card-bottom strong { font-size: 21px; }
+  .rental-card .rental-view-link { font-size: 13px; }
+  .rental-favorite { width: 44px; height: 44px; top: 8px; right: 8px; }
+
+  /* Accounts: tab navigation and forms sized for fingertips. */
+  .member-header { height: 66px; padding-inline: 16px; }
+  .member-shell { min-height: calc(100dvh - 66px); }
+  .member-sidebar { padding: 9px 12px; }
+  .member-sidebar nav { margin: 0; gap: 5px; }
+  .member-sidebar nav a { padding: 10px 12px; }
+  .member-main { padding: 23px 15px 56px; }
+  .member-main > h1 { font-size: clamp(23px, 6vw, 29px); line-height: 1.2; margin-bottom: 19px; }
+  .member-main .profile-panel, .member-main > .live-card { border-radius: 14px; }
+  .fleet-editor-header h2 { line-height: 1.17; }
+  .fleet-list-head { gap: 14px; }
+  .fleet-layout-switch { width: 100%; }
+  .fleet-layout-option { min-height: 44px; font-size: 13px; }
+
+  /* Customer booking list: readable 2-column details and full-width actions. */
+  .customer-bookings-intro { flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .customer-bookings-intro p { max-width: none; flex: 1 1 190px; }
+  .customer-bookings-intro .btn { min-height: 44px; }
+  .customer-bookings-list { gap: 12px; }
+  .customer-booking-card { border-radius: 14px; }
+  .customer-booking-heading { padding: 17px 16px 13px; }
+  .customer-booking-heading h3 { font-size: 18px; }
+  .customer-booking-details { grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 16px 15px; gap: 14px 12px; }
+  .customer-booking-detail { min-width: 0; }
+  .customer-booking-detail > span { font-size: 10px; }
+  .customer-booking-detail strong { font-size: 13px; overflow-wrap: anywhere; }
+  .customer-booking-bottom { padding: 0 16px 17px; gap: 13px; }
+  .customer-booking-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .customer-booking-actions .btn { min-width: 0; min-height: 44px; font-size: 12px; text-align: center; padding: 9px; }
+  .customer-booking-notice { margin-inline: 16px; }
+
+  /* Messages: keep the conversation chooser compact and the composer usable. */
+  .message-app-header { height: 60px; padding: 0 12px; }
+  .message-app-header .member-brand { font-size: 19px; }
+  .message-app-header .member-brand span { font-size: 18px; }
+  .message-workspace { min-height: calc(100dvh - 60px); }
+  .message-workspace .booking-conversations { max-height: 185px; }
+  .message-workspace .booking-conversations h2 { padding: 12px 15px; font-size: 17px; }
+  .message-workspace .booking-conversation { padding: 11px 15px; gap: 10px; }
+  .message-workspace .booking-conversation-icon { width: 40px; height: 40px; }
+  .message-workspace .booking-chat { min-height: 470px; }
+  .message-workspace .booking-chat-heading { height: 58px; min-height: 58px; padding: 10px 15px; }
+  .message-workspace .booking-chat-heading h2 { font-size: 17px; overflow-wrap: anywhere; }
+  .message-workspace .booking-thread { padding: 18px 14px; gap: 15px; }
+  .message-workspace .booking-message-bubble { padding: 12px 14px; }
+  .message-workspace .booking-message-bubble p { font-size: 15px; line-height: 1.55; }
+  .message-workspace .booking-compose { padding: 12px 14px max(14px,env(safe-area-inset-bottom)); }
+  .message-workspace .booking-compose textarea { width: 100%; height: 112px; min-height: 112px; font-size: 16px; padding: 14px 16px; }
+  .message-workspace .booking-compose-actions .btn { min-height: 48px; font-size: 15px; padding: 10px 20px; }
+  .message-workspace .booking-details { border-top: 1px solid #dfe9ec; }
+  .message-workspace .booking-detail-group { padding: 18px 16px; }
+
+  /* Booking request actions and contact form remain comfortable on mobile. */
+  .owner-requests-intro .btn { min-height: 44px; }
+  .owner-request-actions .btn, .owner-request-actions button { min-height: 42px; }
+  .contact-form-card { padding: 23px 18px; }
+}
+
+@media (max-width: 390px) {
+  .shell { width: calc(100% - 28px); }
+  .logo { font-size: 22px; }
+  .hero-copy h1 { font-size: 41px; }
+  .destination-card { height: 184px; }
+  .destination-copy h3 { font-size: 21px; }
+  .customer-booking-actions { grid-template-columns: 1fr; }
+  .fleet-layout-list .fleet-card { grid-template-columns: 98px minmax(0,1fr); }
+  .fleet-layout-list .fleet-card-body { padding: 11px; }
+  .fleet-layout-list .fleet-card-actions { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu, .rental-card, .destination-card { scroll-behavior: auto; transition: none; }
+}
