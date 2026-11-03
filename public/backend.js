@@ -1112,6 +1112,28 @@
       });
       if(sorting==='price-low')filtered.sort((a,b)=>guestDailyRate(a.price)-guestDailyRate(b.price));
       if(sorting==='price-high')filtered.sort((a,b)=>guestDailyRate(b.price)-guestDailyRate(a.price));
+const PAGE_SIZE=12;
+      const maxPage=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
+      const requestedPage=Number(params.get('page'));
+      const currentPage=Number.isSafeInteger(requestedPage)&&requestedPage>0?Math.min(requestedPage,maxPage):1;
+      const visibleBoats=filtered.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
+      const pageHref=number=>{const q=new URLSearchParams(params);if(number===1)q.delete('page');else q.set('page',String(number));return '#/boats'+(q.toString()?'?'+q.toString():'');};
+      const pageNumbers=[...new Set([1,maxPage,currentPage-1,currentPage,currentPage+1].filter(number=>number>=1&&number<=maxPage))].sort((a,b)=>a-b);
+      let previousPage=0;
+      const numberedPages=pageNumbers.map(number=>{
+        const gap=number>previousPage+1?'<span class="rental-page-ellipsis" aria-hidden="true">…</span>':'';
+        previousPage=number;
+        return gap+(number===currentPage
+          ?`<span class="rental-page-link is-current" aria-current="page" aria-label="Page ${number}">${number}</span>`
+          :`<a class="rental-page-link" data-rental-page href="${pageHref(number)}" aria-label="Page ${number}">${number}</a>`);
+      }).join('');
+      const previousLink=currentPage>1
+        ?`<a class="rental-page-link rental-page-direction" data-rental-page href="${pageHref(currentPage-1)}" aria-label="Previous page"><span aria-hidden="true">‹</span> Previous</a>`
+        :`<span class="rental-page-link rental-page-direction is-disabled" aria-disabled="true"><span aria-hidden="true">‹</span> Previous</span>`;
+      const nextLink=currentPage<maxPage
+        ?`<a class="rental-page-link rental-page-direction" data-rental-page href="${pageHref(currentPage+1)}" aria-label="Next page">Next <span aria-hidden="true">›</span></a>`
+        :`<span class="rental-page-link rental-page-direction is-disabled" aria-disabled="true">Next <span aria-hidden="true">›</span></span>`;
+      const pagination=maxPage>1?`<div class="rental-pagination-wrap"><p class="rental-page-summary">Showing ${(currentPage-1)*PAGE_SIZE+1}–${Math.min(currentPage*PAGE_SIZE,filtered.length)} of ${filtered.length} boats</p><nav class="rental-pagination" aria-label="Boat result pages">${previousLink}${numberedPages}${nextLink}</nav></div>`:'';
       const fullCountry=searchInput==='USA'?'United States':searchInput;
       const heading=searchInput?`Boat rentals in <i>${esc(fullCountry)}</i>`:'Find your next <i>day at sea.</i>';
       const typeChoices=[['Motorboat','Motorboat'],['RIB','RIB'],['Sailboat','Sailboat'],['Catamaran','Catamaran'],['Yacht','Yacht'],['Jetski','Jetski']];
@@ -1121,7 +1143,7 @@
       if(startDate)query.set('start',startDate);if(endDate)query.set('end',endDate);query.set('guests',String(guests));
       const listingQuery=query.toString()?'?'+query.toString():'';
       const favoriteBoatIds=session&&profile?.account_type==='customer'?new Set(check(await client.from('favourites').select('boat_id').eq('user_id',session.user.id)).map(row=>row.boat_id)):new Set();
-      const cards=filtered.map(b=>`<article class="rental-card-shell"><a class="rental-card" href="#/listing/${encodeURIComponent(b.id)}${listingQuery}">
+      const cards=visibleBoats.map(b=>`<article class="rental-card-shell"><a class="rental-card" href="#/listing/${encodeURIComponent(b.id)}${listingQuery}">
         <div class="rental-card-photo">${picture(b)}</div>
         <div class="rental-card-body">
           <div class="rental-card-location">${icon('pin')} ${esc(b.location)}, ${esc(b.country)}</div>
@@ -1158,7 +1180,23 @@
             <section class="rental-results" aria-label="Boat search results">
               <div class="rental-results-bar"><div><strong>${filtered.length} ${filtered.length===1?'boat':'boats'} found</strong><span>${searchInput?' · '+esc(fullCountry):' · Browse all destinations'}</span></div><button type="button" class="rental-mobile-filters" data-rental-filters-toggle aria-expanded="false">${icon('filter')} Filters</button><div class="rental-results-controls"><label class="rental-sort-control"><span>Sort by</span><select name="sort"><option value="newest">Newest listings</option><option value="price-low" ${sorting==='price-low'?'selected':''}>Price: low to high</option><option value="price-high" ${sorting==='price-high'?'selected':''}>Price: high to low</option></select></label><div class="rental-layout-switch" role="group" aria-label="Results layout"><a class="rental-layout-option" href="${layoutHref('grid')}" ${cardLayout==='grid'?'aria-current="true"':''}>▦ Grid</a><a class="rental-layout-option" href="${layoutHref('list')}" ${cardLayout==='list'?'aria-current="true"':''}>☰ List</a></div></div></div>
               <style>.rental-page .rental-card h3{font:700 22px/1.22 var(--sans)!important;letter-spacing:-.035em;color:#163f4c;margin-bottom:11px}.rental-page .rental-card-body{font-family:var(--sans);letter-spacing:-.01em}.rental-page .rental-card-location{font-size:12px}.rental-page .rental-results-bar strong{font-family:var(--sans);font-weight:750;letter-spacing:-.02em}.rental-results-controls{display:flex;align-items:center;gap:10px;margin-left:auto}.rental-sort-control{display:inline-flex!important;align-items:center;gap:9px;margin:0!important;padding:4px 5px 4px 13px;background:#ecf5f7;border:1px solid #e0edf0;border-radius:12px;color:#1f2933;font:650 12px/1.2 var(--sans)!important;letter-spacing:-.01em;white-space:nowrap}.rental-sort-control select{width:auto;max-width:180px;height:35px;min-height:35px;padding:6px 30px 6px 12px;margin:0;border:1px solid #e5edf0;border-radius:9px;background:#fff;color:#1f2933;font:650 12px var(--sans);letter-spacing:-.015em;box-shadow:0 1px 4px #0b4d5c0c}.rental-sort-control select:focus{outline:2px solid #24a7bf;outline-offset:1px}.rental-sort-control select option{color:#111827!important;background:#fff!important;font:600 13px var(--sans);padding:10px 12px}@media(max-width:770px){.rental-results-controls{width:100%;justify-content:flex-end;flex-wrap:wrap;gap:8px}.rental-sort-control select{max-width:155px}}.rental-layout-switch{display:inline-flex;align-items:center;gap:3px;background:#ecf5f7;padding:4px;border-radius:12px}.rental-layout-option{padding:8px 12px;border-radius:9px;color:#416675;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap}.rental-layout-option[aria-current=true]{background:#fff;color:#0089a4;box-shadow:0 1px 5px #0b4d5c18}.rental-card-grid.is-list{grid-template-columns:minmax(0,1fr)!important}.rental-card-grid.is-list .rental-card{flex-direction:row;min-height:230px}.rental-card-grid.is-list .rental-card-photo{height:auto;min-height:230px;flex:0 0 min(38%,370px)}.rental-card-grid.is-list .rental-card-body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}.rental-card-grid.is-list .rental-card-bottom{margin-top:auto}.rental-card-grid.is-list .rental-favorite{top:14px;right:14px}.rental-card-grid.is-list .rental-card-photo img{object-fit:cover}@media(max-width:650px){.rental-card-grid.is-list .rental-card{min-height:170px}.rental-card-grid.is-list .rental-card-photo{min-height:170px;flex-basis:38%}.rental-card-grid.is-list .rental-card-body{padding:12px}.rental-card-grid.is-list .rental-card-badges,.rental-card-grid.is-list .rental-card-specs{display:none}.rental-card-grid.is-list .rental-card-bottom{font-size:12px}}@media(max-width:440px){.rental-card-grid.is-list .rental-card-photo{flex-basis:42%}.rental-layout-option{padding:7px 9px}}</style>
+<style>
+              .rental-pagination-wrap{margin:30px 0 6px;text-align:center}
+              .rental-page-summary{margin:0 0 12px;color:#6d8993;font:500 12px/1.5 var(--sans)}
+              .rental-pagination{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap}
+              .rental-page-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:38px;height:38px;padding:0 11px;border:1px solid #dce8ec;border-radius:9px;background:#fff;color:#416473;font:650 13px/1 var(--sans);text-decoration:none;transition:background .15s,border-color .15s,color .15s}
+              a.rental-page-link:hover{border-color:#199bb5;background:#edf8fa;color:#057d97}
+              a.rental-page-link:focus-visible{outline:2px solid #0b91ab;outline-offset:2px}
+              .rental-page-link.is-current{background:#078da7;border-color:#078da7;color:#fff}
+              .rental-page-link.is-disabled{opacity:.38;cursor:default}
+              .rental-page-direction{padding:0 13px}
+              .rental-page-direction span{font-size:20px;line-height:1}
+              .rental-page-ellipsis{padding:0 3px;color:#8fa6ae;font-weight:650}
+              .rental-results-bar{scroll-margin-top:95px}
+              @media(max-width:480px){.rental-pagination{gap:5px}.rental-page-link{min-width:34px;height:36px;padding:0 9px}.rental-page-direction{font-size:0;min-width:36px}.rental-page-direction span{font-size:22px}}
+              </style>
               ${cards?`<div class="rental-card-grid ${cardLayout==='list'?'is-list':''}">${cards}</div>`:`<div class="rental-empty"><div class="rental-empty-icon">${icon('ship')}</div><h2>No boats match just yet.</h2><p>${searchInput?'We are growing our fleet in '+esc(fullCountry)+'. Try fewer filters or explore another destination.':'Try adjusting your filters or explore all available destinations.'}</p><a href="#/boats" class="btn">Explore all boats ${icon('arrow')}</a></div>`}
+              ${pagination}
             </section>
           </div>
         </form>
@@ -1232,9 +1270,11 @@
     return page('My Boats',ownerFleet(boats,rows,['published','drafts'].includes(params.get('filter'))?params.get('filter'):'all',params.get('layout')||'grid'));
   }
   const routes=p=>['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/messages'].includes(p)||p.startsWith('/listing/');
+  let rentalPageJump=false;
+  document.addEventListener('click',e=>{if(e.target.closest?.('a[data-rental-page]'))rentalPageJump=true;});
   window.liveRender=()=>{
     if(!authReady){app.innerHTML=accountLoading;return true;}
-    const {path,params}=parseRoute();const token=++epoch;
+    const {path,params}=parseRoute();const token=++epoch;if(path!=='/boats')rentalPageJump=false;
     if(path==='/login'){authNext=safeNext(params.get('next')||(params.get('owner')==='1'||new URLSearchParams(location.search).get('owner')==='1'?'#/owner':'#/dashboard'))}
     else if(path==='/owner')authNext='#/owner';
     else if(path==='/staff')authNext='#/staff';
@@ -1253,7 +1293,7 @@
     if(ownerPickupMap){ownerPickupMap.map.remove();ownerPickupMap=null;}
     if(publicPickupMap){publicPickupMap.remove();publicPickupMap=null;}
     app.innerHTML=showProfile?profileDialog(authNext):showAuth?loginPage():accountLoading;focusAuth();
-    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),restoredOwnerBoatStep());initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
+    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),restoredOwnerBoatStep());initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}if(rentalPageJump){rentalPageJump=false;app.querySelector('.rental-results-bar')?.scrollIntoView({block:'start',behavior:'instant'});}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
   };
   function syncBookingSkipperOption(form){
     const checkbox=form?.querySelector('[data-needs-skipper]');
