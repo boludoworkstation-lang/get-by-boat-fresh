@@ -2265,38 +2265,3 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
   text-decoration:underline;text-decoration-thickness:1.5px;
   text-underline-offset:3px;text-decoration-color:#4b9eae;
 }
-
-
-/* Boats discovery: keep the first result aligned to the search field as the
-   effective viewport changes with browser zoom. The search and heading retain
-   the site's centered shell; filters occupy the left gutter. */
-@media (min-width: 1600px) {
-  .rental-search-form > .rental-layout {
-    width: calc(100vw - 72px);
-    max-width: none;
-    margin-left: calc(50% - 50vw + 36px);
-    column-gap: 28px;
-    grid-template-columns:
-      minmax(230px, calc((100vw - min(1350px, 100vw - 92px)) / 2 - 64px))
-      minmax(0, 1fr);
-  }
-  .rental-card-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* Before the filter column becomes too narrow, switch to a contained grid.
-   This keeps search, filters and results visually grouped at higher zoom. */
-@media (min-width: 1200px) and (max-width: 1599px) {
-  .rental-search-form > .rental-layout {
-    width: 100%;
-    margin-left: 0;
-    grid-template-columns: minmax(240px, 270px) minmax(0, 1fr);
-    column-gap: 24px;
-  }
-  .rental-card-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-  }
-  .rental-card-photo { height: clamp(185px, 17vw, 265px); }
-}
