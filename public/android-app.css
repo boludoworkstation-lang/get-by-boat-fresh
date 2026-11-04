@@ -1,53 +1,53 @@
-/* Android Trusted Web Activity: purpose-built touch layout.
-   Activated only after /?android_app=1; ordinary mobile web remains unchanged. */
+/* Android-app-only, search-first design. Desktop and ordinary mobile web are unchanged. */
 @media (max-width: 800px) {
-  html.gbb-android-app { scroll-padding-bottom: 90px; }
-  html.gbb-android-app body { padding-bottom: calc(76px + env(safe-area-inset-bottom,0px)); background: #f9fbfb; }
-  html.gbb-android-app .site-head { height: 66px; background: #fff; border: 0; box-shadow: 0 2px 14px #1237440e; }
+  html.gbb-android-app { scroll-padding-bottom: 84px; }
+  html.gbb-android-app body { background: #fff; padding-bottom: calc(73px + env(safe-area-inset-bottom,0px)); color: #193740; }
+  html.gbb-android-app .site-head { height: 62px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #f0f2f3; box-shadow: none; background: #fff; }
   html.gbb-android-app .site-head .shell { width: calc(100% - 36px); }
-  html.gbb-android-app .site-head .logo { font-size: 24px; letter-spacing: -.7px; }
-  html.gbb-android-app .site-head .logo-mark { transform: scale(.92); transform-origin: left center; }
-  html.gbb-android-app .mobile-menu-btn { border-radius: 50%; background: #f0f7f8; }
-  html.gbb-android-app footer.footer { display: none; }
-  html.gbb-android-app .hero { height: 555px; min-height: 0; background: #095669; }
-  html.gbb-android-app .hero-photo { background-position: 59% center; transform: scale(1); }
-  html.gbb-android-app .hero-shade { background: linear-gradient(180deg,#003c5166 0%,#002e40aa 56%,#003947ed 100%); }
-  html.gbb-android-app .hero-inner { height: 100%; width: calc(100% - 42px); padding-top: 59px; padding-bottom: 0; }
-  html.gbb-android-app .hero-copy h1 { font-size: clamp(47px,12.4vw,62px); letter-spacing: -.055em; line-height: 1.02; max-width: 340px; }
-  html.gbb-android-app .hero-copy h1 em { color: #bfeeed; }
-  html.gbb-android-app .hero-copy p { font-size: 14px; line-height: 1.6; max-width: 23ch; margin-top: 16px; }
-  html.gbb-android-app .hero-note { display: none; }
-  html.gbb-android-app .hero-search-wrap { position: absolute; bottom: 38px; left: 0; right: 0; margin-top: 0; }
-  html.gbb-android-app .search-widget { display: grid; grid-template-columns: minmax(0,1fr); gap: 5px; padding: 9px; background: #fff; border-radius: 20px; box-shadow: 0 22px 40px #00262e4d; }
-  html.gbb-android-app .search-widget .search-fields { display: block; }
-  html.gbb-android-app .search-widget .search-field { min-height: 63px; margin: 0; padding: 8px 12px; border: 0; }
-  html.gbb-android-app .search-widget .search-field:not(:first-child) { display: none; }
-  html.gbb-android-app .search-widget .search-field:first-child > span { font-size: 12px; }
-  html.gbb-android-app .search-widget .search-field:first-child input { height: 35px; font-size: 16px; }
-  html.gbb-android-app .search-widget .btn-search { height: 55px; width: 100%; min-width: 0; border-radius: 13px; font-size: 14px; }
-  html.gbb-android-app .hero-promises { display: none; }
-  html.gbb-android-app .section { padding: 38px 0; }
-  html.gbb-android-app .section-header { align-items: start; gap: 15px; margin-bottom: 21px; }
-  html.gbb-android-app .section-header h2 { font-size: clamp(34px,9vw,42px); max-width: 9em; }
-  html.gbb-android-app .section-link { align-self: end; font-size: 11px; }
-  html.gbb-android-app .destination-grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: min(75vw,315px); gap: 15px; overflow-x: auto; margin-right: -16px; padding: 0 17px 12px 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
-  html.gbb-android-app .destination-grid::-webkit-scrollbar { display: none; }
-  html.gbb-android-app .destination-card { height: 280px; border-radius: 19px; scroll-snap-align: start; }
-  html.gbb-android-app .destination-copy { left: 20px; bottom: 22px; }
-  html.gbb-android-app .destination-copy h3 { font-size: 34px; }
-  html.gbb-android-app .rental-page { padding-bottom: 36px; }
-  html.gbb-android-app .rental-card-grid { gap: 18px; }
-  html.gbb-android-app .rental-card { border-radius: 19px; box-shadow: 0 7px 24px #043a4810; }
-  html.gbb-android-app .rental-card-photo { height: 255px; }
-  html.gbb-android-app .rental-card-body { padding: 16px 18px 19px; }
-  html.gbb-android-app .listing-booking { padding-bottom: 20px; }
-  html.gbb-android-app .member-main { padding-bottom: 36px; }
-  .gbb-android-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 120; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; height: calc(70px + env(safe-area-inset-bottom,0px)); padding: 7px 8px calc(7px + env(safe-area-inset-bottom,0px)); background: #fffffff5; border-top: 1px solid #e6eff1; box-shadow: 0 -7px 26px #052d3912; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
-  .gbb-android-bottom-nav a { min-width: 0; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border-radius: 13px; color: #7b949a; font: 700 10px/1.15 'DM Sans',system-ui,sans-serif; transition: color .18s,background .18s; }
-  .gbb-android-bottom-nav a svg { width: 23px; height: 23px; stroke-width: 1.9; }
-  .gbb-android-bottom-nav a[aria-current=page] { color: #007e9b; background: #eaf8fa; }
-  .gbb-android-bottom-nav a:focus-visible { outline: 2px solid #009bb9; outline-offset: -3px; }
+  html.gbb-android-app .site-head .logo { font: 400 23px Georgia,serif; letter-spacing: -.7px; }
+  html.gbb-android-app .site-head .logo-mark { transform: scale(.88); transform-origin: left center; }
+  html.gbb-android-app .mobile-menu-btn { border: none; border-radius: 50%; background: #f5f7f8; width: 42px; height: 42px; }
+  html.gbb-android-app .footer { display: none; }
+
+  /* Start on actual boat search, not a promotional landing page. */
+  html.gbb-android-app .rental-page { background: #fff; padding: 0 0 34px; }
+  html.gbb-android-app .rental-heading { display: block; padding-top: 24px; margin-bottom: 20px; }
+  html.gbb-android-app .rental-eyebrow { display: none; }
+  html.gbb-android-app .rental-heading h1 { font: 750 clamp(29px,8.5vw,36px)/1.12 'DM Sans',system-ui,sans-serif; letter-spacing: -.05em; color: #182f37; }
+  html.gbb-android-app .rental-heading p { font-size: 14px; line-height: 1.45; color: #75868b; margin-top: 7px; }
+  html.gbb-android-app .rental-request-note { display: none; }
+  html.gbb-android-app .rental-search-form.shell { width: calc(100% - 32px); }
+  html.gbb-android-app .rental-search-bar { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; border: 1px solid #e8edef; border-radius: 19px; padding: 9px; box-shadow: 0 4px 18px #123e4d0e; background: #fff; margin-bottom: 24px; }
+  html.gbb-android-app .rental-search-bar label { min-width: 0; min-height: 53px; padding: 8px 11px; background: #f8fafb; border: 1px solid #f0f2f3; border-radius: 12px; }
+  html.gbb-android-app .rental-search-bar .rental-where { grid-column: 1 / -1; background: #fff; border: 1px solid #dee8eb; min-height: 58px; }
+  html.gbb-android-app .rental-search-bar label > span { font-size: 10px; font-weight: 700; color: #667b84; }
+  html.gbb-android-app .rental-search-bar input { font-size: 15px; color: #193740; }
+  html.gbb-android-app .rental-search-bar .rental-date-trigger { font-size: 13px; min-height: 24px; color: #29444d; }
+  html.gbb-android-app .rental-search-button { grid-column: 1 / -1; width: 100%; height: 50px; min-height: 50px; border-radius: 12px; background: #00a1b8; font: 750 14px 'DM Sans',system-ui,sans-serif; }
+  html.gbb-android-app .rental-results-bar { gap: 10px; margin-bottom: 15px; align-items: center; }
+  html.gbb-android-app .rental-results-bar strong { font-size: 15px; color: #273b42; }
+  html.gbb-android-app .rental-results-bar span { font-size: 11px; color: #819097; }
+  html.gbb-android-app .rental-mobile-filters { min-height: 40px; background: #fff; border: 1px solid #e1e7e9; border-radius: 11px; color: #233d44; }
+  html.gbb-android-app .rental-results-controls { gap: 6px; }
+  html.gbb-android-app .rental-sort-control { border-radius: 9px; background: #f7f9f9; }
+  html.gbb-android-app .rental-card-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 22px; }
+  html.gbb-android-app .rental-card { box-shadow: none; border: none; border-radius: 0; background: #fff; overflow: visible; }
+  html.gbb-android-app .rental-card-photo { height: clamp(230px,66vw,310px); overflow: hidden; border-radius: 18px; }
+  html.gbb-android-app .rental-favorite { top: 11px; right: 11px; width: 41px; height: 41px; background: #fff; color: #1d454c; box-shadow: 0 2px 10px #102c3d22; }
+  html.gbb-android-app .rental-card-body { padding: 12px 3px 10px; }
+  html.gbb-android-app .rental-page .rental-card h3 { font-size: 20px!important; line-height: 1.22!important; color: #1d333a!important; margin: 5px 0 7px!important; }
+  html.gbb-android-app .rental-card-location { font-size: 13px; }
+  html.gbb-android-app .rental-card-bottom { border-top: 0; margin-top: 8px; padding-top: 6px; }
+  html.gbb-android-app .rental-card-bottom strong { font-size: 20px; }
+  html.gbb-android-app .listing-booking { padding-bottom: 28px; }
+  html.gbb-android-app .member-main { padding-bottom: 34px; }
+
+  /* Native-feeling tab bar: one tap to explore, save, book, message, account. */
+  .gbb-android-bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 120; height: calc(69px + env(safe-area-inset-bottom,0px)); padding: 6px 7px calc(6px + env(safe-area-inset-bottom,0px)); background: #fffffff7; border-top: 1px solid #edf1f1; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; box-shadow: 0 -5px 22px #0836440a; }
+  .gbb-android-bottom-nav a { text-decoration: none; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; min-width: 0; color: #8c9a9d; font: 700 10px/1.15 'DM Sans',system-ui,sans-serif; border-radius: 10px; }
+  .gbb-android-bottom-nav a svg { width: 23px; height: 23px; stroke-width: 1.8; }
+  .gbb-android-bottom-nav a[aria-current=page] { background: none; color: #008aa0; }
+  .gbb-android-bottom-nav a:focus-visible { outline: 2px solid #008aa0; outline-offset: -2px; }
   html.gbb-android-app:has(.auth-dialog) .gbb-android-bottom-nav { display: none; }
 }
 @media (min-width: 801px) { .gbb-android-bottom-nav { display: none; } }
-@media (prefers-reduced-motion: reduce) { .gbb-android-bottom-nav a { transition: none; } }
