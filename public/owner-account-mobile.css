@@ -1,0 +1,319 @@
+/* Get By Boat — owner account, phone-sized screens only.
+   Presentation only: existing profile, banking and verification flows are unchanged. */
+@media (max-width: 640px) {
+  .member-shell:has(.owner-account-tabs) {
+    --owner-ink: #173d49;
+    --owner-muted: #6e8891;
+    --owner-accent: #009eae;
+    --owner-border: #dfebee;
+    background: #f6fafb;
+  }
+
+  .member-shell:has(.owner-account-tabs) .member-sidebar {
+    background: #fff;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e4edef;
+    box-shadow: 0 3px 12px #123e4d06;
+  }
+  .member-shell:has(.owner-account-tabs) .member-sidebar nav {
+    gap: 7px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .member-shell:has(.owner-account-tabs) .member-sidebar nav::-webkit-scrollbar { display: none; }
+  .member-shell:has(.owner-account-tabs) .member-sidebar nav a {
+    min-height: 37px;
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: #68818a;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 650;
+  }
+  .member-shell:has(.owner-account-tabs) .member-sidebar nav a[aria-current="page"] {
+    color: #087e91;
+    background: #eaf7f9;
+    border-color: #d4ecf0;
+    box-shadow: none;
+  }
+
+  .member-main:has(> .owner-account-tabs) {
+    min-width: 0;
+    padding: 23px 15px 56px;
+    color: var(--owner-ink);
+  }
+  .member-main:has(> .owner-account-tabs) > .member-page-kicker {
+    margin-bottom: 7px;
+    color: #168fa1;
+    font-size: 9px;
+    letter-spacing: .16em;
+  }
+  .member-main:has(> .owner-account-tabs) > h1 {
+    margin: 0 0 19px;
+    color: #153844;
+    font-size: clamp(25px, 6.5vw, 29px);
+    font-weight: 750;
+    letter-spacing: -.045em;
+    line-height: 1.2;
+  }
+
+  /* Keep every tab visible, including Security, on narrow devices. */
+  .member-main > .owner-account-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    margin: 0 0 19px;
+    padding: 0;
+    border: 0;
+    overflow: visible;
+  }
+  .member-main > .owner-account-tabs a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 57px;
+    padding: 10px 7px;
+    border: 1px solid #e0eaed;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 9px #17425205;
+    color: #607d87;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    text-wrap: balance;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+  .member-main > .owner-account-tabs a[aria-current="page"] {
+    color: #087e91;
+    border-color: #6ac4cd;
+    background: #eaf8fa;
+    box-shadow: inset 0 0 0 1px #caedf1;
+  }
+
+  /* The same rhythm and form language across Personal, Business and Security. */
+  .member-main:has(> .owner-account-tabs) .profile-panel {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    box-sizing: border-box;
+    margin: 0 0 14px;
+    padding: 20px 17px;
+    border: 1px solid var(--owner-border);
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 5px 22px #173f4908;
+  }
+  .member-main:has(> .owner-account-tabs) .profile-panel h2 {
+    margin: 0 0 13px;
+    color: #173d49;
+    font-size: 18px;
+    font-weight: 750;
+    letter-spacing: -.035em;
+    line-height: 1.35;
+  }
+  .member-main:has(> .owner-account-tabs) .member-note,
+  .member-main:has(> .owner-account-tabs) .owner-field-help {
+    color: var(--owner-muted);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .member-main:has(> .owner-account-tabs) .profile-panel > .member-note { margin: 0 0 18px; }
+  .member-main:has(> .owner-account-tabs) .live-columns {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 14px;
+    margin: 0;
+  }
+  .member-main:has(> .owner-account-tabs) .live-form label:not(.live-check):not(.account-delete-check) {
+    min-width: 0;
+    margin: 0 0 14px;
+    color: #466772;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .member-main:has(> .owner-account-tabs) .live-columns > label:last-child { margin-bottom: 0; }
+  .member-main:has(> .owner-account-tabs) .profile-panel input:not([type="checkbox"]):not([type="file"]),
+  .member-main:has(> .owner-account-tabs) .profile-panel select,
+  .member-main:has(> .owner-account-tabs) .profile-panel textarea {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 49px;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1px solid #dae7ea;
+    border-radius: 11px;
+    background: #fff;
+    color: #173d49;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .member-main:has(> .owner-account-tabs) .profile-panel input[readonly] { background: #f5f8f9; color: #7a9299; }
+  .member-main:has(> .owner-account-tabs) .profile-panel textarea { min-height: 87px; resize: vertical; }
+  .member-main:has(> .owner-account-tabs) .profile-panel :is(input, select, textarea):focus-visible,
+  .member-main:has(> .owner-account-tabs) .profile-birth-trigger:focus-visible,
+  .member-main:has(> .owner-account-tabs) .language-selector-trigger:focus-visible {
+    outline: 2px solid #74c8d2;
+    outline-offset: 2px;
+    border-color: #33aebe;
+  }
+  .member-main:has(> .owner-account-tabs) .profile-birth-trigger,
+  .member-main:has(> .owner-account-tabs) .language-selector-trigger {
+    width: 100%;
+    min-height: 49px;
+    border-radius: 11px;
+    border-color: #dae7ea;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  .member-main:has(> .owner-account-tabs) .profile-phone-inputs { gap: 9px; margin-top: 0; }
+  .member-main:has(> .owner-account-tabs) .profile-panel .btn {
+    width: 100%;
+    max-width: 100%;
+    min-height: 47px;
+    box-sizing: border-box;
+    margin-top: 8px;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .member-main:has(> .owner-account-tabs) .profile-panel [data-feedback] { margin: 10px 0 0; font-size: 12px; }
+
+  /* Personal profile: calm photo uploader with a clear central action. */
+  .member-main:has(> .owner-account-tabs) .profile-panel[data-live-form="avatar"] { text-align: center; }
+  .member-main:has(> .owner-account-tabs) .profile-photo-preview { margin: 5px 0 17px; }
+  .member-main:has(> .owner-account-tabs) .profile-photo-preview :is(img, span) {
+    display: grid;
+    place-items: center;
+    width: 108px;
+    height: 108px;
+    margin: 0 auto;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    background: #e7f6f8;
+    box-shadow: 0 0 0 1px #d0e8ec, 0 8px 20px #16495610;
+  }
+  .member-main:has(> .owner-account-tabs) .profile-photo-preview span { font-size: 66px; color: #79b3bf; }
+  .member-main:has(> .owner-account-tabs) .profile-panel[data-live-form="avatar"] > label { text-align: left; }
+  .member-main:has(> .owner-account-tabs) .profile-panel input[type="file"] {
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    border: 1px dashed #bdd9df;
+    border-radius: 11px;
+    background: #f7fbfc;
+    color: #5f7e89;
+    font-size: 12px;
+  }
+  .member-main:has(> .owner-account-tabs) .profile-panel[data-live-form="avatar"] > small {
+    color: #829aa1;
+    font-size: 11px !important;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  /* Business checklist and three verification stages. */
+  .member-main:has(> .owner-account-tabs) .owner-workspace { width: 100%; padding-bottom: 6px; }
+  .member-main:has(> .owner-account-tabs) .owner-verification-overview {
+    padding: 20px 17px;
+    background: linear-gradient(145deg, #eaf8fa, #fff 85%) !important;
+    border-color: #cde8ed !important;
+  }
+  .member-main:has(> .owner-account-tabs) .verification-heading { gap: 11px; }
+  .member-main:has(> .owner-account-tabs) .verification-heading h2 { margin: 5px 0 0; font-size: 19px; }
+  .member-main:has(> .owner-account-tabs) .verification-badge {
+    align-self: flex-start;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    white-space: normal;
+    line-height: 1.2;
+  }
+  .member-main:has(> .owner-account-tabs) .owner-progress { grid-template-columns: 1fr; gap: 8px; margin-top: 16px; }
+  .member-main:has(> .owner-account-tabs) .owner-progress-step {
+    min-height: 61px;
+    padding: 11px 13px;
+    border: 1px solid #ddebed;
+    border-radius: 12px;
+    background: #fff;
+    gap: 11px;
+  }
+  .member-main:has(> .owner-account-tabs) .owner-progress-step > span:first-child {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: #e7f4f7;
+    color: #0b8498;
+    font-size: 12px;
+  }
+  .member-main:has(> .owner-account-tabs) .owner-progress-step > span:last-child { font-size: 12px; color: #234854; }
+  .member-main:has(> .owner-account-tabs) .owner-progress-step small { font-size: 10px; margin-top: 3px; }
+  .member-main:has(> .owner-account-tabs) .owner-workspace-heading { margin: 24px 2px 23px; }
+  .member-main:has(> .owner-account-tabs) .owner-workspace-heading h2 { font-size: 21px; line-height: 1.25; margin-bottom: 7px; }
+  .member-main:has(> .owner-account-tabs) .owner-workspace-heading p { font-size: 12px; line-height: 1.55; }
+  .member-main:has(> .owner-account-tabs) .owner-workflow-section { margin-bottom: 28px; scroll-margin-top: 94px; }
+  .member-main:has(> .owner-account-tabs) .owner-workflow-heading { gap: 12px; margin: 0 2px 13px; align-items: flex-start; }
+  .member-main:has(> .owner-account-tabs) .owner-step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: #dcf3f7;
+    color: #07879c;
+    font-size: 12px;
+  }
+  .member-main:has(> .owner-account-tabs) .owner-workflow-heading h2 { margin: 0 0 4px; font-size: 16px; line-height: 1.3; }
+  .member-main:has(> .owner-account-tabs) .owner-workflow-heading p { color: #758e97; font-size: 11px; line-height: 1.5; }
+  .member-main:has(> .owner-account-tabs) .owner-workflow-section > .profile-panel { padding: 19px 16px; }
+  .member-main:has(> .owner-account-tabs) .owner-workflow-section .owner-field-help { margin: 7px 0 0; }
+  .member-main:has(> .owner-account-tabs) .owner-bank-fields { margin: 10px 0 0; }
+
+  /* Individual document uploads are stacked, not squeezed into columns. */
+  .member-main:has(> .owner-account-tabs) .owner-workflow-section .owner-documents-panel { padding: 19px 16px; }
+  .member-main:has(> .owner-account-tabs) .owner-documents-intro { gap: 11px; }
+  .member-main:has(> .owner-account-tabs) .owner-documents-intro h2 { font-size: 18px; margin-bottom: 7px; }
+  .member-main:has(> .owner-account-tabs) .owner-documents-intro p { margin: 0; font-size: 12px; line-height: 1.55; }
+  .member-main:has(> .owner-account-tabs) .owner-documents-private { font-size: 10px; padding: 7px 10px; }
+  .member-main:has(> .owner-account-tabs) .owner-documents-panel .owner-documents-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 11px;
+    margin-top: 18px;
+  }
+  .member-main:has(> .owner-account-tabs) .owner-documents-panel .owner-document-card {
+    padding: 16px 14px;
+    border: 1px solid #dfe9ec;
+    border-radius: 13px;
+    background: #fbfdfd;
+    box-shadow: none;
+    transform: none;
+  }
+  .member-main:has(> .owner-account-tabs) .owner-documents-panel .owner-document-head { min-height: 0; gap: 5px; }
+  .member-main:has(> .owner-account-tabs) .owner-document-headerline { margin-bottom: 5px; }
+  .member-main:has(> .owner-account-tabs) .owner-document-number { width: 32px; height: 32px; border-radius: 9px; }
+  .member-main:has(> .owner-account-tabs) .owner-documents-panel .owner-document-card label { margin: 13px 0 0; }
+  .member-main:has(> .owner-account-tabs) .owner-documents-panel .owner-document-card input[type="file"] { font-size: 11px; }
+  .member-main:has(> .owner-account-tabs) .owner-workflow-section .owner-submit-form { background: #f3fafb !important; }
+  .member-main:has(> .owner-account-tabs) .owner-submit-form .live-check { align-items: flex-start; gap: 10px; line-height: 1.5; }
+  .member-main:has(> .owner-account-tabs) .owner-submit-form .live-check input { flex: 0 0 18px; width: 18px; height: 18px; margin: 2px 0 0; }
+
+  /* Security and account deletion remain clear, but not visually alarming. */
+  .member-main:has(> .owner-account-tabs) .password-change-control { width: 100%; }
+  .member-main:has(> .owner-account-tabs) .password-change-control input { padding-right: 52px !important; }
+  .member-main:has(> .owner-account-tabs) .account-danger-zone {
+    margin: 0 0 16px !important;
+    padding: 20px 17px !important;
+    border: 1px solid #e7e9eb !important;
+    border-radius: 17px !important;
+    background: #fff !important;
+    box-shadow: 0 5px 22px #173f4908 !important;
+  }
+  .member-main:has(> .owner-account-tabs) .account-danger-intro h2 { margin-bottom: 6px !important; font-size: 18px !important; }
+  .member-main:has(> .owner-account-tabs) .account-danger-intro p { font-size: 12px !important; line-height: 1.55 !important; }
+  .member-main:has(> .owner-account-tabs) .account-delete-details { max-width: 100%; }
+  .member-main:has(> .owner-account-tabs) .account-delete-details summary { font-size: 12px; }
+}
