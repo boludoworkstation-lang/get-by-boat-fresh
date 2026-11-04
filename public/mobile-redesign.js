@@ -13,25 +13,27 @@
       sliders: '<path d="M4 5h16M4 12h16M4 19h16"/><circle cx="9" cy="5" r="2" fill="white"/><circle cx="16" cy="12" r="2" fill="white"/><circle cx="8" cy="19" r="2" fill="white"/>',
       chevron: '<path d="m6 9 6 6 6-6"/>',
       ship: '<path d="M4 15h16l-2.5 5h-11L4 15Zm4-8h8v8H8V7Zm-3 0h14M12 3v4"/>',
-      motorboat: '<path d="M3 16h18l-3 4H6l-3-4Zm4 0 1-4h8l3 4M9 12V9h5l2 3M8 22h8"/>',
-      rib: '<path d="M3 16c0-2 2-3 4-3h10c2 0 4 1 4 3s-3 4-9 4-9-2-9-4Zm5-3V9h7l2 4M4 16h16"/>',
-      sailboat: '<path d="M12 2v16M10 6 4 17h6V6Zm4 0 6 11h-6V6ZM3 19h18l-3 3H6l-3-3Z"/>',
-      catamaran: '<path d="M12 2v16M9 6 5 17h4V6Zm5 0 5 11h-5V6ZM2 19h7l-1 3H4l-2-3Zm13 0h7l-2 3h-4l-1-3Z"/>',
-      yacht: '<path d="M2 17h20l-3 4H5l-3-4Zm5 0V9h9l3 8M10 9V6h5v3M9 12h4m2 0h2"/>',
-      jetski: '<path d="M4 18c4 0 7-3 11-3h4l2 3-4 3H8l-4-3Zm6-3 2-5h4l2 5M15 10l-2-2M7 22h13"/>',
-      gps: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
-      speakers: '<path d="M4 9h4l5-4v14l-5-4H4V9Zm12-1a6 6 0 0 1 0 8m2-11a10 10 0 0 1 0 14"/>',
-      bimini: '<path d="M3 11a9 9 0 0 1 18 0H3Zm4 0v10m10-10v10M3 21h18"/>',
-      anchor: '<circle cx="12" cy="4" r="2"/><path d="M12 6v15m-6-8H3c0 6 4 9 9 9s9-3 9-9h-3M7 10h10"/>',
-      shower: '<path d="M5 21V8a5 5 0 0 1 10 0M12 8h7l2 4H10l2-4ZM11 16v2m5-2v3m5-3v2"/>',
-      skis: '<path d="M6 3 3 21m12-18-3 18M3 15l15-4m-13-2 15-4"/>',
-      banana: '<path d="M3 6c2 11 8 16 18 12-3 4-9 5-13 2C4 17 2 11 3 6Z"/>',
-      tube: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>',
-      wakeboard: '<path d="M4 20 17 4a3 3 0 0 1 3 3L7 23a3 3 0 0 1-3-3ZM9 15l5 4m-2-7 5 4"/>',
-      snowflake: '<path d="M12 2v20M4 7l16 10M20 7 4 17M9 5l3 3 3-3M9 19l3-3 3 3"/>',
-      autopilot: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6m0 6v6M3 12h6m6 0h6"/>',
-      dinghy: '<path d="M3 13h18l-3 7H6l-3-7Zm3 0 3-5h6l3 5M7 20h10"/>',
-      thruster: '<path d="M4 12h16m-4-4 4 4-4 4M8 8l-4 4 4 4M9 3v18m6-18v18"/>'
+      // Boat silhouettes show the actual hull/propulsion differences at small sizes.
+      motorboat: '<path d="M2 17h20l-3.5 4H5.5L2 17Zm5-1 1.4-4h7l3 4M9 12V8.5h5l3 3.5M18.5 15h2v3M4 22h16"/>',
+      rib: '<path d="M2.5 16c.6-2 2.1-3.2 4.5-3.2h10c2.7 0 4.5 1.4 4.5 3.2 0 3-4 5-9.5 5s-9.5-2-9.5-5ZM4 16h16M8 12.8 9.2 9H14l2 3.8M17.5 12V6h3M18 8h2.5"/>',
+      sailboat: '<path d="M12 2v16M10 5 4 17h6V5Zm4 1 6 11h-6V6ZM3 19h18l-3 3H6l-3-3Z"/>',
+      catamaran: '<path d="M12 2v15M10 5 4 16h6V5Zm4 1 6 10h-6V6ZM8 17h8M2 19h8l-2 3H4l-2-3Zm12 0h8l-2 3h-4l-2-3Z"/>',
+      yacht: '<path d="M2 17h20l-3.5 4h-13L2 17ZM5 17l2-6h12l2 6M9 11V7h7l2 4M12 7V4h4v3M8 14h3m3 0h3"/>',
+      jetski: '<path d="M3 17.5c3.5-.3 6-3.4 10.6-3.4h4.2l3.2 3.4-4.4 3H8L3 17.5ZM9.6 14l2.2-4.4h4.5l2.1 4.4M14.4 9.6l-2-2.1M18.5 9.5h3M6 22h13"/>',
+      // Equipment matches the line-icon language already used on listing pages.
+      gps: '<circle cx="12" cy="12" r="9"/><path d="m16 8-3 6-5 2 2-5z"/>',
+      speakers: '<rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><circle cx="6.5" cy="14" r="2"/><circle cx="17.5" cy="14" r="2"/>',
+      bimini: '<path d="M2 12c3.5-7 16.5-7 20 0H2ZM5 12v9m14-9v9M4 21h16M8 12l-1.5-2M16 12l1.5-2"/>',
+      anchor: '<path d="M12 3v15M8 7h8M4 13a8 8 0 0 0 16 0M4 13l-2 3M20 13l2 3M10 21h4"/>',
+      shower: '<path d="M4 22V9a5 5 0 0 1 10 0M11 9h7l2 3H9zM12 15v2M16 15v3M20 15v2"/>',
+      skis: '<path d="M7 3 3 21h4l4-18H7Zm9 0-4 18h4l4-18h-4ZM5.5 12h4M14.5 12h4"/>',
+      banana: '<path d="M2.5 10c5.5 11 13.5 11 19 0-2 10-8 12-13.5 8-3-2.3-5.3-5.4-5.5-8ZM7 11l1-3m4 5 1-3m3 3 1-3"/>',
+      tube: '<circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="3"/><path d="M3 22c3-3 5-3 8 0s5-3 10 0"/>',
+      wakeboard: '<path d="M3 15c3-9 15-9 18 0-3 6-15 6-18 0ZM9 11l5 8m0-9-5 8"/>',
+      snowflake: '<path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/>',
+      autopilot: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M8 16l4-9 4 9-4-2-4 2Z"/>',
+      dinghy: '<path d="M3 13h18l-3 6H7l-4-6ZM8 13l3-7h4l3 7M3 21c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
+      thruster: '<circle cx="12" cy="12" r="9"/><path d="m12 12 4-5-1 6-3-1ZM12 12l5 4-6-1 1-3ZM12 12l-4 5 1-6 3 1ZM12 12 7 8l6 1-1 3Z"/>'
     };
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.search}</svg>`;
   };
@@ -315,6 +317,31 @@
     });
   }
 
+  function arrangeMobileFooter() {
+    const columns = document.querySelector('.footer .footer-columns');
+    const brand = columns?.firstElementChild;
+    const social = columns?.querySelector('.footer-social');
+    const apps = columns?.querySelector('.footer-apps');
+    if (!brand || !social || !apps) return;
+    const countries = columns.querySelector('.footer-countries');
+    if (countries && !countries.querySelector('.gbb-mobile-country-grid')) {
+      // The desktop separator text nodes must not become anonymous grid cells.
+      const grid = document.createElement('nav');
+      grid.className = 'gbb-mobile-country-grid';
+      grid.setAttribute('aria-label','Destinations');
+      countries.querySelectorAll(':scope > a').forEach(link => grid.appendChild(link.cloneNode(true)));
+      countries.appendChild(grid);
+    }
+    if (mobile()) {
+      // Keep the mobile reading order as: brand, pages, destinations, social, app.
+      if (social.parentElement !== columns) columns.appendChild(social);
+      if (apps.parentElement !== columns) columns.appendChild(apps);
+    } else {
+      if (social.parentElement !== brand) brand.appendChild(social);
+      if (apps.parentElement !== brand) brand.appendChild(apps);
+    }
+  }
+
   function updateTriggerSummaries() {
     const locationInput = document.querySelector('.rental-page .rental-where input, .hero .search-location input');
     const location = locationInput && locationInput.value.trim();
@@ -374,6 +401,7 @@
     ensureHome();
     ensureRental();
     ensureBottomNav();
+    arrangeMobileFooter();
   }
   function scheduleEnhance() {
     if (scheduled) return;
