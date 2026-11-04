@@ -2,6 +2,10 @@
 
 This is a Google Play Android app for the existing https://getbyboat.net/ marketplace. It uses Android's Trusted Web Activity (TWA), **not** an embedded WebView. Chrome renders the current website (including search, owner dashboard, booking, and Google OAuth) in a full-screen Android experience.
 
+## Android-only mobile experience
+
+The app starts at `https://getbyboat.net/?android_app=1`. This flag enables a dedicated, simplified mobile layout with one-tap search, large swipeable destination cards, and a bottom navigation that follows customer/owner role. The ordinary mobile website is unaffected. All bookings, listings, accounts and messages continue to use the existing backend and permissions. The native APK has no extra storage or contact permissions.
+
 ## Project
 
 - App name: Get By Boat
