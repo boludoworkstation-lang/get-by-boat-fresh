@@ -2671,3 +2671,21 @@ button[data-gallery-select]:has(img)::after {
   .reservation-filter-bar{grid-template-columns:minmax(0,1fr)}
   .reservation-filter-bar label:first-child{grid-column:auto}
 }
+
+/* Let the reservations table use the full card width on desktop. */
+.reservations-table-panel{overflow:visible;min-width:0;padding:14px 12px}
+.reservations-table{width:100%;min-width:0;table-layout:fixed}
+.reservations-table th,.reservations-table td{padding:12px 9px!important;font-size:12px;min-width:0;overflow-wrap:break-word}
+.reservations-table th{font-size:11px;line-height:1.4;white-space:normal}
+.reservations-table th:nth-child(1){width:25%}
+.reservations-table th:nth-child(2){width:18%}
+.reservations-table th:nth-child(3){width:11%}
+.reservations-table th:nth-child(4){width:12%}
+.reservations-table th:nth-child(5){width:12%}
+.reservations-table th:nth-child(6){width:12%}
+.reservations-table th:nth-child(7){width:10%}
+.reservations-table td:nth-child(2){white-space:normal!important}
+@media(max-width:880px){
+  .reservations-table-panel{overflow-x:auto}
+  .reservations-table{min-width:820px;table-layout:auto}
+}
