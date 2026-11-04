@@ -286,3 +286,9 @@
   .footer .footer-store-badge svg { width:18px; }
   .footer .footer-store-badge strong { font-size:11px; }
 }
+
+/* Keep the editorial copy on three sentence-led lines on phones. */
+.editorial-tagline .editorial-mobile-break { display: none; }
+@media (max-width: 760px) {
+  .editorial-tagline .editorial-mobile-break { display: inline; }
+}
