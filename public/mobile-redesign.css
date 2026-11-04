@@ -150,6 +150,9 @@
   .gbb-sheet-option:has(input:checked) .gbb-sheet-check { background:#0098a8; border-color:#0098a8; box-shadow:inset 0 0 0 5px #fff; }
   .gbb-sheet-boat-types { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
   .gbb-sheet-boat-types .gbb-sheet-option { margin:0; min-height:70px; gap:7px; padding:11px; }
+  .gbb-sheet-type-icon { display:inline-flex; flex:0 0 29px; width:29px; height:29px; align-items:center; justify-content:center; color:#087f95; background:#eef9fa; border-radius:9px; }
+  .gbb-sheet-type-icon svg { width:21px; height:21px; }
+  .gbb-sheet-boat-types .gbb-sheet-option:has(input:checked) .gbb-sheet-type-icon { color:#006d83; background:#d9f1f4; }
   .gbb-sheet-boat-types .gbb-sheet-option strong { font-size:12px; }
   .gbb-sheet-boat-types .gbb-sheet-option small { font-size:10px; }
   .gbb-sheet-boat-types .gbb-sheet-check { width:17px; height:17px; flex-basis:17px; }
@@ -157,14 +160,20 @@
   .gbb-sheet-actions button { min-height:48px; border-radius:12px; font-weight:800; font-size:14px; }
   .gbb-sheet-actions .gbb-sheet-reset { border:0; background:transparent; color:#587782; padding:0 12px; }
   .gbb-sheet-actions .gbb-sheet-save { flex:1; border:0; background:#00a1b4; color:#fff; }
-  body.gbb-more-filters-open .rental-page .rental-sidebar.is-open { display:block!important; position:fixed!important; left:0; right:0; bottom:0; top:auto; z-index:9100; width:100%; max-height:87dvh; overflow-y:auto; overscroll-behavior:contain; margin:0; padding:20px 21px max(28px,env(safe-area-inset-bottom)); border:0; border-radius:22px 22px 0 0; box-shadow:0 -12px 50px #051d2533; }
+  body.gbb-more-filters-open .rental-page .rental-sidebar.is-open { display:block!important; position:fixed!important; left:0; right:0; bottom:0; top:auto; z-index:9100; width:100%; max-height:87dvh; overflow-y:auto; overscroll-behavior:contain; margin:0; padding:20px 21px calc(110px + env(safe-area-inset-bottom)); border:0; border-radius:22px 22px 0 0; box-shadow:0 -12px 50px #051d2533; }
   body.gbb-more-filters-open .rental-sidebar-head { position:sticky; top:-20px; z-index:3; background:#fff; padding:15px 0 17px; }
   .gbb-more-filters-close { display:none; border:0; border-radius:50%; background:#edf6f7; color:#1d5361; font-size:24px; width:34px; height:34px; }
   body.gbb-more-filters-open .gbb-more-filters-close { display:block; }
   body.gbb-more-filters-open .rental-sidebar-head h2 { font-size:19px; }
   .rental-sidebar .rental-licence-section label:has(input[name="with_skipper_only"]) { display:none!important; }
-  .gbb-more-filters-done { display:none; }
-  body.gbb-more-filters-open .gbb-more-filters-done { display:block; position:sticky; bottom:-28px; width:100%; min-height:49px; margin:18px 0 0; border:0; border-radius:12px; background:#009eae; color:#fff; font-weight:800; font-size:14px; box-shadow:0 -6px 18px #ffffff; }
+  .gbb-more-filters-done { display:none!important; }
+  body.gbb-more-filters-open .rental-sidebar .rental-filter-button { display:flex!important; position:fixed; left:21px; right:21px; bottom:calc(16px + env(safe-area-inset-bottom)); z-index:9102; box-sizing:border-box; width:auto!important; min-height:50px; margin:0; border:0; border-radius:12px; background:#00a1b4; color:#fff; font-size:14px; font-weight:800; box-shadow:0 -7px 22px 14px #fff; }
+  body.gbb-more-filters-open .rental-sidebar .rental-sidebar-note { display:none; }
+  body.gbb-more-filters-open .rental-sidebar .rental-check-list { gap:7px; }
+  body.gbb-more-filters-open .rental-sidebar .rental-check { min-height:34px; gap:10px; padding:3px 1px; }
+  .rental-sidebar .gbb-filter-choice-icon { display:inline-flex; align-items:center; justify-content:center; flex:0 0 22px; width:22px; height:22px; color:#138fa2; }
+  .rental-sidebar .gbb-filter-choice-icon svg { display:block; width:20px; height:20px; }
+  .rental-sidebar .rental-check:has(input:checked) .gbb-filter-choice-icon { color:#006d83; }
   .rental-card-grid { gap:17px; grid-template-columns:minmax(0,1fr)!important; }
   .rental-card-shell { position:relative; min-width:0; }
   .rental-page .rental-card { border:1px solid #e4ecee; border-radius:19px!important; box-shadow:0 5px 16px #103d4b0b; }
