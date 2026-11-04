@@ -2685,6 +2685,11 @@ button[data-gallery-select]:has(img)::after {
 .reservations-table th:nth-child(6){width:12%}
 .reservations-table th:nth-child(7){width:10%}
 .reservations-table td:nth-child(2){white-space:normal!important}
+.staff-reservations-table th:nth-child(1){width:32%}
+.staff-reservations-table th:nth-child(2){width:22%}
+.staff-reservations-table th:nth-child(3){width:14%}
+.staff-reservations-table th:nth-child(4){width:16%}
+.staff-reservations-table th:nth-child(5){width:16%}
 @media(max-width:880px){
   .reservations-table-panel{overflow-x:auto}
   .reservations-table{min-width:820px;table-layout:auto}
