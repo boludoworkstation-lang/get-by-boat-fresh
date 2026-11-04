@@ -2621,3 +2621,16 @@ button[data-gallery-select]:has(img)::after {
     height: 20px;
   }
 }
+
+/* Staff reservations: calm loading and a clear empty state. */
+.reservations-loading,.reservations-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;min-height:290px;padding:48px 26px;margin-top:22px;
+  border:1px solid #dfebee;border-radius:17px;background:#fff;
+}
+.reservations-loading h2,.reservations-empty h2{margin:14px 0 5px;color:#204a55;font-size:20px;letter-spacing:-.025em}
+.reservations-loading p,.reservations-empty p{max-width:420px;margin:0;color:#6c858d;font-size:13px;line-height:1.65}
+.reservations-loading-spinner{width:26px;height:26px;border:3px solid #d6ebef;border-top-color:#009ab6;border-radius:50%;animation:gbb-loading-spin .85s linear infinite}
+.reservations-empty-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:18px;background:#edf8f9;color:#0897ac}
+.reservations-empty-icon svg{width:26px;height:26px}
+.reservations-empty .btn{margin-top:22px}
