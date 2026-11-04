@@ -1569,6 +1569,9 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
       for(const key of ['location','start','end','skipper','licence_not_required','with_skipper_only','guests','cabins','berths','min_price','max_price','min_length','max_length','engine_min','engine_max','year_min','year_max','country','sort','layout']){
         const value=String(d.get(key)||'').trim();if(value)q.set(key,value);
       }
+      // Omit default year bounds so saved search links advance with the calendar year.
+      if(q.get('year_min')==='2000')q.delete('year_min');
+      if(q.get('year_max')===String(new Date().getFullYear()))q.delete('year_max');
       for(const key of ['type','equipment'])for(const value of d.getAll(key))if(value)q.append(key,String(value));
       const nextHash='#/boats?'+q.toString();
       const results=f.querySelector('.rental-results');
