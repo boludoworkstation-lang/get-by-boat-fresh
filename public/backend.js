@@ -1059,6 +1059,23 @@
     }));
     return page('Staff verification',`<p>Restricted reviewer area. Documents are private and accessible only through short-lived signed links. Approving owners unlocks publication of new listings.</p><div class="staff-verification-filters" data-staff-verification-filters><label>Search by name<input type="search" data-staff-search placeholder="Enter customer or owner name" autocomplete="off" aria-label="Search verification by name"></label><label>Verification status<select data-staff-status aria-label="Filter verification status"><option value="all">All statuses</option><option value="approved">Verified</option><option value="rejected">Rejected</option><option value="pending">In progress</option></select></label><label>Account type<select data-staff-account-type aria-label="Filter account type"><option value="all">All accounts</option><option value="business">Owner</option><option value="customer">Customer</option></select></label><span class="staff-filter-count" data-staff-result-count>${ownerRows.length+rows.length} verifications</span></div><div class="profile-panel staff-filter-no-results" data-staff-no-results hidden>No matching verification requests. Try another name, status or account type.</div><h2>Business / owner verification (${ownerRows.length})</h2><div class="verification-staff-list" data-staff-type="business">${ownerCards.join('')||'<div class="profile-panel">No owner verification requests yet.</div>'}</div><h2>Customer ID & boat licence (${rows.length})</h2><div class="verification-staff-list" data-staff-type="customer">${cards.join('')||'<div class="profile-panel">No customer verification requests yet.</div>'}</div>`);
   }
+  function filterAdminReservations(){
+    const toolbar=document.querySelector('[data-reservation-filters]');
+    if(!toolbar)return;
+    const name=(toolbar.querySelector('[data-reservation-search]')?.value||'').trim().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
+    const status=toolbar.querySelector('[data-reservation-status]')?.value||'all';
+    let visible=0;
+    for(const row of document.querySelectorAll('[data-reservation-row]')){
+      const searchable=(row.dataset.reservationSearch||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
+      const matches=(!name||searchable.includes(name))&&(status==='all'||row.dataset.reservationStatus===status);
+      row.hidden=!matches;
+      if(matches)visible++;
+    }
+    const count=toolbar.querySelector('[data-reservation-result-count]');
+    if(count)count.textContent=visible+' '+(visible===1?'reservation':'reservations')+' found';
+    const empty=document.querySelector('[data-reservation-no-results]');
+    if(empty)empty.hidden=visible!==0;
+  }
   async function adminReservationsPage(){
     if(!superAdmin)return page('Reservations','<div class="profile-panel"><h2>Access restricted</h2><p>Only the Super Admin can view all reservations.</p></div>');
     const rows=check(await Promise.race([client.rpc('super_admin_reservations'),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Reservations are taking too long to load. Please try again.')),12000))]));
@@ -1071,7 +1088,7 @@
       <div class="profile-panel" style="margin:0"><span class="member-page-kicker">OWNER PAYOUT</span><h2>${money(sum(confirmed,'charter_price'))}</h2><p>On confirmed reservations</p></div>
     </div>`;
     if(!rows.length)return page('Reservations',`<p>All reservation requests and financial details in one place.</p>${summary}<div class="profile-panel reservations-empty"><div class="reservations-empty-icon">${icon('calendar')}</div><h2>No reservations yet</h2><p>When a customer sends a booking request, it will appear here with its dates, status and payment details.</p><a class="btn secondary" href="#/dashboard">Back to overview</a></div>`);
-    const tr=rows.map(r=>`<tr>
+    const tr=rows.map(r=>`<tr data-reservation-row data-reservation-search="${esc([r.customer_name,r.owner_name,r.boat_name].filter(Boolean).join(' '))}" data-reservation-status="${esc(['confirmed','awaiting_payment'].includes(r.status)?'accepted':r.status==='pending_owner'?'pending':r.status)}">
       <td style="padding:14px 12px"><strong>${esc(r.boat_name||'Boat')}</strong><br><small>${esc(r.customer_name||'Traveller')} · ${esc(r.owner_name||'Owner')}</small></td>
       <td style="padding:14px 12px;white-space:nowrap">${esc(euroDate(r.start_date))} – ${esc(euroDate(r.end_date))}</td>
       <td style="padding:14px 12px"><span class="member-status">${esc(status(r.status))}</span></td>
@@ -1080,7 +1097,7 @@
       <td style="padding:14px 12px;text-align:right">${money(r.processing_fee||0)}</td>
       <td style="padding:14px 12px;text-align:right"><strong>${money(r.charter_price||0)}</strong></td>
     </tr>`).join('');
-    return page('Reservations',`<p>All reservation requests, dates and financial breakdown. Amounts for pending requests are estimates until payment is confirmed.</p>${summary}<section class="profile-panel" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left;min-width:950px"><thead><tr style="border-bottom:1px solid #dce8ed"><th style="padding:14px 12px">Boat / traveller / owner</th><th style="padding:14px 12px">Rental dates</th><th style="padding:14px 12px">Status</th><th style="padding:14px 12px;text-align:right">Guest total</th><th style="padding:14px 12px;text-align:right">Commission</th><th style="padding:14px 12px;text-align:right">Processing</th><th style="padding:14px 12px;text-align:right">Owner net</th></tr></thead><tbody>${tr}</tbody></table></section>`);
+    return page('Reservations',`<p>All reservation requests, dates and financial breakdown. Amounts for pending requests are estimates until payment is confirmed.</p>${summary}<div class="reservation-filter-bar" data-reservation-filters><label>Search by name<input type="search" data-reservation-search placeholder="Customer, owner or boat name" aria-label="Search reservations by name" autocomplete="off"></label><label>Reservation status<select data-reservation-status aria-label="Filter reservation status"><option value="all">All statuses</option><option value="accepted">Accepted</option><option value="pending">Pending</option><option value="declined">Declined</option><option value="cancelled">Cancelled</option></select></label><span class="reservation-result-count" data-reservation-result-count>${rows.length} reservations</span></div><div class="profile-panel reservation-filter-empty" data-reservation-no-results hidden>No matching reservations. Try another name or status.</div><section class="profile-panel" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left;min-width:950px"><thead><tr style="border-bottom:1px solid #dce8ed"><th style="padding:14px 12px">Boat / traveller / owner</th><th style="padding:14px 12px">Rental dates</th><th style="padding:14px 12px">Status</th><th style="padding:14px 12px;text-align:right">Guest total</th><th style="padding:14px 12px;text-align:right">Commission</th><th style="padding:14px 12px;text-align:right">Processing</th><th style="padding:14px 12px;text-align:right">Owner net</th></tr></thead><tbody>${tr}</tbody></table></section>`);
   }
   async function route(){const {path,params}=parseRoute();if(!['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/reservations','/messages'].includes(path)&&!path.startsWith('/listing/'))return null;
     if(!client)return ['/login','/owner','/bookings','/account','/dashboard','/favourites','/staff','/reservations','/messages'].includes(path)?loginPage():page('Welcome aboard.','<p>Connecting your account…</p>');
@@ -1439,6 +1456,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
   });
   document.addEventListener('input',e=>{
     if(e.target.matches?.('[data-staff-search]'))filterStaffVerifications();
+    if(e.target.matches?.('[data-reservation-search]'))filterAdminReservations();
     if(isWholeBoatSpec(e.target)&&/[.,]/.test(e.target.value))e.target.value=e.target.value.split(/[.,]/)[0];
     if(e.target.matches?.('[data-equipment-search]'))syncEquipmentPicker(e.target.closest('[data-live-form="boat"]'));
     if(e.target.closest('[data-live-form="request"]'))quote();
@@ -1458,6 +1476,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
   });
   document.addEventListener('change',e=>{
     if(e.target.matches?.('[data-staff-status],[data-staff-account-type]'))filterStaffVerifications();
+    if(e.target.matches?.('[data-reservation-status]'))filterAdminReservations();
     if(e.target.closest('[data-live-form="request"]'))quote();
     const ownerBusiness=e.target.closest('[data-live-form="owner-business"]');
     if(ownerBusiness&&e.target.name==='business_country')syncOwnerBusinessCountry(ownerBusiness);
