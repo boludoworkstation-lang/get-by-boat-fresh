@@ -47,7 +47,6 @@
   let scheduled = false;
   let sheetKind = '';
   const boatTypes = ['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'];
-  const boatTypeIcons = {Motorboat:'motorboat',RIB:'rib',Sailboat:'sailboat',Catamaran:'catamaran',Yacht:'yacht',Jetski:'jetski'};
   const equipmentIcons = {gps:'gps',outdoor_speakers:'speakers',bimini:'bimini',electric_windlass:'anchor',outdoor_shower:'shower',water_skis:'skis',banana:'banana',towable_tube:'tube',wakeboard:'wakeboard',air_conditioning:'snowflake',autopilot:'autopilot',dinghy:'dinghy',bow_thruster:'thruster'};
   const getParams = () => new URLSearchParams(window.location.hash.split('?')[1] || '');
   const skipperFromParams = params => params.get('skipper') || (params.get('with_skipper_only') === '1' ? 'with' : '');
@@ -185,7 +184,7 @@
     const heading = kind === 'skipper' ? 'Skipper' : 'Boat type';
     const sheet = document.getElementById('gbb-mobile-options-sheet');
     sheet.setAttribute('aria-label',heading);
-    sheet.innerHTML = `<div class="gbb-sheet-handle" aria-hidden="true"></div><div class="gbb-sheet-heading"><h2>${heading}</h2><button type="button" data-gbb-close-sheet aria-label="Close ${heading} filter">×</button></div><div class="gbb-sheet-options ${kind==='type'?'gbb-sheet-boat-types':''}">${options.map(([value,label,description]) => `<label class="gbb-sheet-option"><input type="radio" name="gbb-sheet-choice" value="${escapeText(value)}" ${selected===value?'checked':''}>${kind==='type'?`<span class="gbb-sheet-type-icon">${icon(boatTypeIcons[value]||'ship')}</span>`:''}<span class="gbb-sheet-option-copy"><strong>${escapeText(label)}</strong>${description?`<small>${escapeText(description)}</small>`:''}</span><span class="gbb-sheet-check" aria-hidden="true"></span></label>`).join('')}</div><div class="gbb-sheet-actions"><button type="button" class="gbb-sheet-reset" data-gbb-clear-sheet>Clear</button><button type="button" class="gbb-sheet-save" data-gbb-save-sheet>Save</button></div>`;
+    sheet.innerHTML = `<div class="gbb-sheet-handle" aria-hidden="true"></div><div class="gbb-sheet-heading"><h2>${heading}</h2><button type="button" data-gbb-close-sheet aria-label="Close ${heading} filter">×</button></div><div class="gbb-sheet-options ${kind==='type'?'gbb-sheet-boat-types':''}">${options.map(([value,label,description]) => `<label class="gbb-sheet-option"><input type="radio" name="gbb-sheet-choice" value="${escapeText(value)}" ${selected===value?'checked':''}><span class="gbb-sheet-option-copy"><strong>${escapeText(label)}</strong>${description?`<small>${escapeText(description)}</small>`:''}</span><span class="gbb-sheet-check" aria-hidden="true"></span></label>`).join('')}</div><div class="gbb-sheet-actions"><button type="button" class="gbb-sheet-reset" data-gbb-clear-sheet>Clear</button><button type="button" class="gbb-sheet-save" data-gbb-save-sheet>Save</button></div>`;
     document.body.classList.add('gbb-mobile-sheet-open');
     sheet.querySelector('input:checked')?.closest('label')?.scrollIntoView?.({block:'nearest'});
   }
@@ -234,10 +233,13 @@
       page.querySelectorAll('.rental-sidebar .gbb-filter-choice-icon').forEach(node => node.remove());
       return;
     }
-    page.querySelectorAll('.rental-sidebar .rental-check input[name="type"], .rental-sidebar .rental-check input[name="equipment"]').forEach(input => {
+    page.querySelectorAll('.rental-sidebar .rental-check input[name="type"]').forEach(input => {
+      input.closest('label')?.querySelector('.gbb-filter-choice-icon')?.remove();
+    });
+    page.querySelectorAll('.rental-sidebar .rental-check input[name="equipment"]').forEach(input => {
       const label = input.closest('label');
       if (!label || label.querySelector('.gbb-filter-choice-icon')) return;
-      const name = input.name === 'type' ? boatTypeIcons[input.value] : equipmentIcons[input.value];
+      const name = equipmentIcons[input.value];
       if (!name) return;
       const wrapper = document.createElement('span');
       wrapper.className = 'gbb-filter-choice-icon';
