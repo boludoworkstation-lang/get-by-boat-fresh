@@ -144,6 +144,15 @@
       ].map(([href,label,symbol]) => `<a href="${href}">${icon(symbol)}<span>${label}</span></a>`).join('');
       document.body.appendChild(nav);
     }
+    const savedLink = nav.querySelectorAll('a')[2];
+    if (savedLink) {
+      const owner = window.GBB_ACCOUNT_ROLE === 'owner';
+      const desiredHref = owner ? '#/owner' : '#/favourites';
+      if (savedLink.getAttribute('href') !== desiredHref) {
+        savedLink.setAttribute('href',desiredHref);
+        savedLink.innerHTML = `${icon(owner ? 'compass' : 'heart')}<span>${owner ? 'My boats' : 'Saved'}</span>`;
+      }
+    }
     const route = activeRoute();
     const publicPage = route === '#/' || route === '#/boats';
     document.body.classList.toggle('gbb-mobile-public-page',publicPage);
