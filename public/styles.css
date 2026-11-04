@@ -2634,3 +2634,40 @@ button[data-gallery-select]:has(img)::after {
 .reservations-empty-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:18px;background:#edf8f9;color:#0897ac}
 .reservations-empty-icon svg{width:26px;height:26px}
 .reservations-empty .btn{margin-top:22px}
+
+/* Reservations toolbar – compact and consistent with staff verification. */
+.reservation-filter-bar{
+  display:grid;grid-template-columns:minmax(220px,1.5fr) minmax(170px,.8fr) auto;
+  align-items:end;gap:13px;margin:0 0 16px;padding:14px 16px;
+  border:1px solid #dde9eb;border-radius:13px;background:#fff;
+  box-shadow:0 4px 18px rgba(21,65,73,.035);
+}
+.reservation-filter-bar label{
+  display:flex;flex-direction:column;gap:6px;min-width:0;margin:0;
+  color:#42616c;font-size:11px;font-weight:750;line-height:1.35;
+}
+.reservation-filter-bar input,.reservation-filter-bar select{
+  display:block;width:100%;height:40px;min-height:40px;margin:0;
+  border:1px solid #dbe7e9;border-radius:8px;background:#fbfdfd;
+  padding:0 12px;color:#234954;font:500 12px var(--sans);box-shadow:none;
+}
+.reservation-filter-bar input::placeholder{color:#9aabb0;font-weight:400}
+.reservation-filter-bar input:focus,.reservation-filter-bar select:focus{
+  outline:2px solid rgba(0,157,184,.18);outline-offset:1px;border-color:#00a2b8;
+}
+.reservation-result-count{
+  display:inline-flex;align-items:center;justify-content:center;min-height:39px;
+  border-radius:9px;background:#eef8f9;padding:0 13px;color:#167a8b;
+  font-size:11px;font-weight:800;white-space:nowrap;
+}
+.reservation-filter-empty{text-align:center;padding:28px 15px;color:#6c858d}
+[data-reservation-row][hidden],.reservation-filter-empty[hidden]{display:none!important}
+@media(max-width:760px){
+  .reservation-filter-bar{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+  .reservation-filter-bar label:first-child{grid-column:1/-1}
+  .reservation-result-count{justify-self:start}
+}
+@media(max-width:420px){
+  .reservation-filter-bar{grid-template-columns:minmax(0,1fr)}
+  .reservation-filter-bar label:first-child{grid-column:auto}
+}
