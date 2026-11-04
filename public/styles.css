@@ -2694,3 +2694,17 @@ button[data-gallery-select]:has(img)::after {
   .reservations-table-panel{overflow-x:auto}
   .reservations-table{min-width:820px;table-layout:auto}
 }
+
+/* Super Admin staff management */
+.staff-control-invite,.staff-control-list{margin-bottom:22px}
+.staff-control-invite{max-width:900px}
+.staff-control-invite .live-form{max-width:680px}
+.staff-control-list{padding:24px}
+.staff-control-table-wrap{overflow-x:auto;width:100%}
+.staff-control-table{width:100%;border-collapse:collapse;text-align:left;font-size:14px}
+.staff-control-table th{padding:13px 16px;color:#567582;font-size:12px;letter-spacing:.035em;font-weight:700;background:#f4f8f9;border-bottom:1px solid #deebee}
+.staff-control-table td{padding:16px;border-bottom:1px solid #e8eef0;color:#183d49;overflow-wrap:anywhere}
+.staff-control-table tr:last-child td{border-bottom:0}
+.staff-control-table th:first-child{border-radius:9px 0 0 0}
+.staff-control-table th:last-child{border-radius:0 9px 0 0}
+@media(max-width:680px){.staff-control-list{padding:18px}.staff-control-table thead{display:none}.staff-control-table,.staff-control-table tbody,.staff-control-table tr,.staff-control-table td{display:block;width:100%}.staff-control-table tr{padding:12px 0;border-bottom:1px solid #e8eef0}.staff-control-table td{padding:6px 2px;border:0}.staff-control-table td:before{content:attr(data-label);display:block;font-size:11px;font-weight:700;color:#64818a;margin-bottom:2px}.staff-control-table tr:last-child{border-bottom:0}}
