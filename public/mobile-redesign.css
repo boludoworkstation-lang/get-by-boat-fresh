@@ -222,7 +222,7 @@
   .footer .footer-columns>div:first-child { display:flex; flex-direction:column; align-items:flex-start; padding-bottom:25px; }
   .footer .footer-logo .logo { font-size:25px; letter-spacing:-.04em; }
   .footer .footer-logo .logo-mark svg { width:32px; }
-  .footer .footer-columns>div:first-child>p { font-size:12px; line-height:1.65; margin:11px 0 0; max-width:30ch; color:#b4cbd0; }
+  .footer .footer-columns>div:first-child>p { font-size:clamp(9px,2.6vw,11px); line-height:1.65; letter-spacing:-.015em; margin:11px 0 0; max-width:none; white-space:nowrap; color:#b4cbd0; }
 
   .footer .footer-social { order:1; width:100%; margin-top:19px; padding-top:0; border-top:0; }
   .footer .footer-social-label,.footer .footer-apps-label,.footer .footer-columns h4 { font-size:10px; font-weight:800; letter-spacing:.15em; color:#e9f5f7; }
