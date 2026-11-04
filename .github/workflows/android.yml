@@ -6,7 +6,7 @@ on:
       - 'android/**'
       - '.github/workflows/android.yml'
   push:
-    branches: [main]
+    branches: [main, 'feature/getbyboat-android-google-play']
     paths:
       - 'android/**'
       - '.github/workflows/android.yml'
