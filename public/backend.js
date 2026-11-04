@@ -1291,7 +1291,7 @@ const PAGE_SIZE=12;
     if(params.get('view')==='calendar')return page('Boat calendar',ownerCalendar(boats.find(b=>b.id===params.get('boat')),rows.filter(r=>r.boat_id===params.get('boat')),blocks.filter(b=>b.boat_id===params.get('boat')),params.get('month')));
     return page('My Boats',ownerFleet(boats,rows,['published','drafts'].includes(params.get('filter'))?params.get('filter'):'all',params.get('layout')||'grid'));
   }
-  const routes=p=>['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/messages'].includes(p)||p.startsWith('/listing/');
+  const routes=p=>['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/reservations','/messages'].includes(p)||p.startsWith('/listing/');
 const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('page');q.sort();return q.toString();};
   let lastBoatsKey=null,lastBoatsPage=null;
   function refreshPagedBoatCards(results,token,pageNumber){
