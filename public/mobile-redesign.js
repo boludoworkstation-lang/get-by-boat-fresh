@@ -12,7 +12,26 @@
       user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-9 16-9 16 0"/>',
       sliders: '<path d="M4 5h16M4 12h16M4 19h16"/><circle cx="9" cy="5" r="2" fill="white"/><circle cx="16" cy="12" r="2" fill="white"/><circle cx="8" cy="19" r="2" fill="white"/>',
       chevron: '<path d="m6 9 6 6 6-6"/>',
-      ship: '<path d="M4 15h16l-2.5 5h-11L4 15Zm4-8h8v8H8V7Zm-3 0h14M12 3v4"/>'
+      ship: '<path d="M4 15h16l-2.5 5h-11L4 15Zm4-8h8v8H8V7Zm-3 0h14M12 3v4"/>',
+      motorboat: '<path d="M3 16h18l-3 4H6l-3-4Zm4 0 1-4h8l3 4M9 12V9h5l2 3M8 22h8"/>',
+      rib: '<path d="M3 16c0-2 2-3 4-3h10c2 0 4 1 4 3s-3 4-9 4-9-2-9-4Zm5-3V9h7l2 4M4 16h16"/>',
+      sailboat: '<path d="M12 2v16M10 6 4 17h6V6Zm4 0 6 11h-6V6ZM3 19h18l-3 3H6l-3-3Z"/>',
+      catamaran: '<path d="M12 2v16M9 6 5 17h4V6Zm5 0 5 11h-5V6ZM2 19h7l-1 3H4l-2-3Zm13 0h7l-2 3h-4l-1-3Z"/>',
+      yacht: '<path d="M2 17h20l-3 4H5l-3-4Zm5 0V9h9l3 8M10 9V6h5v3M9 12h4m2 0h2"/>',
+      jetski: '<path d="M4 18c4 0 7-3 11-3h4l2 3-4 3H8l-4-3Zm6-3 2-5h4l2 5M15 10l-2-2M7 22h13"/>',
+      gps: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+      speakers: '<path d="M4 9h4l5-4v14l-5-4H4V9Zm12-1a6 6 0 0 1 0 8m2-11a10 10 0 0 1 0 14"/>',
+      bimini: '<path d="M3 11a9 9 0 0 1 18 0H3Zm4 0v10m10-10v10M3 21h18"/>',
+      anchor: '<circle cx="12" cy="4" r="2"/><path d="M12 6v15m-6-8H3c0 6 4 9 9 9s9-3 9-9h-3M7 10h10"/>',
+      shower: '<path d="M5 21V8a5 5 0 0 1 10 0M12 8h7l2 4H10l2-4ZM11 16v2m5-2v3m5-3v2"/>',
+      skis: '<path d="M6 3 3 21m12-18-3 18M3 15l15-4m-13-2 15-4"/>',
+      banana: '<path d="M3 6c2 11 8 16 18 12-3 4-9 5-13 2C4 17 2 11 3 6Z"/>',
+      tube: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>',
+      wakeboard: '<path d="M4 20 17 4a3 3 0 0 1 3 3L7 23a3 3 0 0 1-3-3ZM9 15l5 4m-2-7 5 4"/>',
+      snowflake: '<path d="M12 2v20M4 7l16 10M20 7 4 17M9 5l3 3 3-3M9 19l3-3 3 3"/>',
+      autopilot: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6m0 6v6M3 12h6m6 0h6"/>',
+      dinghy: '<path d="M3 13h18l-3 7H6l-3-7Zm3 0 3-5h6l3 5M7 20h10"/>',
+      thruster: '<path d="M4 12h16m-4-4 4 4-4 4M8 8l-4 4 4 4M9 3v18m6-18v18"/>'
     };
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.search}</svg>`;
   };
@@ -26,6 +45,8 @@
   let scheduled = false;
   let sheetKind = '';
   const boatTypes = ['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'];
+  const boatTypeIcons = {Motorboat:'motorboat',RIB:'rib',Sailboat:'sailboat',Catamaran:'catamaran',Yacht:'yacht',Jetski:'jetski'};
+  const equipmentIcons = {gps:'gps',outdoor_speakers:'speakers',bimini:'bimini',electric_windlass:'anchor',outdoor_shower:'shower',water_skis:'skis',banana:'banana',towable_tube:'tube',wakeboard:'wakeboard',air_conditioning:'snowflake',autopilot:'autopilot',dinghy:'dinghy',bow_thruster:'thruster'};
   const getParams = () => new URLSearchParams(window.location.hash.split('?')[1] || '');
   const skipperFromParams = params => params.get('skipper') || (params.get('with_skipper_only') === '1' ? 'with' : '');
 
@@ -162,7 +183,7 @@
     const heading = kind === 'skipper' ? 'Skipper' : 'Boat type';
     const sheet = document.getElementById('gbb-mobile-options-sheet');
     sheet.setAttribute('aria-label',heading);
-    sheet.innerHTML = `<div class="gbb-sheet-handle" aria-hidden="true"></div><div class="gbb-sheet-heading"><h2>${heading}</h2><button type="button" data-gbb-close-sheet aria-label="Close ${heading} filter">×</button></div><div class="gbb-sheet-options ${kind==='type'?'gbb-sheet-boat-types':''}">${options.map(([value,label,description]) => `<label class="gbb-sheet-option"><input type="radio" name="gbb-sheet-choice" value="${escapeText(value)}" ${selected===value?'checked':''}><span class="gbb-sheet-option-copy"><strong>${escapeText(label)}</strong>${description?`<small>${escapeText(description)}</small>`:''}</span><span class="gbb-sheet-check" aria-hidden="true"></span></label>`).join('')}</div><div class="gbb-sheet-actions"><button type="button" class="gbb-sheet-reset" data-gbb-clear-sheet>Clear</button><button type="button" class="gbb-sheet-save" data-gbb-save-sheet>Save</button></div>`;
+    sheet.innerHTML = `<div class="gbb-sheet-handle" aria-hidden="true"></div><div class="gbb-sheet-heading"><h2>${heading}</h2><button type="button" data-gbb-close-sheet aria-label="Close ${heading} filter">×</button></div><div class="gbb-sheet-options ${kind==='type'?'gbb-sheet-boat-types':''}">${options.map(([value,label,description]) => `<label class="gbb-sheet-option"><input type="radio" name="gbb-sheet-choice" value="${escapeText(value)}" ${selected===value?'checked':''}>${kind==='type'?`<span class="gbb-sheet-type-icon">${icon(boatTypeIcons[value]||'ship')}</span>`:''}<span class="gbb-sheet-option-copy"><strong>${escapeText(label)}</strong>${description?`<small>${escapeText(description)}</small>`:''}</span><span class="gbb-sheet-check" aria-hidden="true"></span></label>`).join('')}</div><div class="gbb-sheet-actions"><button type="button" class="gbb-sheet-reset" data-gbb-clear-sheet>Clear</button><button type="button" class="gbb-sheet-save" data-gbb-save-sheet>Save</button></div>`;
     document.body.classList.add('gbb-mobile-sheet-open');
     sheet.querySelector('input:checked')?.closest('label')?.scrollIntoView?.({block:'nearest'});
   }
@@ -200,16 +221,24 @@
       close.textContent = '×';
       sidebar.querySelector('.rental-sidebar-head')?.prepend(close);
     }
-    if (!sidebar.querySelector('.gbb-more-filters-done')) {
-      const done = document.createElement('button');
-      done.type = 'button';
-      done.className = 'gbb-more-filters-done';
-      done.setAttribute('data-gbb-close-more-filters','');
-      done.textContent = 'Show matching boats';
-      sidebar.appendChild(done);
-    }
+    // The sidebar already contains a working submit button. Never add a second one.
+    sidebar.querySelector('.gbb-more-filters-done')?.remove();
     sidebar.classList.add('is-open');
     document.body.classList.add('gbb-more-filters-open');
+  }
+
+  function decorateSidebarChoices(page) {
+    page.querySelectorAll('.rental-sidebar .rental-check input[name="type"], .rental-sidebar .rental-check input[name="equipment"]').forEach(input => {
+      const label = input.closest('label');
+      if (!label || label.querySelector('.gbb-filter-choice-icon')) return;
+      const name = input.name === 'type' ? boatTypeIcons[input.value] : equipmentIcons[input.value];
+      if (!name) return;
+      const wrapper = document.createElement('span');
+      wrapper.className = 'gbb-filter-choice-icon';
+      wrapper.setAttribute('aria-hidden','true');
+      wrapper.innerHTML = icon(name);
+      input.after(wrapper);
+    });
   }
 
   function closeFilterPanels() {
@@ -221,6 +250,7 @@
   function ensureRental() {
     const page = document.querySelector('.rental-page');
     if (!page) return;
+    decorateSidebarChoices(page);
     if (!page.querySelector('.gbb-mobile-rental-search')) {
       const heading = page.querySelector('.rental-heading');
       if (heading) {
