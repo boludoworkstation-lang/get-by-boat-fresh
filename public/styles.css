@@ -2461,7 +2461,7 @@ button[data-gallery-select]:has(img)::after {
 .member-main:has(.staff-verification-filters) > h1{margin-bottom:13px}
 .member-main:has(.staff-verification-filters) > p{max-width:920px;margin:0 0 17px;color:#647e87;font-size:12px;line-height:1.65}
 .staff-verification-filters{
-  display:grid;grid-template-columns:minmax(210px,1.5fr) minmax(165px,.8fr) auto;
+  display:grid;grid-template-columns:minmax(210px,1.4fr) minmax(150px,.8fr) minmax(155px,.8fr) auto;
   align-items:end;gap:13px;max-width:1100px;padding:14px 16px;margin:0 0 26px;
   border:1px solid #dde9eb;border-radius:13px;background:#fff;
   box-shadow:0 4px 18px rgba(21,65,73,.035);
