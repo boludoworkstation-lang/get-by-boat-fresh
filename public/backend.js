@@ -112,7 +112,7 @@
     }
     if(session&&['/dashboard','/bookings','/owner','/account','/favourites','/staff','/reservations','/messages'].includes(path)){
       const isOwner=profile?.account_type==='owner';
-      const links=superAdmin?[['/reservations','Reservations','calendar'],['/staff','Staff verification','shield'],['/account','My profile','user']]:verificationStaff?[['/dashboard','Overview','dashboard'],['/account','My profile','user'],['/staff','Staff verification','shield']]:[['/dashboard','Overview','dashboard'],['/account','My profile','user'],...(isOwner?[['/owner','My boats','ship'],['/owner?view=requests','Booking requests','mail']]:[['/bookings','My bookings','calendar'],['/favourites','Saved boats','heart']]),['/messages','Messages','message']];
+      const links=superAdmin?[['/reservations','Reservations','calendar'],['/staff','Staff verification','shield'],['/account','My profile','user']]:verificationStaff?[['/staff','Staff verification','shield'],['/account','My profile','user']]:[['/dashboard','Overview','dashboard'],['/account','My profile','user'],...(isOwner?[['/owner','My boats','ship'],['/owner?view=requests','Booking requests','mail']]:[['/bookings','My bookings','calendar'],['/favourites','Saved boats','heart']]),['/messages','Messages','message']];
       const memberName=esc(profile?.display_name||'Traveller');
       const initials=esc((profile?.display_name||'G').slice(0,1).toUpperCase());
       return `<header class="member-header"><a class="member-brand" href="#/">${waveLogo()}<span>Get By Boat</span></a><nav aria-label="Top navigation"><span class="member-locale">EN · EUR</span>${isOwner?`<a class="member-host-link" href="#/owner">${icon('plus')} My boats</a>`:''}<a class="member-mini-avatar" href="#/account" aria-label="My profile">${avatarUrl?`<img src="${esc(avatarUrl)}" alt="">`:initials}</a></nav></header><main class="member-shell"><aside class="member-sidebar"><div class="member-side-label">MY ACCOUNT</div><a href="#/account" class="member-identity">${avatarUrl?`<img class="member-avatar" src="${esc(avatarUrl)}" alt="Your profile photo">`:`<div class="member-avatar member-avatar-empty" aria-hidden="true">${initials}</div>`}<span><strong>${memberName}</strong><small>${superAdmin?'Super Admin':verificationStaff?'Staff account':isOwner?'Boat owner':'Traveller account'}</small></span>${icon('chevron')}</a><nav aria-label="Account navigation">${links.map(([href,label,symbol])=>`<a href="#${href}" ${path===href.split('?')[0]&&(href.includes('?')?params.get('view')==='requests':!params.get('view'))?'aria-current="page"':''} ${label==='Booking requests'?'data-sidebar-notification="requests"':label==='Messages'?'data-sidebar-notification="messages"':''}>${icon(symbol)}<span>${label}</span>${label==='Booking requests'?sidebarBadge(sidebarNotifications.requests):label==='Messages'?sidebarBadge(sidebarNotifications.messages):''}</a>`).join('')}</nav><div class="member-side-bottom"><a href="#/contact">${icon('headset')} Help & support</a><button type="button" data-live="logout">${icon('arrow')} Log out</button></div></aside><section class="member-main">${path==='/dashboard'||(path==='/owner'&&params.has('edit'))?'':`<div class="member-page-kicker">YOUR GET BY BOAT ACCOUNT</div><h1>${title}</h1>`}${body}</section></main>`;
@@ -1274,6 +1274,10 @@ const PAGE_SIZE=12;
     if(path==='/staff')return staffPage();
     if(path==='/reservations')return adminReservationsPage();
     if(path==='/dashboard'){
+      if(verificationStaff&&!superAdmin){
+        history.replaceState(null,'',location.pathname+location.search+'#/staff');
+        return staffPage();
+      }
       if(superAdmin){
         history.replaceState(null,'',location.pathname+location.search+'#/reservations');
         return adminReservationsPage();
