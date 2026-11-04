@@ -230,6 +230,10 @@
   }
 
   function decorateSidebarChoices(page) {
+    if (!mobile()) {
+      page.querySelectorAll('.rental-sidebar .gbb-filter-choice-icon').forEach(node => node.remove());
+      return;
+    }
     page.querySelectorAll('.rental-sidebar .rental-check input[name="type"], .rental-sidebar .rental-check input[name="equipment"]').forEach(input => {
       const label = input.closest('label');
       if (!label || label.querySelector('.gbb-filter-choice-icon')) return;
