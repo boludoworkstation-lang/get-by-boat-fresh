@@ -317,3 +317,75 @@
   .member-main:has(> .owner-account-tabs) .account-delete-details { max-width: 100%; }
   .member-main:has(> .owner-account-tabs) .account-delete-details summary { font-size: 12px; }
 }
+
+/* Tapping the signed-in owner's avatar reveals the account actions on phones. */
+.member-header .member-avatar-menu { display: none; }
+@media (max-width: 760px) {
+  .member-header .member-avatar-desktop-link { display: none !important; }
+  .member-header .member-avatar-menu {
+    display: block;
+    position: relative;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+  .member-header .member-avatar-menu > summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .member-header .member-avatar-menu > summary::-webkit-details-marker { display: none; }
+  .member-header .member-avatar-menu > summary:focus-visible {
+    outline: 3px solid #90d5df;
+    outline-offset: 3px;
+  }
+  .member-header .member-avatar-menu[open] > summary { box-shadow: 0 0 0 3px #c8eff3; }
+  .member-header .member-avatar-menu-panel {
+    position: absolute;
+    z-index: 200;
+    top: calc(100% + 13px);
+    right: 0;
+    width: 192px;
+    max-width: calc(100vw - 32px);
+    padding: 7px;
+    border: 1px solid #dce9ec;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 16px 45px #173c4a24;
+  }
+  .member-header .member-avatar-menu-panel :is(a, button) {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    min-height: 45px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #244c59;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.2;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .member-header .member-avatar-menu-panel :is(a, button) .icon {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    color: #008fa6;
+  }
+  .member-header .member-avatar-menu-panel :is(a, button):hover,
+  .member-header .member-avatar-menu-panel :is(a, button):focus-visible { background: #edf8fa; }
+  .member-header .member-avatar-menu-panel button {
+    border-top: 1px solid #edf2f3;
+    border-radius: 0 0 10px 10px;
+    color: #bd4d52;
+  }
+  .member-header .member-avatar-menu-panel button .icon { color: #bd4d52; }
+}
