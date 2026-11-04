@@ -6,7 +6,7 @@ assert.match(backend,/const routes=p=>\[[^\]]*'\/reservations'/);
 assert.ok(backend.includes('setView([lat,lng],exact?12:10)'));
 const pageHtml=fs.readFileSync('public/index.html','utf8');
 assert.match(pageHtml,/<script src="maps-config\.js\?v=1\.0\.1" defer><\/script>/);
-assert.ok(pageHtml.includes('app.js?v=20261104-cdnfallback1'));
+assert.match(pageHtml,/<script src="app\.js\?v=[^\"]+" defer><\/script>/);
 assert.ok(!pageHtml.includes('marketplace-live.js'));
 assert.match(backend,/mapTypeId:'terrain'/);
 assert.match(backend,/radius:5000,strokeColor:'#0588c7'/);
