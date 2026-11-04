@@ -2410,3 +2410,49 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
     flex-wrap: wrap;
   }
 }
+
+
+/* Small transparent wave logo on boat listing photos. */
+.rental-card-photo:has(img.live-photo),
+.fleet-card-photo:has(img.live-photo),
+.listing-cover:has(img),
+.fleet-photo-card:has(img),
+button[data-gallery-select]:has(img),
+.live-card:has(> img.live-photo) {
+  position: relative;
+}
+.rental-card-photo:has(img.live-photo)::after,
+.fleet-card-photo:has(img.live-photo)::after,
+.listing-cover:has(img)::after,
+.fleet-photo-card:has(img)::after,
+button[data-gallery-select]:has(img)::after,
+.live-card:has(> img.live-photo)::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  width: 32px;
+  height: 24px;
+  background: url("/assets/boat-photo-watermark.svg") center / contain no-repeat;
+  opacity: .7;
+  pointer-events: none;
+  user-select: none;
+}
+button[data-gallery-select]:has(img)::after {
+  top: 4px;
+  left: 4px;
+  width: 17px;
+  height: 13px;
+}
+@media (max-width:600px) {
+  .rental-card-photo:has(img.live-photo)::after,
+  .fleet-card-photo:has(img.live-photo)::after,
+  .listing-cover:has(img)::after,
+  .fleet-photo-card:has(img)::after {
+    top: 7px;
+    left: 7px;
+    width: 27px;
+    height: 20px;
+  }
+}
