@@ -127,9 +127,9 @@
     if (!container || container.querySelector('.gbb-mobile-skipper-picker')) return;
     const field = document.createElement('fieldset');
     field.className = 'gbb-mobile-skipper-picker';
-    field.innerHTML = `<legend>${icon('compass')} Skipper</legend><div class="gbb-mobile-skipper-options">${[
-      ['','Any'],['with','With skipper'],['without','Without skipper']
-    ].map(([value,label]) => `<label><input type="radio" name="skipper" value="${value}" ${selected===value?'checked':''}><span>${label}</span></label>`).join('')}</div>`;
+    field.innerHTML = `<legend>${icon('compass')} Skipper</legend><input type="hidden" name="skipper" value="${selected}"><div class="gbb-mobile-skipper-options">${[
+      ['with','With skipper'],['without','Without skipper']
+    ].map(([value,label]) => `<button type="button" data-gbb-pick-skipper="${value}" aria-pressed="${selected===value}">${label}</button>`).join('')}</div>`;
     if (beforeNode) container.insertBefore(field,beforeNode);
     else container.appendChild(field);
   }
@@ -177,14 +177,15 @@
     ensureFilterSheets();
     sheetKind = kind;
     const params = getParams();
-    const selected = kind === 'skipper' ? skipperFromParams(params) : params.getAll('type')[0] || '';
+    const selected = kind === 'skipper' ? skipperFromParams(params) :
+      [...new Set(params.getAll('type').filter(type => boatTypes.includes(type)))];
     const options = kind === 'skipper'
-      ? [['','Any skipper','Show boats with and without a skipper.'],['with','With skipper','Enjoy your day with a professional skipper.'],['without','Without skipper','Drive yourself (a valid licence may be required).']]
-      : [['','All boat types','Explore every boat type.'],...boatTypes.map(type=>[type,type,''])];
+      ? [['with','With skipper','Enjoy your day with a professional skipper.'],['without','Without skipper','Drive yourself (a valid licence may be required).']]
+      : [['','All boats','Explore every boat type.'],...boatTypes.map(type=>[type,type,''])];
     const heading = kind === 'skipper' ? 'Skipper' : 'Boat type';
     const sheet = document.getElementById('gbb-mobile-options-sheet');
     sheet.setAttribute('aria-label',heading);
-    sheet.innerHTML = `<div class="gbb-sheet-handle" aria-hidden="true"></div><div class="gbb-sheet-heading"><h2>${heading}</h2><button type="button" data-gbb-close-sheet aria-label="Close ${heading} filter">×</button></div><div class="gbb-sheet-options ${kind==='type'?'gbb-sheet-boat-types':''}">${options.map(([value,label,description]) => `<label class="gbb-sheet-option"><input type="radio" name="gbb-sheet-choice" value="${escapeText(value)}" ${selected===value?'checked':''}><span class="gbb-sheet-option-copy"><strong>${escapeText(label)}</strong>${description?`<small>${escapeText(description)}</small>`:''}</span><span class="gbb-sheet-check" aria-hidden="true"></span></label>`).join('')}</div><div class="gbb-sheet-actions"><button type="button" class="gbb-sheet-reset" data-gbb-clear-sheet>Clear</button><button type="button" class="gbb-sheet-save" data-gbb-save-sheet>Save</button></div>`;
+    sheet.innerHTML = `<div class="gbb-sheet-handle" aria-hidden="true"></div><div class="gbb-sheet-heading"><h2>${heading}</h2><button type="button" data-gbb-close-sheet aria-label="Close ${heading} filter">×</button></div><div class="gbb-sheet-options ${kind==='type'?'gbb-sheet-boat-types':''}">${options.map(([value,label,description]) => `<label class="gbb-sheet-option ${kind==='type'&&!value?'gbb-sheet-option-all':''}"><input type="${kind==='type'?'checkbox':'radio'}" name="gbb-sheet-choice" value="${escapeText(value)}" ${(kind==='type'?(value?selected.includes(value):selected.length===0):selected===value)?'checked':''}><span class="gbb-sheet-option-copy"><strong>${escapeText(label)}</strong>${description?`<small>${escapeText(description)}</small>`:''}</span><span class="gbb-sheet-check" aria-hidden="true"></span></label>`).join('')}</div><div class="gbb-sheet-actions"><button type="button" class="gbb-sheet-reset" data-gbb-clear-sheet>Clear</button><button type="button" class="gbb-sheet-save" data-gbb-save-sheet>Save</button></div>`;
     document.body.classList.add('gbb-mobile-sheet-open');
     sheet.querySelector('input:checked')?.closest('label')?.scrollIntoView?.({block:'nearest'});
   }
@@ -196,12 +197,19 @@
     if (!form) { closeFilterPanels(); return; }
     if (sheetKind === 'skipper') {
       const picker = form.querySelector('.rental-search-bar .gbb-mobile-skipper-picker');
-      const radio = [...(picker?.querySelectorAll('input[name="skipper"]') || [])].find(input => input.value === chosen);
-      if (radio) radio.checked = true;
+      const field = picker?.querySelector('input[name="skipper"]');
+      if (field) field.value = chosen;
+      picker?.querySelectorAll('[data-gbb-pick-skipper]').forEach(button => {
+        button.setAttribute('aria-pressed',String(button.dataset.gbbPickSkipper === chosen));
+      });
       const legacy = form.querySelector('input[name="with_skipper_only"]');
       if (legacy) legacy.checked = false;
     } else if (sheetKind === 'type') {
-      form.querySelectorAll('.rental-sidebar input[name="type"]').forEach(input => {input.checked = Boolean(chosen && input.value === chosen);});
+      const selectedTypes = clear ? [] : [...(sheet?.querySelectorAll('input[name="gbb-sheet-choice"]:checked') || [])]
+        .map(input => input.value).filter(value => boatTypes.includes(value));
+      form.querySelectorAll('.rental-sidebar input[name="type"]').forEach(input => {
+        input.checked = selectedTypes.includes(input.value);
+      });
     }
     closeFilterPanels();
     form.requestSubmit();
@@ -432,6 +440,19 @@
   }
 
   document.addEventListener('click',event => {
+    const skipperButton = event.target.closest('[data-gbb-pick-skipper]');
+    if (skipperButton) {
+      event.preventDefault();
+      const picker = skipperButton.closest('.gbb-mobile-skipper-picker');
+      const field = picker?.querySelector('input[name="skipper"]');
+      if (field) {
+        const next = field.value === skipperButton.dataset.gbbPickSkipper ? '' : skipperButton.dataset.gbbPickSkipper;
+        field.value = next;
+        picker.querySelectorAll('[data-gbb-pick-skipper]').forEach(button => {
+          button.setAttribute('aria-pressed',String(button.dataset.gbbPickSkipper === next));
+        });
+      }
+    }
     if (event.target.closest('[data-gbb-open-search]')) { event.preventDefault(); openSearch(); }
     if (event.target.closest('[data-gbb-close-search]')) { event.preventDefault(); closeSearch(); }
     if (event.target.closest('[data-gbb-open-sheet]')) { event.preventDefault(); openOptionsSheet(event.target.closest('[data-gbb-open-sheet]').dataset.gbbOpenSheet); }
@@ -440,6 +461,20 @@
     if (event.target.closest('[data-gbb-clear-sheet]')) { event.preventDefault(); saveOptionsSheet(true); }
     if (event.target.closest('[data-gbb-open-more-filters]')) { event.preventDefault(); openMoreFilters(); }
     if (event.target.closest('[data-gbb-close-more-filters]')) { event.preventDefault(); closeFilterPanels(); }
+  });
+  document.addEventListener('change',event => {
+    const input = event.target;
+    if (!input.matches?.('#gbb-mobile-options-sheet .gbb-sheet-boat-types input[name="gbb-sheet-choice"]')) return;
+    const sheet = input.closest('.gbb-sheet-boat-types');
+    const allBoats = sheet.querySelector('input[value=""]');
+    if (input === allBoats) {
+      allBoats.checked = true;
+      sheet.querySelectorAll('input[name="gbb-sheet-choice"]').forEach(choice => {
+        if (choice !== allBoats) choice.checked = false;
+      });
+    } else {
+      allBoats.checked = !sheet.querySelector('input[name="gbb-sheet-choice"]:checked:not([value=""])');
+    }
   });
   document.addEventListener('keydown',event => {
     if (event.key==='Escape' && document.body.classList.contains('gbb-search-open')) closeSearch();
