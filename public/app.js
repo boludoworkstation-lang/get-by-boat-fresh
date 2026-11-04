@@ -101,7 +101,9 @@ let authMode = 'login';
 function authClient() {
   if (!AUTH_READY) return Promise.resolve(null);
   if (!authClientPromise) {
-    authClientPromise = import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm')
+    const loadModule=(url,timeoutMs)=>Promise.race([import(url),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Supabase library did not load in time.')),timeoutMs))]);
+    authClientPromise = loadModule('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm',7000)
+      .catch(()=>loadModule('https://esm.sh/@supabase/supabase-js@2.118.0',7000))
       .then(({createClient}) => createClient(AUTH_CONFIG.supabaseUrl, AUTH_CONFIG.supabasePublishableKey, {
         auth: {flowType: 'pkce', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true}
       }))
