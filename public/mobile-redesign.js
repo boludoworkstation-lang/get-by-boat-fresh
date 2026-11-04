@@ -327,6 +327,14 @@
     const social = columns?.querySelector('.footer-social');
     const apps = columns?.querySelector('.footer-apps');
     if (!brand || !social || !apps) return;
+    const members = columns.querySelector('.footer-members-column');
+    const links = columns.querySelector('.gbb-footer-links') || [...columns.children].find(section =>
+      section.querySelector(':scope > h4')?.textContent.trim() === 'Get By Boat');
+    const destinations = columns.querySelector('.gbb-footer-destinations') || [...columns.children].find(section =>
+      section.querySelector(':scope > h4')?.textContent.trim() === 'Say hello to summer');
+    if (!links || !destinations) return;
+    links.classList.add('gbb-footer-links');
+    destinations.classList.add('gbb-footer-destinations');
     const countries = columns.querySelector('.footer-countries');
     if (countries && !countries.querySelector('.gbb-mobile-country-grid')) {
       // The desktop separator text nodes must not become anonymous grid cells.
@@ -336,14 +344,22 @@
       countries.querySelectorAll(':scope > a').forEach(link => grid.appendChild(link.cloneNode(true)));
       countries.appendChild(grid);
     }
-    if (mobile()) {
-      // Keep the mobile reading order as: brand, pages, destinations, social, app.
-      if (social.parentElement !== columns) columns.appendChild(social);
-      if (apps.parentElement !== columns) columns.appendChild(apps);
-    } else {
-      if (social.parentElement !== brand) brand.appendChild(social);
-      if (apps.parentElement !== brand) brand.appendChild(apps);
-    }
+    // Keep "Follow us" under the brand slogan on every screen size.
+    if (social.parentElement !== brand) brand.insertBefore(social, apps.parentElement === brand ? apps : null);
+    const onPhone = mobile();
+    if (onPhone && apps.parentElement !== columns) columns.appendChild(apps);
+    if (!onPhone && apps.parentElement !== brand) brand.appendChild(apps);
+
+    // Restore the desktop order when resizing. Only move nodes when necessary,
+    // because the footer is observed for dynamic app renders.
+    const desired = onPhone
+      ? [brand, members, destinations, links, apps]
+      : [brand, members, links, destinations];
+    desired.filter(Boolean).forEach((node, index) => {
+      if (columns.children[index] !== node) {
+        columns.insertBefore(node, columns.children[index] || null);
+      }
+    });
   }
 
   function updateTriggerSummaries() {
