@@ -252,7 +252,7 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  html=await e.route('#/listing/boat-1');assert.match(html,/Pending staff review/);assert.match(html,/Verify your licence to book<\/button>/);
  // An authorised reviewer checks the ID and skipper licence, then records a decision.
  e=await environment({hash:'#/staff',user:verifiedUser,profile:verifiedProfile,request:e.state.verificationRequest,staff:true});
- html=await e.route('#/staff');assert.match(html,/Staff verification/);assert.match(html,/Approve documents/);assert.match(html,/View ID \/ passport/);
+ html=await e.route('#/staff');assert.match(html,/Documents Verification/);assert.match(html,/Approve documents/);assert.match(html,/View ID \/ passport/);
  await e.submit('review',{status:'approved',identity_matches:'on',licence_matches:'on',note:''},{id:'guest-1'});
  assert.equal(e.state.verificationReview.status,'approved');assert.equal(e.state.deletions.length,2);
  // A verified customer can book; changing the account name invalidates the approval.
