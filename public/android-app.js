@@ -52,16 +52,6 @@
       if (match) link.setAttribute('aria-current','page');
       else link.removeAttribute('aria-current');
     }
-    const h1 = document.querySelector('.hero-copy h1');
-    if (h1 && h1.dataset.androidTitle !== 'done') {
-      h1.innerHTML = 'Find your next <em>escape.</em>';
-      h1.dataset.androidTitle = 'done';
-    }
-    const p = document.querySelector('.hero-copy p');
-    if (p && p.dataset.androidTitle !== 'done') {
-      p.textContent = 'Beautiful boats. Incredible places. Your kind of summer.';
-      p.dataset.androidTitle = 'done';
-    }
   }
   window.addEventListener('hashchange', update);
   const app = document.getElementById('app');
