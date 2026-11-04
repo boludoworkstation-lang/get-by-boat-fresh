@@ -1,4 +1,7 @@
 /* GET BY BOAT — interface and illustrative marketing listings. Live account and booking routes are implemented in backend.js. */
+window.__gbbSourceLoaded='diagnostic-1';
+window.addEventListener('error',e=>{window.__gbbStartupError=String(e.message||'Unknown script error')+' at '+String(e.filename||'')+':'+String(e.lineno||'');});
+window.addEventListener('unhandledrejection',e=>{window.__gbbUnhandledRejection=String(e.reason?.message||e.reason||'Unknown rejection');});
 const COUNTRIES = [
   {name:'Croatia',subtitle:'Adriatic dreams',photo:'yacht-main.webp',count:'Explore the Dalmatian coast'},
   {name:'Greece',subtitle:'Island living',photo:'yacht-lagoon.webp',count:'Aegean days await'},
