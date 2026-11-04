@@ -20,20 +20,20 @@
       catamaran: '<path d="M12 2v15M10 5 4 16h6V5Zm4 1 6 10h-6V6ZM8 17h8M2 19h8l-2 3H4l-2-3Zm12 0h8l-2 3h-4l-2-3Z"/>',
       yacht: '<path d="M2 17h20l-3.5 4h-13L2 17ZM5 17l2-6h12l2 6M9 11V7h7l2 4M12 7V4h4v3M8 14h3m3 0h3"/>',
       jetski: '<path d="M3 17.5c3.5-.3 6-3.4 10.6-3.4h4.2l3.2 3.4-4.4 3H8L3 17.5ZM9.6 14l2.2-4.4h4.5l2.1 4.4M14.4 9.6l-2-2.1M18.5 9.5h3M6 22h13"/>',
-      // Distinctive marine equipment silhouettes; each stays readable at 20px.
-      gps: '<rect x="5" y="2" width="14" height="20" rx="3"/><rect x="7.5" y="5" width="9" height="11" rx="1.2"/><path d="m10 12 2-5 2 5-2-1.2Z"/><path d="M10 19h4"/>',
-      speakers: '<rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="18" rx="1.5"/><circle cx="6.5" cy="14" r="2.2"/><circle cx="17.5" cy="14" r="2.2"/><path d="M6.5 7h.01M17.5 7h.01"/>',
-      bimini: '<path d="M2.5 11c3.5-7 15.5-7 19 0H2.5ZM5.5 11v8m13-8v8M3.5 19h17M9 7.5h6"/>',
-      windlass: '<path d="M3 20h18M5 16h14v4H5Z"/><circle cx="9" cy="11" r="4"/><circle cx="9" cy="11" r="1.2"/><path d="M13 10h5m0-3v7m0-4h3"/>',
-      shower: '<path d="M4 21V9a5 5 0 0 1 10 0M11 9h7l2 3H9Z"/><path d="M11.5 16v2m4-2v3m4-3v2"/>',
-      skis: '<path d="M7 2 3 22h4l4-20H7Zm10 0-4 20h4l4-20h-4ZM5 12h4m5 0h4M6 15h3m5 0h3"/>',
-      banana: '<path d="M2 11c3 9 17 9 20 0-1 7-5 10-10 10S3 18 2 11Z"/><path d="m6 10 1-3m5 3V6m5 4 1-3M7 15h.01m5 1h.01m5-1h.01"/>',
-      tube: '<ellipse cx="12" cy="12" rx="10" ry="7"/><ellipse cx="12" cy="12" rx="4" ry="2.5"/><path d="M5 17v2m14-2v2"/>',
-      wakeboard: '<rect x="8.5" y="2" width="7" height="20" rx="3.5" transform="rotate(35 12 12)"/><path d="m7.8 8.8 5 3.5m-1.8 3 5 3.5"/>',
-      aircon: '<rect x="2.5" y="3" width="19" height="11" rx="2"/><path d="M6 9h12M7 18c2-2 3-2 5 0m0 3c2-2 3-2 5 0"/>',
-      autopilot: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M12 2v5m0 10v5M2 12h5m10 0h5M5 5l3.5 3.5M19 5l-3.5 3.5M5 19l3.5-3.5M19 19l-3.5-3.5"/>',
-      dinghy: '<path d="M2.5 12c1-2 5-3 9.5-3s8.5 1 9.5 3l-2 5c-1.5 2-13.5 2-15 0Z"/><path d="M7 12h10M8 15h8M19.5 10V7H22v5M3 21c3-2 5-2 8 0s5-2 10 0"/>',
-      thruster: '<path d="M2 5h9c6 0 10 3 10 8s-4 7-10 7H2M2 17h7"/><circle cx="14" cy="13" r="4.4"/><path d="m14 9.5 1.5 3.5-1.5 3.5-1.5-3.5Zm-3.5 3.5h7"/>'
+      // Equipment matches the line-icon language already used on listing pages.
+      gps: '<circle cx="12" cy="12" r="9"/><path d="m16 8-3 6-5 2 2-5z"/>',
+      speakers: '<rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><circle cx="6.5" cy="14" r="2"/><circle cx="17.5" cy="14" r="2"/>',
+      bimini: '<path d="M2 12c3.5-7 16.5-7 20 0H2ZM5 12v9m14-9v9M4 21h16M8 12l-1.5-2M16 12l1.5-2"/>',
+      anchor: '<path d="M12 3v15M8 7h8M4 13a8 8 0 0 0 16 0M4 13l-2 3M20 13l2 3M10 21h4"/>',
+      shower: '<path d="M4 22V9a5 5 0 0 1 10 0M11 9h7l2 3H9zM12 15v2M16 15v3M20 15v2"/>',
+      skis: '<path d="M7 3 3 21h4l4-18H7Zm9 0-4 18h4l4-18h-4ZM5.5 12h4M14.5 12h4"/>',
+      banana: '<path d="M2.5 10c5.5 11 13.5 11 19 0-2 10-8 12-13.5 8-3-2.3-5.3-5.4-5.5-8ZM7 11l1-3m4 5 1-3m3 3 1-3"/>',
+      tube: '<circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="3"/><path d="M3 22c3-3 5-3 8 0s5-3 10 0"/>',
+      wakeboard: '<path d="M3 15c3-9 15-9 18 0-3 6-15 6-18 0ZM9 11l5 8m0-9-5 8"/>',
+      snowflake: '<path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/>',
+      autopilot: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M8 16l4-9 4 9-4-2-4 2Z"/>',
+      dinghy: '<path d="M3 13h18l-3 6H7l-4-6ZM8 13l3-7h4l3 7M3 21c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
+      thruster: '<circle cx="12" cy="12" r="9"/><path d="m12 12 4-5-1 6-3-1ZM12 12l5 4-6-1 1-3ZM12 12l-4 5 1-6 3 1ZM12 12 7 8l6 1-1 3Z"/>'
     };
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.search}</svg>`;
   };
@@ -47,7 +47,7 @@
   let scheduled = false;
   let sheetKind = '';
   const boatTypes = ['Motorboat','RIB','Sailboat','Catamaran','Yacht','Jetski'];
-  const equipmentIcons = {gps:'gps',outdoor_speakers:'speakers',bimini:'bimini',electric_windlass:'windlass',outdoor_shower:'shower',water_skis:'skis',banana:'banana',towable_tube:'tube',wakeboard:'wakeboard',air_conditioning:'aircon',autopilot:'autopilot',dinghy:'dinghy',bow_thruster:'thruster'};
+  const equipmentIcons = {gps:'gps',outdoor_speakers:'speakers',bimini:'bimini',electric_windlass:'anchor',outdoor_shower:'shower',water_skis:'skis',banana:'banana',towable_tube:'tube',wakeboard:'wakeboard',air_conditioning:'snowflake',autopilot:'autopilot',dinghy:'dinghy',bow_thruster:'thruster'};
   const getParams = () => new URLSearchParams(window.location.hash.split('?')[1] || '');
   const skipperFromParams = params => params.get('skipper') || (params.get('with_skipper_only') === '1' ? 'with' : '');
 
