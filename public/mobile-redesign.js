@@ -331,6 +331,14 @@
     });
   }
 
+  function hideGuestBookingsFromMenu() {
+    const menu = document.querySelector('.site-head .mobile-menu');
+    if (!menu) return;
+    const isGuest = Boolean(menu.querySelector('a[href="#/login"]'));
+    const bookings = menu.querySelector('a[href="#/bookings"]');
+    if (bookings) bookings.hidden = mobile() && isGuest;
+  }
+
   function arrangeMobileFooter() {
     const columns = document.querySelector('.footer .footer-columns');
     const brand = columns?.firstElementChild;
@@ -431,6 +439,7 @@
     ensureHome();
     ensureRental();
     ensureBottomNav();
+    hideGuestBookingsFromMenu();
     arrangeMobileFooter();
   }
   function scheduleEnhance() {
