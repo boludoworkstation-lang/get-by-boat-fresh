@@ -1060,7 +1060,7 @@
   }
   async function adminReservationsPage(){
     if(!superAdmin)return page('Reservations','<div class="profile-panel"><h2>Access restricted</h2><p>Only the Super Admin can view all reservations.</p></div>');
-    const rows=check(await client.rpc('super_admin_reservations'));
+    const rows=check(await Promise.race([client.rpc('super_admin_reservations'),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Reservations are taking too long to load. Please try again.')),12000))]));
     const confirmed=rows.filter(r=>r.status==='confirmed');
     const sum=(list,key)=>list.reduce((total,r)=>total+(Number(r[key])||0),0);
     const summary=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:20px 0 28px">
@@ -1336,7 +1336,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
     if(ownerPickupMap){ownerPickupMap.map.remove();ownerPickupMap=null;}
     if(publicPickupMap){publicPickupMap.remove();publicPickupMap=null;}
     app.innerHTML=showProfile?profileDialog(authNext):showAuth?loginPage():accountLoading;focusAuth();
-    route().then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),restoredOwnerBoatStep());initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}if(path==='/boats'){lastBoatsKey=boatsResultsKey(params);lastBoatsPage=pageNumber;}else{lastBoatsKey=null;lastBoatsPage=null;}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
+    Promise.race([route(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('This page is taking too long to load. Please try again.')),15000))]).then(html=>{if(token!==epoch)return;app.innerHTML=html;quote();updateOwnerSkipperFee(document.querySelector('[data-live-form="boat"]'));syncEquipmentPicker(document.querySelector('[data-live-form="boat"]'));showOwnerBoatStep(document.querySelector('[data-live-form="boat"]'),restoredOwnerBoatStep());initOwnerPickupMap();initPublicPickupMap();syncCalendarSelection();focusAuth();syncChatSubscription();if(ownerScrollTarget){const target=ownerScrollTarget;ownerScrollTarget='';document.getElementById?.(target)?.scrollIntoView?.({block:'start',behavior:'instant'});}if(path==='/boats'){lastBoatsKey=boatsResultsKey(params);lastBoatsPage=pageNumber;}else{lastBoatsKey=null;lastBoatsPage=null;}}).catch(e=>{if(token===epoch){app.innerHTML=page('We couldn’t load this page.',`<p role="alert">${errorText(e)}</p>${btn('Try again','refresh')}`);syncChatSubscription()}});return true;
   };
   function syncBookingSkipperOption(form){
     const checkbox=form?.querySelector('[data-needs-skipper]');
