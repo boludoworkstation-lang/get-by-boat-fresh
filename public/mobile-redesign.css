@@ -88,13 +88,10 @@
   .gbb-mobile-search-dialog .gbb-mobile-skipper-picker { display:block; grid-column:1/-1; padding:14px 0 3px; margin:0; border:0; }
   .gbb-mobile-skipper-picker legend { display:flex; align-items:center; gap:8px; color:#1c4653; font:750 12px var(--sans,Arial,sans-serif); padding:0 0 10px; }
   .gbb-mobile-skipper-picker legend svg { width:16px; height:16px; color:#009cae; }
-  .gbb-mobile-skipper-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
-  .gbb-mobile-skipper-options label { min-height:46px!important; border:1px solid #dce9ec!important; border-radius:11px!important; padding:4px!important; margin:0!important; display:grid; place-items:center; cursor:pointer; background:#fff; }
-  .gbb-mobile-skipper-options input { position:absolute; opacity:0; width:1px!important; height:1px!important; pointer-events:none; }
-  .gbb-mobile-skipper-options span { display:block; text-align:center; font:750 11px/1.2 var(--sans,Arial,sans-serif)!important; color:#456873; }
-  .gbb-mobile-skipper-options label:has(input:checked) { background:#eaf8f9; border-color:#15a6b6!important; box-shadow:inset 0 0 0 1px #15a6b6; }
-  .gbb-mobile-skipper-options label:has(input:checked) span { color:#087c8c; }
-  .gbb-mobile-skipper-options label:has(input:focus-visible) { outline:2px solid #009eac; outline-offset:2px; }
+  .gbb-mobile-skipper-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+  .gbb-mobile-skipper-options button { min-height:46px; border:1px solid #dce9ec; border-radius:11px; padding:8px 10px; margin:0; cursor:pointer; background:#fff; color:#456873; font:750 12px/1.2 var(--sans,Arial,sans-serif); }
+  .gbb-mobile-skipper-options button[aria-pressed="true"] { background:#eaf8f9; border-color:#15a6b6; box-shadow:inset 0 0 0 1px #15a6b6; color:#087c8c; }
+  .gbb-mobile-skipper-options button:focus-visible { outline:2px solid #009eac; outline-offset:2px; }
 
   /* Live boat search: compact search trigger and bold photographs. */
   .rental-page { background:#fff; padding:21px 0 44px; }
@@ -151,9 +148,12 @@
   .gbb-sheet-option:has(input:checked) .gbb-sheet-check { background:#0098a8; border-color:#0098a8; box-shadow:inset 0 0 0 5px #fff; }
   .gbb-sheet-boat-types { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
   .gbb-sheet-boat-types .gbb-sheet-option { margin:0; min-height:70px; gap:7px; padding:11px; }
+  .gbb-sheet-boat-types .gbb-sheet-option-all strong { font-weight:800; color:#123845; }
   .gbb-sheet-boat-types .gbb-sheet-option strong { font-size:12px; }
   .gbb-sheet-boat-types .gbb-sheet-option small { font-size:10px; }
-  .gbb-sheet-boat-types .gbb-sheet-check { width:17px; height:17px; flex-basis:17px; }
+  .gbb-sheet-boat-types .gbb-sheet-check { position:relative; width:19px; height:19px; flex-basis:19px; border-radius:6px; }
+  .gbb-sheet-boat-types .gbb-sheet-option:has(input:checked) .gbb-sheet-check { box-shadow:none; }
+  .gbb-sheet-boat-types .gbb-sheet-option:has(input:checked) .gbb-sheet-check::after { content:''; position:absolute; left:6px; top:2px; width:5px; height:10px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); }
   .gbb-sheet-actions { flex:0 0 auto; display:flex; align-items:center; gap:16px; padding:14px 20px max(17px,env(safe-area-inset-bottom)); border-top:1px solid #e5eff1; background:#fff; }
   .gbb-sheet-actions button { min-height:48px; border-radius:12px; font-weight:800; font-size:14px; }
   .gbb-sheet-actions .gbb-sheet-reset { border:0; background:transparent; color:#587782; padding:0 12px; }
@@ -175,15 +175,16 @@
   .rental-card-grid { gap:17px; grid-template-columns:minmax(0,1fr)!important; }
   .rental-card-shell { position:relative; min-width:0; }
   .rental-page .rental-card { border:1px solid #e4ecee; border-radius:19px!important; box-shadow:0 5px 16px #103d4b0b; }
+  .rental-page .rental-card-shell > .rental-card { height:auto; }
   .rental-page .rental-card-photo { height:clamp(218px,66vw,289px)!important; }
   .rental-page .rental-card-photo img { object-fit:cover; }
-  .rental-page .rental-card-body { padding:16px 16px 17px; }
+  .rental-page .rental-card-body { flex:initial; padding:16px 16px 15px; }
   .rental-page .rental-card-location { font-size:12px; color:#788b93; }
   .rental-page .rental-card .rental-card-body h3 { font:800 19px/1.24 var(--sans,Arial,sans-serif)!important; letter-spacing:-.028em; color:#123b49; margin:6px 0 9px; }
   .rental-page .rental-card-badges { gap:6px; margin-bottom:9px; }
   .rental-page .rental-card-badge { border:0; background:#eef8f9; padding:6px 8px; font-size:11px; border-radius:7px; color:#327987; }
-  .rental-page .rental-card-specs { font-size:12px; color:#819399; }
-  .rental-page .rental-card-bottom { border-top:1px solid #eaf0f1; padding-top:12px; margin-top:14px; align-items:baseline; }
+  .rental-page .rental-card-specs { font-size:12px; color:#819399; margin-bottom:4px; }
+  .rental-page .rental-card-bottom { border-top:1px solid #eaf0f1; padding-top:10px; margin-top:11px; align-items:baseline; }
   .rental-page .rental-card-bottom strong { font-size:20px; color:#123b49; }
   .rental-page .rental-view-link { font-size:12px; color:var(--gbb-mobile-teal); }
   .rental-page .rental-favorite { width:40px; height:40px; border-radius:50%; top:11px; right:11px; }
@@ -214,21 +215,21 @@
 @media(max-width:640px){
   .footer { padding-bottom:0!important; }
   .footer .shell { width:calc(100% - 38px); }
-  .footer .footer-columns { display:flex!important; flex-direction:column; gap:0!important; padding-top:38px; padding-bottom:24px; }
+  .footer .footer-columns { display:flex!important; flex-direction:column; gap:0!important; padding-top:27px; padding-bottom:18px; }
   .footer .footer-columns>div { min-width:0; grid-column:auto!important; transform:none!important; }
-  .footer .footer-columns>div:first-child { display:flex; flex-direction:column; align-items:flex-start; padding-bottom:25px; }
+  .footer .footer-columns>div:first-child { display:flex; flex-direction:column; align-items:flex-start; padding-bottom:18px; }
   .footer .footer-logo .logo { font-size:25px; letter-spacing:-.04em; }
   .footer .footer-logo .logo-mark svg { width:32px; }
   .footer .footer-columns>div:first-child>p { font-size:clamp(9px,2.6vw,11px); line-height:1.65; letter-spacing:-.015em; margin:11px 0 0; max-width:none; white-space:nowrap; color:#b4cbd0; }
 
-  .footer .footer-social { order:1; width:100%; margin-top:19px; padding-top:0; border-top:0; }
+  .footer .footer-social { order:1; width:100%; margin-top:14px; padding-top:0; border-top:0; }
   .footer .footer-social-label,.footer .footer-apps-label,.footer .footer-columns h4 { font-size:10px; font-weight:800; letter-spacing:.15em; color:#e9f5f7; }
   .footer .footer-social-label { margin-bottom:12px; }
   .footer .footer-social-links { gap:9px; }
-  .footer .footer-social-links a { width:39px; height:39px; border-radius:11px; background:#ffffff0b; border-color:#ffffff2a; }
-  .footer .footer-social-links a svg { width:19px; height:19px; }
+  .footer .footer-social-links a { width:36px; height:36px; border-radius:10px; background:#ffffff0b; border-color:#ffffff2a; }
+  .footer .footer-social-links a svg { width:18px; height:18px; }
 
-  .footer .footer-apps { order:2; width:100%; margin-top:24px; padding-top:22px; border-top:1px solid #ffffff20; }
+  .footer .footer-apps { order:2; width:100%; margin-top:17px; padding-top:17px; border-top:1px solid #ffffff20; }
   .footer .footer-apps-label { margin-bottom:12px; }
   .footer .footer-store-badges { display:flex; flex-wrap:wrap; gap:8px; width:100%; }
   .footer .footer-store-badge { width:138px; max-width:calc((100vw - 48px)/2); min-width:0; height:38px; padding:4px 7px; gap:6px; border-radius:8px; opacity:.83; }
@@ -238,22 +239,22 @@
 
   /* The unlabeled internal counter does not belong in the customer footer. */
   .footer .footer-members-column { display:none!important; }
-  .footer .gbb-footer-links { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:2px 13px; border-top:1px solid #ffffff20; margin-top:22px; padding-top:23px; }
-  .footer .gbb-footer-links h4 { grid-column:1/-1; margin:0 0 10px; }
-  .footer .gbb-footer-links>a:not(.logo) { display:flex; align-items:center; margin:0; min-height:39px; padding:5px 0; font-size:13px; line-height:1.3; color:#bcd0d4; text-decoration:none; }
+  .footer .gbb-footer-links { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1px 13px; border-top:1px solid #ffffff20; margin-top:16px; padding-top:17px; }
+  .footer .gbb-footer-links h4 { grid-column:1/-1; margin:0 0 7px; }
+  .footer .gbb-footer-links>a:not(.logo) { display:flex; align-items:center; margin:0; min-height:31px; padding:4px 0; font-size:12px; line-height:1.3; color:#bcd0d4; text-decoration:none; }
   .footer .gbb-footer-links>a:focus-visible { outline:2px solid #87dbe5; outline-offset:3px; border-radius:4px; }
 
-  .footer .gbb-footer-destinations { margin-top:0; padding-top:23px; border-top:1px solid #ffffff20; }
-  .footer .gbb-footer-destinations h4 { margin:0 0 9px; }
-  .footer .gbb-footer-destinations>p { font-size:12px; line-height:1.5; margin:0 0 18px; }
+  .footer .gbb-footer-destinations { margin-top:0; padding-top:17px; border-top:1px solid #ffffff20; }
+  .footer .gbb-footer-destinations h4 { margin:0 0 7px; }
+  .footer .gbb-footer-destinations>p { font-size:11px; line-height:1.4; margin:0 0 11px; }
   .footer .footer-countries { display:block; font-size:0; line-height:1.4; }
   .footer .footer-countries:has(.gbb-mobile-country-grid)>a,.footer .footer-countries:has(.gbb-mobile-country-grid)>br { display:none; }
-  .footer .gbb-mobile-country-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:12px; row-gap:3px; }
-  .footer .footer-countries .gbb-mobile-country-grid a { display:flex; align-items:center; min-width:0; min-height:35px; margin:0; padding:5px 0; font-size:12.5px; line-height:1.3; font-weight:550; white-space:normal; border:0; border-radius:0; background:transparent; color:#c7dce0; text-decoration:none; }
+  .footer .gbb-mobile-country-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); column-gap:8px; row-gap:2px; }
+  .footer .footer-countries .gbb-mobile-country-grid a { display:flex; align-items:center; min-width:0; min-height:29px; margin:0; padding:4px 0; font-size:11.5px; line-height:1.3; font-weight:550; white-space:normal; border:0; border-radius:0; background:transparent; color:#c7dce0; text-decoration:none; }
   .footer .footer-countries a:hover,.footer .footer-countries a:focus-visible { background:transparent; color:#fff; text-decoration:none; }
   .footer .footer-countries a:focus-visible { outline:2px solid #87dbe5; outline-offset:2px; }
 
-  .footer .footer-bottom { display:flex!important; flex-direction:column-reverse; justify-content:center; align-items:center; gap:14px; border-top:1px solid #ffffff21; padding:23px 0 calc(27px + env(safe-area-inset-bottom)); }
+  .footer .footer-bottom { display:flex!important; flex-direction:column-reverse; justify-content:center; align-items:center; gap:10px; border-top:1px solid #ffffff21; padding:18px 0 calc(21px + env(safe-area-inset-bottom)); }
   .footer .footer-bottom span { display:block; margin:0; font-size:11px; line-height:1.5; color:#91adb5; text-align:center; }
   .footer .footer-legal { display:flex; justify-content:center; flex-wrap:wrap; gap:12px 24px; margin:0!important; }
   .footer .footer-legal a { font-size:11px; color:#b7cdd1; text-decoration:none; }
