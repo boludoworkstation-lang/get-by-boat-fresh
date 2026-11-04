@@ -1,0 +1,154 @@
+/* Get By Boat 2026: redesigned mobile discovery and search.
+   Deliberately scoped to phone-sized public pages. */
+.gbb-mobile-intro,.gbb-mobile-featured-copy,.gbb-mobile-categories,
+.gbb-mobile-search-trigger,.gbb-mobile-bottom-nav,.gbb-mobile-filter-chips,
+.gbb-mobile-destinations-toggle,.gbb-mobile-modal-title { display:none; }
+
+@media(max-width:640px){
+  :root { --gbb-mobile-ink:#122e3a; --gbb-mobile-teal:#009eac; }
+  html { scroll-padding-top:76px; }
+  body.gbb-mobile-public-page { background:#fff; padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+  body.gbb-search-open { overflow:hidden; }
+  .site-head { height:67px!important; background:#fff; box-shadow:0 1px 0 #eaf0f1; }
+  .site-head .nav { height:67px; }
+  .site-head .logo { font-size:23px; letter-spacing:-.045em; }
+  .site-head .logo-mark { height:28px; }
+  .site-head .logo-mark svg { max-height:28px; width:32px; }
+  .site-head .mobile-menu-btn { height:42px; width:42px; border-radius:50%; background:#f0f8f9; }
+  .site-head .mobile-menu { border:1px solid #e6eff0; border-top:none; box-shadow:0 20px 35px #103e4b14; }
+
+  /* A quiet editorial welcome replaces a long full-bleed hero. */
+  .gbb-mobile-intro { display:block; background:#fff; padding:28px 19px 21px; }
+  .gbb-mobile-eyebrow { font:800 10px/1.2 var(--sans,Arial,sans-serif); letter-spacing:.19em; color:var(--gbb-mobile-teal); }
+  .gbb-mobile-intro h1 { font:400 clamp(39px,11.1vw,49px)/1.025 var(--serif,Georgia,serif); letter-spacing:-.055em; color:var(--gbb-mobile-ink); margin:12px 0 20px; }
+  .gbb-mobile-intro h1 em { font-weight:400; color:var(--gbb-mobile-teal); }
+  .gbb-mobile-search-trigger { width:100%; display:flex; align-items:center; gap:13px; min-height:71px; padding:11px 13px; text-align:left; border:1px solid #dce9eb; border-radius:18px; color:var(--gbb-mobile-ink); background:#fff; box-shadow:0 7px 25px #0643540d; }
+  .gbb-mobile-search-trigger .gbb-search-icon { width:46px; height:46px; flex:0 0 46px; display:grid; place-items:center; border-radius:14px; background:#e8f7f8; color:var(--gbb-mobile-teal); }
+  .gbb-mobile-search-trigger .gbb-search-icon svg { width:23px; height:23px; }
+  .gbb-mobile-search-trigger .gbb-search-copy { display:flex; flex-direction:column; gap:5px; min-width:0; flex:1; }
+  .gbb-mobile-search-trigger strong { font-size:14px; line-height:1.2; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gbb-mobile-search-trigger small { color:#82969d; font-size:11px; line-height:1.3; }
+  .gbb-mobile-search-trigger .gbb-search-arrow { color:var(--gbb-mobile-teal); font-size:23px; line-height:1; }
+  .hero { height:clamp(242px,71vw,310px)!important; min-height:0!important; margin:0 14px!important; border-radius:22px; background:#075a6b; overflow:hidden; isolation:isolate; box-shadow:none; }
+  .hero .hero-inner { width:100%; height:100%; padding:0!important; }
+  .hero .hero-photo { background-position:53% 50%; transform:none; }
+  .hero .hero-shade { background:linear-gradient(0deg,#082e43dc 0%,#08394e00 78%); }
+  .hero .hero-copy { display:none!important; }
+  .hero .hero-search-wrap { position:static; margin:0; padding:0; width:0; height:0; }
+  .hero .hero-promises { display:none!important; }
+  .hero .search-widget { display:none!important; }
+  .gbb-mobile-featured-copy { position:absolute; z-index:2; bottom:22px; left:21px; right:20px; color:#fff; display:block; pointer-events:none; }
+  .gbb-mobile-featured-copy small { font:800 9px var(--sans,Arial,sans-serif); letter-spacing:.19em; color:#cef2f4; }
+  .gbb-mobile-featured-copy h2 { font:400 33px/1.04 var(--serif,Georgia,serif); letter-spacing:-.04em; color:#fff; margin:9px 0 7px; }
+  .gbb-mobile-featured-copy p { font-size:12px; color:#e7f5f7; margin:0; line-height:1.5; }
+  .gbb-mobile-categories { display:block; padding:26px 0 2px; }
+  .gbb-mobile-section-head { margin:0 19px 14px; display:flex; justify-content:space-between; align-items:baseline; gap:9px; }
+  .gbb-mobile-section-head h2 { font:400 26px/1.12 var(--serif,Georgia,serif); letter-spacing:-.04em; margin:0; color:var(--gbb-mobile-ink); }
+  .gbb-mobile-section-head a { color:#008fa3; font-weight:800; font-size:12px; text-decoration:none; white-space:nowrap; }
+  .gbb-mobile-type-scroll { display:flex; overflow-x:auto; overscroll-behavior-x:contain; gap:11px; padding:1px 19px 15px; scrollbar-width:none; scroll-snap-type:x proximity; }
+  .gbb-mobile-type-scroll::-webkit-scrollbar { display:none; }
+  .gbb-mobile-type { flex:0 0 126px; display:block; border:1px solid #e2ecee; overflow:hidden; background:#fff; border-radius:17px; text-decoration:none; color:#183b48; scroll-snap-align:start; }
+  .gbb-mobile-type-photo { width:100%; height:89px; background-color:#bbdfe5; background-size:cover; background-position:center; display:block; }
+  .gbb-mobile-type span:last-child { padding:12px; display:flex; justify-content:space-between; font-size:12px; font-weight:800; }
+  .gbb-mobile-type b { color:var(--gbb-mobile-teal); }
+  #destinations.section { padding:23px 0 34px; }
+  #destinations .section-header { margin:0 19px 16px; display:flex; align-items:end; }
+  #destinations .section-header h2 { font-size:29px; letter-spacing:-.045em; }
+  #destinations .section-header .section-link { font-size:11px; }
+  #destinations .destination-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; padding:0 15px; }
+  #destinations .destination-card { height:180px; border-radius:16px; }
+  #destinations .destination-card .destination-copy { left:13px; bottom:13px; right:8px; }
+  #destinations .destination-copy h3 { font-size:22px; line-height:1.1; }
+  #destinations .destination-copy span { font-size:8px; }
+  #destinations:not(.gbb-destinations-expanded) .destination-card:nth-child(n+5) { display:none; }
+  .gbb-mobile-destinations-toggle { display:flex; align-items:center; justify-content:center; gap:8px; width:calc(100% - 30px); margin:14px 15px 0; min-height:43px; background:#f0f8f9; color:#078c9e; border:1px solid #deedf0; border-radius:12px; font-size:12px; font-weight:800; }
+  .editorial { margin-top:8px; }
+  .editorial-content { padding:28px 20px 35px; }
+  .editorial-content h2 { font-size:39px; }
+  .owner-section { margin-bottom:0; }
+  .footer { padding-bottom:90px; }
+
+  /* Search dialog keeps existing live location/date/boat-type handlers. */
+  .gbb-mobile-search-backdrop { display:none; position:fixed; inset:0; z-index:8990; background:#092e3ab3; backdrop-filter:blur(3px); }
+  body.gbb-search-open .gbb-mobile-search-backdrop { display:block; }
+  .gbb-mobile-modal-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:15px; color:#173a47; }
+  .gbb-mobile-modal-title strong { font:400 27px var(--serif,Georgia,serif); }
+  .gbb-mobile-modal-title button { width:40px; height:40px; display:grid; place-items:center; background:#eff7f8; border:0; border-radius:50%; color:#1d5361; font-size:24px; line-height:1; }
+  body.gbb-search-open .gbb-mobile-search-dialog { display:block!important; position:fixed!important; z-index:9000!important; top:max(18px,env(safe-area-inset-top)); left:12px; width:calc(100vw - 24px); max-height:calc(100dvh - 34px); overflow-y:auto; background:white!important; border-radius:23px!important; padding:21px 17px!important; box-shadow:0 25px 75px #001b2755!important; }
+  .gbb-mobile-search-dialog .gbb-mobile-modal-title { display:flex; }
+  .gbb-mobile-search-dialog.search-widget { display:block!important; }
+  .gbb-mobile-search-dialog.search-widget .search-fields { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+  .gbb-mobile-search-dialog.search-widget .search-location { grid-column:1/-1; }
+  .gbb-mobile-search-dialog.search-widget .search-field { border:1px solid #e0eaec!important; min-height:65px; padding:12px!important; margin:0; border-radius:12px; }
+  .gbb-mobile-search-dialog.search-widget .search-field:last-child { grid-column:1/-1; }
+  .gbb-mobile-search-dialog.search-widget .search-field input,.gbb-mobile-search-dialog.search-widget .search-field select { font-size:16px!important; }
+  .gbb-mobile-search-dialog.search-widget .btn-search { display:flex; align-items:center; justify-content:center; width:100%; min-height:51px; margin-top:12px; font-size:15px; }
+
+  /* Live boat search: compact search trigger and bold photographs. */
+  .rental-page { background:#fff; padding:21px 0 44px; }
+  .rental-heading { margin-bottom:17px; }
+  .rental-heading .rental-eyebrow { font-size:10px; letter-spacing:.16em; margin-bottom:9px; }
+  .rental-heading h1 { font-size:38px; letter-spacing:-.05em; }
+  .rental-heading p { font-size:13px; margin-top:8px; }
+  .rental-request-note { display:none!important; }
+  .gbb-mobile-rental-search { display:flex; margin:0 auto 13px; width:calc(100% - 32px); max-width:800px; }
+  .rental-search-form > .rental-search-bar { display:none!important; }
+  body.gbb-search-open .rental-search-form > .rental-search-bar.gbb-mobile-search-dialog { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:0; }
+  body.gbb-search-open .rental-search-bar .gbb-mobile-modal-title { grid-column:1/-1; }
+  body.gbb-search-open .rental-search-bar label.rental-where { grid-column:1/-1; }
+  body.gbb-search-open .rental-search-bar label { min-height:72px; margin:0; border:1px solid #e0eaec!important; padding:12px!important; border-radius:12px; }
+  body.gbb-search-open .rental-search-bar label>span { font-size:11px; }
+  body.gbb-search-open .rental-search-bar input { font-size:16px; }
+  body.gbb-search-open .rental-search-bar .rental-search-button { grid-column:1/-1; margin:7px 0 0; min-height:52px; }
+  .rental-page .rental-search-form { width:100%; }
+  .rental-page .rental-layout { width:calc(100% - 30px); margin:0 auto; }
+  .gbb-mobile-filter-chips { display:flex; overflow-x:auto; gap:8px; padding:0 0 13px; scrollbar-width:none; }
+  .gbb-mobile-filter-chips::-webkit-scrollbar { display:none; }
+  .gbb-mobile-filter-chips a { flex:0 0 auto; border:1px solid #dce8eb; border-radius:999px; padding:10px 14px; background:#fff; color:#335c6a; font:750 12px var(--sans,Arial,sans-serif); text-decoration:none; }
+  .gbb-mobile-filter-chips a[aria-current=true] { background:#173e4a; border-color:#173e4a; color:#fff; }
+  .rental-results-bar { display:flex; gap:10px; margin:3px 0 13px; align-items:center; }
+  .rental-results-bar>div:first-child strong { font-size:15px; }
+  .rental-results-bar>div:first-child span { display:none; }
+  .rental-mobile-filters { min-height:42px; padding:9px 14px; background:#eaf7f8; color:#078d9e; border:1px solid #dcebed; font-weight:750; }
+  .rental-results-controls { width:100%; justify-content:flex-end; }
+  .rental-layout-switch { display:none!important; }
+  .rental-sort-control { padding:3px 3px 3px 11px!important; border-radius:10px!important; }
+  .rental-sort-control span { font-size:11px; }
+  .rental-sort-control select { font-size:12px!important; }
+  .rental-sidebar.is-open { max-height:min(72dvh,700px); border-radius:16px; }
+  .rental-card-grid { gap:17px; grid-template-columns:minmax(0,1fr)!important; }
+  .rental-card-shell { position:relative; min-width:0; }
+  .rental-page .rental-card { border:1px solid #e4ecee; border-radius:19px!important; box-shadow:0 5px 16px #103d4b0b; }
+  .rental-page .rental-card-photo { height:clamp(218px,66vw,289px)!important; }
+  .rental-page .rental-card-photo img { object-fit:cover; }
+  .rental-page .rental-card-body { padding:16px 16px 17px; }
+  .rental-page .rental-card-location { font-size:12px; color:#788b93; }
+  .rental-page .rental-card h3 { font:800 19px/1.24 var(--sans,Arial,sans-serif)!important; letter-spacing:-.028em; color:#123b49; margin:6px 0 9px; }
+  .rental-page .rental-card-badges { gap:6px; margin-bottom:9px; }
+  .rental-page .rental-card-badge { border:0; background:#eef8f9; padding:6px 8px; font-size:11px; border-radius:7px; color:#327987; }
+  .rental-page .rental-card-specs { font-size:12px; color:#819399; }
+  .rental-page .rental-card-bottom { border-top:1px solid #eaf0f1; padding-top:12px; margin-top:14px; align-items:baseline; }
+  .rental-page .rental-card-bottom strong { font-size:20px; color:#123b49; }
+  .rental-page .rental-view-link { font-size:12px; color:var(--gbb-mobile-teal); }
+  .rental-page .rental-favorite { width:40px; height:40px; border-radius:50%; top:11px; right:11px; }
+  .rental-page .rental-card-grid.is-list .rental-card { flex-direction:column; }
+  .rental-page .rental-card-grid.is-list .rental-card-photo { min-height:0; flex:auto; height:clamp(218px,66vw,289px)!important; }
+  .rental-page .rental-card-grid.is-list .rental-card-badges,.rental-page .rental-card-grid.is-list .rental-card-specs { display:flex; }
+
+  /* Four useful routes, one compact familiar app navigation. */
+  body.gbb-mobile-public-page .gbb-mobile-bottom-nav { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); position:fixed; left:0; right:0; bottom:0; z-index:120; min-height:calc(69px + env(safe-area-inset-bottom)); padding:7px 7px max(7px,env(safe-area-inset-bottom)); border-top:1px solid #e8f0f1; background:#fffffff2; backdrop-filter:blur(15px); }
+  .gbb-mobile-bottom-nav a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; border-radius:11px; padding:4px 1px; text-decoration:none; color:#82939a; font-size:10px; font-weight:750; }
+  .gbb-mobile-bottom-nav a svg { width:21px; height:21px; stroke-width:1.8; }
+  .gbb-mobile-bottom-nav a[aria-current=page] { color:#0095a5; }
+  .gbb-mobile-bottom-nav a:focus-visible { outline:2px solid #57c8d4; }
+  .rental-page .rental-pagination { margin-bottom:15px; }
+}
+@media(max-width:360px){
+  .gbb-mobile-intro h1 { font-size:38px; }
+  .gbb-mobile-type { flex-basis:115px; }
+  .rental-heading h1 { font-size:33px; }
+  .gbb-mobile-section-head h2 { font-size:23px; }
+}
+@media(prefers-reduced-motion:reduce){
+  .gbb-mobile-search-trigger,.gbb-mobile-type,.gbb-mobile-bottom-nav a { transition:none!important; }
+}
