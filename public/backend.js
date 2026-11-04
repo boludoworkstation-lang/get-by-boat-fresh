@@ -1025,11 +1025,13 @@
     const empty=document.querySelector?.('[data-staff-no-results]');
     if(empty)empty.hidden=visible!==0;
   }
-  function staffControlPage(){
+  async function staffControlPage(){
     if(!superAdmin)return page('Staff Control','<div class="profile-panel"><h2>Access restricted</h2><p>Only Super Admin can manage staff access.</p></div>');
-    return page('Staff Control',`<section class="profile-panel" style="margin-bottom:24px"><h2>Add Staff</h2><p>Enter an email to grant Staff access. New teammates receive a secure invitation to set up their login; existing users receive a confirmation email.</p><form class="live-form" data-live-form="invite-staff"><label>Staff email<input name="email" type="email" maxlength="254" placeholder="name@example.com" autocomplete="email" required></label><button class="btn" type="submit">Send Staff invitation</button><p role="status" data-feedback></p></form></section>`);
+    const staff=check(await client.rpc('super_admin_staff_list'));
+    const list=staff.length?staff.map(person=>`<tr><td data-label="Full name">${esc(person.full_name||'—')}</td><td data-label="Email">${esc(person.email||'—')}</td><td data-label="Date added">${person.added_at?esc(new Date(person.added_at).toLocaleDateString('en-GB')):'—'}</td></tr>`).join(''):'<tr><td colspan="3">No staff members added yet.</td></tr>';
+    return page('Staff Control',`<section class="profile-panel staff-control-invite"><h2>Invite Staff</h2><p>Enter an email to grant Staff access. New teammates receive a secure invitation to set up their login; existing users receive a confirmation email.</p><form class="live-form" data-live-form="invite-staff"><label>Staff email<input name="email" type="email" maxlength="254" placeholder="name@example.com" autocomplete="email" required></label><button class="btn" type="submit">Send Staff invitation</button><p role="status" data-feedback></p></form></section><section class="profile-panel staff-control-list"><h2>Staff members (${staff.length})</h2><div class="staff-control-table-wrap"><table class="staff-control-table"><thead><tr><th scope="col">Full name</th><th scope="col">Email</th><th scope="col">Date added</th></tr></thead><tbody>${list}</tbody></table></div></section>`);
   }
-  async function staffPage(){
+    async function staffPage(){
     if(!verificationStaff)return page('Documents Verification','<div class="profile-panel"><h2>Access restricted</h2><p>Only authorised Get By Boat reviewers can access private verification documents.</p></div>');
     const rows=check(await client.from('verification_requests').select('*').order('submitted_at',{ascending:false}).limit(1000));
     const reviews=rows.length?check(await client.from('verification_reviews').select('*').in('user_id',rows.map(r=>r.user_id))):[];
