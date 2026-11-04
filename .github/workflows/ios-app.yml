@@ -1,6 +1,12 @@
 name: iOS app checks
 
 on:
+  push:
+    branches:
+      - feature/ios-app-store-starter
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/ios-app.yml'
   pull_request:
     paths:
       - 'mobile/**'
