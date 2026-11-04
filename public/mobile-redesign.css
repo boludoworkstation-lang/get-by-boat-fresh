@@ -162,6 +162,7 @@
   .gbb-more-filters-close { display:none; border:0; border-radius:50%; background:#edf6f7; color:#1d5361; font-size:24px; width:34px; height:34px; }
   body.gbb-more-filters-open .gbb-more-filters-close { display:block; }
   body.gbb-more-filters-open .rental-sidebar-head h2 { font-size:19px; }
+  .rental-sidebar .rental-licence-section label:has(input[name="with_skipper_only"]) { display:none!important; }
   .gbb-more-filters-done { display:none; }
   body.gbb-more-filters-open .gbb-more-filters-done { display:block; position:sticky; bottom:-28px; width:100%; min-height:49px; margin:18px 0 0; border:0; border-radius:12px; background:#009eae; color:#fff; font-weight:800; font-size:14px; box-shadow:0 -6px 18px #ffffff; }
   .rental-card-grid { gap:17px; grid-template-columns:minmax(0,1fr)!important; }
