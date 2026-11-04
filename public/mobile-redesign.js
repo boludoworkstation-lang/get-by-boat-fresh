@@ -234,7 +234,12 @@
     if (searchBar && !searchBar.querySelector('.gbb-mobile-modal-title')) {
       searchBar.insertAdjacentHTML('afterbegin',modalHeading());
     }
-    if (searchBar) ensureSkipperPicker(searchBar,searchBar.querySelector('.rental-search-button'),skipperFromParams(getParams()));
+    if (searchBar) {
+      if (mobile()) ensureSkipperPicker(searchBar,searchBar.querySelector('.rental-search-button'),skipperFromParams(getParams()));
+      searchBar.querySelectorAll('.gbb-mobile-skipper-picker input').forEach(input => {
+        if (input.disabled === mobile()) input.disabled = !mobile();
+      });
+    }
     const results = page.querySelector('.rental-results');
     if (results && !results.querySelector('.gbb-mobile-filter-chips')) {
       const chips = document.createElement('nav');
