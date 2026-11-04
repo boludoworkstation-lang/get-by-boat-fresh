@@ -32,6 +32,8 @@ jobs:
           SDK_MANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager -print -quit)"
           test -n "$SDK_MANAGER"
           "$SDK_MANAGER" "platforms;android-36" "build-tools;36.0.0"
+      - name: Check Android UI script syntax
+        run: node --check public/android-app.js
       - name: Build debug APK and unsigned release AAB
         working-directory: android
         run: gradle --no-daemon :app:assembleDebug :app:bundleRelease
