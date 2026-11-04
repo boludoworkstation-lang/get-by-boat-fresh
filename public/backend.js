@@ -1106,8 +1106,8 @@
     </tr>`).join('');
     return page('Reservations',`<p>${staffView?'All reservation requests and dates in one place.':'All reservation requests, dates and financial breakdown. Amounts for pending requests are estimates until payment is confirmed.'}</p>${summary}<div class="reservation-filter-bar" data-reservation-filters><label>Search by name<input type="search" data-reservation-search placeholder="Customer, owner or boat name" aria-label="Search reservations by name" autocomplete="off"></label><label>Reservation status<select data-reservation-status aria-label="Filter reservation status"><option value="all">All statuses</option><option value="accepted">Accepted</option><option value="pending">Pending</option><option value="declined">Declined</option><option value="cancelled">Cancelled</option></select></label><span class="reservation-result-count" data-reservation-result-count>${rows.length} reservations</span></div><div class="profile-panel reservation-filter-empty" data-reservation-no-results hidden>No matching reservations. Try another name or status.</div><section class="profile-panel reservations-table-panel"><table class="reservations-table ${staffView?'staff-reservations-table':''}" style="width:100%;border-collapse:collapse;text-align:left;table-layout:fixed"><thead><tr style="border-bottom:1px solid #dce8ed"><th style="padding:14px 12px">Boat / traveller / owner</th><th style="padding:14px 12px">Rental dates</th><th style="padding:14px 12px">Status</th><th style="padding:14px 12px;text-align:right">Guest total</th>${staffView?'':`<th style="padding:14px 12px;text-align:right">Commission</th><th style="padding:14px 12px;text-align:right">Processing</th>`}<th style="padding:14px 12px;text-align:right">Owner net</th></tr></thead><tbody>${tr}</tbody></table></section>`);
   }
-  async function route(){const {path,params}=parseRoute();if(!['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/reservations','/messages'].includes(path)&&!path.startsWith('/listing/'))return null;
-    if(!client)return ['/login','/owner','/bookings','/account','/dashboard','/favourites','/staff','/reservations','/messages'].includes(path)?loginPage():page('Welcome aboard.','<p>Connecting your account…</p>');
+  async function route(){const {path,params}=parseRoute();if(!['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path)&&!path.startsWith('/listing/'))return null;
+    if(!client)return ['/login','/owner','/bookings','/account','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path)?loginPage():page('Welcome aboard.','<p>Connecting your account…</p>');
     if(path==='/login'&&session&&!recovery){location.hash=afterLogin();return !profile?profileDialog(authNext):page('Welcome back.','<p>Opening your account…</p>')}
     if(path==='/login')return loginPage();
     if(path==='/owner'&&!session)return loginPage();
@@ -1324,7 +1324,7 @@ const PAGE_SIZE=12;
     if(params.get('view')==='calendar')return page('Boat calendar',ownerCalendar(boats.find(b=>b.id===params.get('boat')),rows.filter(r=>r.boat_id===params.get('boat')),blocks.filter(b=>b.boat_id===params.get('boat')),params.get('month')));
     return page('My Boats',ownerFleet(boats,rows,['published','drafts'].includes(params.get('filter'))?params.get('filter'):'all',params.get('layout')||'grid'));
   }
-  const routes=p=>['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/reservations','/messages'].includes(p)||p.startsWith('/listing/');
+  const routes=p=>['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(p)||p.startsWith('/listing/');
 const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('page');q.sort();return q.toString();};
   let lastBoatsKey=null,lastBoatsPage=null;
   function refreshPagedBoatCards(results,token,pageNumber){
@@ -1362,7 +1362,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
     window.GBB_ACCOUNT_LINK=session?'#/dashboard':null;
     window.GBB_ACCOUNT_ROLE=profile?.account_type||null;
     const showProfile=false;
-    const showAuth=path==='/login'||(!session&&['/owner','/bookings','/account','/dashboard','/favourites','/staff','/reservations','/messages'].includes(path));
+    const showAuth=path==='/login'||(!session&&['/owner','/bookings','/account','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path));
     if(showAuth){if(!authBackground)authBackground=returnRoute==='#/'?home():app.innerHTML||home()}
     else{returnRoute=location.hash||'#/';authBackground=null;document.body?.classList.remove('auth-open')}
     if(!routes(path))return false;
