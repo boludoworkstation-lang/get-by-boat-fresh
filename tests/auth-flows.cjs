@@ -2,6 +2,7 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
 const source=fs.readFileSync('public/app.js','utf8');
 const helpers=source.slice(source.indexOf('function rentalDayCount('),source.indexOf('function boatDetail('));
 const backend=fs.readFileSync('public/backend.js','utf8');
+assert.match(backend,/const routes=p=>\[[^\]]*'\/reservations'/);
 assert.ok(backend.includes('setView([lat,lng],exact?12:10)'));
 const pageHtml=fs.readFileSync('public/index.html','utf8');
 assert.match(pageHtml,/<script src="maps-config\.js\?v=1\.0\.1" defer><\/script>/);
