@@ -311,7 +311,7 @@
     const mode = owner ? 'owner' : 'standard';
     if (nav.dataset.gbbNavMode !== mode) {
       const items = owner
-        ? [['#/','Explore','search'],['#/owner','My boats','ship'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']]
+        ? [['#/','Explore','search'],['#/owner','My boats','sailboat'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']]
         : [['#/','Discover','compass'],['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/account','Profile','user']];
       nav.innerHTML = items.map(([href,label,symbol]) => `<a href="${href}"${href === '#/owner?view=requests' ? ' data-gbb-notification="requests"' : href === '#/messages' ? ' data-gbb-notification="messages"' : ''}>${icon(symbol)}<span>${label}</span></a>`).join('');
       nav.dataset.gbbNavMode = mode;
