@@ -432,6 +432,83 @@
     updateTriggerSummaries();
   }
 
+  function enhanceOwnerDashboardNav() {
+    if (!mobile()) return;
+    const nav = document.querySelector('.member-shell .member-sidebar nav[aria-label="Account navigation"]');
+    if (!nav?.querySelector('a[href="#/owner"]')) return;
+
+    let cue = nav.nextElementSibling;
+    if (!cue?.classList.contains('gbb-owner-nav-scroll-cue')) {
+      cue = document.createElement('div');
+      cue.className = 'gbb-owner-nav-scroll-cue';
+      cue.innerHTML = '<span class="gbb-owner-nav-track" aria-hidden="true"><span class="gbb-owner-nav-thumb"></span></span><button type="button" class="gbb-owner-nav-more" aria-label="Show more dashboard sections"><span>More</span>' + icon('chevron') + '</button>';
+      nav.insertAdjacentElement('afterend', cue);
+      const button = cue.querySelector('button');
+      const thumb = cue.querySelector('.gbb-owner-nav-thumb');
+      const update = () => {
+        if (!cue.isConnected) return;
+        const max = Math.max(0, nav.scrollWidth - nav.clientWidth);
+        cue.hidden = max < 4;
+        if (!max) return;
+        const size = Math.min(100, Math.max(18, nav.clientWidth / nav.scrollWidth * 100));
+        const offset = Math.max(0, Math.min(1, nav.scrollLeft / max)) * (100 - size);
+        thumb.style.width = size + '%';
+        thumb.style.left = offset + '%';
+        const atEnd = nav.scrollLeft >= max - 4;
+        cue.classList.toggle('is-at-end', atEnd);
+        button.querySelector('span').textContent = atEnd ? 'Back' : 'More';
+        button.setAttribute('aria-label', atEnd ? 'Show earlier dashboard sections' : 'Show more dashboard sections');
+      };
+      button.addEventListener('click', () => {
+        nav.scrollBy({ left: cue.classList.contains('is-at-end') ? -nav.scrollWidth : nav.clientWidth * .72, behavior: 'smooth' });
+      });
+      nav.addEventListener('scroll', update, { passive: true });
+      nav._gbbOwnerNavCueUpdate = update;
+    }
+    requestAnimationFrame(() => nav._gbbOwnerNavCueUpdate?.());
+  }
+
+  function enhanceMobileMessenger() {
+    if (!mobile()) return;
+    const workspace = document.querySelector('.message-workspace');
+    if (!workspace) return;
+    const query = new URLSearchParams(window.location.hash.split('?')[1] || '');
+    const threadView = Boolean(query.get('booking'));
+    workspace.classList.toggle('gbb-mobile-thread-view', threadView);
+    if (!threadView) return;
+
+    const heading = workspace.querySelector('.booking-chat-heading');
+    if (heading && !heading.querySelector('.gbb-chat-back-to-list')) {
+      const back = document.createElement('a');
+      back.className = 'gbb-chat-back-to-list';
+      back.href = '#/messages';
+      back.textContent = '‹';
+      back.setAttribute('aria-label', 'Back to conversations');
+      heading.prepend(back);
+      const details = document.createElement('button');
+      details.type = 'button';
+      details.className = 'gbb-chat-details-action';
+      details.innerHTML = 'Details ' + icon('chevron');
+      details.addEventListener('click', () => workspace.classList.add('gbb-mobile-details-view'));
+      heading.append(details);
+    }
+
+    const detailHeading = workspace.querySelector('.booking-details-heading');
+    if (detailHeading && !detailHeading.querySelector('.gbb-chat-back-to-thread')) {
+      const back = document.createElement('button');
+      back.type = 'button';
+      back.className = 'gbb-chat-back-to-thread';
+      back.textContent = '← Conversation';
+      back.addEventListener('click', () => workspace.classList.remove('gbb-mobile-details-view'));
+      detailHeading.prepend(back);
+    }
+    const thread = workspace.querySelector('.booking-thread');
+    if (thread && !thread.dataset.gbbInitialScroll) {
+      thread.dataset.gbbInitialScroll = 'true';
+      requestAnimationFrame(() => { if (thread.isConnected) thread.scrollTop = thread.scrollHeight; });
+    }
+  }
+
   function enhance() {
     scheduled = false;
     ensureBackdrop();
@@ -440,6 +517,8 @@
     ensureRental();
     ensureBottomNav();
     hideGuestBookingsFromMenu();
+    enhanceOwnerDashboardNav();
+    enhanceMobileMessenger();
     arrangeMobileFooter();
   }
   function scheduleEnhance() {

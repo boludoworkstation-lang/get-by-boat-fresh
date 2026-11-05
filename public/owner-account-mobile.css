@@ -389,3 +389,61 @@
   }
   .member-header .member-avatar-menu-panel button .icon { color: #bd4d52; }
 }
+
+/* Scroll affordance for owner dashboard navigation on narrow screens. */
+@media (max-width: 640px) {
+  .member-shell:has(.owner-account-tabs) .gbb-owner-nav-scroll-cue,
+  .member-shell:has(.member-sidebar a[href="#/owner"]) .gbb-owner-nav-scroll-cue {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 27px;
+    padding: 6px 3px 0;
+  }
+  .member-shell .gbb-owner-nav-scroll-cue[hidden] { display: none !important; }
+  .member-shell .gbb-owner-nav-track {
+    position: relative;
+    display: block;
+    flex: 1;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e1edf0;
+  }
+  .member-shell .gbb-owner-nav-thumb {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    border-radius: 999px;
+    background: #08a1b4;
+    box-shadow: 0 0 5px #08a1b422;
+    transition: left .12s ease;
+  }
+  .member-shell .gbb-owner-nav-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex: 0 0 auto;
+    min-height: 27px;
+    padding: 1px 2px 1px 8px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #0089a2;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+  .member-shell .gbb-owner-nav-more svg {
+    width: 14px;
+    height: 14px;
+    transform: rotate(-90deg);
+    transition: transform .18s ease;
+  }
+  .member-shell .gbb-owner-nav-scroll-cue.is-at-end .gbb-owner-nav-more svg { transform: rotate(90deg); }
+  .member-shell .gbb-owner-nav-more:focus-visible { outline: 2px solid #03a3b7; outline-offset: 3px; }
+}

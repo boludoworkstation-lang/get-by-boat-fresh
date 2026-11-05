@@ -298,3 +298,228 @@
   .about-page .about-story-copy { font-size: 14px; line-height: 1.8; }
   .about-page .about-story-copy .about-lead { font-size: 18px; line-height: 1.65; }
 }
+
+/* About Us: preserve editorial desktop flow; break the Spanish beach phrase on phones. */
+.about-story-copy .about-mobile-line-break { display: none; }
+@media (max-width: 760px) {
+  .about-story-copy .about-mobile-line-break { display: inline; }
+}
+
+/* Messages on phones: conversation list and chat are separate, readable surfaces. */
+@media (max-width: 640px) {
+  .message-workspace {
+    height: calc(100dvh - 60px);
+    min-height: 0;
+    overflow: hidden;
+    background: #f8fbfc;
+  }
+  .message-workspace .booking-messenger-three {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+  .message-workspace .booking-conversations {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    border: 0;
+    background: #f8fbfc;
+  }
+  .message-workspace .booking-conversations h2 {
+    min-height: 69px;
+    align-items: center;
+    gap: 12px;
+    padding: 17px 19px;
+    border-bottom: 1px solid #e5eff1;
+    background: #fff;
+    color: #173e49;
+    font-size: 20px;
+    font-weight: 750;
+  }
+  .message-workspace .booking-conversations h2 span {
+    margin-left: auto;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: #eaf6f8;
+    color: #007f98;
+    font-size: 12px;
+  }
+  .message-workspace .booking-messages-back {
+    width: 31px;
+    height: 31px;
+    margin: 0;
+    border-radius: 9px;
+  }
+  .message-workspace .booking-conversation {
+    min-height: 80px;
+    margin: 7px 10px;
+    padding: 13px 12px;
+    gap: 13px;
+    border: 1px solid #e4edf0;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 2px 10px #17465608;
+  }
+  .message-workspace .booking-conversation.selected {
+    border-color: #aee0e8;
+    background: #edfafb;
+  }
+  .message-workspace .booking-conversation-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: #e5f5f8;
+    color: #008fa5;
+    font-size: 18px;
+  }
+  .message-workspace .booking-conversation strong { color: #1b4552; font-size: 14px; font-weight: 750; }
+  .message-workspace .booking-conversation small { color: #6d8992; font-size: 11.5px; line-height: 1.4; }
+  .message-workspace:not(.gbb-mobile-thread-view) .booking-chat,
+  .message-workspace:not(.gbb-mobile-thread-view) .booking-details { display: none; }
+  .message-workspace.gbb-mobile-thread-view .booking-conversations { display: none; }
+  .message-workspace.gbb-mobile-thread-view .booking-chat {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    background: #fff;
+  }
+  .message-workspace.gbb-mobile-thread-view .booking-details { display: none; }
+  .message-workspace.gbb-mobile-thread-view.gbb-mobile-details-view .booking-chat { display: none; }
+  .message-workspace.gbb-mobile-thread-view.gbb-mobile-details-view .booking-details {
+    display: block;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    border: 0;
+  }
+  .message-workspace.gbb-mobile-thread-view .booking-chat-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 10px;
+    height: auto;
+    min-height: 68px;
+    padding: 10px 12px;
+    background: #fff;
+    border-bottom: 1px solid #e5eff1;
+  }
+  .message-workspace.gbb-mobile-thread-view .booking-chat-heading > div { min-width: 0; flex: 1; }
+  .message-workspace.gbb-mobile-thread-view .booking-chat-heading h2 {
+    margin: 0 0 3px;
+    color: #183d49;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .message-workspace.gbb-mobile-thread-view .booking-chat-heading p {
+    display: block;
+    overflow: hidden;
+    color: #708b94;
+    font-size: 11px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .message-workspace .gbb-chat-back-to-list {
+    display: grid;
+    place-items: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #e0edf0;
+    border-radius: 10px;
+    background: #f0f8fa;
+    color: #087d94;
+    font-size: 28px;
+    line-height: 1;
+  }
+  .message-workspace .gbb-chat-details-action {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 2px;
+    min-height: 34px;
+    padding: 7px 9px;
+    border: 1px solid #deebee;
+    border-radius: 9px;
+    background: #fff;
+    color: #087e94;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 750;
+  }
+  .message-workspace .gbb-chat-details-action svg { width: 12px; height: 12px; transform: rotate(-90deg); }
+  .message-workspace.gbb-mobile-thread-view .booking-thread {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    padding: 17px 13px 20px;
+    gap: 13px;
+    background: #f8fbfc;
+    overscroll-behavior: contain;
+  }
+  .message-workspace .booking-message-bubble { max-width: min(88%, 440px); padding: 11px 13px; border-radius: 15px 15px 15px 5px; }
+  .message-workspace .booking-message.outgoing .booking-message-bubble {
+    border: 1px solid #b5e1e9;
+    border-radius: 15px 15px 5px 15px;
+    background: #dff4f8;
+    color: #164b5a;
+  }
+  .message-workspace .booking-message-bubble p { font-size: 14px; line-height: 1.55; }
+  .message-workspace .booking-message-bubble small { font-size: 10px; }
+  .message-workspace.gbb-mobile-thread-view .booking-compose {
+    flex: none;
+    padding: 9px 12px calc(10px + env(safe-area-inset-bottom));
+    border-top: 1px solid #e0ecf0;
+    background: #fff;
+  }
+  .message-workspace.gbb-mobile-thread-view .booking-compose textarea {
+    width: 100%;
+    height: 67px;
+    min-height: 67px;
+    padding: 12px 14px;
+    border: 1px solid #cfe1e5;
+    border-radius: 14px;
+    background: #f9fcfd;
+    color: #173e4a;
+    font-size: 16px;
+    resize: none;
+  }
+  .message-workspace.gbb-mobile-thread-view .booking-compose-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 7px;
+  }
+  .message-workspace.gbb-mobile-thread-view .booking-compose-actions .btn {
+    width: auto;
+    min-height: 40px;
+    padding: 8px 15px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+  .message-workspace .booking-details-heading { display: block; padding: 16px 18px; }
+  .message-workspace .gbb-chat-back-to-thread {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    margin: 0 0 14px;
+    padding: 5px 10px;
+    border: 1px solid #dbeaed;
+    border-radius: 9px;
+    background: #edf8fa;
+    color: #087e94;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
