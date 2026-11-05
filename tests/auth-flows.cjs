@@ -37,6 +37,34 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  const ctx={console,setTimeout,setInterval:()=>0,clearInterval:()=>{},URL,URLSearchParams,Intl,Date,crypto:{randomUUID:()=>'00000000-0000-4000-a000-000000000001'},fetch:async()=>({ok:true,json:async()=>({external:{google:true,apple:true}})}),FormData:class{constructor(f){this.values=f.values}get(k){return this.values[k]??null}getAll(k){return this.values[k]||[]}},location:{hash,search,pathname:'/',origin:'https://getbyboat.net'},window:{},document:{addEventListener(k,fn){(events[k]??=[]).push(fn)},querySelector(s){return s==='[data-feedback]'?feedback:null}},app:{innerHTML:''},state:{start:'',end:''},AUTH_CONFIG:{supabaseUrl:'https://example.supabase.co',supabasePublishableKey:'public'},authMode:'login',authClient:async()=>client,home:()=>'<main>Home</main>',header:()=>'<header/>',footer:()=>'<footer/>',waveLogo:()=>'<span class="logo-mark"></span>',icon:()=>'<svg></svg>',safe:s=>String(s??'').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;'),fmt:n=>String(n),toast(){},modal(){},parseRoute(){const [path,q]=ctx.location.hash.slice(1).split('?');return {path,params:new URLSearchParams(q)}},render(){ctx.window.liveRender()}};
  ctx.history={replaceState(_,__,url){const u=new URL(url,ctx.location.origin);ctx.location.hash=u.hash;ctx.location.search=u.search}};
  vm.createContext(ctx);vm.runInContext(helpers,ctx);vm.runInContext(backend,ctx);await sleep();
+ // Match production: backend is bundled into app.js and loaded separately.
+ // A second initialization used to register two toggles, closing language options immediately.
+ const listenerCounts=Object.fromEntries(Object.entries(events).map(([name,list])=>[name,list.length]));
+ const firstRender=ctx.window.liveRender;
+ vm.runInContext(backend,ctx);await sleep();
+ assert.deepEqual(Object.fromEntries(Object.entries(events).map(([name,list])=>[name,list.length])),listenerCounts);
+ assert.equal(ctx.window.liveRender,firstRender);
+ // The shared controls must toggle once per click after both script loads.
+ const eyeHandlers=events.click.filter(fn=>fn.toString().includes("closest?.('[data-password-visibility]')"));
+ assert.equal(eyeHandlers.length,1);
+ for(const name of ['password','confirm']){
+   const input={name,type:'password',focus(){}},attributes={};
+   const eye={closest:()=>({querySelector:()=>input}),setAttribute:(key,value)=>attributes[key]=value};
+   const event={target:{closest:()=>eye}};
+   eyeHandlers.forEach(fn=>fn(event));assert.equal(input.type,'text');assert.equal(attributes['aria-pressed'],'true');
+   eyeHandlers.forEach(fn=>fn(event));assert.equal(input.type,'password');assert.equal(attributes['aria-pressed'],'false');
+ }
+ const languageHandlers=events.click.filter(fn=>fn.toString().includes("closest?.('[data-language-toggle]')"));
+ assert.equal(languageHandlers.length,1);
+ const popover={hidden:true},summary={},languageSearch={value:'',focus(){}},attributes={};
+ const toggle={closest:()=>picker,setAttribute:(key,value)=>attributes[key]=value};
+ const picker={querySelector:selector=>({'[data-language-popover]':popover,'[data-language-toggle]':toggle,'[data-language-summary]':summary,'.profile-language-search':languageSearch,'input[name="languages"]':{value:'Croatian'}}[selector]||null)};
+ const originalQueryAll=ctx.document.querySelectorAll;
+ ctx.document.querySelectorAll=()=>[picker];
+ const languageEvent={target:{closest:()=>toggle},preventDefault(){}};
+ languageHandlers.forEach(fn=>fn(languageEvent));assert.equal(popover.hidden,false);assert.equal(attributes['aria-expanded'],'true');
+ languageHandlers.forEach(fn=>fn(languageEvent));assert.equal(popover.hidden,true);assert.equal(attributes['aria-expanded'],'false');
+ ctx.document.querySelectorAll=originalQueryAll;
  return {ctx,state,feedback,events,async route(hash){ctx.location.hash=hash;ctx.render();await sleep();return ctx.app.innerHTML},async submit(kind,values,dataset={}){if(kind==='boat')values={spec_engine_type:'outboard',spec_engine_hp:'250',spec_length_m:'7.5',spec_build_year:'2015',spec_tank_capacity_l:'150',spec_fuel_lph:'12',...values};const button={disabled:false};const f={dataset:{liveForm:kind,...dataset},values,querySelector:s=>s.startsWith('[data-editor-step=')?null:s==='[data-feedback]'?feedback:button,querySelectorAll:()=>[]};await events.submit[0]({target:f,preventDefault(){}});await sleep()},async click(action){const b={dataset:{live:action},disabled:false};await events.click.find(handler=>handler.toString().includes("case 'social-google'"))({target:{closest:selector=>selector==='[data-live]'?b:null},preventDefault(){}});await sleep()}};
 }
 (async()=>{
