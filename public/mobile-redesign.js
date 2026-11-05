@@ -482,8 +482,7 @@
       form.classList.add('gbb-mobile-search-dialog');
     }
     document.body.classList.add('gbb-search-open');
-    const locationInput = form.querySelector('input[name=location]');
-    if (locationInput) setTimeout(() => locationInput.focus({preventScroll:true}),80);
+    // Wait for an explicit tap on Where before focusing it or showing suggestions.
   }
 
   function closeSearch() {
