@@ -11,7 +11,7 @@
   .site-head .mobile-menu a[hidden] { display:none!important; }
   html { scroll-padding-top:76px; }
   body.gbb-mobile-public-page { background:#fff; padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
-  body.gbb-mobile-account-page { padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+  body.gbb-mobile-member-page { padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
   body.gbb-search-open,body.gbb-mobile-sheet-open,body.gbb-more-filters-open { overflow:hidden; }
   .site-head { height:67px!important; background:#fff; box-shadow:0 1px 0 #eaf0f1; }
   .site-head .nav { height:67px; }
@@ -197,7 +197,7 @@
   .rental-page .rental-card-grid.is-list .rental-card-badges,.rental-page .rental-card-grid.is-list .rental-card-specs { display:flex; }
 
   /* Four useful routes, one compact familiar app navigation. */
-  body.gbb-mobile-public-page .gbb-mobile-bottom-nav, body.gbb-mobile-account-page .gbb-mobile-bottom-nav { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); position:fixed; left:0; right:0; bottom:0; z-index:120; min-height:calc(69px + env(safe-area-inset-bottom)); padding:7px 7px max(7px,env(safe-area-inset-bottom)); border-top:1px solid #e8f0f1; background:#fffffff2; backdrop-filter:blur(15px); }
+  body.gbb-mobile-public-page .gbb-mobile-bottom-nav, body.gbb-mobile-member-page .gbb-mobile-bottom-nav { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); position:fixed; left:0; right:0; bottom:0; z-index:120; min-height:calc(69px + env(safe-area-inset-bottom)); padding:7px 7px max(7px,env(safe-area-inset-bottom)); border-top:1px solid #e8f0f1; background:#fffffff2; backdrop-filter:blur(15px); }
   .gbb-mobile-bottom-nav a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; border-radius:11px; padding:4px 1px; text-decoration:none; color:#82939a; font-size:10px; font-weight:750; }
   .gbb-mobile-bottom-nav a svg { width:21px; height:21px; stroke-width:1.8; }
   .gbb-mobile-bottom-nav a[aria-current=page] { color:#0095a5; }
@@ -307,6 +307,10 @@
     min-height: 0;
     overflow: hidden;
     background: #f8fbfc;
+  }
+  /* Leave room for the persistent bottom navigation beneath chat and composer. */
+  body.gbb-mobile-member-page .message-workspace {
+    height: calc(100dvh - 136px - env(safe-area-inset-bottom));
   }
   .message-workspace .booking-messenger-three {
     display: flex;
