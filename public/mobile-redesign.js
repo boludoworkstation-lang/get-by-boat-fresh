@@ -323,7 +323,7 @@
     const owner = mode === 'owner';
     const itemsByRole = {
       owner: [['#/','Explore','search'],['#/owner','My boats','speedboat'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']],
-      customer: [['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/bookings','Bookings','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']],
+      customer: [['#/','Explore','search'],['#/favourites','Saved','heart'],['#/bookings','Bookings','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']],
       staff: [['#/','Explore','search'],['#/reservations','Reservations','calendar'],['#/staff','Verification','shield'],['#/account','Profile','user']],
       'super-admin': [['#/','Explore','search'],['#/reservations','Reservations','calendar'],['#/staff','Verification','shield'],['#/staff-control','Staff','users'],['#/account','Profile','user']],
       standard: [['#/','Discover','compass'],['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/account','Profile','user']]
@@ -352,7 +352,7 @@
         : route === '#/account' || route === '#/dashboard' ? '#/account'
         : route === '#/' || route === '#/boats' ? '#/' : '';
     } else if (mode === 'customer') {
-      selectedRoute = route === '#/' || route === '#/boats' ? '#/boats'
+      selectedRoute = route === '#/' || route === '#/boats' ? '#/'
         : route === '#/dashboard' ? '#/account' : route;
     } else if (mode === 'staff' || mode === 'super-admin') {
       selectedRoute = route === '#/' || route === '#/boats' ? '#/'
