@@ -523,11 +523,30 @@
   }
 }
 
-/* Keep the final homepage editorial sentence on one readable line. */
+/* Editorial copy: keep every sentence the same readable size on phones.
+   Let the longer final sentence wrap naturally instead of shrinking it. */
 .editorial-tagline .editorial-last-line { white-space: nowrap; }
 @media (min-width: 761px) and (max-width: 1099px) {
   .editorial-tagline .editorial-last-line { font-size: 13px; letter-spacing: -.015em; }
 }
 @media (max-width: 760px) {
-  .editorial-tagline .editorial-last-line { font-size: clamp(10px, 3vw, 13px); letter-spacing: -.015em; }
+  .editorial p.editorial-tagline {
+    width: 100%;
+    max-width: 470px;
+    margin: 17px 0 23px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: -.008em;
+    color: #526d74;
+  }
+  .editorial-tagline span,
+  .editorial-tagline .editorial-last-line {
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    white-space: normal;
+    text-wrap: pretty;
+  }
 }
