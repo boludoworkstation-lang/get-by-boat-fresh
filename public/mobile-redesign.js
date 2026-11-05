@@ -323,11 +323,18 @@
     }
     const route = activeRoute();
     const publicPage = route === '#/' || route === '#/boats';
-    const accountPage = route === '#/account' && Boolean(window.GBB_ACCOUNT_LINK) && Boolean(document.querySelector('.member-shell'));
+    const memberRoutes = ['#/dashboard', '#/owner', '#/account', '#/bookings', '#/favourites'];
+    const memberPage = Boolean(window.GBB_ACCOUNT_LINK) && (
+      (memberRoutes.includes(route) && Boolean(document.querySelector('.member-shell'))) ||
+      (route === '#/messages' && Boolean(document.querySelector('.message-workspace')))
+    );
     document.body.classList.toggle('gbb-mobile-public-page',publicPage);
-    document.body.classList.toggle('gbb-mobile-account-page',accountPage);
+    document.body.classList.toggle('gbb-mobile-member-page',memberPage);
+    const selectedRoute = route === '#/owner' || route === '#/favourites' ? route
+      : ['#/dashboard', '#/account', '#/bookings', '#/messages'].includes(route) ? '#/account'
+      : route === '#/boats' || route === '#/' ? route : '';
     nav.querySelectorAll('a').forEach(a => {
-      const current = a.getAttribute('href') === (route === '#/boats' ? '#/boats' : route === '#/' ? '#/' : route === '#/account' ? '#/account' : '');
+      const current = a.getAttribute('href') === selectedRoute;
       if (current) a.setAttribute('aria-current','page');
       else a.removeAttribute('aria-current');
     });
