@@ -2072,7 +2072,6 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
       const form=input.form,start=form.querySelector('input[name="start"]'),end=form.querySelector('input[name="end"]');
       if(start.value&&end.value&&end.value<start.value){end.value='';const endButton=form.querySelector('[data-rental-date-open="end"]');if(endButton)endButton.innerHTML='dd/mm/yyyy '+icon('calendar');}
       input.dispatchEvent(new Event('change',{bubbles:true}));closeRentalCalendar();
-      if(day&&calendar.dataset.rentalCalendar==='start'){const endButton=form.querySelector('[data-rental-date-open="end"]');if(endButton&&!end.value)openRentalCalendar(endButton);}
     }
   });
   document.addEventListener('keydown',event=>{if(event.key==='Escape')closeRentalCalendar();});
