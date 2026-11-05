@@ -105,7 +105,7 @@
   const ownerView=()=>parseRoute().path==='/owner'||(parseRoute().path==='/account'&&safeNext(parseRoute().params.get('next'))==='#/owner');
   const nav=()=>`<nav class="live-nav"><a href="#/boats">Explore boats</a>${profile?.account_type==='owner'?'<a href="#/owner">My boats</a>':'<a href="#/bookings">My bookings</a>'}${session?'<a href="#/account">My profile</a>'+btn('Log out','logout'):'<a href="#/login">Log in</a>'}</nav>`;
   const memberAvatarActions=(picture,isOwner)=>isOwner
-    ?`<a class="member-mini-avatar member-avatar-desktop-link" href="#/account" aria-label="My profile">${picture}</a><details class="member-avatar-menu"><summary class="member-mini-avatar" aria-label="Account menu" title="Account menu">${picture}</summary><div class="member-avatar-menu-panel" aria-label="Account actions"><a href="#/account">${icon('user')}<span>My profile</span></a><button type="button" data-live="logout">${icon('arrow')}<span>Log out</span></button></div></details>`
+    ?`<a class="member-mini-avatar member-avatar-desktop-link" href="#/account" aria-label="My profile">${picture}</a><details class="member-avatar-menu"><summary class="member-mini-avatar" aria-label="Account menu" title="Account menu">${picture}</summary><div class="member-avatar-menu-panel" aria-label="Account actions"><button type="button" data-live="logout">${icon('arrow')}<span>Log out</span></button></div></details>`
     :`<a class="member-mini-avatar" href="#/account" aria-label="My profile">${picture}</a>`;
   const page=(title,body)=>{
     const {path,params}=parseRoute();
