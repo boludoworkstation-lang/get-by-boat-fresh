@@ -1036,9 +1036,17 @@
   }
     async function staffPage(){
     if(!verificationStaff)return page('Documents Verification','<div class="profile-panel"><h2>Access restricted</h2><p>Only authorised Get By Boat reviewers can access private verification documents.</p></div>');
-    const rows=check(await client.from('verification_requests').select('*').order('submitted_at',{ascending:false}).limit(1000));
-    const reviews=rows.length?check(await client.from('verification_reviews').select('*').in('user_id',rows.map(r=>r.user_id))):[];
-    const profiles=rows.length?check(await client.from('profiles').select('id,display_name,details').in('id',rows.map(r=>r.user_id))):[];
+    const [customerResult,ownerResult]=await Promise.all([
+      client.from('verification_requests').select('*').order('submitted_at',{ascending:false}).limit(1000),
+      client.from('owner_verification_requests').select('*').eq('application_state','submitted').order('submitted_at',{ascending:false}).limit(1000)
+    ]);
+    const rows=check(customerResult),ownerRows=check(ownerResult);
+    const [reviews,profiles,ownerReviews,ownerProfiles]=await Promise.all([
+      rows.length?client.from('verification_reviews').select('*').in('user_id',rows.map(r=>r.user_id)):Promise.resolve({data:[],error:null}),
+      rows.length?client.from('profiles').select('id,display_name,details').in('id',rows.map(r=>r.user_id)):Promise.resolve({data:[],error:null}),
+      ownerRows.length?client.from('owner_verification_reviews').select('*').in('user_id',ownerRows.map(r=>r.user_id)):Promise.resolve({data:[],error:null}),
+      ownerRows.length?client.from('profiles').select('id,display_name').in('id',ownerRows.map(r=>r.user_id)):Promise.resolve({data:[],error:null})
+    ]).then(results=>results.map(check));
     const cards=await Promise.all(rows.map(async r=>{
       const p=profiles.find(x=>x.id===r.user_id),review=reviews.find(x=>x.user_id===r.user_id);
       const current=review?.identity_path===r.identity_path && review?.licence_path===r.licence_path && review?.reviewed_birth_date===r.birth_date && review?.reviewed_licence_type===r.licence_type && review?.reviewed_licence_expiry===r.licence_expiry && review?.reviewed_name?.trim().toLocaleLowerCase()===p?.display_name?.trim().toLocaleLowerCase();
@@ -1050,9 +1058,7 @@
       }
       return `<article class="profile-panel verification-staff-card"><div class="verification-heading"><div><h2>${esc(p?.display_name||'Customer')}</h2><p>Submitted ${esc(r.submitted_at?.slice(0,10)||'')} · DOB ${esc(r.birth_date)}</p></div><span class="verification-badge ${esc(status)}">${esc(verificationLabel(status))}</span></div><p><strong>Identity:</strong> ${r.identity_type==='passport'?'Passport':'National ID'} · <strong>Licence:</strong> ${esc(r.licence_type)} · <strong>Expiry:</strong> ${esc(r.licence_expiry||'Permanent / not specified')}</p>${p?.details?.birth_date?`<p>Customer profile date of birth: ${esc(p.details.birth_date)}</p>`:''}<div class="verification-document-links">${documentLink(idFile,'ID / passport')}${documentLink(licenceFile,'boat driving licence')}</div>${current&&review?.note?`<p>Previous decision note: ${esc(review.note)}</p>`:''}<form class="live-form verification-review-form" data-live-form="review" data-id="${esc(r.user_id)}"><label>Decision<select name="status" required><option value="approved">Approve documents</option><option value="rejected">Reject / request correction</option></select></label><label class="live-check"><input type="checkbox" name="identity_matches"> I checked that the ID/passport is genuine-looking and matches the customer's legal name and date of birth.</label><label class="live-check"><input type="checkbox" name="licence_matches"> I checked the licence holder matches the ID/passport, and the licence category and validity are suitable.</label><label>Message to customer (required if rejected)<textarea name="note" rows="2" maxlength="1000" placeholder="Explain which details need correction."></textarea></label><button class="btn" type="submit">Save review decision</button><p role="status" data-feedback></p></form></article>`;
     }));
-    const ownerRows=check(await client.from('owner_verification_requests').select('*').eq('application_state','submitted').order('submitted_at',{ascending:false}).limit(1000));
-    const ownerReviews=ownerRows.length?check(await client.from('owner_verification_reviews').select('*').in('user_id',ownerRows.map(r=>r.user_id))):[];
-    const ownerProfiles=ownerRows.length?check(await client.from('profiles').select('id,display_name').in('id',ownerRows.map(r=>r.user_id))):[];
+    
     const ownerCards=await Promise.all(ownerRows.map(async r=>{
       const p=ownerProfiles.find(x=>x.id===r.user_id),review=ownerReviews.find(x=>x.user_id===r.user_id);
       const isCurrent=ownerReviewIsCurrent(r,review,p?.display_name),s=isCurrent?review.status:'pending';
