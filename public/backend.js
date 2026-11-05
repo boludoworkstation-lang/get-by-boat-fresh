@@ -1028,11 +1028,45 @@
     const empty=document.querySelector?.('[data-staff-no-results]');
     if(empty)empty.hidden=visible!==0;
   }
+  function staffMemberRows(staff){
+    return staff.length?staff.map(person=>{
+      const email=String(person.email||'').trim();
+      const self=email.toLowerCase()===String(session?.user?.email||'').toLowerCase();
+      return `<tr><td data-label="Full name">${esc(person.full_name||'—')}</td><td data-label="Email">${esc(email||'—')}</td><td data-label="Date added">${person.added_at?esc(new Date(person.added_at).toLocaleDateString('en-GB')):'—'}</td><td data-label="Actions" style="text-align:right">${self?'<span class="member-note">Super Admin</span>':`<button type="button" data-remove-staff="${esc(email)}" data-staff-name="${esc(person.full_name||email)}" style="background:#fff;color:#b42332;border:1px solid #f1bec4;border-radius:7px;padding:8px 12px;font-weight:600;cursor:pointer">Remove</button>`}</td></tr>`;
+    }).join(''):'<tr><td colspan="4">No staff members added yet.</td></tr>';
+  }
+  function updateStaffMemberTable(staff){
+    const heading=document.querySelector('[data-staff-members-count]');
+    const tbody=document.querySelector('[data-staff-members-rows]');
+    if(heading)heading.textContent='Staff members ('+staff.length+')';
+    if(tbody)tbody.innerHTML=staffMemberRows(staff);
+  }
+  document.addEventListener('click',async event=>{
+    const button=event.target.closest?.('[data-remove-staff]');
+    if(!button)return;
+    event.preventDefault();
+    if(!superAdmin||button.disabled)return;
+    const email=String(button.dataset.removeStaff||'');
+    const name=String(button.dataset.staffName||email);
+    if(!email||!window.confirm('Remove Staff access for '+name+' ('+email+')?\\n\\nThis will revoke Staff permissions. Their user account will remain active.'))return;
+    const feedback=document.querySelector('[data-staff-remove-feedback]');
+    button.disabled=true;
+    if(feedback){feedback.textContent='Removing Staff access…';feedback.style.color='#526d77';}
+    try{
+      const {data,error}=await client.rpc('super_admin_remove_staff_by_email',{target_email:email});
+      if(error||data!==true)throw error||new Error('Could not remove Staff');
+      const {data:members,error:listError}=await client.rpc('super_admin_staff_list');
+      if(listError)throw listError;
+      updateStaffMemberTable(members||[]);
+      if(feedback){feedback.textContent='Staff access removed for '+name+'.';feedback.style.color='#187650';}
+    }catch(error){
+      if(feedback){feedback.textContent=error?.message||'Unable to remove Staff. Please try again.';feedback.style.color='#b42332';}
+    }finally{if(button.isConnected)button.disabled=false;}
+  });
   async function staffControlPage(){
     if(!superAdmin)return page('Staff Control','<div class="profile-panel"><h2>Access restricted</h2><p>Only Super Admin can manage staff access.</p></div>');
     const staff=check(await client.rpc('super_admin_staff_list'));
-    const list=staff.length?staff.map(person=>`<tr><td data-label="Full name">${esc(person.full_name||'—')}</td><td data-label="Email">${esc(person.email||'—')}</td><td data-label="Date added">${person.added_at?esc(new Date(person.added_at).toLocaleDateString('en-GB')):'—'}</td></tr>`).join(''):'<tr><td colspan="3">No staff members added yet.</td></tr>';
-    return page('Staff Control',`<section class="profile-panel staff-control-invite"><h2>Invite Staff</h2><p>Enter an email to grant Staff access. New teammates receive a secure invitation to set up their login; existing users receive a confirmation email.</p><form class="live-form" data-live-form="invite-staff"><label>Staff email<input name="email" type="email" maxlength="254" placeholder="name@example.com" autocomplete="email" required></label><button class="btn" type="submit">Send Staff invitation</button><p role="status" data-feedback></p></form></section><section class="profile-panel staff-control-list"><h2 data-staff-members-count>Staff members (${staff.length})</h2><div class="staff-control-table-wrap"><table class="staff-control-table"><thead><tr><th scope="col">Full name</th><th scope="col">Email</th><th scope="col">Date added</th></tr></thead><tbody data-staff-members-rows>${list}</tbody></table></div></section>`);
+    return page('Staff Control',`<section class="profile-panel staff-control-invite"><h2>Invite Staff</h2><p>Enter an email to grant Staff access. New teammates receive a secure invitation to set up their login; existing users receive a confirmation email.</p><form class="live-form" data-live-form="invite-staff"><label>Staff email<input name="email" type="email" maxlength="254" placeholder="name@example.com" autocomplete="email" required></label><button class="btn" type="submit">Send Staff invitation</button><p role="status" data-feedback></p></form></section><section class="profile-panel staff-control-list"><h2 data-staff-members-count>Staff members (${staff.length})</h2><p role="status" data-staff-remove-feedback style="min-height:1em;color:#187650"></p><div class="staff-control-table-wrap"><table class="staff-control-table"><thead><tr><th scope="col">Full name</th><th scope="col">Email</th><th scope="col">Date added</th><th scope="col" style="text-align:right">Actions</th></tr></thead><tbody data-staff-members-rows>${staffMemberRows(staff)}</tbody></table></div></section>`);
   }
     async function staffPage(){
     if(!verificationStaff)return page('Documents Verification','<div class="profile-panel"><h2>Access restricted</h2><p>Only authorised Get By Boat reviewers can access private verification documents.</p></div>');
@@ -1563,10 +1597,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
       if(data?.sent)f.reset();
       const {data:staffMembers,error:listError}=await client.rpc('super_admin_staff_list');
       if(!listError&&Array.isArray(staffMembers)){
-        const heading=document.querySelector('[data-staff-members-count]');
-        const tbody=document.querySelector('[data-staff-members-rows]');
-        if(heading)heading.textContent='Staff members ('+staffMembers.length+')';
-        if(tbody)tbody.innerHTML=staffMembers.map(person=>'<tr><td data-label="Full name">'+esc(person.full_name||'—')+'</td><td data-label="Email">'+esc(person.email||'—')+'</td><td data-label="Date added">'+(person.added_at?esc(new Date(person.added_at).toLocaleDateString('en-GB')):'—')+'</td></tr>').join('')||'<tr><td colspan="3">No staff members added yet.</td></tr>';
+        updateStaffMemberTable(staffMembers);
       }
       return;
     }
