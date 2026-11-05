@@ -522,3 +522,12 @@
     font-weight: 700;
   }
 }
+
+/* Keep the final homepage editorial sentence on one readable line. */
+.editorial-tagline .editorial-last-line { white-space: nowrap; }
+@media (min-width: 761px) and (max-width: 1099px) {
+  .editorial-tagline .editorial-last-line { font-size: 13px; letter-spacing: -.015em; }
+}
+@media (max-width: 760px) {
+  .editorial-tagline .editorial-last-line { font-size: clamp(10px, 3vw, 13px); letter-spacing: -.015em; }
+}
