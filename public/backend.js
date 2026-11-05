@@ -1048,19 +1048,19 @@
     if(!superAdmin||button.disabled)return;
     const email=String(button.dataset.removeStaff||'');
     const name=String(button.dataset.staffName||email);
-    if(!email||!window.confirm('Remove Staff access for '+name+' ('+email+')?\\n\\nThis will revoke Staff permissions. Their user account will remain active.'))return;
+    if(!email||!window.confirm('Deactivate the Staff account for '+name+' ('+email+')?\\n\\nThis will block sign-in and revoke Staff permissions. Account data will be preserved.'))return;
     const feedback=document.querySelector('[data-staff-remove-feedback]');
     button.disabled=true;
-    if(feedback){feedback.textContent='Removing Staff access…';feedback.style.color='#526d77';}
+    if(feedback){feedback.textContent='Deactivating Staff account…';feedback.style.color='#526d77';}
     try{
-      const {data,error}=await client.rpc('super_admin_remove_staff_by_email',{target_email:email});
-      if(error||data!==true)throw error||new Error('Could not remove Staff');
+      const {data,error}=await client.functions.invoke('deactivate-staff',{body:{email}});
+      if(error||!data?.deactivated)throw new Error(data?.error||error?.message||'Could not deactivate Staff account');
       const {data:members,error:listError}=await client.rpc('super_admin_staff_list');
       if(listError)throw listError;
       updateStaffMemberTable(members||[]);
-      if(feedback){feedback.textContent='Staff access removed for '+name+'.';feedback.style.color='#187650';}
+      if(feedback){feedback.textContent='Staff account deactivated for '+name+'.';feedback.style.color='#187650';}
     }catch(error){
-      if(feedback){feedback.textContent=error?.message||'Unable to remove Staff. Please try again.';feedback.style.color='#b42332';}
+      if(feedback){feedback.textContent=error?.message||'Unable to deactivate Staff. Please try again.';feedback.style.color='#b42332';}
     }finally{if(button.isConnected)button.disabled=false;}
   });
   async function staffControlPage(){
