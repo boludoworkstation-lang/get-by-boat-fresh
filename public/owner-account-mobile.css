@@ -511,3 +511,20 @@
     min-height: 0;
   }
 }
+
+/* Shared signed-in bottom navigation for Customer, Staff and Super Admin on phones. */
+@media (max-width: 640px) {
+  body.gbb-mobile-role-member-page .member-shell > .member-sidebar {
+    display: none !important;
+  }
+  body.gbb-mobile-five-nav .gbb-mobile-bottom-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding-inline: 4px;
+  }
+  body.gbb-mobile-signed-nav .gbb-mobile-bottom-nav a {
+    position: relative;
+    gap: 4px;
+    font-size: 9.5px;
+    padding-inline: 0;
+  }
+}
