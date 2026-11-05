@@ -299,12 +299,6 @@
   .about-page .about-story-copy .about-lead { font-size: 18px; line-height: 1.65; }
 }
 
-/* About Us: preserve editorial desktop flow; break the Spanish beach phrase on phones. */
-.about-story-copy .about-mobile-line-break { display: none; }
-@media (max-width: 760px) {
-  .about-story-copy .about-mobile-line-break { display: inline; }
-}
-
 /* Messages on phones: conversation list and chat are separate, readable surfaces. */
 @media (max-width: 640px) {
   .message-workspace {
