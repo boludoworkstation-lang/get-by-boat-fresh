@@ -480,5 +480,13 @@ document.addEventListener('change',e=>{const t=e.target;updateRentalDates(t);if(
 document.addEventListener('input',e=>{updateRentalDates(e.target);if(e.target.dataset.priceEnd)updatePriceFilter(e.target.dataset.priceEnd,e.target.value);if(e.target.dataset.range){updateDualRange(e.target.dataset.range,e.target.dataset.end,e.target.value)}});
 document.addEventListener('submit',e=>{const f=e.target;if(!['hero-search','quick-search','reserve-form','login-form','checkout-form'].includes(f.id))return;e.preventDefault();if(f.id==='hero-search'||f.id==='quick-search'){const data=new FormData(f);const start=data.get('start')||'',end=data.get('end')||'';if(start&&end&&end<start){toast('End date must be on or after the start date.');return}state.start=start;state.end=end;state.filters.country='';state.filters.location=canonicalDestination(data.get('location'));state.filters.type=String(data.get('type')||'');state.filters.minPrice=MIN_PRICE;state.filters.max=MAX_PRICE;state.filters.guests=1;state.filters.lengthMin=0;state.filters.lengthMax=MAX_LENGTH;state.filters.engineMin=0;state.filters.engineMax=MAX_ENGINE;state.filters.skipper=false;state.filters.equipment=[];state.view='list';const mobileSearch=window.matchMedia('(max-width:640px)').matches;const skipperChoice=mobileSearch?String(data.get('skipper')||''):'';const target='#/boats?location='+encodeURIComponent(state.filters.location)+'&type='+encodeURIComponent(state.filters.type)+(mobileSearch&&start?'&start='+encodeURIComponent(start):'')+(mobileSearch&&end?'&end='+encodeURIComponent(end):'')+(['with','without'].includes(skipperChoice)?'&skipper='+skipperChoice:'');if(location.hash===target)render();else location.hash=target}if(f.id==='reserve-form'){const data=new FormData(f);if(data.get('end')<data.get('start')){toast('Please select an ending date on or after the starting date.');return}state.start=String(data.get('start'));state.end=String(data.get('end'));location.hash='#/checkout/'+f.dataset.id}if(f.id==='login-form')submitEmailAuth(f);if(f.id==='checkout-form')createBookingPreview(f)});
 document.addEventListener('click',e=>{if(e.target.classList.contains('overlay'))e.target.remove()});
-window.addEventListener('hashchange',render);
+document.addEventListener('click',e=>{
+ const menuLink=e.target.closest?.('.site-head .mobile-menu a[href^="#/"]');
+ if(!menuLink)return;
+ state.mobile=false;
+ if(menuLink.getAttribute('href')===location.hash){
+  setTimeout(()=>{const head=document.querySelector('.site-head');if(head?.querySelector('.mobile-menu'))head.outerHTML=header(parseRoute().path==='/boats'?'boats':'');},0);
+ }
+});
+window.addEventListener('hashchange',()=>{state.mobile=false;render();});
 // backend.js initializes the first render after registering the live routes.
