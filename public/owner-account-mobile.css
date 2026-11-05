@@ -550,3 +550,54 @@
     flex-shrink: 0;
   }
 }
+
+/* Staff and Super Admin can sign out from their top-right avatar on every screen. */
+.member-header .member-avatar-menu-privileged {
+  display: block;
+  position: relative;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+.member-header .member-avatar-menu-privileged > summary {
+  list-style: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.member-header .member-avatar-menu-privileged > summary::-webkit-details-marker { display: none; }
+.member-header .member-avatar-menu-privileged > summary:focus-visible { outline: 3px solid #90d5df; outline-offset: 3px; }
+@media (min-width: 761px) {
+  .member-header .member-avatar-menu-privileged .member-avatar-menu-panel {
+    position: absolute;
+    z-index: 200;
+    top: calc(100% + 13px);
+    right: 0;
+    width: 192px;
+    padding: 7px;
+    border: 1px solid #dce9ec;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 16px 45px #173c4a24;
+  }
+  .member-header .member-avatar-menu-privileged .member-avatar-menu-panel button {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    min-height: 45px;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #bd4d52;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    line-height: 1.2;
+    text-align: left;
+    cursor: pointer;
+  }
+  .member-header .member-avatar-menu-privileged .member-avatar-menu-panel button:hover,
+  .member-header .member-avatar-menu-privileged .member-avatar-menu-panel button:focus-visible { background: #edf8fa; }
+  .member-header .member-avatar-menu-privileged .member-avatar-menu-panel button .icon { width: 17px; height: 17px; color: #bd4d52; }
+}
