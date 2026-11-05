@@ -8,6 +8,8 @@
       search: '<circle cx="10.7" cy="10.7" r="6.6"/><path d="m16 16 5 5"/>',
       compass: '<circle cx="12" cy="12" r="9"/><path d="m15.7 8.3-2.2 5.2-5.2 2.2 2.2-5.2z"/>',
       heart: '<path d="M20.8 8c0-5.2-6.4-6.7-8.8-2.8C9.6 1.3 3.2 2.8 3.2 8c0 4.3 6.4 9.2 8.8 11.8C14.4 17.2 20.8 12.3 20.8 8Z"/>',
+      shield: '<path d="M12 2 20 5v6c0 5-3.5 8-8 11-4.5-3-8-6-8-11V5l8-3Z"/><path d="m9 12 2 2 4-4"/>',
+      users: '<circle cx="9" cy="8" r="3"/><path d="M2.5 20v-2a6.5 6.5 0 0 1 13 0v2M17 5a3 3 0 0 1 0 6m1 3a5 5 0 0 1 3.5 5v1"/>',
       calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>',
       user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-9 16-9 16 0"/>',
       message: '<path d="M20 11.5a8 8 0 0 1-8 8 8.5 8.5 0 0 1-3.5-.75L4 20l1.25-4.5A8 8 0 1 1 20 11.5Z"/>',
@@ -308,36 +310,58 @@
       nav.setAttribute('aria-label','Mobile navigation');
       document.body.appendChild(nav);
     }
-    const owner = window.GBB_ACCOUNT_ROLE === 'owner' && Boolean(window.GBB_ACCOUNT_LINK);
-    const mode = owner ? 'owner' : 'standard';
+
+    // Privileged roles come from the existing verified staff/admin checks in backend.js.
+    // This only chooses visible links; the backend still authorizes access to each page.
+    const signedIn = Boolean(window.GBB_ACCOUNT_LINK);
+    const role = signedIn ? (window.GBB_MOBILE_ACCESS_ROLE || window.GBB_ACCOUNT_ROLE) : null;
+    const mode = role === 'super-admin' ? 'super-admin'
+      : role === 'staff' ? 'staff'
+      : role === 'owner' ? 'owner'
+      : role === 'customer' ? 'customer'
+      : 'standard';
+    const owner = mode === 'owner';
+    const itemsByRole = {
+      owner: [['#/','Explore','search'],['#/owner','My boats','speedboat'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']],
+      customer: [['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/bookings','Bookings','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']],
+      staff: [['#/','Explore','search'],['#/reservations','Reservations','calendar'],['#/staff','Verification','shield'],['#/account','Profile','user']],
+      'super-admin': [['#/','Explore','search'],['#/reservations','Reservations','calendar'],['#/staff','Verification','shield'],['#/staff-control','Staff','users'],['#/account','Profile','user']],
+      standard: [['#/','Discover','compass'],['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/account','Profile','user']]
+    };
     if (nav.dataset.gbbNavMode !== mode) {
-      const items = owner
-        ? [['#/','Explore','search'],['#/owner','My boats','speedboat'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']]
-        : [['#/','Discover','compass'],['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/account','Profile','user']];
-      nav.innerHTML = items.map(([href,label,symbol]) => `<a href="${href}"${href === '#/owner?view=requests' ? ' data-gbb-notification="requests"' : href === '#/messages' ? ' data-gbb-notification="messages"' : ''}>${icon(symbol)}<span>${label}</span></a>`).join('');
+      nav.innerHTML = itemsByRole[mode].map(([href,label,symbol]) => `<a href="${href}"${href === '#/owner?view=requests' ? ' data-gbb-notification="requests"' : href === '#/messages' ? ' data-gbb-notification="messages"' : ''}>${icon(symbol)}<span>${label}</span></a>`).join('');
       nav.dataset.gbbNavMode = mode;
     }
 
     const route = activeRoute();
     const publicPage = route === '#/' || route === '#/boats';
-    const memberRoutes = ['#/dashboard', '#/owner', '#/account', '#/bookings', '#/favourites'];
-    const memberPage = Boolean(window.GBB_ACCOUNT_LINK) && (
-      (memberRoutes.includes(route) && Boolean(document.querySelector('.member-shell'))) ||
-      (route === '#/messages' && Boolean(document.querySelector('.message-workspace')))
-    );
+    const memberRoutes = ['#/dashboard','#/owner','#/account','#/bookings','#/favourites','#/staff','#/staff-control','#/reservations','#/messages'];
+    const memberPage = signedIn && memberRoutes.includes(route);
     document.body.classList.toggle('gbb-mobile-public-page',publicPage);
     document.body.classList.toggle('gbb-mobile-member-page',memberPage);
     document.body.classList.toggle('gbb-mobile-owner-nav',owner);
     document.body.classList.toggle('gbb-mobile-owner-page',owner && memberPage);
+    document.body.classList.toggle('gbb-mobile-role-member-page',memberPage && mode !== 'standard');
+    document.body.classList.toggle('gbb-mobile-signed-nav',mode !== 'standard');
+    document.body.classList.toggle('gbb-mobile-five-nav',itemsByRole[mode].length === 5);
 
-    const selectedRoute = owner
-      ? route === '#/owner' ? (getParams().get('view') === 'requests' ? '#/owner?view=requests' : '#/owner')
+    let selectedRoute = '';
+    if (owner) {
+      selectedRoute = route === '#/owner' ? (getParams().get('view') === 'requests' ? '#/owner?view=requests' : '#/owner')
         : route === '#/messages' ? '#/messages'
         : route === '#/account' || route === '#/dashboard' ? '#/account'
-        : route === '#/' || route === '#/boats' ? '#/' : ''
-      : route === '#/favourites' ? '#/favourites'
+        : route === '#/' || route === '#/boats' ? '#/' : '';
+    } else if (mode === 'customer') {
+      selectedRoute = route === '#/' || route === '#/boats' ? '#/boats'
+        : route === '#/dashboard' ? '#/account' : route;
+    } else if (mode === 'staff' || mode === 'super-admin') {
+      selectedRoute = route === '#/' || route === '#/boats' ? '#/'
+        : route === '#/dashboard' ? (mode === 'super-admin' ? '#/reservations' : '#/staff') : route;
+    } else {
+      selectedRoute = route === '#/favourites' ? '#/favourites'
         : ['#/dashboard', '#/account', '#/bookings', '#/messages'].includes(route) ? '#/account'
         : route === '#/boats' || route === '#/' ? route : '';
+    }
     nav.querySelectorAll('a').forEach(a => {
       if (a.getAttribute('href') === selectedRoute) a.setAttribute('aria-current','page');
       else a.removeAttribute('aria-current');
