@@ -16,6 +16,7 @@
       ship: '<path d="M4 15h16l-2.5 5h-11L4 15Zm4-8h8v8H8V7Zm-3 0h14M12 3v4"/>',
       // Boat silhouettes show the actual hull/propulsion differences at small sizes.
       motorboat: '<path d="M2 17h20l-3.5 4H5.5L2 17Zm5-1 1.4-4h7l3 4M9 12V8.5h5l3 3.5M18.5 15h2v3M4 22h16"/>',
+      speedboat: '<path d="M2 17h20l-4.5 4H7L2 17Z"/><path d="M7 17l2-5h8l3 5M10 12l1-4h5l2 4M2 22h5m11 0h4"/>',
       rib: '<path d="M2.5 16c.6-2 2.1-3.2 4.5-3.2h10c2.7 0 4.5 1.4 4.5 3.2 0 3-4 5-9.5 5s-9.5-2-9.5-5ZM4 16h16M8 12.8 9.2 9H14l2 3.8M17.5 12V6h3M18 8h2.5"/>',
       sailboat: '<path d="M12 2v16M10 5 4 17h6V5Zm4 1 6 11h-6V6ZM3 19h18l-3 3H6l-3-3Z"/>',
       catamaran: '<path d="M12 2v15M10 5 4 16h6V5Zm4 1 6 10h-6V6ZM8 17h8M2 19h8l-2 3H4l-2-3Zm12 0h8l-2 3h-4l-2-3Z"/>',
@@ -311,7 +312,7 @@
     const mode = owner ? 'owner' : 'standard';
     if (nav.dataset.gbbNavMode !== mode) {
       const items = owner
-        ? [['#/','Explore','search'],['#/owner','My boats','yacht'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']]
+        ? [['#/','Explore','search'],['#/owner','My boats','speedboat'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']]
         : [['#/','Discover','compass'],['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/account','Profile','user']];
       nav.innerHTML = items.map(([href,label,symbol]) => `<a href="${href}"${href === '#/owner?view=requests' ? ' data-gbb-notification="requests"' : href === '#/messages' ? ' data-gbb-notification="messages"' : ''}>${icon(symbol)}<span>${label}</span></a>`).join('');
       nav.dataset.gbbNavMode = mode;
