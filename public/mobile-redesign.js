@@ -311,7 +311,7 @@
     const mode = owner ? 'owner' : 'standard';
     if (nav.dataset.gbbNavMode !== mode) {
       const items = owner
-        ? [['#/boats','Explore','search'],['#/owner','My boats','ship'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']]
+        ? [['#/','Discovery','compass'],['#/owner','My boats','ship'],['#/owner?view=requests','Requests','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']]
         : [['#/','Discover','compass'],['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/account','Profile','user']];
       nav.innerHTML = items.map(([href,label,symbol]) => `<a href="${href}"${href === '#/owner?view=requests' ? ' data-gbb-notification="requests"' : href === '#/messages' ? ' data-gbb-notification="messages"' : ''}>${icon(symbol)}<span>${label}</span></a>`).join('');
       nav.dataset.gbbNavMode = mode;
@@ -333,7 +333,7 @@
       ? route === '#/owner' ? (getParams().get('view') === 'requests' ? '#/owner?view=requests' : '#/owner')
         : route === '#/messages' ? '#/messages'
         : route === '#/account' || route === '#/dashboard' ? '#/account'
-        : route === '#/' || route === '#/boats' ? '#/boats' : ''
+        : route === '#/' || route === '#/boats' ? '#/' : ''
       : route === '#/favourites' ? '#/favourites'
         : ['#/dashboard', '#/account', '#/bookings', '#/messages'].includes(route) ? '#/account'
         : route === '#/boats' || route === '#/' ? route : '';
