@@ -132,6 +132,8 @@
       link.querySelector('.member-nav-count')?.remove();
       if(count)link.insertAdjacentHTML('beforeend',sidebarBadge(count));
     });
+    window.GBB_MOBILE_NAV_COUNTS={requests:sidebarNotifications.requests,messages:sidebarNotifications.messages};
+    document.dispatchEvent(new Event('gbb:sidebar-notifications'));
   };
   async function refreshSidebarNotifications(){
     if(!client||!session?.user||!profile||superAdmin||verificationStaff)return;
