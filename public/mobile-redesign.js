@@ -470,6 +470,12 @@
     if (event.target.closest('[data-gbb-clear-sheet]')) { event.preventDefault(); saveOptionsSheet(true); }
     if (event.target.closest('[data-gbb-open-more-filters]')) { event.preventDefault(); openMoreFilters(); }
     if (event.target.closest('[data-gbb-close-more-filters]')) { event.preventDefault(); closeFilterPanels(); }
+    // The results are refreshed in place; dismiss the full-screen mobile filter panel
+    // and reveal the updated list when guests explicitly apply their filters.
+    if (mobile() && event.target.closest('.rental-page .rental-filter-button')) {
+      closeFilterPanels();
+      requestAnimationFrame(() => document.querySelector('.rental-page .rental-results-bar')?.scrollIntoView({block:'start',behavior:'smooth'}));
+    }
   });
   document.addEventListener('change',event => {
     const input = event.target;
