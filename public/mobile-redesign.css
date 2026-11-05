@@ -292,3 +292,9 @@
 @media (max-width: 760px) {
   .editorial-tagline .editorial-mobile-break { display: inline; }
 }
+
+/* Slightly smaller story typography on mobile About Us, without changing desktop. */
+@media (max-width: 760px) {
+  .about-page .about-story-copy { font-size: 14px; line-height: 1.8; }
+  .about-page .about-story-copy .about-lead { font-size: 18px; line-height: 1.65; }
+}
