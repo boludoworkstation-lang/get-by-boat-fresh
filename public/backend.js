@@ -1,5 +1,7 @@
 /* Live marketplace. Authorization and prices are enforced by database policies/triggers. */
 (() => {
+  // Production also bundles this file into app.js; register handlers only once.
+  if(window.__gbbBackendStarted)return;
   window.__gbbBackendStarted=true;
   const accountLoading='<main role="status" aria-live="polite" style="min-height:100dvh;display:grid;place-items:center;background:#f7fbfc;color:#164453;font-family:inherit"><div style="display:flex;align-items:center;gap:12px;font-size:19px;font-weight:600"><span aria-hidden="true" style="width:19px;height:19px;border:2px solid #b6dce4;border-top-color:#009ab6;border-radius:50%;animation:gbb-loading-spin .85s linear infinite"></span>Get By Boat</div><style>@keyframes gbb-loading-spin{to{transform:rotate(360deg)}}</style></main>';
   let authReady=false;
