@@ -19,6 +19,25 @@ Marketing photographs added on 6 November 2026 are stored locally under `public/
 | `destination-france.webp` | Nick Page · Unsplash | [Yacht at Nice harbour, France](https://unsplash.com/photos/white-and-brown-boat-on-water-near-city-buildings-during-daytime-8WJkrixuI8M) |
 | `destination-italy.jpg` | Efrem Efre · Pexels | [Yacht in Sardinia, Italy](https://www.pexels.com/photo/aerial-view-of-a-yacht-in-sardinian-waters-36366679/) |
 | `destination-portugal.webp` | User-supplied image (6 November 2026) | Algarve coastal rock formations and sailboat. Original creator and commercial reuse rights have not been verified; verify before public commercial use. |
+
+### Destination slideshow additions (6 November 2026)
+
+The following user-provided photographs have unverified original photographers and reuse rights: `destination-croatia-2.webp`, `destination-croatia-3.webp`, `destination-greece-2.webp`, `destination-spain-2.webp`, `destination-spain-3.webp`, `destination-italy-2.webp`, `destination-italy-3.webp`, `destination-malta-2.webp`, `destination-malta-3.webp`, and `destination-portugal-2.webp`. Confirm permission before commercial use.
+
+The other new slideshow photographs are Pexels stock images (the number identifies the source photo at `https://www.pexels.com/photo/NUMBER/`):
+
+| Destination | Second image | Third image |
+| --- | --- | --- |
+| Greece | User supplied (rights unverified) | [30002105](https://www.pexels.com/photo/30002105/) |
+| France | [14211554](https://www.pexels.com/photo/14211554/) | [30811051](https://www.pexels.com/photo/30811051/) |
+| Portugal | User supplied (rights unverified) | [9831499](https://www.pexels.com/photo/9831499/) |
+| Cyprus | [10067452](https://www.pexels.com/photo/10067452/) | [30563689](https://www.pexels.com/photo/30563689/) |
+| Montenegro | [25450673](https://www.pexels.com/photo/25450673/) | [34129087](https://www.pexels.com/photo/34129087/) |
+| Turkey | [35495056](https://www.pexels.com/photo/35495056/) | [35495055](https://www.pexels.com/photo/35495055/) |
+| Albania | [34092446](https://www.pexels.com/photo/34092446/) | [33945650](https://www.pexels.com/photo/33945650/) |
+| Australia | [33698805](https://www.pexels.com/photo/33698805/) | [33698812](https://www.pexels.com/photo/33698812/) |
+| Bahamas | [28294674](https://www.pexels.com/photo/28294674/) | [34123151](https://www.pexels.com/photo/34123151/) |
+| United States | [5488927](https://www.pexels.com/photo/5488927/) | [11338398](https://www.pexels.com/photo/11338398/) |
 | `destination-australia-whitsundays.webp` (previous version) | Roman · Pexels | [Whitsunday Islands, Australia](https://www.pexels.com/photo/aerial-view-of-whitsunday-islands-australia-35228292/) |
 | `destination-australia-sydney-harbour.webp` | Line Knipst · Pexels | [Yacht passing the Sydney Opera House and Harbour Bridge, Australia](https://www.pexels.com/photo/sea-coast-of-sydney-with-opera-house-and-harbor-bridge-20642052/) |
 | `destination-australia-whitehaven-v2.webp` | Paul Pulimoottil · Pexels | [Boats beside Whitehaven Beach, Australia](https://www.pexels.com/photo/scenic-whitehaven-beach-with-turquoise-waters-33698804/) |
