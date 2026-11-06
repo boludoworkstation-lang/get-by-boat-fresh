@@ -35,7 +35,7 @@
   .gbb-mobile-search-trigger .gbb-search-arrow { color:var(--gbb-mobile-teal); font-size:23px; line-height:1; }
   .hero { height:clamp(242px,71vw,310px)!important; min-height:0!important; margin:0 14px!important; border-radius:22px; background:#075a6b; overflow:hidden; isolation:isolate; box-shadow:none; }
   .hero .hero-inner { width:100%; height:100%; padding:0!important; }
-  .hero .hero-photo { background-position:53% 50%; transform:none; }
+  .hero .hero-photo { background-image:url('https://images.pexels.com/photos/35495052/pexels-photo-35495052.jpeg?auto=compress&cs=tinysrgb&w=960'); background-position:53% 50%; transform:none; }
   .hero .hero-shade { background:linear-gradient(0deg,#082e43dc 0%,#08394e00 78%); }
   .hero .hero-copy { display:none!important; }
   .hero .hero-search-wrap { position:static; margin:0; padding:0; width:0; height:0; }

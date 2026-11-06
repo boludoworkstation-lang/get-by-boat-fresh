@@ -4,29 +4,55 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#006a83">
-  <meta name="description" content="Get By Boat — discover memorable boat charters in Croatia, Greece, Spain, Italy, France, the USA, the Bahamas, and Australia.">
-  <title>Get By Boat — Explore the world by boat</title>
+  <meta name="description" content="Discover beautiful boats in Croatia, Greece, Spain and beyond. Compare your options and request your next day on the water with Get By Boat.">
+  <meta name="robots" content="index,follow">
+  <title>Get By Boat — Discover Beautiful Boats &amp; Coastal Escapes</title>
+  <link rel="canonical" href="https://getbyboat.net/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Get By Boat">
+  <meta property="og:title" content="Get By Boat — Discover Beautiful Boats &amp; Coastal Escapes">
+  <meta property="og:description" content="Find the boat that feels right. Explore destinations, compare options and request your next day at sea.">
+  <meta property="og:url" content="https://getbyboat.net/">
+  <meta property="og:image" content="https://getbyboat.net/assets/home-speedboat.webp">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://images.pexels.com" crossorigin>
-  <link rel="preload" as="image" href="assets/home-hero.webp" fetchpriority="high">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-  <link rel="stylesheet" href="styles.css?v=20261106-banana-tow-editorial">
+  <link rel="stylesheet" href="styles.css?v=20261106-banana-tow-seo-perf-2">
   <link rel="stylesheet" href="mobile.css?v=1">
-  <link rel="stylesheet" href="mobile-redesign.css?v=24">
+  <link rel="stylesheet" href="mobile-redesign.css?v=25">
   <link rel="stylesheet" href="owner-account-mobile.css?v=8">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
   <script src="auth-config.js?v=5.4.0" defer></script>
   <script src="maps-config.js?v=1.0.1" defer></script>
-  <script src="app.js?v=20261106-banana-tow-editorial" defer></script>
+  <script src="app.js?v=20261106-banana-tow-seo-cta-2" defer></script>
   <script src="backend.js?v=20261106-mobile-staff-chat-paging" defer></script>
   <script src="mobile-redesign.js?v=24" defer></script>
   <script>
+    // Only preload the large hero on the homepage, never on account/listing links.
+    if ((!location.hash || /^#\/(?:\?.*)?$/.test(location.hash)) && matchMedia('(min-width: 641px)').matches) {
+      const heroPreload = document.createElement('link');
+      heroPreload.rel = 'preload';
+      heroPreload.as = 'image';
+      heroPreload.href = 'https://images.pexels.com/photos/35495052/pexels-photo-35495052.jpeg?auto=compress&cs=tinysrgb&w=2560';
+      heroPreload.fetchPriority = 'high';
+      document.head.appendChild(heroPreload);
+    }
     window.addEventListener('error', function(event){document.documentElement.dataset.gbbError=String(event.message||'Script error').slice(0,220);}, true);
     window.addEventListener('load', function(){document.documentElement.dataset.gbbLive=typeof window.liveRender;document.documentElement.dataset.gbbBoot=String(window.__gbbBackendStarted||false);document.documentElement.dataset.gbbSource=String(window.__gbbSourceLoaded||'none');});
   </script>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <main class="preboot" aria-label="Get By Boat">
+      <h1>Discover your next day at sea.</h1>
+      <p>Explore memorable coastal destinations and find your kind of boat.</p>
+      <a href="/destinations/croatia">Explore Croatia</a>
+      <a href="/destinations/greece">Explore Greece</a>
+      <a href="/destinations/spain">Explore Spain</a>
+    </main>
+  </div>
+  <noscript><p class="preboot-noscript">JavaScript is needed to browse live boats and request bookings. You can still explore our destination guides above.</p></noscript>
   <div id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

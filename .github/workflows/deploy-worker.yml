@@ -36,8 +36,6 @@ jobs:
             echo "::error::Set repository secret CLOUDFLARE_API_TOKEN before deploying."
             exit 1
           fi
-      - name: Bundle live marketplace into main script
-        run: node -e "const fs=require('fs');fs.appendFileSync('public/app.js','\n'+fs.readFileSync('public/backend.js','utf8'))"
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v4
         with:

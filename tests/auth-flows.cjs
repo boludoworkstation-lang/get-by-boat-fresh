@@ -177,7 +177,12 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  html=await e.route('#/account?tab=verification');assert.match(html,/Pending staff review/);
  const backlog=Array.from({length:25},(_,i)=>({user_id:'customer-'+i,submitted_at:new Date(Date.UTC(2026,10,5,0,i)).toISOString(),identity_path:'private/id-'+i,licence_path:'private/licence-'+i,birth_date:'1992-02-04',identity_type:'passport',licence_type:'coastal',licence_expiry:'2028-12-31'}));
  const pagedStaff=await environment({hash:'#/staff',user:{id:'reviewer-1'},profile:{display_name:'Reviewer',account_type:'owner'},verificationRows:backlog,staff:true});
- const queueHtml=await pagedStaff.route('#/staff');
+ let queueHtml=await pagedStaff.route('#/staff');
+ // Staff data now loads in parallel; wait for the asynchronous queue to render.
+ for(let attempt=0;attempt<10&&!queueHtml.includes('Showing 1–20 of 25 verifications');attempt++){
+   await new Promise(resolve=>setTimeout(resolve,20));
+   queueHtml=await pagedStaff.route('#/staff');
+ }
  assert.match(queueHtml,/Showing 1–20 of 25 verifications/);
  assert.equal((queueHtml.match(/class="profile-panel verification-staff-card"/g)||[]).length,20);
  assert.match(queueHtml,/data-staff-page-dir="next"/);
