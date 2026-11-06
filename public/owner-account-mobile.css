@@ -753,3 +753,55 @@
     border-radius: 10px;
   }
 }
+
+/* 2026-11-06: compact, touch-friendly member screens; desktop unaffected. */
+@media(max-width:640px){
+  /* Requests: keep the decision buttons obvious, prioritise boat and date. */
+  .owner-requests-workspace{min-width:0}
+  .owner-requests-workspace .owner-requests-intro{gap:10px;margin-bottom:15px}
+  .owner-requests-workspace .owner-requests-intro h2{font-size:clamp(20px,5.7vw,25px);line-height:1.18}
+  .owner-requests-workspace .owner-requests-summary{gap:7px;margin-bottom:16px}
+  .owner-requests-workspace .owner-requests-summary>div{padding:12px 9px;border-radius:12px;min-width:0}
+  .owner-requests-workspace .owner-requests-summary>div span{font-size:10px;line-height:1.35}
+  .owner-requests-workspace .owner-request-card{padding:15px 13px;border-radius:15px;margin-bottom:11px;min-width:0}
+  .owner-requests-workspace .owner-request-card-top{gap:10px;margin-bottom:13px;align-items:flex-start}
+  .owner-requests-workspace .owner-request-guest-avatar{width:36px;height:36px;flex:0 0 36px}
+  .owner-requests-workspace .owner-request-identity{min-width:0;flex:1}
+  .owner-requests-workspace .owner-request-identity h3{font-size:14px;line-height:1.25;margin:1px 0}
+  .owner-requests-workspace .owner-request-identity p{font-size:12px;line-height:1.4;font-weight:700;color:#1c5362;overflow-wrap:anywhere}
+  .owner-requests-workspace .owner-request-eyebrow{font-size:9px;letter-spacing:.08em}
+  .owner-requests-workspace .owner-request-card-top .live-status{font-size:10px;max-width:110px;text-align:center;flex-shrink:0}
+  .owner-requests-workspace .owner-request-info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:11px 0}
+  .owner-requests-workspace .owner-request-info>div{min-width:0;gap:5px}
+  .owner-requests-workspace .owner-request-info span{font-size:9px;letter-spacing:.04em}
+  .owner-requests-workspace .owner-request-info strong{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+  .owner-requests-workspace .owner-request-footer{gap:12px;padding-top:11px}
+  .owner-requests-workspace .owner-request-actions{gap:8px;flex-wrap:wrap}
+  .owner-requests-workspace .owner-request-actions .btn,.owner-requests-workspace .owner-request-actions button{min-height:44px;font-size:12px}
+  .owner-requests-workspace .owner-request-price strong{font-size:19px}
+
+  /* Staff Control: use readable information cards instead of column-like rows. */
+  .staff-control-table-wrap{overflow:visible}
+  .staff-control-table,.staff-control-table tbody{display:block;width:100%;min-width:0}
+  .staff-control-table thead{display:none}
+  .staff-control-table tr{display:grid;grid-template-columns:1fr;gap:0;margin:0 0 12px;padding:12px 15px;border:1px solid #dce9ec;border-radius:14px;background:#fff;box-shadow:0 5px 15px #143d4a0a}
+  .staff-control-table td{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;width:100%;padding:8px 0!important;border:0!important;text-align:right!important;overflow-wrap:anywhere}
+  .staff-control-table td::before{content:attr(data-label);flex:0 0 85px;max-width:85px;text-align:left;color:#78909a;font-size:10px;font-weight:750}
+  .staff-control-table td:first-child{font-size:15px;font-weight:800;color:#153b48}
+  .staff-control-table td:last-child{border-top:1px solid #eaf0f1!important;align-items:center;padding-top:12px!important;margin-top:4px}
+  .staff-control-table [data-remove-staff]{min-height:44px!important;padding:10px 15px!important;border-radius:10px!important}
+
+  /* Message pages: pagination belongs inside scrollable lists and threads. */
+  .message-workspace .gbb-chat-pager{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin:8px 11px 14px;padding:8px 0;color:#708994;font-size:11px}
+  .message-workspace .gbb-chat-pager a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 11px;border:1px solid #d9e8ec;border-radius:10px;background:#fff;color:#087e91;font-size:12px;font-weight:750;text-decoration:none}
+  .message-workspace .gbb-chat-pager span{flex:1;text-align:center;min-width:75px}
+  .message-workspace .gbb-messages-pager{margin:0 0 13px}
+  .message-workspace .gbb-messages-pager a{background:#eef9fa}
+
+  /* Five-tab bottom navigation and listing actions remain visually small but easier to tap. */
+  body.gbb-mobile-five-nav .gbb-mobile-bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
+  body.gbb-mobile-five-nav .gbb-mobile-bottom-nav a{min-width:0;min-height:48px;padding:4px 0}
+  body.gbb-mobile-five-nav .gbb-mobile-bottom-nav a span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(8px,2.4vw,10px)}
+  .live-listing-page .listing-action{min-width:44px;min-height:44px;width:44px;height:44px}
+  .live-listing-page .listing-action-row{gap:4px}
+}
