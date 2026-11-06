@@ -14,9 +14,9 @@ const COUNTRIES = [
   {name:'Montenegro',subtitle:'The Adriatic beyond',photo:'destination-montenegro.webp',count:'Discover the Bay of Kotor'},
   {name:'Turkey',subtitle:'Turquoise coast',photo:'destination-turkey.webp',count:'From Bodrum to hidden bays'},
   {name:'Albania',subtitle:'Untouched shores',photo:'destination-albania.webp',count:'The Albanian Riviera awaits'},
-  {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-australia-sydney-harbour.webp',count:'Unforgettable island escapes'},
-  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-rose-island.webp',count:'A thousand shades of blue'},
-  {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-miami.webp',count:'From Miami to California'}
+  {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-australia-whitehaven-v2.webp',count:'Unforgettable island escapes'},
+  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-tropical-beach-v2.webp',count:'A thousand shades of blue'},
+  {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-miami-yacht-v2.webp',count:'From Miami to California'}
 ];
 const BOATS = [
  {id:'sunseeker-manhattan-66',category:'Yacht',name:'Sunseeker Manhattan 66',location:'Split',country:'Croatia',type:'Motorboat',price:2800,guests:12,cabins:6,baths:3,rating:'4.9',reviews:42,photo:'yacht-main.webp',gallery:['yacht-main.webp','yacht-detail.webp','yacht-deck.webp','yacht-cabin.webp'],tag:'Guest favourite',skipper:true,features:['With skipper','Air conditioning','Wi-Fi','Water toys','Sun deck','Sound system'],description:'A statement in understated luxury. Discover the Dalmatian islands on a beautiful motor yacht with generous lounging spaces, light-filled interiors and effortless access to secluded coves.'},

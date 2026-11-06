@@ -17,9 +17,12 @@ Marketing photographs added on 6 November 2026 are stored locally under `public/
 | `destination-italy.jpg` | Efrem Efre · Pexels | [Yacht in Sardinia, Italy](https://www.pexels.com/photo/aerial-view-of-a-yacht-in-sardinian-waters-36366679/) |
 | `destination-australia-whitsundays.webp` (previous version) | Roman · Pexels | [Whitsunday Islands, Australia](https://www.pexels.com/photo/aerial-view-of-whitsunday-islands-australia-35228292/) |
 | `destination-australia-sydney-harbour.webp` | Line Knipst · Pexels | [Yacht passing the Sydney Opera House and Harbour Bridge, Australia](https://www.pexels.com/photo/sea-coast-of-sydney-with-opera-house-and-harbor-bridge-20642052/) |
+| `destination-australia-whitehaven-v2.webp` | Paul Pulimoottil · Pexels | [Boats beside Whitehaven Beach, Australia](https://www.pexels.com/photo/scenic-whitehaven-beach-with-turquoise-waters-33698804/) |
 | `destination-bahamas-speedboat.webp` (previous version) | Maryna · Pexels | [Speedboat cruising on turquoise water in the Bahamas](https://www.pexels.com/photo/speedboat-on-turquoise-waters-in-the-bahamas-34123151/) |
 | `destination-bahamas-rose-island.webp` | Erick Morales Oyola · Unsplash | [Speedboat, sandy beach and palms at Rose Island, Bahamas](https://unsplash.com/photos/a-white-and-blue-speedboat-anchored-in-clear-turquoise-water-oLOOihxy48o) |
+| `destination-bahamas-tropical-beach-v2.webp` | Asad Photo Maldives · Pexels | [Illustrative tropical beach with palms and boats](https://www.pexels.com/photo/nature-sunny-beach-holiday-9500417/); this is an illustrative stock photograph, not a documented view of the Bahamas. |
 | `destination-usa-miami.webp` | Irasema McAllister · Pexels | [Speedboat by Miami Beach, United States](https://www.pexels.com/photo/white-boat-on-sea-near-city-buildings-6937301/) |
+| `destination-usa-miami-yacht-v2.webp` | Grace Barrejon · Pexels | [Sunny yacht outing, Miami Beach, United States](https://www.pexels.com/photo/woman-in-bikini-standing-on-white-yacht-7544686/) |
 | `owner-ocean.jpg` | Jan van der Wolf · Pexels | [Sailboat at sea](https://www.pexels.com/photo/a-sailboat-is-sailing-in-the-ocean-28354625/) |
 | `member-croatia.jpg` | Pexels | [Boats near Dubrovnik, Croatia](https://www.pexels.com/photo/aerial-photography-of-boats-in-the-sea-3580532/) |
 

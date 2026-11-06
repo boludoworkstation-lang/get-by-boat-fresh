@@ -22,6 +22,24 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  const state={user,profile,verificationRequest:request,verificationReview:review,ownerRequest,ownerReview,pickup,staff,writes:[],uploads:[],deletions:[],oauth:null,logins:0};const events={};const feedback={textContent:''};
  const boat={id:'boat-1',owner_id:'owner-1',name:'Test Boat',country:'Croatia',location:'Split',type:'Motorboat',price:800,guests:6,cabins:1,published:true,with_skipper:false,without_skipper:true,...boatOptions};
  const client={auth:{getUser:async()=>({data:{user:state.user}}),onAuthStateChange(){},signInWithPassword:async()=>{state.logins++;state.user={id:'guest-1'};return {data:{session:{user:state.user}}}},signInWithOAuth:async x=>{state.oauth=x;return {data:{}}},signOut:async()=>{state.user=null;return {data:{}}}},rpc:async(name)=>({data:name==='is_verification_staff'?state.staff:name==='is_super_admin'?false:[]}),storage:{from(){return {upload:async(path,file)=>{state.uploads.push({path,file});return {data:{path}}},remove:async paths=>{state.deletions.push(...paths);return {data:paths}},createSignedUrl:async path=>({data:{signedUrl:'https://example.invalid/download/'+path}})}}},from(table){const q={select(){return q},eq(){return q},in(){return q},order(){return q},limit(){return q},update(value){state.writes.push({table,value});if(table==='profiles')state.profile={...state.profile,...value};return q},upsert(value){state.writes.push({table,value});if(table==='profiles')state.profile=value;if(table==='verification_requests')state.verificationRequest=value;if(table==='verification_reviews')state.verificationReview={...value,identity_path:state.verificationRequest.identity_path,licence_path:state.verificationRequest.licence_path,reviewed_birth_date:state.verificationRequest.birth_date,reviewed_licence_type:state.verificationRequest.licence_type,reviewed_licence_expiry:state.verificationRequest.licence_expiry,reviewed_name:state.profile.display_name};return q},insert(value){state.writes.push({table,value});return q},maybeSingle:async()=>({data:table==='boats'?boat:table==='boat_pickups'?state.pickup:table==='profiles'?state.profile:table==='verification_requests'?state.verificationRequest:table==='verification_reviews'?state.verificationReview:null}),single:async()=>({data:table==='verification_requests'?state.verificationRequest:table==='verification_reviews'?state.verificationReview:boat}),then(resolve){resolve({data:table==='boats'?[boat]:table==='bookings'?bookings:table==='verification_requests'&&state.verificationRequest?[state.verificationRequest]:table==='verification_reviews'&&state.verificationReview?[state.verificationReview]:table==='profiles'&&state.profile?[{id:state.user?.id,...state.profile}]:[]})}};return q}};
+ // Match the server-paginated staff RPC used by production; the older mock
+ // database rows alone no longer populate the verification queue.
+ const originalRpc=client.rpc;
+ client.rpc=async(name,args={})=>{
+   if(name!=='staff_verification_page')return originalRpc(name,args);
+   const customers=(verificationRows.length?verificationRows:state.verificationRequest?[state.verificationRequest]:[])
+     .map(request=>({type:'customer',request,review:state.verificationReview?.user_id===request.user_id?state.verificationReview:null,profile:state.profile&&state.user?.id===request.user_id?{id:request.user_id,...state.profile}:null}));
+   const owners=state.ownerRequest?.submitted_at?[{type:'business',request:state.ownerRequest,review:state.ownerReview,profile:{id:state.ownerRequest.user_id,...state.profile}}]:[];
+   const all=[...customers,...owners];
+   const filtered=all.filter(entry=>{
+     if(args.p_type&&args.p_type!=='all'&&entry.type!==args.p_type)return false;
+     if(args.p_search&&!String(entry.profile?.display_name||entry.request.legal_business_name||'').toLowerCase().includes(String(args.p_search).toLowerCase()))return false;
+     if(args.p_status&&args.p_status!=='all'&&(entry.review?.status||'pending')!==args.p_status)return false;
+     return true;
+   });
+   const start=(Math.max(1,Number(args.p_page)||1)-1)*(Number(args.p_page_size)||20);
+   return {data:{total:filtered.length,entries:filtered.slice(start,start+(Number(args.p_page_size)||20))}};
+ };
  const originalFrom=client.from.bind(client);
  client.from=table=>{
    if(!['owner_verification_requests','owner_verification_reviews'].includes(table)){
