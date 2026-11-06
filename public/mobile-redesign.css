@@ -548,3 +548,213 @@
     text-wrap: pretty;
   }
 }
+
+/* Listing details: an image-led, calm layout for phones only.
+   Preserve the existing desktop columns and all booking controls. */
+@media (max-width: 700px) {
+  .live-listing-page {
+    position: relative;
+    padding-top: 18px;
+    padding-bottom: 45px;
+  }
+  .live-listing-page .listing-back {
+    min-height: 38px;
+    margin: 0 0 10px;
+    font-size: 12px;
+  }
+  .live-listing-page > h1 {
+    max-width: 100%;
+    margin: 0 0 6px;
+    font-size: clamp(23px, 6vw, 28px);
+    line-height: 1.16;
+    letter-spacing: -.035em;
+    overflow-wrap: anywhere;
+  }
+  .live-listing-page .listing-action-row {
+    position: absolute;
+    top: 17px;
+    right: 0;
+    display: flex;
+    gap: 7px;
+    margin: 0;
+  }
+  .live-listing-page .listing-action {
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid #dce9ec;
+    border-radius: 50%;
+    background: #fff;
+    color: #315c68;
+  }
+  .live-listing-page .listing-action > span { display: none; }
+  .live-listing-page .listing-action .icon { width: 19px; height: 19px; }
+  .live-listing-page .listing-location-intro {
+    gap: 5px 7px;
+    margin: 0 0 16px;
+    color: #6d8790;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .live-listing-page .listing-location-intro .icon { width: 14px; height: 14px; }
+
+  /* Display contents lets the photo, key facts and booking card follow a
+     natural reading sequence without duplicating forms or changing data. */
+  .live-listing-page .listing-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .live-listing-page .listing-layout > .listing-details { display: contents; }
+  .live-listing-page .listing-details > * {
+    order: 3;
+    width: 100%;
+    min-width: 0;
+  }
+  .live-listing-page .listing-details > .boat-photo-carousel,
+  .live-listing-page .listing-details > .listing-cover { order: 0; }
+  .live-listing-page .listing-details > .listing-highlight-row { order: 1; }
+  .live-listing-page .listing-layout > .listing-booking {
+    order: 2;
+    width: 100%;
+    margin: 0 0 5px;
+  }
+  .live-listing-page .boat-photo-carousel { margin: 0 !important; }
+  .live-listing-page .listing-cover {
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: none;
+  }
+  .live-listing-page .listing-cover [data-gallery-main] {
+    width: 100%;
+    height: clamp(215px, 58vw, 285px);
+    max-height: none !important;
+    object-fit: cover;
+  }
+  .live-listing-page .listing-cover .live-photo,
+  .live-listing-page .listing-cover .live-placeholder { height: clamp(215px, 58vw, 285px); }
+  .live-listing-page [data-gallery-select] img {
+    width: 66px !important;
+    height: 50px !important;
+    border-radius: 8px !important;
+  }
+  .live-listing-page .listing-highlight-row {
+    gap: 7px;
+    margin: 12px 0 15px;
+  }
+  .live-listing-page .listing-highlight-row > span {
+    padding: 7px 10px;
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .live-listing-page .listing-booking-card {
+    padding: 17px 17px 19px;
+    border: 1px solid #dbe9ec;
+    border-radius: 16px;
+    background: #fbfdfd;
+    box-shadow: 0 9px 24px rgba(18, 72, 85, .065);
+  }
+  .live-listing-page .listing-booking-card h2 {
+    margin: 3px 0 8px;
+    font-size: 27px;
+    letter-spacing: -.04em;
+  }
+  .live-listing-page .listing-booking-card h2 small { font-size: 13px; }
+  .live-listing-page .listing-booking-card > .member-note {
+    margin: 0 0 11px;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .live-listing-page .listing-booking-card .listing-rental-fixed {
+    margin: 0 0 12px;
+    padding: 9px 12px;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+  .live-listing-page .listing-booking-card .listing-skipper-addon {
+    min-height: 55px;
+    padding: 11px 12px;
+  }
+  .live-listing-page .listing-booking-card .listing-rental-choices { margin-bottom: 12px; }
+  .live-listing-page .listing-booking-card .booking-date-range { margin: 9px 0 10px; }
+  .live-listing-page .listing-booking-card .booking-date-heading { margin-bottom: 6px; font-size: 12px; }
+  .live-listing-page .listing-booking-card .booking-date-trigger {
+    min-height: 54px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    gap: 4px;
+  }
+  .live-listing-page .listing-booking-card .booking-date-trigger strong { font-size: 13px; }
+  .live-listing-page .listing-booking-card .booking-date-trigger small { font-size: 10px; }
+  .live-listing-page .listing-booking-card .booking-date-arrow { font-size: 20px; }
+  .live-listing-page .listing-booking-card [data-quote] { font-size: 12px; line-height: 1.45; }
+  .live-listing-page .listing-booking-card [data-quote] p { margin: 8px 0; }
+  .live-listing-page .listing-booking-card button[type=submit] {
+    min-height: 45px;
+    margin: 11px 0 7px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+  .live-listing-page .listing-booking-card > small { font-size: 10px; }
+
+  .live-listing-page .listing-details > section:not(.fleet-public-pickup) {
+    padding: 19px 0;
+  }
+  .live-listing-page .listing-details > section h2 {
+    margin-bottom: 12px;
+    font-size: 19px;
+    letter-spacing: -.025em;
+  }
+  .live-listing-page .listing-section-title { gap: 8px; margin-bottom: 12px; }
+  .live-listing-page .listing-section-title .icon { width: 17px; height: 17px; }
+  .live-listing-page .listing-about .live-description {
+    font-size: 13px;
+    line-height: 1.62;
+  }
+  .live-listing-page .listing-spec-grid > div {
+    padding: 9px 1px;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .live-listing-page .listing-equipment-group { padding: 14px; border-radius: 12px; }
+  .live-listing-page .listing-equipment-group ul { gap: 8px; }
+  .live-listing-page .listing-calendar-header { gap: 9px; margin-bottom: 15px; }
+  .live-listing-page .listing-calendar-month:nth-child(n+2) { display: none; }
+  .live-listing-page .listing-calendar-pair { display: block; }
+  .live-listing-page .listing-calendar-month h3 { margin-bottom: 9px; font-size: 14px; }
+  .live-listing-page .listing-calendar-weekdays { margin-bottom: 4px; }
+  .live-listing-page .listing-calendar-date { font-size: 12px; }
+  .live-listing-page .listing-calendar-hint { margin-top: 10px; font-size: 12px; }
+  .live-listing-page .listing-condition-grid { gap: 10px; }
+  .live-listing-page .listing-condition-grid > div { padding: 14px; border-radius: 12px; }
+  .live-listing-page .listing-condition-grid h3 { margin-bottom: 9px; font-size: 14px; }
+  .live-listing-page .listing-condition-grid dl > div { padding: 8px 0; }
+  .live-listing-page .fleet-public-pickup { margin-top: 18px !important; border-radius: 13px; }
+  .live-listing-page .listing-map-heading { padding: 16px 16px 11px; }
+  .live-listing-page .fleet-public-pickup .listing-map-heading h3 { font-size: 18px; }
+  .live-listing-page .fleet-public-map { height: 245px; }
+  .live-listing-page .fleet-public-pickup p.listing-map-disclaimer { padding: 12px 16px; font-size: 11px; }
+
+  /* The date picker remains fully usable, but only one month needs to be
+     shown at a time on a narrow screen; its arrows navigate the months. */
+  .booking-calendar-panel {
+    width: min(100%, 440px);
+    max-height: calc(100dvh - 36px);
+    padding: 17px 16px;
+  }
+  .booking-calendar-months { grid-template-columns: minmax(0, 1fr); }
+  .booking-calendar-month:nth-child(n+2) { display: none; }
+  .booking-calendar-days { grid-auto-rows: 40px; }
+  .booking-calendar-day { font-size: 13px; }
+}
+
+@media (max-width: 360px) {
+  .live-listing-page .listing-booking-card { padding-inline: 13px; }
+  .live-listing-page .listing-location-intro { font-size: 11px; }
+  .live-listing-page .listing-booking-card .booking-date-trigger strong { font-size: 12px; }
+}
