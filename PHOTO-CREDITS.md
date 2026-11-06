@@ -23,6 +23,7 @@ Marketing photographs added on 6 November 2026 are stored locally under `public/
 | `destination-bahamas-tropical-beach-v2.webp` | Asad Photo Maldives · Pexels | [Illustrative tropical beach with palms and boats](https://www.pexels.com/photo/nature-sunny-beach-holiday-9500417/); this is an illustrative stock photograph, not a documented view of the Bahamas. |
 | `destination-usa-miami.webp` | Irasema McAllister · Pexels | [Speedboat by Miami Beach, United States](https://www.pexels.com/photo/white-boat-on-sea-near-city-buildings-6937301/) |
 | `destination-usa-miami-yacht-v2.webp` | Grace Barrejon · Pexels | [Sunny yacht outing, Miami Beach, United States](https://www.pexels.com/photo/woman-in-bikini-standing-on-white-yacht-7544686/) |
+| `destination-usa-hawaii-catamarans-v3.webp` | Jess Loiterton · Pexels | [Two catamarans and swimmers off Oahu, Hawaii, United States](https://www.pexels.com/photo/people-on-white-and-yellow-boat-on-sea-4319841/) |
 | `owner-ocean.jpg` | Jan van der Wolf · Pexels | [Sailboat at sea](https://www.pexels.com/photo/a-sailboat-is-sailing-in-the-ocean-28354625/) |
 | `member-croatia.jpg` | Pexels | [Boats near Dubrovnik, Croatia](https://www.pexels.com/photo/aerial-photography-of-boats-in-the-sea-3580532/) |
 
