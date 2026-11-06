@@ -14,8 +14,8 @@ const COUNTRIES = [
   {name:'Montenegro',subtitle:'The Adriatic beyond',photo:'destination-montenegro.webp',count:'Discover the Bay of Kotor'},
   {name:'Turkey',subtitle:'Turquoise coast',photo:'destination-turkey.webp',count:'From Bodrum to hidden bays'},
   {name:'Albania',subtitle:'Untouched shores',photo:'destination-albania.webp',count:'The Albanian Riviera awaits'},
-  {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-australia-whitsundays.webp',count:'Unforgettable island escapes'},
-  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-speedboat.webp',count:'A thousand shades of blue'},
+  {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-australia-sydney-harbour.webp',count:'Unforgettable island escapes'},
+  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-rose-island.webp',count:'A thousand shades of blue'},
   {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-miami.webp',count:'From Miami to California'}
 ];
 const BOATS = [
