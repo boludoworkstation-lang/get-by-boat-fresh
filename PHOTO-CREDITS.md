@@ -18,6 +18,7 @@ Marketing photographs added on 6 November 2026 are stored locally under `public/
 | `destination-spain.webp` | Eugene Zhyvchik · Unsplash | [Boats near Mallorca, Spain](https://unsplash.com/photos/white-boats-on-sea-near-green-trees-during-daytime-UXteIizxbWo) |
 | `destination-france.webp` | Nick Page · Unsplash | [Yacht at Nice harbour, France](https://unsplash.com/photos/white-and-brown-boat-on-water-near-city-buildings-during-daytime-8WJkrixuI8M) |
 | `destination-italy.jpg` | Efrem Efre · Pexels | [Yacht in Sardinia, Italy](https://www.pexels.com/photo/aerial-view-of-a-yacht-in-sardinian-waters-36366679/) |
+| `destination-portugal.webp` | User-supplied image (6 November 2026) | Algarve coastal rock formations and sailboat. Original creator and commercial reuse rights have not been verified; verify before public commercial use. |
 | `destination-australia-whitsundays.webp` (previous version) | Roman · Pexels | [Whitsunday Islands, Australia](https://www.pexels.com/photo/aerial-view-of-whitsunday-islands-australia-35228292/) |
 | `destination-australia-sydney-harbour.webp` | Line Knipst · Pexels | [Yacht passing the Sydney Opera House and Harbour Bridge, Australia](https://www.pexels.com/photo/sea-coast-of-sydney-with-opera-house-and-harbor-bridge-20642052/) |
 | `destination-australia-whitehaven-v2.webp` | Paul Pulimoottil · Pexels | [Boats beside Whitehaven Beach, Australia](https://www.pexels.com/photo/scenic-whitehaven-beach-with-turquoise-waters-33698804/) |
