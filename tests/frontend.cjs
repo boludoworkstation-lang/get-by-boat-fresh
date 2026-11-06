@@ -1,5 +1,9 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
 const source=fs.readFileSync('public/app.js','utf8');
+const mobileSearchSource=fs.readFileSync('public/mobile-redesign.js','utf8');
+assert.match(mobileSearchSource,/field\.setAttribute\('aria-label','Skipper preference'\)/);
+assert.doesNotMatch(mobileSearchSource,/<legend>\$\{icon\('compass'\)\} Skipper<\/legend>/);
+assert.match(mobileSearchSource,/\['with','With skipper'\],\['without','Without skipper'\]/);
 const handlers={};let user=null,account=null,verificationRequest=null,verificationReview=null,lastWrite=null,oauth=null,enabled=false;
 const feedback={textContent:''};let chatMessages=[];
 const boat={id:'boat-1',owner_id:'owner-1',name:'Test <Boat>',country:'Croatia',location:'Split',pickup_location:'CONFIDENTIAL MARINA ADDRESS',pickup_latitude:43.12345,pickup_longitude:16.98765,type:'Sailboat',price:800,guests:6,cabins:2,published:true,with_skipper:false,without_skipper:true,specifications:{engine_type:'outboard',engine_hp:250,length_m:7.5,width_m:2.5,build_year:2025},insurance_type:'third_party',security_deposit:500};

@@ -87,9 +87,7 @@
   .gbb-mobile-search-dialog.search-widget .search-field:last-child { grid-column:1/-1; }
   .gbb-mobile-search-dialog.search-widget .search-field input,.gbb-mobile-search-dialog.search-widget .search-field select { font-size:16px!important; }
   .gbb-mobile-search-dialog.search-widget .btn-search { display:flex; align-items:center; justify-content:center; width:100%; min-height:51px; margin-top:12px; font-size:15px; }
-  .gbb-mobile-search-dialog .gbb-mobile-skipper-picker { display:block; grid-column:1/-1; padding:14px 0 3px; margin:0; border:0; }
-  .gbb-mobile-skipper-picker legend { display:flex; align-items:center; gap:8px; color:#1c4653; font:750 12px var(--sans,Arial,sans-serif); padding:0 0 10px; }
-  .gbb-mobile-skipper-picker legend svg { width:16px; height:16px; color:#009cae; }
+  .gbb-mobile-search-dialog .gbb-mobile-skipper-picker { display:block; grid-column:1/-1; padding:11px 0 3px; margin:0; border:0; }
   .gbb-mobile-skipper-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
   .gbb-mobile-skipper-options button { min-height:46px; border:1px solid #dce9ec; border-radius:11px; padding:8px 10px; margin:0; cursor:pointer; background:#fff; color:#456873; font:750 12px/1.2 var(--sans,Arial,sans-serif); }
   .gbb-mobile-skipper-options button[aria-pressed="true"] { background:#eaf8f9; border-color:#15a6b6; box-shadow:inset 0 0 0 1px #15a6b6; color:#087c8c; }

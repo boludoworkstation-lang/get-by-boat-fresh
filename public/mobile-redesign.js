@@ -131,7 +131,8 @@
     if (!container || container.querySelector('.gbb-mobile-skipper-picker')) return;
     const field = document.createElement('fieldset');
     field.className = 'gbb-mobile-skipper-picker';
-    field.innerHTML = `<legend>${icon('compass')} Skipper</legend><input type="hidden" name="skipper" value="${selected}"><div class="gbb-mobile-skipper-options">${[
+    field.setAttribute('aria-label','Skipper preference');
+    field.innerHTML = `<input type="hidden" name="skipper" value="${selected}"><div class="gbb-mobile-skipper-options">${[
       ['with','With skipper'],['without','Without skipper']
     ].map(([value,label]) => `<button type="button" data-gbb-pick-skipper="${value}" aria-pressed="${selected===value}">${label}</button>`).join('')}</div>`;
     if (beforeNode) container.insertBefore(field,beforeNode);
