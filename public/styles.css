@@ -1793,7 +1793,8 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 @media(max-width:600px){.about-hero{min-height:440px}.about-hero-inner{padding-top:65px;padding-bottom:65px}.about-hero h1{font-size:43px}.about-hero p{font-size:15px}.about-story{padding-top:55px;padding-bottom:55px}.about-visual{border-radius:17px}.about-visual-photo{min-height:245px}.about-visual-quote{padding:30px}.about-values{grid-template-columns:1fr;gap:30px;padding-top:58px;padding-bottom:58px}.about-values h3{margin:10px 0}.about-cta{display:block;padding:32px 26px;border-radius:18px}.about-cta .btn{margin-top:28px}}
 
 .how-hero{position:relative}
-@media(max-width:800px){.editorial-image img{object-position:center 70%}}
+/* Keep the towing speedboat and inflatable in the short mobile editorial crop. */
+@media(max-width:800px){.editorial-image img{object-position:center 30%}}
 
 /* Kornati hero: exclude the boat flag and brighten the Adriatic tones without filtering the text. */
 .how-hero{isolation:isolate;overflow:hidden;background:#064653}
