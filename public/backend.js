@@ -894,6 +894,7 @@
       .replace('<p class="fleet-editor-hint">Check-in is at 09:00 and check-out at 19:00 for daily rentals.</p>',`<div class="live-columns">${field('Check-in time','check_in_time','time',String(b.check_in_time||'09:00').slice(0,5),'required step="900"')}${field('Check-out time','check_out_time','time',String(b.check_out_time||'19:00').slice(0,5),'required step="900"')}</div><div class="fleet-boat-rules"><h4>Boat rules</h4><div class="fleet-boat-rules-grid">${optionalSelect('licence_required','Boat licence required',[['true','Yes'],['false','No']],b.licence_required===false?'false':'true')}${optionalSelect('pets_allowed','Pets allowed',[['false','No'],['true','Yes']],s.pets_allowed===true?'true':'false')}${field('Minimum rental age (years)','minimum_rental_age','number',b.minimum_rental_age||18,'required min="18" max="100"')}</div></div>`)
       .replace('</fieldset><div class="fleet-skipper-fee"',`<button type="button" class="fleet-offer-both" data-rental-both>✓ Offer both rental options</button><p class="fleet-rental-summary" data-rental-mode-summary></p></fieldset><div class="fleet-skipper-fee"`)
       .replace('Additional skipper fee per day (€)','Skipper price per day (€)')
+      .replace('The skipper fee is included in the guest’s online checkout after owner confirmation. Get By Boat takes no commission on the skipper fee.','The optional skipper fee is paid separately at check-in. Get By Boat takes no commission on the skipper fee.')
       .replace(`min="0" max="10000" step="0.01" ${both?'required':''} ${both?'':'disabled'}`,`min="${both?'0.01':'0'}" max="10000" step="0.01" ${both?'required':''} ${both?'':'disabled'}`)
       .replace('data-skipper-fee-wrapper>','data-skipper-fee-wrapper '+(both?'':'hidden')+'>')
       .replace(closing,technical+insurance+equipment+closing)
@@ -932,7 +933,7 @@
       const dates=esc(euroRange(r.start_date,r.end_date));
       const checkIn=esc(boatClock(r.boats?.check_in_time,'09:00'));
       const checkOut=esc(boatClock(r.boats?.check_out_time,'18:00'));
-      const skipperNote=r.with_skipper&&Number(r.skipper_fee_total)>0?'Skipper fee '+money(r.skipper_fee_total)+' included in total':r.with_skipper?'Skipper included in boat price':'Self-drive';
+      const skipperNote=r.with_skipper&&Number(r.skipper_fee_total)>0?'Optional skipper: '+money(r.skipper_fee_total)+' paid at check-in':r.with_skipper?'Skipper included in boat price':'Self-drive';
       return `<article class="customer-booking-card">
         <div class="customer-booking-heading"><div><span class="customer-booking-eyebrow">BOAT RESERVATION</span><h3>${esc(r.boats?.name||'Boat reservation')}</h3></div><span class="live-status ${badge}">${esc(status(r.status))}</span></div>
         <div class="customer-booking-details"><div class="customer-booking-detail"><span>${icon('calendar')} RENTAL DATES</span><strong>${dates}</strong></div><div class="customer-booking-detail"><span>${icon('clock')} CHECK-IN / CHECK-OUT</span><strong>${checkIn} – ${checkOut}</strong></div><div class="customer-booking-detail"><span>${icon('user')} PASSENGERS</span><strong>${Number(r.guests)||1}</strong></div><div class="customer-booking-detail"><span>${icon('ship')} RENTAL OPTION</span><strong>${r.with_skipper?'With skipper':'Without skipper'}</strong></div></div>
@@ -944,7 +945,7 @@
   }
   function requests(rows,owner=false,reviews=[]){return rows.length?rows.map(r=>{
     const ownReview=!owner?ownerReviewForm(r,reviews.find(review=>review.booking_id===r.id)):'';
-    return `<article class="live-card"><span class="live-status ${['awaiting_payment','confirmed'].includes(r.status)?'is-approved':r.status==='declined'?'is-declined':''}">${esc(status(r.status))}</span><h3>${esc(r.boats?.name||'Boat reservation')}</h3><p>${esc(euroRange(r.start_date,r.end_date))} · ${esc(boatClock(r.boats?.check_in_time,'09:00'))} check-in · ${esc(boatClock(r.boats?.check_out_time,'19:00'))} check-out · ${r.guests} passengers</p><p><strong>${r.with_skipper?'Rent with skipper':'Rent without skipper'}</strong></p>${owner?`<p>Guest: ${esc(r.customer_name)}</p><p>Owner charter: ${money(r.charter_price)} · Get By Boat commission: ${money(Math.max(0,Number(r.service_fee)-(Number(r.processing_fee)||0)))} · Processing allowance: ${money(Number(r.processing_fee)||0)} · Total service fee: ${money(r.service_fee)} · Guest total: <strong>${money(r.total)}</strong></p>`:`<p><strong>Total boat price: ${money(r.total)}</strong></p>`}${r.with_skipper&&Number(r.skipper_fee_total)>0?`<p class="fleet-quote-extra">Skipper: <strong>${money(r.skipper_fee_total)}</strong> included in the total paid through Get By Boat.</p>`:r.with_skipper?`<p class="fleet-quote-extra">Skipper included in the boat price.</p>`:''}<small>Request ${esc(r.id)}</small><div class="live-actions"><a class="btn live-secondary" href="#/messages?booking=${esc(r.id)}">${icon('message')} ${owner?'Message guest':'Message owner'}</a>${owner&&r.status==='pending_owner'?btn('Accept request','accept',r.id)+btn('Decline','decline',r.id):''}${!owner&&['pending_owner','awaiting_payment'].includes(r.status)?btn('Cancel request','cancel',r.id):''}</div>${r.status==='awaiting_payment'?'<p>Your dates are held. Online payment is not available yet. This is not a paid, confirmed booking.</p>':''}${ownReview}</article>`;
+    return `<article class="live-card"><span class="live-status ${['awaiting_payment','confirmed'].includes(r.status)?'is-approved':r.status==='declined'?'is-declined':''}">${esc(status(r.status))}</span><h3>${esc(r.boats?.name||'Boat reservation')}</h3><p>${esc(euroRange(r.start_date,r.end_date))} · ${esc(boatClock(r.boats?.check_in_time,'09:00'))} check-in · ${esc(boatClock(r.boats?.check_out_time,'19:00'))} check-out · ${r.guests} passengers</p><p><strong>${r.with_skipper?'Rent with skipper':'Rent without skipper'}</strong></p>${owner?`<p>Guest: ${esc(r.customer_name)}</p><p>Owner charter: ${money(r.charter_price)} · Get By Boat commission: ${money(Math.max(0,Number(r.service_fee)-(Number(r.processing_fee)||0)))} · Processing allowance: ${money(Number(r.processing_fee)||0)} · Total service fee: ${money(r.service_fee)} · Guest total: <strong>${money(r.total)}</strong></p>`:`<p><strong>Total boat price: ${money(r.total)}</strong></p>`}${r.with_skipper&&Number(r.skipper_fee_total)>0?`<p class="fleet-quote-extra">Optional skipper: <strong>${money(r.skipper_fee_total)}</strong> paid separately at check-in.</p>`:r.with_skipper?`<p class="fleet-quote-extra">Skipper included in the boat price.</p>`:''}<small>Request ${esc(r.id)}</small><div class="live-actions"><a class="btn live-secondary" href="#/messages?booking=${esc(r.id)}">${icon('message')} ${owner?'Message guest':'Message owner'}</a>${owner&&r.status==='pending_owner'?btn('Accept request','accept',r.id)+btn('Decline','decline',r.id):''}${!owner&&['pending_owner','awaiting_payment'].includes(r.status)?btn('Cancel request','cancel',r.id):''}</div>${r.status==='awaiting_payment'?'<p>Your dates are held. Online payment is not available yet. This is not a paid, confirmed booking.</p>':''}${ownReview}</article>`;
   }).join(''):'<div class="live-card"><p>No booking requests yet.</p></div>'}
   function ownerRequestsWorkspace(rows){
     const pending=rows.filter(r=>r.status==='pending_owner');
@@ -1013,26 +1014,89 @@
       <div class="member-dashboard-columns"><section class="member-panel"><div class="member-panel-head"><div><span class="member-eyebrow">YOUR FLEET</span><h2>My boats</h2></div><a href="#/owner">Manage all ${icon('arrow')}</a></div>${boats.length?boats.slice(0,3).map(b=>`<a class="member-booking-preview" href="#/owner?edit=${b.id}"><div class="member-booking-icon">${icon('ship')}</div><div><strong>${esc(b.name)}</strong><span>${esc(b.location)} · ${b.published?'Published':'Draft'}</span></div>${icon('arrow')}</a>`).join(''):`<div class="member-card-empty"><h3>Your first boat is waiting</h3><p>Create a listing and start welcoming guests.</p><a class="member-inline-link" href="#/owner?edit=new">List your boat ${icon('arrow')}</a></div>`}</section>
       <aside class="member-panel member-profile-panel"><div class="member-panel-head"><div><span class="member-eyebrow">GUESTS ABOARD</span><h2>Booking requests</h2></div></div><p class="member-panel-intro">${pending} ${pending===1?'request needs':'requests need'} your response.</p><a class="member-outline-action" href="#/owner?view=requests">Manage guest requests ${icon('arrow')}</a><p class="member-note">Owner accounts can list boats and manage requests. To rent a boat yourself, use a separate customer account.</p></aside></div></div>`;
   }
-  function filterStaffVerifications(){
-    const toolbar=document.querySelector?.('[data-staff-verification-filters]');
-    if(!toolbar)return;
-    const name=(toolbar.querySelector('[data-staff-search]')?.value||'').trim().toLocaleLowerCase();
-    const status=toolbar.querySelector('[data-staff-status]')?.value||'all';
-    const accountType=toolbar.querySelector('[data-staff-account-type]')?.value||'all';
-    let visible=0;
-    for(const card of document.querySelectorAll?.('.verification-staff-card')||[]){
-      const heading=card.querySelector('.verification-heading');
-      const badge=card.querySelector('.verification-badge');
-      const decision=badge?.classList.contains('approved')?'approved':badge?.classList.contains('rejected')?'rejected':'pending';
-      const cardType=card.closest('[data-staff-type]')?.dataset.staffType||'';
-      const matches=(!name||(heading?.textContent||'').toLocaleLowerCase().includes(name))&&(status==='all'||status===decision)&&(accountType==='all'||accountType===cardType);
-      card.hidden=!matches;
-      if(matches)visible++;
+  const staffPageSize=20;
+  const staffFilterState={search:'',status:'all',type:'all',page:1};
+  let staffQueueCache=null,staffQueueLoading=null,staffResultsToken=0,staffSearchTimer=null;
+  const staffSearchNormalize=value=>String(value||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().trim();
+  async function fetchStaffQueueRows(table,select,onlySubmitted=false){
+    const all=[],batchSize=500;
+    for(let offset=0;offset<20000;offset+=batchSize){
+      let query=client.from(table).select(select);
+      if(onlySubmitted)query=query.eq('application_state','submitted');
+      const pageRows=check(await query.order('submitted_at',{ascending:false}).range(offset,offset+batchSize-1));
+      all.push(...pageRows);
+      if(pageRows.length<batchSize)return all;
     }
-    const count=toolbar.querySelector('[data-staff-result-count]');
-    if(count)count.textContent=visible+' '+(visible===1?'verification':'verifications')+' found';
-    const empty=document.querySelector?.('[data-staff-no-results]');
-    if(empty)empty.hidden=visible!==0;
+    throw Error('Too many verification records to display. Please contact support.');
+  }
+  async function fetchStaffRelatedRows(table,select,ids){
+    if(!ids.length)return [];
+    const chunks=[];
+    for(let i=0;i<ids.length;i+=100)chunks.push(ids.slice(i,i+100));
+    return (await Promise.all(chunks.map(batch=>client.from(table).select(select).in(table==='profiles'?'id':'user_id',batch)))).flatMap(check);
+  }
+  async function staffVerificationIndex(){
+    if(staffQueueCache&&Date.now()-staffQueueCache.loadedAt<45000)return staffQueueCache;
+    if(staffQueueLoading)return staffQueueLoading;
+    staffQueueLoading=(async()=>{
+      const [customers,owners]=await Promise.all([
+        fetchStaffQueueRows('verification_requests','user_id,submitted_at,identity_path,licence_path,birth_date,identity_type,licence_type,licence_expiry'),
+        fetchStaffQueueRows('owner_verification_requests','*',true)
+      ]);
+      const customerIds=customers.map(r=>r.user_id),ownerIds=owners.map(r=>r.user_id);
+      const [customerReviews,customerProfiles,ownerReviews,ownerProfiles]=await Promise.all([
+        fetchStaffRelatedRows('verification_reviews','*',customerIds),
+        fetchStaffRelatedRows('profiles','id,display_name,details',customerIds),
+        fetchStaffRelatedRows('owner_verification_reviews','*',ownerIds),
+        fetchStaffRelatedRows('profiles','id,display_name',ownerIds)
+      ]);
+      const findById=rows=>new Map(rows.map(row=>[row.user_id||row.id,row]));
+      const customerReviewMap=findById(customerReviews),customerProfileMap=findById(customerProfiles);
+      const ownerReviewMap=findById(ownerReviews),ownerProfileMap=findById(ownerProfiles);
+      const entries=[
+        ...customers.map(request=>{
+          const profile=customerProfileMap.get(request.user_id),review=customerReviewMap.get(request.user_id);
+          const isCurrent=review?.identity_path===request.identity_path&&review?.licence_path===request.licence_path
+            &&review?.reviewed_birth_date===request.birth_date&&review?.reviewed_licence_type===request.licence_type
+            &&review?.reviewed_licence_expiry===request.licence_expiry
+            &&staffSearchNormalize(review?.reviewed_name)===staffSearchNormalize(profile?.display_name);
+          return {type:'customer',request,profile,review,status:isCurrent?review.status:'pending',name:profile?.display_name||'',submittedAt:request.submitted_at||''};
+        }),
+        ...owners.map(request=>{
+          const profile=ownerProfileMap.get(request.user_id),review=ownerReviewMap.get(request.user_id);
+          return {type:'business',request,profile,review,status:ownerReviewIsCurrent(request,review,profile?.display_name)?review.status:'pending',name:[request.legal_business_name,profile?.display_name].filter(Boolean).join(' '),submittedAt:request.submitted_at||''};
+        })
+      ];
+      staffQueueCache={entries,loadedAt:Date.now()};
+      return staffQueueCache;
+    })().finally(()=>{staffQueueLoading=null;});
+    return staffQueueLoading;
+  }
+  async function updateStaffVerificationResults(){
+    const target=document.querySelector('[data-staff-page-results]');
+    if(!target||parseRoute().path!=='/staff')return;
+    const token=++staffResultsToken;
+    target.setAttribute('aria-busy','true');
+    try{
+      const html=await staffPage();
+      if(token!==staffResultsToken||!target.isConnected)return;
+      const fragment=document.createElement('div');fragment.innerHTML=html;
+      const replacement=fragment.querySelector('[data-staff-page-results]');
+      if(replacement)target.replaceWith(replacement);
+      const total=fragment.querySelector('[data-staff-result-count]');
+      const count=document.querySelector('[data-staff-result-count]');
+      if(total&&count)count.textContent=total.textContent;
+    }catch(error){if(token===staffResultsToken){toast(error.message||'Could not load verification requests.');target.removeAttribute('aria-busy');}}
+  }
+  function filterStaffVerifications(){
+    const toolbar=document.querySelector('[data-staff-verification-filters]');
+    if(!toolbar)return;
+    staffFilterState.search=toolbar.querySelector('[data-staff-search]')?.value||'';
+    staffFilterState.status=toolbar.querySelector('[data-staff-status]')?.value||'all';
+    staffFilterState.type=toolbar.querySelector('[data-staff-account-type]')?.value||'all';
+    staffFilterState.page=1;
+    clearTimeout(staffSearchTimer);
+    staffSearchTimer=setTimeout(updateStaffVerificationResults,180);
   }
   function staffMemberRows(staff){
     return staff.length?staff.map(person=>{
@@ -1074,45 +1138,50 @@
     const staff=check(await client.rpc('super_admin_staff_list'));
     return page('Staff Control',`<section class="profile-panel staff-control-invite"><h2>Invite Staff</h2><p>Enter an email to grant Staff access. New teammates receive a secure invitation to set up their login; existing users receive a confirmation email.</p><form class="live-form" data-live-form="invite-staff"><label>Staff email<input name="email" type="email" maxlength="254" placeholder="name@example.com" autocomplete="email" required></label><button class="btn" type="submit">Send Staff invitation</button><p role="status" data-feedback></p></form></section><section class="profile-panel staff-control-list"><h2 data-staff-members-count>Staff members (${staff.length})</h2><p role="status" data-staff-remove-feedback style="min-height:1em;color:#187650"></p><div class="staff-control-table-wrap"><table class="staff-control-table"><thead><tr><th scope="col">Full name</th><th scope="col">Email</th><th scope="col">Date added</th><th scope="col" style="text-align:right">Actions</th></tr></thead><tbody data-staff-members-rows>${staffMemberRows(staff)}</tbody></table></div></section>`);
   }
-    async function staffPage(){
+  async function staffPage(){
     if(!verificationStaff)return page('Documents Verification','<div class="profile-panel"><h2>Access restricted</h2><p>Only authorised Get By Boat reviewers can access private verification documents.</p></div>');
-    const [customerResult,ownerResult]=await Promise.all([
-      client.from('verification_requests').select('*').order('submitted_at',{ascending:false}).limit(1000),
-      client.from('owner_verification_requests').select('*').eq('application_state','submitted').order('submitted_at',{ascending:false}).limit(1000)
-    ]);
-    const rows=check(customerResult),ownerRows=check(ownerResult);
-    const [reviews,profiles,ownerReviews,ownerProfiles]=await Promise.all([
-      rows.length?client.from('verification_reviews').select('*').in('user_id',rows.map(r=>r.user_id)):Promise.resolve({data:[],error:null}),
-      rows.length?client.from('profiles').select('id,display_name,details').in('id',rows.map(r=>r.user_id)):Promise.resolve({data:[],error:null}),
-      ownerRows.length?client.from('owner_verification_reviews').select('*').in('user_id',ownerRows.map(r=>r.user_id)):Promise.resolve({data:[],error:null}),
-      ownerRows.length?client.from('profiles').select('id,display_name').in('id',ownerRows.map(r=>r.user_id)):Promise.resolve({data:[],error:null})
-    ]).then(results=>results.map(check));
+    const {entries}=await staffVerificationIndex();
+    const name=staffSearchNormalize(staffFilterState.search);
+    const matching=entries.filter(entry=>(!name||staffSearchNormalize(entry.name).includes(name))
+      &&(staffFilterState.status==='all'||staffFilterState.status===entry.status)
+      &&(staffFilterState.type==='all'||staffFilterState.type===entry.type))
+      .sort((a,b)=>Number(b.status==='pending')-Number(a.status==='pending')||b.submittedAt.localeCompare(a.submittedAt));
+    const pages=Math.max(1,Math.ceil(matching.length/staffPageSize));
+    staffFilterState.page=Math.max(1,Math.min(staffFilterState.page,pages));
+    const start=(staffFilterState.page-1)*staffPageSize;
+    const displayed=matching.slice(start,start+staffPageSize);
+    const rows=displayed.filter(entry=>entry.type==='customer').map(entry=>entry.request);
+    const ownerRows=displayed.filter(entry=>entry.type==='business').map(entry=>entry.request);
+    const reviews=displayed.filter(entry=>entry.type==='customer').map(entry=>entry.review).filter(Boolean);
+    const profiles=displayed.filter(entry=>entry.type==='customer').map(entry=>entry.profile).filter(Boolean);
+    const ownerReviews=displayed.filter(entry=>entry.type==='business').map(entry=>entry.review).filter(Boolean);
+    const ownerProfiles=displayed.filter(entry=>entry.type==='business').map(entry=>entry.profile).filter(Boolean);
     const cards=await Promise.all(rows.map(async r=>{
       const p=profiles.find(x=>x.id===r.user_id),review=reviews.find(x=>x.user_id===r.user_id);
       const current=review?.identity_path===r.identity_path && review?.licence_path===r.licence_path && review?.reviewed_birth_date===r.birth_date && review?.reviewed_licence_type===r.licence_type && review?.reviewed_licence_expiry===r.licence_expiry && review?.reviewed_name?.trim().toLocaleLowerCase()===p?.display_name?.trim().toLocaleLowerCase();
       const status=current?review.status:'pending';
-      const [idFile,licenceFile]=current&&['approved','rejected'].includes(status)?[null,null]:await Promise.all([client.storage.from('verification-documents').createSignedUrl(r.identity_path,300),client.storage.from('verification-documents').createSignedUrl(r.licence_path,300)]);
-      const documentLink=(result,label)=>!result?`<span class="member-note">${esc(label)}: reviewed; copy scheduled for removal</span>`:result.error?`<span class="member-note">${esc(label)} unavailable (may have been deleted after review)</span>`:`<a class="member-outline-action" target="_blank" rel="noopener noreferrer" href="${esc(result.data.signedUrl)}">View ${esc(label)} · 5-minute link ${icon('arrow')}</a>`;
+      const reviewed=current&&['approved','rejected'].includes(status);
+      const documentLink=(path,label)=>reviewed?`<span class="member-note">${esc(label)}: reviewed; copy scheduled for removal</span>`:`<button type="button" class="member-outline-action" data-staff-document-path="${esc(path)}" data-staff-document-bucket="verification-documents">View ${esc(label)} ${icon('arrow')}</button>`;
       if(current&&status==='approved'){
         return `<article class="profile-panel verification-staff-card verification-complete-card"><div class="verification-heading"><div><span class="verification-complete-eyebrow">Customer verification</span><h2>${esc(p?.display_name||'Customer')}</h2><p>Verified ${esc(review.reviewed_at?.slice(0,10)||'')}</p></div><span class="verification-badge approved">✓ Verified</span></div><div class="verification-complete-details"><span><strong>Identity</strong>${r.identity_type==='passport'?'Passport':'National ID'}</span><span><strong>Boat licence</strong>${esc(r.licence_type)}</span><span><strong>Valid until</strong>${esc(r.licence_expiry||'No expiry')}</span></div><div class="verification-complete-footer"><p class="verification-complete-note"><span class="verification-check-dot" aria-hidden="true">✓</span>Documents reviewed and approved</p><div class="verification-email-controls"><button type="button" class="verification-email-action" data-verification-email="${esc(r.user_id)}">Send confirmation email <span aria-hidden="true">↗</span></button><span class="verification-email-feedback" role="status"></span></div></div></article>`;
       }
-      return `<article class="profile-panel verification-staff-card"><div class="verification-heading"><div><h2>${esc(p?.display_name||'Customer')}</h2><p>Submitted ${esc(r.submitted_at?.slice(0,10)||'')} · DOB ${esc(r.birth_date)}</p></div><span class="verification-badge ${esc(status)}">${esc(verificationLabel(status))}</span></div><p><strong>Identity:</strong> ${r.identity_type==='passport'?'Passport':'National ID'} · <strong>Licence:</strong> ${esc(r.licence_type)} · <strong>Expiry:</strong> ${esc(r.licence_expiry||'Permanent / not specified')}</p>${p?.details?.birth_date?`<p>Customer profile date of birth: ${esc(p.details.birth_date)}</p>`:''}<div class="verification-document-links">${documentLink(idFile,'ID / passport')}${documentLink(licenceFile,'boat driving licence')}</div>${current&&review?.note?`<p>Previous decision note: ${esc(review.note)}</p>`:''}<form class="live-form verification-review-form" data-live-form="review" data-id="${esc(r.user_id)}"><label>Decision<select name="status" required><option value="approved">Approve documents</option><option value="rejected">Reject / request correction</option></select></label><label class="live-check"><input type="checkbox" name="identity_matches"> I checked that the ID/passport is genuine-looking and matches the customer's legal name and date of birth.</label><label class="live-check"><input type="checkbox" name="licence_matches"> I checked the licence holder matches the ID/passport, and the licence category and validity are suitable.</label><label>Message to customer (required if rejected)<textarea name="note" rows="2" maxlength="1000" placeholder="Explain which details need correction."></textarea></label><button class="btn" type="submit">Save review decision</button><p role="status" data-feedback></p></form></article>`;
+      return `<article class="profile-panel verification-staff-card"><div class="verification-heading"><div><h2>${esc(p?.display_name||'Customer')}</h2><p>Submitted ${esc(r.submitted_at?.slice(0,10)||'')} · DOB ${esc(r.birth_date)}</p></div><span class="verification-badge ${esc(status)}">${esc(verificationLabel(status))}</span></div><p><strong>Identity:</strong> ${r.identity_type==='passport'?'Passport':'National ID'} · <strong>Licence:</strong> ${esc(r.licence_type)} · <strong>Expiry:</strong> ${esc(r.licence_expiry||'Permanent / not specified')}</p>${p?.details?.birth_date?`<p>Customer profile date of birth: ${esc(p.details.birth_date)}</p>`:''}<div class="verification-document-links">${documentLink(r.identity_path,'ID / passport')}${documentLink(r.licence_path,'boat driving licence')}</div>${current&&review?.note?`<p>Previous decision note: ${esc(review.note)}</p>`:''}<form class="live-form verification-review-form" data-live-form="review" data-id="${esc(r.user_id)}"><label>Decision<select name="status" required><option value="approved">Approve documents</option><option value="rejected">Reject / request correction</option></select></label><label class="live-check"><input type="checkbox" name="identity_matches"> I checked that the ID/passport is genuine-looking and matches the customer's legal name and date of birth.</label><label class="live-check"><input type="checkbox" name="licence_matches"> I checked the licence holder matches the ID/passport, and the licence category and validity are suitable.</label><label>Message to customer (required if rejected)<textarea name="note" rows="2" maxlength="1000" placeholder="Explain which details need correction."></textarea></label><button class="btn" type="submit">Save review decision</button><p role="status" data-feedback></p></form></article>`;
     }));
     
     const ownerCards=await Promise.all(ownerRows.map(async r=>{
       const p=ownerProfiles.find(x=>x.id===r.user_id),review=ownerReviews.find(x=>x.user_id===r.user_id);
       const isCurrent=ownerReviewIsCurrent(r,review,p?.display_name),s=isCurrent?review.status:'pending';
       const paths=[['Registration',r.registration_path],['ID / passport',r.identity_path],['Bank account proof',r.iban_proof_path]];
-      const signed=isCurrent&&s==='approved'?[]:await Promise.all(paths.map(async ([label,path])=>{
-        const result=await client.storage.from('owner-verification-documents').createSignedUrl(path,300);
-        return result.error?`<span class="member-note">${esc(label)} unavailable</span>`:`<a href="${esc(result.data.signedUrl)}" target="_blank" rel="noopener noreferrer" class="member-outline-action">View ${esc(label)} · 5-minute link ${icon('arrow')}</a>`;
-      }));
+      const signed=isCurrent&&s==='approved'?[]:paths.map(([label,path])=>`<button type="button" class="member-outline-action" data-staff-document-path="${esc(path)}" data-staff-document-bucket="owner-verification-documents">View ${esc(label)} ${icon('arrow')}</button>`);
       if(isCurrent&&s==='approved'){
         return `<article class="profile-panel verification-staff-card verification-complete-card"><div class="verification-heading"><div><span class="verification-complete-eyebrow">Business verification</span><h2>${esc(r.legal_business_name)}</h2><p>Owner: ${esc(p?.display_name||'Unknown')} · Verified ${esc(review.reviewed_at?.slice(0,10)||'')}</p></div><span class="verification-badge approved">✓ Verified</span></div><div class="verification-complete-footer"><p class="verification-complete-note"><span class="verification-check-dot" aria-hidden="true">✓</span>Business documents reviewed and approved</p></div></article>`;
       }
       return `<article class="profile-panel verification-staff-card"><div class="verification-heading"><div><h2>${esc(r.legal_business_name)}</h2><p>Owner: ${esc(p?.display_name||'Unknown')} · Submitted ${esc(r.submitted_at?.slice(0,10)||'')}</p></div><span class="verification-badge ${esc(s)}">${esc(verificationLabel(s))}</span></div><p><strong>Country / registration:</strong> ${esc(r.business_country)} · ${esc(r.tax_identifier)}<br><strong>Registered address:</strong> ${esc(r.registered_address)}<br><strong>Website:</strong> <a href="${esc(r.business_website)}" target="_blank" rel="noopener noreferrer">${esc(r.business_website)}</a><br><strong>Business bank account:</strong> ${esc(r.payout_bank_details?.method==='local'?(`${r.payout_bank_details.country} · Account ${r.payout_bank_details.account_number} · Bank/routing ${r.payout_bank_details.routing_number}${r.payout_bank_details.swift_bic?' · SWIFT/BIC '+r.payout_bank_details.swift_bic:''}`):r.iban||'Not provided')} · ${esc(r.iban_holder)}<br><strong>Identity document:</strong> ${r.identity_type==='passport'?'Passport':'National ID'}</p><div class="verification-document-links">${signed.join('')}</div>${isCurrent&&review?.note?`<p>Previous decision note: ${esc(review.note)}</p>`:''}<form class="live-form verification-review-form" data-live-form="owner-review" data-id="${esc(r.user_id)}"><label>Decision<select name="status" required><option value="approved">Approve business</option><option value="rejected">Reject / request correction</option></select></label><label class="live-check"><input type="checkbox" name="registration_matches"> I checked the business registration, country and registration number (OIB / SIRET / other).</label><label class="live-check"><input type="checkbox" name="identity_matches"> I checked the owner / manager identity and authority to represent the business.</label><label class="live-check"><input type="checkbox" name="bank_matches"> I checked that the business bank account belongs to the registered business and verified its website and address.</label><label>Message to owner (required if rejected)<textarea name="note" rows="2" maxlength="1000" placeholder="Explain what needs correction"></textarea></label><button class="btn" type="submit">Save owner verification</button><p role="status" data-feedback></p></form></article>`;
     }));
-    return page('Documents Verification',`<p>Restricted reviewer area. Documents are private and accessible only through short-lived signed links. Approving owners unlocks publication of new listings.</p><div class="staff-verification-filters" data-staff-verification-filters><label>Search by name<input type="search" data-staff-search placeholder="Enter customer or owner name" autocomplete="off" aria-label="Search verification by name"></label><label>Verification status<select data-staff-status aria-label="Filter verification status"><option value="all">All statuses</option><option value="approved">Verified</option><option value="rejected">Rejected</option><option value="pending">In progress</option></select></label><label>Account type<select data-staff-account-type aria-label="Filter account type"><option value="all">All accounts</option><option value="business">Owner</option><option value="customer">Customer</option></select></label><span class="staff-filter-count" data-staff-result-count>${ownerRows.length+rows.length} verifications</span></div><div class="profile-panel staff-filter-no-results" data-staff-no-results hidden>No matching verification requests. Try another name, status or account type.</div><h2>Business / owner verification (${ownerRows.length})</h2><div class="verification-staff-list" data-staff-type="business">${ownerCards.join('')||'<div class="profile-panel">No owner verification requests yet.</div>'}</div><h2>Customer ID & boat licence (${rows.length})</h2><div class="verification-staff-list" data-staff-type="customer">${cards.join('')||'<div class="profile-panel">No customer verification requests yet.</div>'}</div>`);
+    const pageLabel=matching.length?`Showing ${start+1}–${Math.min(start+staffPageSize,matching.length)} of ${matching.length} verifications`:'No matching verifications';
+    const pager=`<nav class="staff-verification-pagination" aria-label="Verification pages"><span>${pageLabel}</span><div><button type="button" data-staff-page-dir="previous" ${staffFilterState.page===1?'disabled':''} aria-label="Previous verification page">← Previous</button><span class="staff-pagination-current">${staffFilterState.page} / ${pages}</span><button type="button" data-staff-page-dir="next" ${staffFilterState.page===pages?'disabled':''} aria-label="Next verification page">Next →</button></div></nav>`;
+    const results=`<div data-staff-page-results aria-live="polite">${matching.length?'':`<div class="profile-panel staff-filter-no-results">No matching verification requests. Try another name, status or account type.</div>`}${ownerRows.length?`<h2>Business / owner verification (${ownerRows.length} on this page)</h2><div class="verification-staff-list" data-staff-type="business">${ownerCards.join('')}</div>`:''}${rows.length?`<h2>Customer ID & boat licence (${rows.length} on this page)</h2><div class="verification-staff-list" data-staff-type="customer">${cards.join('')}</div>`:''}${pager}</div>`;
+    return page('Documents Verification',`<p>Restricted reviewer area. Documents are private and opened only through short-lived signed links. Approving owners unlocks publication of new listings.</p><div class="staff-verification-filters" data-staff-verification-filters><label>Search by name<input type="search" data-staff-search value="${esc(staffFilterState.search)}" placeholder="Enter customer or owner name" autocomplete="off" aria-label="Search verification by name"></label><label>Verification status<select data-staff-status aria-label="Filter verification status"><option value="all" ${staffFilterState.status==='all'?'selected':''}>All statuses</option><option value="approved" ${staffFilterState.status==='approved'?'selected':''}>Verified</option><option value="rejected" ${staffFilterState.status==='rejected'?'selected':''}>Rejected</option><option value="pending" ${staffFilterState.status==='pending'?'selected':''}>In progress</option></select></label><label>Account type<select data-staff-account-type aria-label="Filter account type"><option value="all" ${staffFilterState.type==='all'?'selected':''}>All accounts</option><option value="business" ${staffFilterState.type==='business'?'selected':''}>Owner</option><option value="customer" ${staffFilterState.type==='customer'?'selected':''}>Customer</option></select></label><span class="staff-filter-count" data-staff-result-count>${matching.length} verifications</span></div>${results}`);
   }
   function filterAdminReservations(){
     const toolbar=document.querySelector('[data-reservation-filters]');
@@ -1523,6 +1592,37 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
   document.addEventListener('beforeinput',event=>{
     if(isBoatSpecNumber(event.target)&&event.data&&(/[eE+\-]/.test(event.data)||(isWholeBoatSpec(event.target)&&/[.,]/.test(event.data))))event.preventDefault();
   });
+  document.addEventListener('click',async event=>{
+    const pagerButton=event.target.closest?.('[data-staff-page-dir]');
+    if(pagerButton&&!pagerButton.disabled){
+      event.preventDefault();
+      staffFilterState.page+=pagerButton.dataset.staffPageDir==='next'?1:-1;
+      await updateStaffVerificationResults();
+      return;
+    }
+    const documentButton=event.target.closest?.('[data-staff-document-path]');
+    if(!documentButton||documentButton.disabled)return;
+    event.preventDefault();
+    const bucket=documentButton.dataset.staffDocumentBucket,path=documentButton.dataset.staffDocumentPath;
+    if(!verificationStaff||!['verification-documents','owner-verification-documents'].includes(bucket)||!path)return;
+    const popup=window.open('about:blank','_blank');
+    if(popup)popup.opener=null;
+    const previous=documentButton.innerHTML;
+    documentButton.disabled=true;
+    documentButton.textContent='Opening private document…';
+    try{
+      const {data,error}=await client.storage.from(bucket).createSignedUrl(path,300);
+      if(error||!data?.signedUrl)throw error||Error('Document unavailable.');
+      if(popup)popup.location.replace(data.signedUrl);
+      else{
+        const link=document.createElement('a');link.className='member-outline-action';
+        link.href=data.signedUrl;link.target='_blank';link.rel='noopener noreferrer';
+        link.textContent='Open document · 5-minute link';
+        documentButton.after(link);
+      }
+    }catch(error){if(popup&&!popup.closed)popup.close();toast(error.message||'The document is unavailable.');}
+    finally{documentButton.disabled=false;documentButton.innerHTML=previous;}
+  });
   document.addEventListener('input',e=>{
     if(e.target.matches?.('[data-staff-search]'))filterStaffVerifications();
     if(e.target.matches?.('[data-reservation-search]'))filterAdminReservations();
@@ -1778,7 +1878,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
           emailNotice=' Verification saved, but email delivery needs a retry.';
         }
       }
-      await current();render();toast((cleanup.error?'Decision saved. Document cleanup needs staff attention.':'Decision saved. Document copies removed from private storage.')+emailNotice);return;
+      staffQueueCache=null;await current();render();toast((cleanup.error?'Decision saved. Document cleanup needs staff attention.':'Decision saved. Document copies removed from private storage.')+emailNotice);return;
     }
     if(kind==='owner-review'){
       if(!verificationStaff)throw Error('Staff review access required.');
@@ -1787,7 +1887,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
       if(decision==='approved'&&(!d.get('registration_matches')||!d.get('identity_matches')||!d.get('bank_matches')))throw Error('Confirm you checked the registration, identity, website, address and business bank account.');
       if(decision==='rejected'&&!note)throw Error('Explain what the owner needs to correct.');
       check(await client.from('owner_verification_reviews').upsert({user_id:f.dataset.id,status:decision,note},{onConflict:'user_id'}).select().single());
-      await current();render();toast('Owner verification decision saved.');return;
+      staffQueueCache=null;await current();render();toast('Owner verification decision saved.');return;
     }
     if(kind==='avatar'){
       const file=d.get('photo');if(!file?.size||file.size>5242880||!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('Choose a JPEG, PNG or WebP under 5 MB.');

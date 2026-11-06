@@ -2695,6 +2695,63 @@ button[data-gallery-select]:has(img)::after {
   .reservations-table{min-width:820px;table-layout:auto}
 }
 
+/* Keep the desktop financial table, but give Super Admin a readable phone layout. */
+@media(max-width:640px){
+  .reservations-table-panel:has(.reservations-table:not(.staff-reservations-table)){
+    padding:0;border:0;background:transparent;box-shadow:none;overflow:visible;
+  }
+  .reservations-table:not(.staff-reservations-table){
+    display:block;width:100%;min-width:0;table-layout:auto;
+  }
+  .reservations-table:not(.staff-reservations-table) thead{display:none}
+  .reservations-table:not(.staff-reservations-table) tbody{display:grid;gap:12px}
+  .reservations-table:not(.staff-reservations-table) tr{
+    display:block;min-width:0;padding:10px 14px;background:white;
+    border:1px solid #dce8ed;border-radius:15px;
+    box-shadow:0 7px 20px rgba(10,52,66,.045);
+  }
+  .reservations-table:not(.staff-reservations-table) tr[hidden]{display:none}
+  .reservations-table:not(.staff-reservations-table) td{
+    display:grid;grid-template-columns:minmax(96px,38%) minmax(0,1fr);
+    align-items:center;gap:10px;width:100%;min-width:0;
+    padding:10px 0!important;border-bottom:1px solid #edf2f4;
+    text-align:right!important;white-space:normal!important;font-size:13px;
+  }
+  .reservations-table:not(.staff-reservations-table) td:last-child{border-bottom:0}
+  .reservations-table:not(.staff-reservations-table) td:first-child{
+    display:block;text-align:left!important;padding:8px 0 13px!important;
+    font-size:15px;line-height:1.6;
+  }
+  .reservations-table:not(.staff-reservations-table) td:before{
+    color:#69828b;text-align:left;font:650 11px/1.35 var(--sans);
+  }
+  .reservations-table:not(.staff-reservations-table) td:nth-child(2):before{content:'Rental dates'}
+  .reservations-table:not(.staff-reservations-table) td:nth-child(3):before{content:'Status'}
+  .reservations-table:not(.staff-reservations-table) td:nth-child(4):before{content:'Guest total'}
+  .reservations-table:not(.staff-reservations-table) td:nth-child(5):before{content:'Commission'}
+  .reservations-table:not(.staff-reservations-table) td:nth-child(6):before{content:'Processing'}
+  .reservations-table:not(.staff-reservations-table) td:nth-child(7):before{content:'Owner net'}
+}
+
+/* Super Admin staff management */
+.staff-verification-pagination{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:18px 3px 9px;color:#64818a;font-size:13px;
+}
+.staff-verification-pagination>div{display:flex;align-items:center;gap:8px}
+.staff-verification-pagination button{
+  border:1px solid #dce8ec;border-radius:9px;padding:9px 12px;
+  background:#fff;color:#245262;font-weight:700;font-size:12px;
+}
+.staff-verification-pagination button:disabled{opacity:.45;cursor:default}
+.staff-pagination-current{white-space:nowrap;color:#285563;font-weight:700}
+[data-staff-page-results][aria-busy="true"]{opacity:.6;pointer-events:none}
+@media(max-width:640px){
+  .staff-verification-pagination{flex-direction:column;align-items:stretch;gap:10px}
+  .staff-verification-pagination>div{justify-content:space-between}
+  .staff-verification-pagination button{min-height:42px}
+}
+
 /* Super Admin staff management */
 .staff-control-invite,.staff-control-list{margin-bottom:22px}
 .staff-control-invite{max-width:900px}
