@@ -1,6 +1,6 @@
 # Marketing photo sources
 
-Marketing photographs added on 6 November 2026 are stored locally under `public/assets/`. They are licensed for commercial website use under the [Unsplash License](https://unsplash.com/license) or [Pexels License](https://www.pexels.com/license/); neither requires photographer credit, but we keep a source record for future reference.
+Marketing photographs added on 6 November 2026 are stored locally under `public/assets/`. Stock photos are licensed for commercial website use under the [Unsplash License](https://unsplash.com/license) or [Pexels License](https://www.pexels.com/license/); neither requires photographer credit, but we keep a source record for future reference. The homepage tubing illustrations listed below were instead generated for Get By Boat using AI and are not photographs of a specific rental boat or a verifiable real-world scene.
 
 | File | Photographer / source | Original photo |
 | --- | --- | --- |
@@ -8,6 +8,8 @@ Marketing photographs added on 6 November 2026 are stored locally under `public/
 | `home-editorial.webp` (previous version) | Damian Kamp · Unsplash | [Yacht at Platja d'en Bossa, Ibiza](https://unsplash.com/photos/luxury-yacht-in-blue-coastal-waters-with-buildings-and-trees-kksBLNHN3Us) |
 | `home-speedboat.webp` | Kader Azra Namuslu · Pexels | [Speedboat and swimmers beside Mediterranean cliffs](https://www.pexels.com/photo/people-swimming-near-a-boat-on-the-sea-9443894/) |
 | `home-banana-tow.webp` | Lio Voo · Pexels | [Motorboat towing an inflatable banana across turquoise waters](https://www.pexels.com/photo/a-motorboat-tugging-rubber-boats-13315548/) |
+| `home-tube-joy-desktop.webp` | Original AI-generated marketing image for Get By Boat | Portrait editorial illustration of two friends tubing behind a speedboat; not a real-location or listing photo |
+| `home-tube-joy-mobile.webp` | Original AI-generated marketing image for Get By Boat | Wide responsive illustration of the same summer tubing activity; not a real-location or listing photo |
 | `how-kornati.webp` | Filip Živaljić · Unsplash | [Boats near Kornati, Croatia](https://unsplash.com/photos/a-body-of-water-with-boats-in-it-and-a-hill-in-the-background-2cCUKYce2uE) |
 | `login-yacht.webp` | Hameen Reynolds · Unsplash | [Yacht on turquoise water](https://unsplash.com/photos/a-white-boat-sails-alone-on-turquoise-water-RKHVLoCkm6c) |
 | `destination-croatia.webp` (previous version) | Luka Filipović · Unsplash | [Boat in Kornati, Croatia](https://unsplash.com/photos/a-boat-on-the-water-vsuTN9dKuOs) |
