@@ -1206,7 +1206,7 @@
     const rows=check(await Promise.race([client.rpc(staffView?'staff_reservations':'super_admin_reservations'),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Reservations are taking too long to load. Please try again.')),12000))]));
     const confirmed=rows.filter(r=>r.status==='confirmed');
     const sum=(list,key)=>list.reduce((total,r)=>total+(Number(r[key])||0),0);
-    const summary=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:20px 0 28px">
+    const summary=`<div class="reservation-summary">
       <div class="profile-panel" style="margin:0"><span class="member-page-kicker">ALL REQUESTS</span><h2>${rows.length}</h2><p>Reservation requests</p></div>
       <div class="profile-panel" style="margin:0"><span class="member-page-kicker">CONFIRMED BOOKINGS</span><h2>${confirmed.length}</h2><p>Accepted reservations</p></div>
       ${staffView?'':`<div class="profile-panel" style="margin:0"><span class="member-page-kicker">PLATFORM COMMISSION</span><h2>${money(sum(confirmed,'commission'))}</h2><p>On confirmed reservations</p></div>
