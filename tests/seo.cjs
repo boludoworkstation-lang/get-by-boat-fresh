@@ -9,7 +9,7 @@ const workflow = fs.readFileSync(path.join(repo, '.github/workflows/deploy-worke
 
 (async () => {
   const {default:worker} = await import('../src/index.js');
-  const {destinations} = await import('../src/seo.js');
+  const {destinations,bookingGuideHtml} = await import('../src/seo.js');
   const env = {ASSETS:{fetch:async()=>new Response('asset body',{headers:{'content-type':'text/css','cache-control':'public, max-age=0, must-revalidate'}})}};
 
   const sitemap = await worker.fetch(new Request('https://getbyboat.net/sitemap.xml'), env);
@@ -17,7 +17,17 @@ const workflow = fs.readFileSync(path.join(repo, '.github/workflows/deploy-worke
   assert.equal(sitemap.status, 200);
   assert.match(sitemap.headers.get('content-type'), /application\/xml/);
   assert.match(xml, /https:\/\/getbyboat\.net\/destinations\/croatia/);
-  assert.equal((xml.match(/<url>/g)||[]).length, destinations.length + 1);
+  assert.equal((xml.match(/<url>/g)||[]).length, destinations.length + 2);
+  assert.match(xml, /https:\/\/getbyboat\.net\/guides\/how-boat-bookings-work/);
+
+  const robots = await worker.fetch(new Request('https://getbyboat.net/robots.txt'),env);
+  const robotsText = await robots.text();
+  assert.equal(robots.status,200);
+  assert.match(robots.headers.get('content-type'), /text\/plain/);
+  assert.match(robotsText,/User-agent: OAI-SearchBot\nAllow: \//);
+  assert.match(robotsText,/User-agent: Claude-SearchBot\nAllow: \//);
+  assert.match(robotsText,/User-agent: PerplexityBot\nAllow: \//);
+  assert.match(robotsText,/Sitemap: https:\/\/getbyboat\.net\/sitemap\.xml/);
 
   for (const destination of destinations) {
     const response = await worker.fetch(new Request('https://getbyboat.net/destinations/'+destination.slug), env);
@@ -27,13 +37,29 @@ const workflow = fs.readFileSync(path.join(repo, '.github/workflows/deploy-worke
     assert.ok(page.includes(`rel="canonical" href="https://getbyboat.net/destinations/${destination.slug}"`));
     assert.ok(page.includes(`/#/boats?country=${encodeURIComponent(destination.query || destination.name)}`));
     assert.ok(page.includes('property="og:image"'));
+    assert.match(page, /"@type":"BreadcrumbList"/);
+    assert.match(page, /aria-label="Explore boats in /);
+    assert.match(page, /guides\/how-boat-bookings-work/);
     assert.ok(!page.includes('342,507'));
   }
+
+  const guideResponse = await worker.fetch(new Request('https://getbyboat.net/guides/how-boat-bookings-work'),env);
+  const guide = await guideResponse.text();
+  assert.equal(guideResponse.status,200);
+  assert.match(guide,/<h1>How boat booking <em>requests work\.<\/em><\/h1>/);
+  assert.match(guide,/"@type":"FAQPage"/);
+  assert.match(guide,/Are boat bookings instant\?/);
+  assert.match(guide,/must review and approve/);
+  assert.equal(bookingGuideHtml(),guide);
+  const guideRedirect = await worker.fetch(new Request('https://getbyboat.net/guides/how-boat-bookings-work/'),env);
+  assert.equal(guideRedirect.status,301);
 
   const notFound = await worker.fetch(new Request('https://getbyboat.net/destinations/unknown'), env);
   assert.equal(notFound.status, 404);
   const noPost = await worker.fetch(new Request('https://getbyboat.net/sitemap.xml', {method:'POST'}), env);
   assert.equal(noPost.status, 405);
+  const noPostRobots = await worker.fetch(new Request('https://getbyboat.net/robots.txt', {method:'POST'}),env);
+  assert.equal(noPostRobots.status,405);
   const redirect = await worker.fetch(new Request('https://getbyboat.net/destinations/croatia/'), env);
   assert.equal(redirect.status, 301);
 
@@ -51,6 +77,11 @@ const workflow = fs.readFileSync(path.join(repo, '.github/workflows/deploy-worke
   assert.match(html, /rel="canonical" href="https:\/\/getbyboat.net\/"/);
   assert.match(html, /property="og:image"/);
   assert.match(html, /class="preboot"/);
+  assert.match(html,/"@type":"Organization"/);
+  assert.match(html,/"@type":"WebSite"/);
+  const homeJsonLd = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+  assert.ok(homeJsonLd);
+  assert.equal(JSON.parse(homeJsonLd[1])['@graph'].length,2);
   assert.match(app, /aria-label="Popular destinations"/);
   assert.doesNotMatch(app, /FOOTER_COUNTER_BASE|342,507/);
   assert.doesNotMatch(workflow, /appendFileSync\('public\/app\.js'/);
