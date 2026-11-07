@@ -50,6 +50,8 @@ The other new slideshow photographs are Pexels stock images (the number identifi
 | `owner-ocean.jpg` | Jan van der Wolf · Pexels | [Sailboat at sea](https://www.pexels.com/photo/a-sailboat-is-sailing-in-the-ocean-28354625/) |
 | `member-croatia.jpg` | Pexels | [Boats near Dubrovnik, Croatia](https://www.pexels.com/photo/aerial-photography-of-boats-in-the-sea-3580532/) |
 
-The Spain and Italy marketing destination cards intentionally display each other's previous photographs as requested, even though the photographed shorelines belong to the opposite country. The remaining illustrative boat previews still use Pexels images via the `PHOTO_URLS` mapping in `public/app.js`. Real owner-uploaded listing images are not replaced by these marketing photos. The How it works photo's credit is retained here, but the link is no longer overlaid on the page.
+The Italy marketing destination card now uses a documented Positano photograph with boats on the Amalfi Coast; Spain retains its own Balearic coastal photograph. The remaining illustrative boat previews still use Pexels images via the `PHOTO_URLS` mapping in `public/app.js`. Real owner-uploaded listing images are not replaced by these marketing photos. The How it works photo's credit is retained here, but the link is no longer overlaid on the page.
 
 These licenses do not transfer trademark, privacy or model-release rights. Avoid using photographs in a way that implies a photographed person or actual vessel endorses Get By Boat or that a stock photo depicts a specific bookable vessel.
+
+Additional destination photo: `destination-italy-positano-pexels.jpeg` (external URL in `PHOTO_URLS`) — 8 K · Pexels, [aerial view of Positano and boats, Italy](https://www.pexels.com/photo/aerial-view-of-body-of-water-near-mountains-12464296/).
