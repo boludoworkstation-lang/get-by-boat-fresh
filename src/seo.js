@@ -54,7 +54,7 @@ export function destinationHtml(place) {
   <link rel="canonical" href="${canonical}">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="/assets/${escapeHtml(place.image)}" as="image" fetchpriority="high">
-  <link rel="stylesheet" href="/destination-page.css?v=2">
+  <link rel="stylesheet" href="/destination-page.css?v=3">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Get By Boat">
   <meta property="og:title" content="${escapeHtml(title)}">
@@ -68,7 +68,7 @@ export function destinationHtml(place) {
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><nav class="wrap" aria-label="Main navigation"><a class="wordmark" href="/">Get <span>By Boat</span></a><div><a href="/#/how-it-works">How it works</a><a class="nav-cta" href="/#/boats">Explore boats</a></div></nav></header>
   <main id="main">
-    <section class="hero"><img src="/assets/${escapeHtml(place.image)}" alt="Coastal boating inspiration for ${escapeHtml(place.name)}" fetchpriority="high"><div class="hero-tint"></div><div class="wrap hero-content"><p class="eyebrow">GET BY BOAT · DESTINATIONS</p><h1>Boat rental in <em>${escapeHtml(place.name)}</em></h1><p class="hero-lead">${escapeHtml(place.lead)}</p><a class="button" href="${searchLink(place)}">Explore boats in ${escapeHtml(place.name)} <span aria-hidden="true">→</span></a></div></section>
+    <section class="hero${place.slug==='spain'?' hero--spain':''}"><img src="/assets/${escapeHtml(place.image)}" alt="Coastal boating inspiration for ${escapeHtml(place.name)}" fetchpriority="high"><div class="hero-tint"></div><div class="wrap hero-content"><p class="eyebrow">GET BY BOAT · DESTINATIONS</p><h1>Boat rental in <em>${escapeHtml(place.name)}</em></h1><p class="hero-lead">${escapeHtml(place.lead)}</p><a class="button" href="${searchLink(place)}">Explore boats in ${escapeHtml(place.name)} <span aria-hidden="true">→</span></a></div></section>
     <section class="wrap intro"><div><p class="eyebrow dark">YOUR NEXT DAY AT SEA</p><h2>Discover the coast<br><em>your way.</em></h2></div><div><p>${escapeHtml(place.detail)}</p><p>Browse photographs, compare boat details and send a request to the owner. Availability and rental conditions are confirmed as part of the booking process.</p></div></section>
     <section class="places"><div class="wrap"><div class="section-heading"><h2>Places to explore</h2><p>Find inspiration for your departure point.</p></div><ul class="place-list">${place.places.map(name=>`<li><a href="${placeSearchLink(place,name)}" aria-label="Explore boats in ${escapeHtml(name)}, ${escapeHtml(place.name)}">${escapeHtml(name)} <span aria-hidden="true">↗</span></a></li>`).join('')}</ul><a class="text-link" href="${searchLink(place)}">See all boat options <span aria-hidden="true">→</span></a></div></section>
     <section class="wrap next"><div><p class="eyebrow dark">KEEP EXPLORING</p><h2>Another coast, another feeling.</h2><p class="guide-prompt">New to boat rental? <a href="${BOOKING_GUIDE_PATH}">Read how booking requests, skipper options and licence checks work.</a></p></div><nav class="related" aria-label="Other destinations">${related.map(item=>`<a href="/destinations/${item.slug}">${escapeHtml(item.name)} <span aria-hidden="true">↗</span></a>`).join('')}</nav></section>

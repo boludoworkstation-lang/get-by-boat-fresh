@@ -79,3 +79,13 @@ h2{font-size:clamp(36px,4vw,55px);line-height:1.1}
 .site-footer small{font-size:12px;color:#8eb2ba}
 @media(max-width:760px){.wrap{width:calc(100% - 36px)}.site-header{height:66px}.wordmark{font-size:21px}.site-header nav>div{gap:10px}.site-header nav>div>a:first-child{display:none}.nav-cta{padding:9px 13px;font-size:12px}.hero{min-height:480px}.hero-content{padding:70px 0}.hero-lead{font-size:16px}.hero-tint{background:linear-gradient(90deg,rgba(4,36,47,.85),rgba(4,47,57,.46))}.intro{grid-template-columns:1fr;gap:25px;padding:65px 0}.places{padding:60px 0}.section-heading{display:block}.section-heading p{margin-top:9px}.place-list{grid-template-columns:repeat(2,minmax(0,1fr))}.place-list a{min-height:70px;padding:18px 14px}.place-list li{font-size:15px}.next{padding:65px 0}.guide-hero{padding:72px 0 80px}.guide-lead{font-size:16px}.guide-steps{padding:65px 0}.guide-steps ol,.guide-faq-list{grid-template-columns:1fr}.guide-steps li{padding:24px}.guide-faq{padding:65px 0}.guide-qa{padding:23px}.bottom-cta .wrap{display:block}.bottom-cta .button{margin-top:23px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button{transition:none}}
+
+/* The supplied Spain photo is 640px wide. Display it near native size while
+   a softened, decorative copy fills the wider hero without inventing details. */
+.hero--spain::before{content:"";position:absolute;inset:-18px;background:url('/assets/destination-spain-blue-cove.jpg') center/cover no-repeat;filter:blur(18px) brightness(.76) saturate(1.07);transform:scale(1.04)}
+.hero--spain>img{inset:0 0 0 auto;width:min(58%,900px);height:100%;object-fit:contain;object-position:center;filter:saturate(1.06) contrast(1.03)}
+.hero--spain .hero-tint{background:linear-gradient(90deg,rgba(3,38,50,.84),rgba(3,45,57,.54) 45%,rgba(3,45,57,.10) 75%,rgba(3,45,57,.02))}
+@media(max-width:760px){
+  .hero--spain>img{inset:0;width:100%;height:100%;object-fit:contain;object-position:center 20%}
+  .hero--spain .hero-tint{background:linear-gradient(180deg,rgba(3,38,50,.58),rgba(3,38,50,.60))}
+}

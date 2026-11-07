@@ -2800,3 +2800,12 @@ button[data-gallery-select]:has(img)::after {
 /* Responsive editorial photography: action is centered in portrait and banner crops. */
 .editorial-image picture{display:block;width:100%;height:100%}
 .editorial-image picture img{display:block;width:100%;height:100%;object-fit:cover;object-position:center center}
+
+/* Spain destination: preserve the original blue-cove image and keep it bright. */
+.destination-card[href*="country=Spain"] img{object-position:center 38%;filter:saturate(1.08) contrast(1.03) brightness(1.06)}
+.destination-card[href*="country=Spain"] .destination-shade{background:linear-gradient(0deg,rgba(2,35,47,.80) 0%,rgba(2,35,47,.24) 35%,transparent 74%)}
+.destination-card[href*="country=Spain"]:hover img{transform:scale(1.02)}
+@media(max-width:540px){
+  .destination-card[href*="country=Spain"]{background:linear-gradient(180deg,#76d9e7,#0b6174)}
+  .destination-card[href*="country=Spain"] img{height:calc(100% - 34px);object-fit:cover;object-position:center}
+}
