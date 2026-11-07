@@ -7,15 +7,15 @@ const COUNTRIES = [
   {name:'Greece',subtitle:'Island living',photo:'destination-greece-user.webp',count:'Aegean days await'},
   {name:'Spain',subtitle:'The Balearic escape',photo:'destination-spain-blue-cove.jpg',count:'From Mallorca to Ibiza'},
   {name:'France',subtitle:'Riviera moments',photo:'destination-france-riviera.webp',count:'The French Riviera'},
-  {name:'Italy',subtitle:'The art of summer',photo:'destination-spain.webp',count:'Timeless coastal beauty'},
-  {name:'Malta',subtitle:'Blue Lagoon days',photo:'destination-malta.webp',count:'Islands made for the sea'},
+  {name:'Italy',subtitle:'The art of summer',photo:'destination-italy-2.webp',count:'Timeless coastal beauty'},
+  {name:'Malta',subtitle:'Blue Lagoon days',photo:'destination-malta-2.webp',count:'Islands made for the sea'},
   {name:'Portugal',subtitle:'Atlantic sunshine',photo:'destination-portugal.webp',count:'The beautiful Algarve'},
   {name:'Cyprus',subtitle:'Eastern Mediterranean',photo:'destination-cyprus.webp',count:'Sunlit coves and clear waters'},
   {name:'Montenegro',subtitle:'The Adriatic beyond',photo:'destination-montenegro.webp',count:'Discover the Bay of Kotor'},
   {name:'Turkey',subtitle:'Turquoise coast',photo:'destination-turkey-user.webp',count:'From Bodrum to hidden bays'},
   {name:'Albania',subtitle:'Untouched shores',photo:'destination-albania.webp',count:'The Albanian Riviera awaits'},
   {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-greece.jpg',count:'Unforgettable island escapes'},
-  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-bright-boat.jpeg',count:'A thousand shades of blue'},
+  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-rose-island.webp',count:'A thousand shades of blue'},
   {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-miami-marina.jpeg',count:'From Miami to California'}
 ];
 const BOATS = [
@@ -278,7 +278,7 @@ document.addEventListener('pointerdown',event=>{if(destinationPicker&&!destinati
 window.addEventListener('scroll',closeDestinationPicker,true);
 
 function searchWidget(compact=false){return `<form class="search-widget ${compact?'search-widget-compact':''}" id="${compact?'quick-search':'hero-search'}"><div class="search-fields"><label class="search-field search-location"><span>${icon('pin')} Departure location</span><input name="location" type="text" aria-label="Departure location" list="home-destinations" placeholder="City, e.g. Dubrovnik, Croatia" value="${safe(state.filters.location)}" autocomplete="off"></label><datalist id="home-destinations">${suggestedDestinations.map(city=>`<option value="${safe(city)}"></option>`).join('')}</datalist><label class="search-field home-date-field"><span>${icon('calendar')} From</span><input type="hidden" name="start" value="${safe(state.start)}"><button type="button" class="rental-date-trigger" data-rental-date-open="start" aria-label="Select start date">${state.start?state.start.split('-').reverse().join('/'):'dd/mm/yyyy'} ${icon('calendar')}</button></label><label class="search-field home-date-field"><span>${icon('calendar')} To</span><input type="hidden" name="end" value="${safe(state.end)}"><button type="button" class="rental-date-trigger" data-rental-date-open="end" aria-label="Select end date">${state.end?state.end.split('-').reverse().join('/'):'dd/mm/yyyy'} ${icon('calendar')}</button></label><label class="search-field"><span>${icon('ship')} Boat type</span><select name="type" aria-label="Boat type"><option value="">Any type</option>${BOAT_TYPES.map(t=>`<option value="${t.value}" ${state.filters.type===t.value?'selected':''}>${t.label}</option>`).join('')}</select></label></div><button class="btn btn-search" type="submit">${icon('search')} Search boats</button></form>`}
-function destinationCard(c){return `<a href="#/boats?country=${encodeURIComponent(c.value||c.name)}" class="destination-card"><img src="${IMG(c.photo)}" alt="Yachting scenery in ${c.name}" loading="lazy"><div class="destination-shade"></div><div class="destination-copy"><span>${c.subtitle}</span><h3>${c.name}</h3><small>${c.count}</small></div><span class="destination-arr">${icon('arrow')}</span></a>`}
+function destinationCard(c){return `<a href="#/boats?country=${encodeURIComponent(c.value||c.name)}" class="destination-card"><img src="${IMG(c.photo)}" alt="Yachting scenery in ${c.name}" loading="lazy" style="${c.name==='Montenegro'?'filter:saturate(1.22) brightness(1.08) contrast(1.04)':c.name==='United States'?'filter:saturate(1.2) brightness(1.11) contrast(1.04)':''}"><div class="destination-shade"></div><div class="destination-copy"><span>${c.subtitle}</span><h3>${c.name}</h3><small>${c.count}</small></div><span class="destination-arr">${icon('arrow')}</span></a>`}
 function favButton(b){return `<button class="fav-btn ${state.favs.includes(b.id)?'is-fav':''}" data-action="fav" data-id="${b.id}" aria-label="${state.favs.includes(b.id)?'Remove from':'Add to'} favourites">${icon('heart')}</button>`}
 // Interactive booking-flow demo. Session memory only; no customer data is stored.
 const demoReservations=[];
