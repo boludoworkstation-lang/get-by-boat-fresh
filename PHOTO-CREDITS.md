@@ -55,3 +55,5 @@ The Italy marketing destination card now uses a documented Positano photograph w
 These licenses do not transfer trademark, privacy or model-release rights. Avoid using photographs in a way that implies a photographed person or actual vessel endorses Get By Boat or that a stock photo depicts a specific bookable vessel.
 
 Additional destination photo: `destination-italy-positano-pexels.jpeg` (external URL in `PHOTO_URLS`) — 8 K · Pexels, [aerial view of Positano and boats, Italy](https://www.pexels.com/photo/aerial-view-of-body-of-water-near-mountains-12464296/).
+
+Additional destination photo: `destination-greece-mykonos-pexels.jpeg` (external URL in `PHOTO_URLS`) — Benjamin Cobb · Pexels, [drone photograph of a sailing boat in a bay near Mykonos, Greece](https://www.pexels.com/photo/drone-shot-of-a-sailing-boat-on-the-sea-11145556/).
