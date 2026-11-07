@@ -4,7 +4,7 @@ window.addEventListener('error',e=>{window.__gbbStartupError=String(e.message||'
 window.addEventListener('unhandledrejection',e=>{window.__gbbUnhandledRejection=String(e.reason?.message||e.reason||'Unknown rejection');});
 const COUNTRIES = [
   {name:'Croatia',subtitle:'Adriatic dreams',photo:'destination-kornati-cliffs.webp',count:'Explore the Dalmatian coast'},
-  {name:'Greece',subtitle:'Island living',photo:'destination-greece-user.webp',count:'Aegean days await'},
+  {name:'Greece',subtitle:'Island living',photo:'destination-greece-mykonos-pexels.jpeg',count:'Aegean days await'},
   {name:'Spain',subtitle:'The Balearic escape',photo:'destination-spain-blue-cove.jpg',count:'From Mallorca to Ibiza'},
   {name:'France',subtitle:'Riviera moments',photo:'destination-france-riviera.webp',count:'The French Riviera'},
   {name:'Italy',subtitle:'The art of summer',photo:'destination-italy-positano-pexels.jpeg',count:'Timeless coastal beauty'},
@@ -65,6 +65,7 @@ const MAX_PRICE = 2000; // slider at 2000 means EUR 2,000+ (no price ceiling)
 const MAX_LENGTH = 15; // 15+ = open-ended upper bound in metres
 const MAX_ENGINE = 400; // 400+ = open-ended upper bound in horsepower
 const PHOTO_URLS = {
+  'destination-greece-mykonos-pexels.jpeg':'https://images.pexels.com/photos/11145556/pexels-photo-11145556.jpeg?auto=compress&cs=tinysrgb&w=1400',
   // Pexels photographs: Bahamas beach with palms and boat; Miami marina, Florida.
   'destination-italy-positano-pexels.jpeg':'https://images.pexels.com/photos/12464296/pexels-photo-12464296.jpeg?auto=compress&cs=tinysrgb&w=1400',
   'destination-bahamas-bright-boat.jpeg':'https://images.pexels.com/photos/28294674/pexels-photo-28294674.jpeg?auto=compress&cs=tinysrgb&w=1400',
