@@ -57,3 +57,7 @@ These licenses do not transfer trademark, privacy or model-release rights. Avoid
 Additional destination photo: `destination-italy-positano-pexels.jpeg` (external URL in `PHOTO_URLS`) — 8 K · Pexels, [aerial view of Positano and boats, Italy](https://www.pexels.com/photo/aerial-view-of-body-of-water-near-mountains-12464296/).
 
 Additional destination photo: `destination-greece-mykonos-pexels.jpeg` (external URL in `PHOTO_URLS`) — Benjamin Cobb · Pexels, [drone photograph of a sailing boat in a bay near Mykonos, Greece](https://www.pexels.com/photo/drone-shot-of-a-sailing-boat-on-the-sea-11145556/).
+
+Additional destination photos:
+- `destination-bahamas-nassau-pexels.jpeg` (external URL in `PHOTO_URLS`) — Mikhail Nilov · Pexels, [aerial beach with palm trees in the Bahamas](https://www.pexels.com/photo/an-aerial-shot-of-a-beach-9401017/).
+- `destination-usa-tropical-marina-pexels.jpeg` (external URL in `PHOTO_URLS`) — Sachith Ravishka Kodikara · Pexels, [tropical yacht marina in Miami, USA](https://www.pexels.com/photo/yacht-in-tropical-marina-6222811/).
