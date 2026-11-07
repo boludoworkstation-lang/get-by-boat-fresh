@@ -1,5 +1,7 @@
 # Marketing photo sources
 
+The homepage “Not just boating. A feeling.” section uses the [Pexels aerial speedboat photograph by Serhat Yılmaz](https://www.pexels.com/photo/a-motor-boat-traversing-the-sea-7627872/) under the Pexels License.
+
 Marketing photographs added on 6 November 2026 are stored locally under `public/assets/`. Stock photos are licensed for commercial website use under the [Unsplash License](https://unsplash.com/license) or [Pexels License](https://www.pexels.com/license/); neither requires photographer credit, but we keep a source record for future reference. All actively used homepage editorial photography is from real stock photographs, not AI-generated illustrations.
 
 | File | Photographer / source | Original photo |
