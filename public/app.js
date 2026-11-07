@@ -18,23 +18,6 @@ const COUNTRIES = [
   {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-tropical-beach-v2.webp',count:'A thousand shades of blue'},
   {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-hawaii-catamarans-v3.webp',count:'From Miami to California'}
 ];
-// Three photographs per destination. Every card uses the same shared slide index.
-const DESTINATION_SLIDES = {
-  Croatia: ['destination-kornati-cliffs.webp', 'destination-croatia-2.webp', 'destination-croatia-3.webp'],
-  Greece: ['destination-greece.jpg', 'destination-greece-2.webp', 'destination-greece-3.webp'],
-  Spain: ['destination-italy.jpg', 'destination-spain-2.webp', 'destination-spain-3.webp'],
-  France: ['destination-france.webp', 'destination-france-2.webp', 'destination-france-3.webp'],
-  Italy: ['destination-spain.webp', 'destination-italy-2.webp', 'destination-italy-3.webp'],
-  Malta: ['destination-malta.webp', 'destination-malta-2.webp', 'destination-malta-3.webp'],
-  Portugal: ['destination-portugal.webp', 'destination-portugal-2.webp', 'destination-portugal-3.webp'],
-  Cyprus: ['destination-cyprus.webp', 'destination-cyprus-2.webp', 'destination-cyprus-3.webp'],
-  Montenegro: ['destination-montenegro.webp', 'destination-montenegro-2.webp', 'destination-montenegro-3.webp'],
-  Turkey: ['destination-turkey.webp', 'destination-turkey-2.webp', 'destination-turkey-3.webp'],
-  Albania: ['destination-albania.webp', 'destination-albania-2.webp', 'destination-albania-3.webp'],
-  Australia: ['destination-australia-whitehaven-v2.webp', 'destination-australia-2.webp', 'destination-australia-3.webp'],
-  Bahamas: ['destination-bahamas-tropical-beach-v2.webp', 'destination-bahamas-2.webp', 'destination-bahamas-3.webp'],
-  'United States': ['destination-usa-hawaii-catamarans-v3.webp', 'destination-usa-2.webp', 'destination-usa-3.webp']
-};
 const BOATS = [
  {id:'sunseeker-manhattan-66',category:'Yacht',name:'Sunseeker Manhattan 66',location:'Split',country:'Croatia',type:'Motorboat',price:2800,guests:12,cabins:6,baths:3,rating:'4.9',reviews:42,photo:'yacht-main.webp',gallery:['yacht-main.webp','yacht-detail.webp','yacht-deck.webp','yacht-cabin.webp'],tag:'Guest favourite',skipper:true,features:['With skipper','Air conditioning','Wi-Fi','Water toys','Sun deck','Sound system'],description:'A statement in understated luxury. Discover the Dalmatian islands on a beautiful motor yacht with generous lounging spaces, light-filled interiors and effortless access to secluded coves.'},
  {id:'lagoon-46-catamaran',name:'Lagoon 46 Catamaran',location:'Athens',country:'Greece',type:'Catamaran',price:1950,guests:10,cabins:6,baths:4,rating:'4.8',reviews:36,photo:'yacht-lagoon.webp',gallery:['yacht-lagoon.webp','yacht-sailsea.webp','yacht-deck.webp','yacht-detail.webp'],tag:'Loved by travellers',skipper:true,features:['With skipper','Wi-Fi','Air conditioning','Snorkelling','Outdoor dining','Sun deck'],description:'Slow down and savour the Aegean. Open-air dining, generous deck space and serene cabins make this catamaran a beautifully easy way to discover Greece.'},
@@ -291,16 +274,7 @@ document.addEventListener('pointerdown',event=>{if(destinationPicker&&!destinati
 window.addEventListener('scroll',closeDestinationPicker,true);
 
 function searchWidget(compact=false){return `<form class="search-widget ${compact?'search-widget-compact':''}" id="${compact?'quick-search':'hero-search'}"><div class="search-fields"><label class="search-field search-location"><span>${icon('pin')} Departure location</span><input name="location" type="text" aria-label="Departure location" list="home-destinations" placeholder="City, e.g. Dubrovnik, Croatia" value="${safe(state.filters.location)}" autocomplete="off"></label><datalist id="home-destinations">${suggestedDestinations.map(city=>`<option value="${safe(city)}"></option>`).join('')}</datalist><label class="search-field home-date-field"><span>${icon('calendar')} From</span><input type="hidden" name="start" value="${safe(state.start)}"><button type="button" class="rental-date-trigger" data-rental-date-open="start" aria-label="Select start date">${state.start?state.start.split('-').reverse().join('/'):'dd/mm/yyyy'} ${icon('calendar')}</button></label><label class="search-field home-date-field"><span>${icon('calendar')} To</span><input type="hidden" name="end" value="${safe(state.end)}"><button type="button" class="rental-date-trigger" data-rental-date-open="end" aria-label="Select end date">${state.end?state.end.split('-').reverse().join('/'):'dd/mm/yyyy'} ${icon('calendar')}</button></label><label class="search-field"><span>${icon('ship')} Boat type</span><select name="type" aria-label="Boat type"><option value="">Any type</option>${BOAT_TYPES.map(t=>`<option value="${t.value}" ${state.filters.type===t.value?'selected':''}>${t.label}</option>`).join('')}</select></label></div><button class="btn btn-search" type="submit">${icon('search')} Search boats</button></form>`}
-function destinationCard(c){const slides=DESTINATION_SLIDES[c.name]||[c.photo];return `<a href="#/boats?country=${encodeURIComponent(c.value||c.name)}" class="destination-card"><span class="destination-slides" aria-hidden="true">${slides.map((photo,i)=>`<img class="destination-slide${i===destinationSlideIndex?' is-active':''}" src="${IMG(photo)}" alt="" loading="lazy" decoding="async">`).join('')}</span><div class="destination-shade"></div><div class="destination-copy"><span>${c.subtitle}</span><h3>${c.name}</h3><small>${c.count}</small></div><span class="destination-arr">${icon('arrow')}</span></a>`}
-let destinationSlideIndex=0;
-const destinationSlideTimer=window.setInterval(()=>{
-  if(document.hidden||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const cards=document.querySelectorAll('.destination-slides');
-  if(!cards.length)return;
-  destinationSlideIndex=(destinationSlideIndex+1)%3;
-  cards.forEach(card=>card.querySelectorAll('.destination-slide').forEach((img,i)=>img.classList.toggle('is-active',i===destinationSlideIndex)));
-},5000);
-destinationSlideTimer?.unref?.(); // Browser timers are numbers; keep Node-based checks free to exit.
+function destinationCard(c){return `<a href="#/boats?country=${encodeURIComponent(c.value||c.name)}" class="destination-card"><img src="${IMG(c.photo)}" alt="Yachting scenery in ${c.name}" loading="lazy"><div class="destination-shade"></div><div class="destination-copy"><span>${c.subtitle}</span><h3>${c.name}</h3><small>${c.count}</small></div><span class="destination-arr">${icon('arrow')}</span></a>`}
 function favButton(b){return `<button class="fav-btn ${state.favs.includes(b.id)?'is-fav':''}" data-action="fav" data-id="${b.id}" aria-label="${state.favs.includes(b.id)?'Remove from':'Add to'} favourites">${icon('heart')}</button>`}
 // Interactive booking-flow demo. Session memory only; no customer data is stored.
 const demoReservations=[];
