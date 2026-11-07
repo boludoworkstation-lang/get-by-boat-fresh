@@ -66,3 +66,6 @@ Additional destination photo: `destination-usa-miami-skyline-marina-pexels.jpeg`
 
 - **United States destination (lake wakeboarding):** [8 K, Pexels photo 5330037](https://www.pexels.com/photo/unrecognizable-traveler-practicing-wake-surfing-on-lake-near-motor-boat-5330037/) — real lake watersports photography, Pexels free license.
 - **Bahamas destination (white-sand beach):** [Mikhail Nilov, Pexels photo 9400834](https://www.pexels.com/photo/an-aerial-shot-of-a-beach-9400834/) — real Bahamas coastline photography, Pexels free license.
+
+- **United States destination (wakeboarding action):** [Ron Lach, Pexels photo 9953825](https://www.pexels.com/photo/man-wakeboarding-on-lake-9953825/) — real lake watersports photography, Pexels free license.
+- **Bahamas destination (boat aerial):** [Cam Green, Pexels photo 4166305](https://www.pexels.com/photo/aerial-shot-of-a-boat-on-the-sea-4166305/) — actual Bahamas boat and reef photography, Pexels free license.
