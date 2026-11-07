@@ -2809,3 +2809,11 @@ button[data-gallery-select]:has(img)::after {
   .destination-card[href*="country=Spain"]{background:linear-gradient(180deg,#76d9e7,#0b6174)}
   .destination-card[href*="country=Spain"] img{height:calc(100% - 34px);object-fit:cover;object-position:center}
 }
+
+
+/* Destination-photo clarity: Italy, Montenegro, Bahamas and Miami marina */
+.destination-card[href*="country=Italy"] img { filter:saturate(1.24) contrast(1.07) brightness(1.06); }
+.destination-card[href*="country=Montenegro"] img { filter:saturate(1.21) contrast(1.08) brightness(1.07); }
+.destination-card[href*="country=Bahamas"] img { filter:saturate(1.12) contrast(1.05) brightness(1.11); object-position:center 56%; }
+.destination-card[href*="country=Bahamas"] .destination-shade { background:linear-gradient(0deg,rgba(3,42,55,.83) 0%,rgba(3,42,55,.24) 28%,transparent 60%); }
+.destination-card[href*="country=USA"] img { object-position:center 49%; filter:saturate(1.15) contrast(1.045) brightness(1.055); }

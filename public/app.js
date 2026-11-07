@@ -4,7 +4,7 @@ window.addEventListener('error',e=>{window.__gbbStartupError=String(e.message||'
 window.addEventListener('unhandledrejection',e=>{window.__gbbUnhandledRejection=String(e.reason?.message||e.reason||'Unknown rejection');});
 const COUNTRIES = [
   {name:'Croatia',subtitle:'Adriatic dreams',photo:'destination-kornati-cliffs.webp',count:'Explore the Dalmatian coast'},
-  {name:'Greece',subtitle:'Island living',photo:'destination-greece.jpg',count:'Aegean days await'},
+  {name:'Greece',subtitle:'Island living',photo:'destination-greece-user.webp',count:'Aegean days await'},
   {name:'Spain',subtitle:'The Balearic escape',photo:'destination-spain-blue-cove.jpg',count:'From Mallorca to Ibiza'},
   {name:'France',subtitle:'Riviera moments',photo:'destination-france-riviera.webp',count:'The French Riviera'},
   {name:'Italy',subtitle:'The art of summer',photo:'destination-spain.webp',count:'Timeless coastal beauty'},
@@ -15,8 +15,8 @@ const COUNTRIES = [
   {name:'Turkey',subtitle:'Turquoise coast',photo:'destination-turkey-user.webp',count:'From Bodrum to hidden bays'},
   {name:'Albania',subtitle:'Untouched shores',photo:'destination-albania.webp',count:'The Albanian Riviera awaits'},
   {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-greece.jpg',count:'Unforgettable island escapes'},
-  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-tropical-beach-v2.webp',count:'A thousand shades of blue'},
-  {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-hawaii-catamarans-v3.webp',count:'From Miami to California'}
+  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-bright-boat.jpeg',count:'A thousand shades of blue'},
+  {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-miami-marina.jpeg',count:'From Miami to California'}
 ];
 const BOATS = [
  {id:'sunseeker-manhattan-66',category:'Yacht',name:'Sunseeker Manhattan 66',location:'Split',country:'Croatia',type:'Motorboat',price:2800,guests:12,cabins:6,baths:3,rating:'4.9',reviews:42,photo:'yacht-main.webp',gallery:['yacht-main.webp','yacht-detail.webp','yacht-deck.webp','yacht-cabin.webp'],tag:'Guest favourite',skipper:true,features:['With skipper','Air conditioning','Wi-Fi','Water toys','Sun deck','Sound system'],description:'A statement in understated luxury. Discover the Dalmatian islands on a beautiful motor yacht with generous lounging spaces, light-filled interiors and effortless access to secluded coves.'},
@@ -65,6 +65,9 @@ const MAX_PRICE = 2000; // slider at 2000 means EUR 2,000+ (no price ceiling)
 const MAX_LENGTH = 15; // 15+ = open-ended upper bound in metres
 const MAX_ENGINE = 400; // 400+ = open-ended upper bound in horsepower
 const PHOTO_URLS = {
+  // Pexels photographs: Bahamas beach with palms and boat; Miami marina, Florida.
+  'destination-bahamas-bright-boat.jpeg':'https://images.pexels.com/photos/28294674/pexels-photo-28294674.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  'destination-usa-miami-marina.jpeg':'https://images.pexels.com/photos/36642080/pexels-photo-36642080.jpeg?auto=compress&cs=tinysrgb&w=1400',
   'destination-france-riviera.webp': 'https://images.unsplash.com/photo-1590081649469-2c7a8a3a670e?auto=format&fit=crop&w=1200&q=85',
   'destination-malta.webp': 'https://images.pexels.com/photos/33680129/pexels-photo-33680129.jpeg?auto=compress&cs=tinysrgb&w=1920',
   'destination-cyprus.webp': 'https://images.pexels.com/photos/32736667/pexels-photo-32736667.jpeg?auto=compress&cs=tinysrgb&w=1920',
