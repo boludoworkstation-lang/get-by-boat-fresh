@@ -6,15 +6,15 @@ const COUNTRIES = [
   {name:'Croatia',subtitle:'Adriatic dreams',photo:'destination-kornati-cliffs.webp',count:'Explore the Dalmatian coast'},
   {name:'Greece',subtitle:'Island living',photo:'destination-greece.jpg',count:'Aegean days await'},
   {name:'Spain',subtitle:'The Balearic escape',photo:'destination-spain-blue-cove.jpg',count:'From Mallorca to Ibiza'},
-  {name:'France',subtitle:'Riviera moments',photo:'destination-france.webp',count:'The French Riviera'},
+  {name:'France',subtitle:'Riviera moments',photo:'destination-france-riviera.webp',count:'The French Riviera'},
   {name:'Italy',subtitle:'The art of summer',photo:'destination-spain.webp',count:'Timeless coastal beauty'},
   {name:'Malta',subtitle:'Blue Lagoon days',photo:'destination-malta.webp',count:'Islands made for the sea'},
   {name:'Portugal',subtitle:'Atlantic sunshine',photo:'destination-portugal.webp',count:'The beautiful Algarve'},
   {name:'Cyprus',subtitle:'Eastern Mediterranean',photo:'destination-cyprus.webp',count:'Sunlit coves and clear waters'},
   {name:'Montenegro',subtitle:'The Adriatic beyond',photo:'destination-montenegro.webp',count:'Discover the Bay of Kotor'},
-  {name:'Turkey',subtitle:'Turquoise coast',photo:'destination-turkey.webp',count:'From Bodrum to hidden bays'},
+  {name:'Turkey',subtitle:'Turquoise coast',photo:'destination-turkey-user.webp',count:'From Bodrum to hidden bays'},
   {name:'Albania',subtitle:'Untouched shores',photo:'destination-albania.webp',count:'The Albanian Riviera awaits'},
-  {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-australia-whitehaven-v2.webp',count:'Unforgettable island escapes'},
+  {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-greece.jpg',count:'Unforgettable island escapes'},
   {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-tropical-beach-v2.webp',count:'A thousand shades of blue'},
   {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-hawaii-catamarans-v3.webp',count:'From Miami to California'}
 ];
@@ -65,6 +65,7 @@ const MAX_PRICE = 2000; // slider at 2000 means EUR 2,000+ (no price ceiling)
 const MAX_LENGTH = 15; // 15+ = open-ended upper bound in metres
 const MAX_ENGINE = 400; // 400+ = open-ended upper bound in horsepower
 const PHOTO_URLS = {
+  'destination-france-riviera.webp': 'https://images.unsplash.com/photo-1590081649469-2c7a8a3a670e?auto=format&fit=crop&w=1200&q=85',
   'destination-malta.webp': 'https://images.pexels.com/photos/33680129/pexels-photo-33680129.jpeg?auto=compress&cs=tinysrgb&w=1920',
   'destination-cyprus.webp': 'https://images.pexels.com/photos/32736667/pexels-photo-32736667.jpeg?auto=compress&cs=tinysrgb&w=1920',
   'destination-montenegro.webp': 'https://images.pexels.com/photos/34129011/pexels-photo-34129011.jpeg?auto=compress&cs=tinysrgb&w=1920',
