@@ -63,3 +63,6 @@ Additional destination photos:
 - `destination-usa-tropical-marina-pexels.jpeg` (external URL in `PHOTO_URLS`) — Sachith Ravishka Kodikara · Pexels, [tropical yacht marina in Miami, USA](https://www.pexels.com/photo/yacht-in-tropical-marina-6222811/).
 
 Additional destination photo: `destination-usa-miami-skyline-marina-pexels.jpeg` (external URL in `PHOTO_URLS`) — Ndumiso Zimu · Pexels, [Miami skyline and a marina with yachts](https://www.pexels.com/photo/skyline-of-miami-with-marina-and-high-rises-36827490/).
+
+- **United States destination (lake wakeboarding):** [8 K, Pexels photo 5330037](https://www.pexels.com/photo/unrecognizable-traveler-practicing-wake-surfing-on-lake-near-motor-boat-5330037/) — real lake watersports photography, Pexels free license.
+- **Bahamas destination (white-sand beach):** [Mikhail Nilov, Pexels photo 9400834](https://www.pexels.com/photo/an-aerial-shot-of-a-beach-9400834/) — real Bahamas coastline photography, Pexels free license.
