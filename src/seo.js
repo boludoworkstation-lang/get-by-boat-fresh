@@ -54,7 +54,7 @@ export function destinationHtml(place) {
   <link rel="canonical" href="${canonical}">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="/assets/${escapeHtml(place.image)}" as="image" fetchpriority="high">
-  <link rel="stylesheet" href="/destination-page.css?v=3">
+  <link rel="stylesheet" href="/destination-page.css?v=4">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Get By Boat">
   <meta property="og:title" content="${escapeHtml(title)}">
