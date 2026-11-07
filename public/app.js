@@ -65,8 +65,8 @@ const MAX_PRICE = 2000; // slider at 2000 means EUR 2,000+ (no price ceiling)
 const MAX_LENGTH = 15; // 15+ = open-ended upper bound in metres
 const MAX_ENGINE = 400; // 400+ = open-ended upper bound in horsepower
 const PHOTO_URLS = {
-  'home-feeling-lifestyle-boat-desktop.jpg':'assets/home-feeling-clear-sea-20261107.webp',
-  'home-feeling-lifestyle-boat-mobile.jpg':'assets/home-feeling-clear-sea-20261107.webp',
+  'home-feeling-lifestyle-boat-desktop.jpg':'https://images.pexels.com/photos/7627872/pexels-photo-7627872.jpeg?auto=compress&cs=tinysrgb&w=1800',
+  'home-feeling-lifestyle-boat-mobile.jpg':'https://images.pexels.com/photos/7627872/pexels-photo-7627872.jpeg?auto=compress&cs=tinysrgb&w=1800',
   'destination-usa-lake-tahoe-boats-pexels.jpeg':'https://images.pexels.com/photos/6786345/pexels-photo-6786345.jpeg?auto=compress&cs=tinysrgb&w=1400',
   'destination-bahamas-white-beach-boats-pexels.jpeg':'https://images.pexels.com/photos/29525734/pexels-photo-29525734.jpeg?auto=compress&cs=tinysrgb&w=1400',
   'destination-usa-wakeboarding-action-pexels.jpeg':'https://images.pexels.com/photos/9953825/pexels-photo-9953825.jpeg?auto=compress&cs=tinysrgb&w=1400',
