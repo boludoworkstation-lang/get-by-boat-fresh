@@ -5,7 +5,7 @@ window.addEventListener('unhandledrejection',e=>{window.__gbbUnhandledRejection=
 const COUNTRIES = [
   {name:'Croatia',subtitle:'Adriatic dreams',photo:'destination-kornati-cliffs.webp',count:'Explore the Dalmatian coast'},
   {name:'Greece',subtitle:'Island living',photo:'destination-greece.jpg',count:'Aegean days await'},
-  {name:'Spain',subtitle:'The Balearic escape',photo:'destination-italy.jpg',count:'From Mallorca to Ibiza'},
+  {name:'Spain',subtitle:'The Balearic escape',photo:'destination-spain-blue-cove.jpg',count:'From Mallorca to Ibiza'},
   {name:'France',subtitle:'Riviera moments',photo:'destination-france.webp',count:'The French Riviera'},
   {name:'Italy',subtitle:'The art of summer',photo:'destination-spain.webp',count:'Timeless coastal beauty'},
   {name:'Malta',subtitle:'Blue Lagoon days',photo:'destination-malta.webp',count:'Islands made for the sea'},
