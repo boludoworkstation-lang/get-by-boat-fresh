@@ -15,8 +15,8 @@ const COUNTRIES = [
   {name:'Turkey',subtitle:'Turquoise coast',photo:'destination-turkey-user.webp',count:'From Bodrum to hidden bays'},
   {name:'Albania',subtitle:'Untouched shores',photo:'destination-albania.webp',count:'The Albanian Riviera awaits'},
   {name:'Australia',subtitle:'Beyond the horizon',photo:'destination-greece.jpg',count:'Unforgettable island escapes'},
-  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-nassau-pexels.jpeg',count:'A thousand shades of blue'},
-  {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-miami-skyline-marina-pexels.jpeg',count:'From Miami to California'}
+  {name:'Bahamas',subtitle:'Blue beyond belief',photo:'destination-bahamas-beach-pexels.jpeg',count:'A thousand shades of blue'},
+  {name:'United States',value:'USA',subtitle:'Coasts to discover',photo:'destination-usa-lake-wakeboarding-pexels.jpeg',count:'From Miami to California'}
 ];
 const BOATS = [
  {id:'sunseeker-manhattan-66',category:'Yacht',name:'Sunseeker Manhattan 66',location:'Split',country:'Croatia',type:'Motorboat',price:2800,guests:12,cabins:6,baths:3,rating:'4.9',reviews:42,photo:'yacht-main.webp',gallery:['yacht-main.webp','yacht-detail.webp','yacht-deck.webp','yacht-cabin.webp'],tag:'Guest favourite',skipper:true,features:['With skipper','Air conditioning','Wi-Fi','Water toys','Sun deck','Sound system'],description:'A statement in understated luxury. Discover the Dalmatian islands on a beautiful motor yacht with generous lounging spaces, light-filled interiors and effortless access to secluded coves.'},
@@ -65,6 +65,8 @@ const MAX_PRICE = 2000; // slider at 2000 means EUR 2,000+ (no price ceiling)
 const MAX_LENGTH = 15; // 15+ = open-ended upper bound in metres
 const MAX_ENGINE = 400; // 400+ = open-ended upper bound in horsepower
 const PHOTO_URLS = {
+  'destination-usa-lake-wakeboarding-pexels.jpeg':'https://images.pexels.com/photos/5330037/pexels-photo-5330037.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  'destination-bahamas-beach-pexels.jpeg':'https://images.pexels.com/photos/9400834/pexels-photo-9400834.jpeg?auto=compress&cs=tinysrgb&w=1400',
   'destination-usa-miami-skyline-marina-pexels.jpeg':'https://images.pexels.com/photos/36827490/pexels-photo-36827490.jpeg?auto=compress&cs=tinysrgb&w=1400',
   'destination-bahamas-nassau-pexels.jpeg':'https://images.pexels.com/photos/9401017/pexels-photo-9401017.jpeg?auto=compress&cs=tinysrgb&w=1400',
   'destination-usa-tropical-marina-pexels.jpeg':'https://images.pexels.com/photos/6222811/pexels-photo-6222811.jpeg?auto=compress&cs=tinysrgb&w=1400',
