@@ -1808,7 +1808,7 @@ button.listing-calendar-date.is-selected{background:#078daa;color:#fff;outline:0
 
 .how-hero{position:relative}
 /* Keep the towing speedboat and inflatable in the short mobile editorial crop. */
-@media(max-width:800px){.editorial-image img{object-position:center 30%}}
+@media(max-width:800px){.editorial-image img{object-position:center 68%}}
 
 /* Kornati hero: exclude the boat flag and brighten the Adriatic tones without filtering the text. */
 .how-hero{isolation:isolate;overflow:hidden;background:#064653}
