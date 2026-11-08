@@ -1515,7 +1515,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
     });
   }
   window.liveRender=()=>{
-    if(!authReady){app.innerHTML=accountLoading;return true;}
+    if(!authReady){if(!routes(parseRoute().path))return false;app.innerHTML=accountLoading;return true;}
     const {path,params}=parseRoute();const token=++epoch;
     const pageNumber=params.get('page')||'1';
     const currentResults=path==='/boats'?app.querySelector?.('.rental-results'):null;
@@ -2654,7 +2654,7 @@ document.addEventListener('click',async event=>{
   },true);
     // Static sample boats cannot create real requests or paid confirmations.
   document.addEventListener('submit',e=>{if(['reserve-form','checkout-form'].includes(e.target.id)){e.preventDefault();e.stopImmediatePropagation();modal('Example boat','This is an example listing. Explore the live boat catalogue to send a real booking request.');}},true);
-  async function boot(){try{client=await Promise.race([authClient(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('The sign-in service could not start. Please refresh the page and try again.')),16000))]);client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});const inviteHash=new URLSearchParams(location.hash.replace(/^#/,''));if(inviteHash.has('access_token')&&inviteHash.has('refresh_token')){const {error:inviteError}=await client.auth.setSession({access_token:inviteHash.get('access_token'),refresh_token:inviteHash.get('refresh_token')});history.replaceState(null,'',location.pathname+location.search+'#/staff');if(inviteError)throw Error('Invitation sign-in failed. Please request a fresh invitation.');}await Promise.race([current(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Your account is taking too long to load. Please check your connection and try again.')),15000))]);if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}authReady=true;render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
+  async function boot(){try{client=await Promise.race([authClient(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('The sign-in service could not start. Please refresh the page and try again.')),16000))]);client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});const inviteHash=new URLSearchParams(location.hash.replace(/^#/,''));if(inviteHash.has('access_token')&&inviteHash.has('refresh_token')){const {error:inviteError}=await client.auth.setSession({access_token:inviteHash.get('access_token'),refresh_token:inviteHash.get('refresh_token')});history.replaceState(null,'',location.pathname+location.search+'#/staff');if(inviteError)throw Error('Invitation sign-in failed. Please request a fresh invitation.');}await Promise.race([current(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Your account is taking too long to load. Please check your connection and try again.')),15000))]);if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}authReady=true;render()}catch(e){if(routes(parseRoute().path))app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`);else render()}}
   setInterval(()=>{
     const active=parseRoute().path;
     if(!session||!['/dashboard','/owner','/account','/bookings','/favourites','/messages'].includes(active))return;
@@ -2662,6 +2662,7 @@ document.addEventListener('click',async event=>{
   },20000);
   // Wait for the persisted auth session before showing protected screens.
   // This avoids a login/home flash during a normal authenticated refresh.
-  app.innerHTML=accountLoading;
+  if(routes(parseRoute().path))app.innerHTML=accountLoading;
+  else render(); // Public informational pages do not need to wait for account initialization.
   boot();
 })();
