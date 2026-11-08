@@ -1298,7 +1298,7 @@
       });
       if(sorting==='price-low')filtered.sort((a,b)=>guestDailyRate(a.price)-guestDailyRate(b.price));
       if(sorting==='price-high')filtered.sort((a,b)=>guestDailyRate(b.price)-guestDailyRate(a.price));
-const PAGE_SIZE=12;
+const PAGE_SIZE=20;
       const maxPage=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
       const requestedPage=Number(params.get('page'));
       const currentPage=Number.isSafeInteger(requestedPage)&&requestedPage>0?Math.min(requestedPage,maxPage):1;
@@ -1476,7 +1476,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
       if(!fresh)throw Error('Could not refresh boat results.');
       results.innerHTML=fresh.innerHTML;
       lastBoatsPage=pageNumber;
-      results.querySelector('.rental-results-bar')?.scrollIntoView({block:'start',behavior:'instant'});
+      // Preserve the user's scroll position when changing result pages.
     }).catch(error=>{
       if(token===epoch&&results.isConnected){
         console.warn('Pagination update failed',error);
