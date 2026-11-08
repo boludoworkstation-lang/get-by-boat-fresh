@@ -1253,7 +1253,7 @@
       const all=[];
       const chunkSize=500;
       for(let offset=0;;offset+=chunkSize){
-        const rows=check(await client.from('boats').select('*').eq('published',true)
+        const rows=check(await client.from('boats').select('id,name,location,country,type,price,guests,licence_required,specifications,with_skipper,without_skipper,photo_url,created_at').eq('published',true)
           .order('created_at',{ascending:false}).order('id',{ascending:false})
           .range(offset,offset+chunkSize-1));
         all.push(...rows);
