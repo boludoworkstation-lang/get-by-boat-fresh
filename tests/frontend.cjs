@@ -1,6 +1,18 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
 const source=fs.readFileSync('public/app.js','utf8');
 const mobileSearchSource=fs.readFileSync('public/mobile-redesign.js','utf8');
+const liveBackend=fs.readFileSync('public/backend.js','utf8');
+const indexHtml=fs.readFileSync('public/index.html','utf8');
+assert.doesNotMatch(source,/Destination guides: <a href/,'Footer should not display destination guides');
+assert.ok(mobileSearchSource.includes("standard: [['#/','Discover','compass'],['#/boats','Explore','search'],['#/how-it-works','How it works','compass'],['#/login','Log in','user']]"));
+assert.ok(mobileSearchSource.includes("form.setAttribute('aria-modal','true')"));
+assert.ok(indexHtml.includes('backend.js?v=20261108-unpaid-availability'));
+assert.ok(indexHtml.includes('mobile-redesign.js?v=20261108-navigation'));
+assert.ok(liveBackend.includes("const PAGE_SIZE=12;"));
+assert.ok(liveBackend.includes("loading=\"${eager?'eager':'lazy'}\""));
+assert.ok(liveBackend.includes("r.status==='confirmed'"));
+assert.ok(liveBackend.includes("Set the check-in and check-out times for this boat."));
+
 assert.match(mobileSearchSource,/field\.setAttribute\('aria-label','Skipper preference'\)/);
 assert.doesNotMatch(mobileSearchSource,/<legend>\$\{icon\('compass'\)\} Skipper<\/legend>/);
 assert.match(mobileSearchSource,/\['with','With skipper'\],\['without','Without skipper'\]/);
