@@ -1298,7 +1298,7 @@
       });
       if(sorting==='price-low')filtered.sort((a,b)=>guestDailyRate(a.price)-guestDailyRate(b.price));
       if(sorting==='price-high')filtered.sort((a,b)=>guestDailyRate(b.price)-guestDailyRate(a.price));
-const PAGE_SIZE=20;
+const PAGE_SIZE=12;
       const maxPage=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
       const requestedPage=Number(params.get('page'));
       const currentPage=Number.isSafeInteger(requestedPage)&&requestedPage>0?Math.min(requestedPage,maxPage):1;
