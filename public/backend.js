@@ -1243,6 +1243,28 @@
     </tr>`).join('');
     return page('Reservations',`<p>${staffView?'All reservation requests and dates in one place.':'All reservation requests, dates and financial breakdown. Amounts for pending requests are estimates until payment is confirmed.'}</p>${summary}<div class="reservation-filter-bar" data-reservation-filters><label>Search by name<input type="search" data-reservation-search placeholder="Customer, owner or boat name" aria-label="Search reservations by name" autocomplete="off"></label><label>Reservation status<select data-reservation-status aria-label="Filter reservation status"><option value="all">All statuses</option><option value="accepted">Accepted</option><option value="pending">Pending</option><option value="declined">Declined</option><option value="cancelled">Cancelled</option></select></label><span class="reservation-result-count" data-reservation-result-count>${rows.length} reservations</span></div><div class="profile-panel reservation-filter-empty" data-reservation-no-results hidden>No matching reservations. Try another name or status.</div><section class="profile-panel reservations-table-panel"><table class="reservations-table ${staffView?'staff-reservations-table':''}" style="width:100%;border-collapse:collapse;text-align:left;table-layout:fixed"><thead><tr style="border-bottom:1px solid #dce8ed"><th style="padding:14px 12px">Boat / traveller / owner</th><th style="padding:14px 12px">Rental dates</th><th style="padding:14px 12px">Status</th><th style="padding:14px 12px;text-align:right">Guest total</th>${staffView?'':`<th style="padding:14px 12px;text-align:right">Commission</th><th style="padding:14px 12px;text-align:right">Processing</th>`}<th style="padding:14px 12px;text-align:right">Owner net</th></tr></thead><tbody>${tr}</tbody></table></section>`);
   }
+  let publicBoatsCache=null;
+  let publicBoatsCacheUntil=0;
+  let publicBoatsInflight=null;
+  async function loadPublicBoatCatalogue(){
+    if(publicBoatsCache&&Date.now()<publicBoatsCacheUntil)return publicBoatsCache;
+    if(publicBoatsInflight)return publicBoatsInflight;
+    publicBoatsInflight=(async()=>{
+      const all=[];
+      const chunkSize=500;
+      for(let offset=0;;offset+=chunkSize){
+        const rows=check(await client.from('boats').select('*').eq('published',true)
+          .order('created_at',{ascending:false}).order('id',{ascending:false})
+          .range(offset,offset+chunkSize-1));
+        all.push(...rows);
+        if(rows.length<chunkSize)break;
+      }
+      publicBoatsCache=all;
+      publicBoatsCacheUntil=Date.now()+30000;
+      return all;
+    })();
+    try{return await publicBoatsInflight}finally{publicBoatsInflight=null}
+  }
   async function route(){const {path,params}=parseRoute();if(!['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path)&&!path.startsWith('/listing/'))return null;
     if(!client)return ['/login','/owner','/bookings','/account','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path)?loginPage():page('Welcome aboard.','<p>Connecting your account…</p>');
     if(path==='/login'&&session&&!recovery){location.hash=afterLogin();return !profile?profileDialog(authNext):page('Welcome back.','<p>Opening your account…</p>')}
@@ -1252,7 +1274,10 @@
       try{await refreshSidebarNotifications()}catch(error){console.warn('Notification counts unavailable',error?.message||error)}
     }
     if(path==='/boats') {
-      const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));
+      // Fetch catalogue in bounded pages so Supabase's row cap never hides later listings.
+      // Cache briefly to avoid downloading the full catalogue on every filter/page change.
+      const boats=await loadPublicBoatCatalogue();
+
       const rawSearch=(params.get('location')||params.get('country')||'').trim();
       const foldCity=text=>String(text||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().replace(/[đð]/g,'d').replace(/ı/g,'i').replace(/ł/g,'l').replace(/ø/g,'o').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ß/g,'ss').replace(/þ/g,'th').trim();
       const searchInput=window.resolveDestinationName?.(rawSearch,destinationCities)||rawSearch;
@@ -1282,7 +1307,10 @@
       const layoutHref=mode=>{const q=new URLSearchParams(params);if(mode==='grid')q.delete('layout');else q.set('layout','list');return '#/boats?'+q.toString();};
       const startDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('start')||'')?params.get('start'):'';
       const endDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('end')||'')?params.get('end'):'';
-      let filtered=boats.filter(b=>{
+      const unavailableIds=startDate&&endDate&&startDate<=endDate
+        ?new Set(check(await client.rpc('public_unavailable_boat_ids',{p_start:startDate,p_end:endDate})).map(row=>row.boat_id))
+        :new Set();
+      let filtered=boats.filter(b=>!unavailableIds.has(b.id)&&(()=>{
         const where=!search||foldCity(`${b.location||''}, ${b.country||''}`).includes(search)||foldCity(b.country||'')===search||(search==='united states'&&foldCity(b.country||'')==='usa')||(search==='usa'&&foldCity(b.country||'')==='united states');
         const typeOk=!types.length||types.includes(b.type);
         const countryOk=!selectedCountry||foldCity(b.country)===(selectedCountry==='United States'?foldCity('USA'):foldCity(selectedCountry))||(selectedCountry==='United States'&&foldCity(b.country)===foldCity('United States'));
@@ -1295,7 +1323,7 @@
         const hp=Number(specs.engine_hp)||0;
         const equipped=Array.isArray(specs.equipment)?specs.equipment:[];
         return where&&typeOk&&countryOk&&yearOk&&skipperOk&&(!licenceNotRequired||(b.licence_required===false&&b.without_skipper!==false))&&(!withSkipperOnly||(b.with_skipper===true&&b.without_skipper===false))&&Number(b.guests)>=guests&&(!cabins||Number(specs.cabins)>=cabins)&&(!berths||Number(specs.berths)>=berths)&&(!engineMin||hp>=engineMin)&&(engineMax===400||hp<=engineMax)&&(!minPrice||price>=minPrice)&&(!maxPrice||price<=maxPrice)&&(!minLength||length>=minLength)&&(maxLength===15||length<=maxLength)&&selectedEquipment.every(id=>equipped.includes(id));
-      });
+      })());
       if(sorting==='price-low')filtered.sort((a,b)=>guestDailyRate(a.price)-guestDailyRate(b.price));
       if(sorting==='price-high')filtered.sort((a,b)=>guestDailyRate(b.price)-guestDailyRate(a.price));
 const PAGE_SIZE=12;
@@ -1360,7 +1388,7 @@ const PAGE_SIZE=12;
               <fieldset class="rental-range-section" aria-label="Boat length"><div class="rental-range-head"><span>Boat length</span><div class="rental-length-label"><output data-length-summary>${minLength} - ${maxLength===15?'15+':maxLength} m</output></div></div><div class="rental-double-slider" data-rental-length><div class="rental-slider-track"></div><div class="rental-slider-active" style="left:${minLength/15*100}%;right:${100-maxLength/15*100}%"></div><input type="range" name="min_length" min="0" max="15" step="1" value="${minLength}" aria-label="Minimum boat length"><input type="range" name="max_length" min="0" max="15" step="1" value="${maxLength}" aria-label="Maximum boat length"></div><div class="rental-length-ticks"><span>0 m</span><span>15+ m</span></div></fieldset><fieldset class="rental-range-section" aria-label="Engine power"><div class="rental-range-head"><span>Engine power</span><div class="rental-length-label"><output data-range-summary>${engineMin} - ${engineMax===400?'400+':engineMax} hp</output></div></div><div class="rental-double-slider" data-rental-range="engine"><div class="rental-slider-track"></div><div class="rental-slider-active" style="left:${engineMin/400*100}%;right:${100-engineMax/400*100}%"></div><input type="range" name="engine_min" min="0" max="400" step="25" value="${engineMin}" aria-label="Minimum engine power"><input type="range" name="engine_max" min="0" max="400" step="25" value="${engineMax}" aria-label="Maximum engine power"></div><div class="rental-length-ticks"><span>0 hp</span><span>400+ hp</span></div></fieldset>
               <fieldset><legend>Equipment</legend><div class="rental-check-list">${amenities.map(([value,label])=>checkField('equipment',value,label,selectedEquipment.includes(value))).join('')}</div></fieldset>
               <fieldset class="rental-range-section" aria-label="Year of manufacture"><div class="rental-range-head"><span>Year of manufacture</span><div class="rental-length-label"><output data-year-summary>${yearMin} - ${yearMax}</output></div></div><div class="rental-double-slider" data-rental-range="year"><div class="rental-slider-track"></div><div class="rental-slider-active" style="left:${(yearMin-manufactureYearStart)/manufactureYearRange*100}%;right:${(manufactureYearEnd-yearMax)/manufactureYearRange*100}%"></div><input type="range" name="year_min" min="${manufactureYearStart}" max="${manufactureYearEnd}" step="1" value="${yearMin}" aria-label="Minimum year of manufacture"><input type="range" name="year_max" min="${manufactureYearStart}" max="${manufactureYearEnd}" step="1" value="${yearMax}" aria-label="Maximum year of manufacture"></div></fieldset>
-                            <button type="submit" class="btn rental-filter-button">Show matching boats ${icon('arrow')}</button>
+                            
               <p class="rental-sidebar-note">Owners review each booking request. Online payment is not enabled yet.</p>
             </aside>
             <section class="rental-results" aria-label="Boat search results">
@@ -1476,7 +1504,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
       if(!fresh)throw Error('Could not refresh boat results.');
       results.innerHTML=fresh.innerHTML;
       lastBoatsPage=pageNumber;
-      results.querySelector('.rental-results-bar')?.scrollIntoView({block:'start',behavior:'instant'});
+      // Preserve the user's scroll position when changing result pages.
     }).catch(error=>{
       if(token===epoch&&results.isConnected){
         console.warn('Pagination update failed',error);
@@ -1487,7 +1515,7 @@ const boatsResultsKey=params=>{const q=new URLSearchParams(params);q.delete('pag
     });
   }
   window.liveRender=()=>{
-    if(!authReady){app.innerHTML=accountLoading;return true;}
+    if(!authReady){if(!routes(parseRoute().path))return false;app.innerHTML=accountLoading;return true;}
     const {path,params}=parseRoute();const token=++epoch;
     const pageNumber=params.get('page')||'1';
     const currentResults=path==='/boats'?app.querySelector?.('.rental-results'):null;
@@ -2626,7 +2654,7 @@ document.addEventListener('click',async event=>{
   },true);
     // Static sample boats cannot create real requests or paid confirmations.
   document.addEventListener('submit',e=>{if(['reserve-form','checkout-form'].includes(e.target.id)){e.preventDefault();e.stopImmediatePropagation();modal('Example boat','This is an example listing. Explore the live boat catalogue to send a real booking request.');}},true);
-  async function boot(){try{client=await Promise.race([authClient(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('The sign-in service could not start. Please refresh the page and try again.')),16000))]);client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});const inviteHash=new URLSearchParams(location.hash.replace(/^#/,''));if(inviteHash.has('access_token')&&inviteHash.has('refresh_token')){const {error:inviteError}=await client.auth.setSession({access_token:inviteHash.get('access_token'),refresh_token:inviteHash.get('refresh_token')});history.replaceState(null,'',location.pathname+location.search+'#/staff');if(inviteError)throw Error('Invitation sign-in failed. Please request a fresh invitation.');}await Promise.race([current(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Your account is taking too long to load. Please check your connection and try again.')),15000))]);if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}authReady=true;render()}catch(e){app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`)}}
+  async function boot(){try{client=await Promise.race([authClient(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('The sign-in service could not start. Please refresh the page and try again.')),16000))]);client.auth.onAuthStateChange((event,s)=>{session=s;if(event==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='#/login';render()},0)}if(event==='SIGNED_OUT'){profile=null;setTimeout(()=>render(),0)}});const inviteHash=new URLSearchParams(location.hash.replace(/^#/,''));if(inviteHash.has('access_token')&&inviteHash.has('refresh_token')){const {error:inviteError}=await client.auth.setSession({access_token:inviteHash.get('access_token'),refresh_token:inviteHash.get('refresh_token')});history.replaceState(null,'',location.pathname+location.search+'#/staff');if(inviteError)throw Error('Invitation sign-in failed. Please request a fresh invitation.');}await Promise.race([current(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Your account is taking too long to load. Please check your connection and try again.')),15000))]);if(new URLSearchParams(location.search).has('auth_callback')){const p=parseRoute().params;authNext=safeNext(p.get('next')||(ownerIntent?'#/owner':'#/dashboard'));history.replaceState(null,'',location.pathname+loginLink(authNext));}authReady=true;render()}catch(e){if(routes(parseRoute().path))app.innerHTML=page('Connection unavailable.',`<p>${errorText(e)}</p><button class="btn" onclick="location.reload()">Retry</button>`);else render()}}
   setInterval(()=>{
     const active=parseRoute().path;
     if(!session||!['/dashboard','/owner','/account','/bookings','/favourites','/messages'].includes(active))return;
@@ -2634,6 +2662,7 @@ document.addEventListener('click',async event=>{
   },20000);
   // Wait for the persisted auth session before showing protected screens.
   // This avoids a login/home flash during a normal authenticated refresh.
-  app.innerHTML=accountLoading;
+  if(routes(parseRoute().path))app.innerHTML=accountLoading;
+  else render(); // Public informational pages do not need to wait for account initialization.
   boot();
 })();
