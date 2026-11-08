@@ -305,9 +305,10 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(galleryHtml,/test-deck\.jpg/);
  assert.match(galleryHtml,/10:00/);
  assert.match(galleryHtml,/17:45/);
- galleryHtml=await galleryEnv.route('#/owner?edit=boat-1');
- assert.match(galleryHtml,/name="check_in_time"/);
- assert.match(galleryHtml,/name="check_out_time"/);
+ const editorEnv=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'},boatOptions:{check_in_time:'10:00:00',check_out_time:'17:45:00'}});
+ const editorHtml=await editorEnv.route('#/owner?edit=boat-1');
+ assert.match(editorHtml,/name="check_in_time"/);
+ assert.match(editorHtml,/name="check_out_time"/);
  // Google supplies a full name: a customer profile is created without an extra form.
  e=await environment({hash:'#/dashboard',user:{id:'google-user',user_metadata:{given_name:'Luka',family_name:'Kovač'}},profile:null});
  assert.equal(e.state.profile.account_type,'customer');assert.equal(e.state.profile.display_name,'Luka Kovač');
