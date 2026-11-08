@@ -1243,14 +1243,6 @@
     </tr>`).join('');
     return page('Reservations',`<p>${staffView?'All reservation requests and dates in one place.':'All reservation requests, dates and financial breakdown. Amounts for pending requests are estimates until payment is confirmed.'}</p>${summary}<div class="reservation-filter-bar" data-reservation-filters><label>Search by name<input type="search" data-reservation-search placeholder="Customer, owner or boat name" aria-label="Search reservations by name" autocomplete="off"></label><label>Reservation status<select data-reservation-status aria-label="Filter reservation status"><option value="all">All statuses</option><option value="accepted">Accepted</option><option value="pending">Pending</option><option value="declined">Declined</option><option value="cancelled">Cancelled</option></select></label><span class="reservation-result-count" data-reservation-result-count>${rows.length} reservations</span></div><div class="profile-panel reservation-filter-empty" data-reservation-no-results hidden>No matching reservations. Try another name or status.</div><section class="profile-panel reservations-table-panel"><table class="reservations-table ${staffView?'staff-reservations-table':''}" style="width:100%;border-collapse:collapse;text-align:left;table-layout:fixed"><thead><tr style="border-bottom:1px solid #dce8ed"><th style="padding:14px 12px">Boat / traveller / owner</th><th style="padding:14px 12px">Rental dates</th><th style="padding:14px 12px">Status</th><th style="padding:14px 12px;text-align:right">Guest total</th>${staffView?'':`<th style="padding:14px 12px;text-align:right">Commission</th><th style="padding:14px 12px;text-align:right">Processing</th>`}<th style="padding:14px 12px;text-align:right">Owner net</th></tr></thead><tbody>${tr}</tbody></table></section>`);
   }
-  async function route(){const {path,params}=parseRoute();if(!['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path)&&!path.startsWith('/listing/'))return null;
-    if(!client)return ['/login','/owner','/bookings','/account','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path)?loginPage():page('Welcome aboard.','<p>Connecting your account…</p>');
-    if(path==='/login'&&session&&!recovery){location.hash=afterLogin();return !profile?profileDialog(authNext):page('Welcome back.','<p>Opening your account…</p>')}
-    if(path==='/login')return loginPage();
-    if(path==='/owner'&&!session)return loginPage();
-    if(session&&profile&&['/dashboard','/owner','/account','/bookings','/favourites','/messages'].includes(path)&&!superAdmin&&!verificationStaff){
-      try{await refreshSidebarNotifications()}catch(error){console.warn('Notification counts unavailable',error?.message||error)}
-    }
   let publicBoatsCache=null;
   let publicBoatsCacheUntil=0;
   let publicBoatsInflight=null;
@@ -1273,6 +1265,14 @@
     })();
     try{return await publicBoatsInflight}finally{publicBoatsInflight=null}
   }
+  async function route(){const {path,params}=parseRoute();if(!['/boats','/owner','/bookings','/account','/login','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path)&&!path.startsWith('/listing/'))return null;
+    if(!client)return ['/login','/owner','/bookings','/account','/dashboard','/favourites','/staff','/staff-control','/reservations','/messages'].includes(path)?loginPage():page('Welcome aboard.','<p>Connecting your account…</p>');
+    if(path==='/login'&&session&&!recovery){location.hash=afterLogin();return !profile?profileDialog(authNext):page('Welcome back.','<p>Opening your account…</p>')}
+    if(path==='/login')return loginPage();
+    if(path==='/owner'&&!session)return loginPage();
+    if(session&&profile&&['/dashboard','/owner','/account','/bookings','/favourites','/messages'].includes(path)&&!superAdmin&&!verificationStaff){
+      try{await refreshSidebarNotifications()}catch(error){console.warn('Notification counts unavailable',error?.message||error)}
+    }
     if(path==='/boats') {
       // Fetch catalogue in bounded pages so Supabase's row cap never hides later listings.
       // Cache briefly to avoid downloading the full catalogue on every filter/page change.
@@ -1388,7 +1388,7 @@ const PAGE_SIZE=12;
               <fieldset class="rental-range-section" aria-label="Boat length"><div class="rental-range-head"><span>Boat length</span><div class="rental-length-label"><output data-length-summary>${minLength} - ${maxLength===15?'15+':maxLength} m</output></div></div><div class="rental-double-slider" data-rental-length><div class="rental-slider-track"></div><div class="rental-slider-active" style="left:${minLength/15*100}%;right:${100-maxLength/15*100}%"></div><input type="range" name="min_length" min="0" max="15" step="1" value="${minLength}" aria-label="Minimum boat length"><input type="range" name="max_length" min="0" max="15" step="1" value="${maxLength}" aria-label="Maximum boat length"></div><div class="rental-length-ticks"><span>0 m</span><span>15+ m</span></div></fieldset><fieldset class="rental-range-section" aria-label="Engine power"><div class="rental-range-head"><span>Engine power</span><div class="rental-length-label"><output data-range-summary>${engineMin} - ${engineMax===400?'400+':engineMax} hp</output></div></div><div class="rental-double-slider" data-rental-range="engine"><div class="rental-slider-track"></div><div class="rental-slider-active" style="left:${engineMin/400*100}%;right:${100-engineMax/400*100}%"></div><input type="range" name="engine_min" min="0" max="400" step="25" value="${engineMin}" aria-label="Minimum engine power"><input type="range" name="engine_max" min="0" max="400" step="25" value="${engineMax}" aria-label="Maximum engine power"></div><div class="rental-length-ticks"><span>0 hp</span><span>400+ hp</span></div></fieldset>
               <fieldset><legend>Equipment</legend><div class="rental-check-list">${amenities.map(([value,label])=>checkField('equipment',value,label,selectedEquipment.includes(value))).join('')}</div></fieldset>
               <fieldset class="rental-range-section" aria-label="Year of manufacture"><div class="rental-range-head"><span>Year of manufacture</span><div class="rental-length-label"><output data-year-summary>${yearMin} - ${yearMax}</output></div></div><div class="rental-double-slider" data-rental-range="year"><div class="rental-slider-track"></div><div class="rental-slider-active" style="left:${(yearMin-manufactureYearStart)/manufactureYearRange*100}%;right:${(manufactureYearEnd-yearMax)/manufactureYearRange*100}%"></div><input type="range" name="year_min" min="${manufactureYearStart}" max="${manufactureYearEnd}" step="1" value="${yearMin}" aria-label="Minimum year of manufacture"><input type="range" name="year_max" min="${manufactureYearStart}" max="${manufactureYearEnd}" step="1" value="${yearMax}" aria-label="Maximum year of manufacture"></div></fieldset>
-                            <button type="submit" class="btn rental-filter-button">Show matching boats ${icon('arrow')}</button>
+                            
               <p class="rental-sidebar-note">Owners review each booking request. Online payment is not enabled yet.</p>
             </aside>
             <section class="rental-results" aria-label="Boat search results">
