@@ -327,7 +327,7 @@
       customer: [['#/','Explore','search'],['#/favourites','Saved','heart'],['#/bookings','Bookings','calendar'],['#/messages','Messages','message'],['#/account','Profile','user']],
       staff: [['#/','Explore','search'],['#/reservations','Reservations','calendar'],['#/staff','Verification','shield'],['#/account','Profile','user']],
       'super-admin': [['#/','Explore','search'],['#/reservations','Reservations','calendar'],['#/staff','Verification','shield'],['#/staff-control','Staff','users'],['#/account','Profile','user']],
-      standard: [['#/','Discover','compass'],['#/boats','Explore','search'],['#/favourites','Saved','heart'],['#/account','Profile','user']]
+      standard: [['#/','Discover','compass'],['#/boats','Explore','search'],['#/how-it-works','How it works','compass'],['#/login','Log in','user']]
     };
     if (nav.dataset.gbbNavMode !== mode) {
       nav.innerHTML = itemsByRole[mode].map(([href,label,symbol]) => `<a href="${href}"${href === '#/owner?view=requests' ? ' data-gbb-notification="requests"' : href === '#/messages' ? ' data-gbb-notification="messages"' : ''}>${icon(symbol)}<span>${label}</span></a>`).join('');
@@ -359,8 +359,8 @@
       selectedRoute = route === '#/' || route === '#/boats' ? '#/'
         : route === '#/dashboard' ? (mode === 'super-admin' ? '#/reservations' : '#/staff') : route;
     } else {
-      selectedRoute = route === '#/favourites' ? '#/favourites'
-        : ['#/dashboard', '#/account', '#/bookings', '#/messages'].includes(route) ? '#/account'
+      selectedRoute = route === '#/login' ? '#/login'
+        : route === '#/how-it-works' ? '#/how-it-works'
         : route === '#/boats' || route === '#/' ? route : '';
     }
     nav.querySelectorAll('a').forEach(a => {
@@ -482,12 +482,17 @@
       if (!form) return;
       form.classList.add('gbb-mobile-search-dialog');
     }
+    form.setAttribute('role','dialog');
+    form.setAttribute('aria-modal','true');
+    form.setAttribute('aria-label','Boat search');
     document.body.classList.add('gbb-search-open');
     // Wait for an explicit tap on Where before focusing it or showing suggestions.
   }
 
   function closeSearch() {
     document.body.classList.remove('gbb-search-open');
+    const modal = document.querySelector('.gbb-mobile-search-dialog');
+    if(modal){modal.removeAttribute('role');modal.removeAttribute('aria-modal');modal.removeAttribute('aria-label');}
     if (movedForm) {
       movedForm.classList.remove('gbb-mobile-search-dialog');
       if (oldFormParent && oldFormParent.isConnected) {
