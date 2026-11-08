@@ -1251,8 +1251,33 @@
     if(session&&profile&&['/dashboard','/owner','/account','/bookings','/favourites','/messages'].includes(path)&&!superAdmin&&!verificationStaff){
       try{await refreshSidebarNotifications()}catch(error){console.warn('Notification counts unavailable',error?.message||error)}
     }
+  let publicBoatsCache=null;
+  let publicBoatsCacheUntil=0;
+  let publicBoatsInflight=null;
+  async function loadPublicBoatCatalogue(){
+    if(publicBoatsCache&&Date.now()<publicBoatsCacheUntil)return publicBoatsCache;
+    if(publicBoatsInflight)return publicBoatsInflight;
+    publicBoatsInflight=(async()=>{
+      const all=[];
+      const chunkSize=500;
+      for(let offset=0;;offset+=chunkSize){
+        const rows=check(await client.from('boats').select('*').eq('published',true)
+          .order('created_at',{ascending:false}).order('id',{ascending:false})
+          .range(offset,offset+chunkSize-1));
+        all.push(...rows);
+        if(rows.length<chunkSize)break;
+      }
+      publicBoatsCache=all;
+      publicBoatsCacheUntil=Date.now()+30000;
+      return all;
+    })();
+    try{return await publicBoatsInflight}finally{publicBoatsInflight=null}
+  }
     if(path==='/boats') {
-      const boats=check(await client.from('boats').select('*').eq('published',true).order('created_at',{ascending:false}));
+      // Fetch catalogue in bounded pages so Supabase's row cap never hides later listings.
+      // Cache briefly to avoid downloading the full catalogue on every filter/page change.
+      const boats=await loadPublicBoatCatalogue();
+
       const rawSearch=(params.get('location')||params.get('country')||'').trim();
       const foldCity=text=>String(text||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().replace(/[đð]/g,'d').replace(/ı/g,'i').replace(/ł/g,'l').replace(/ø/g,'o').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ß/g,'ss').replace(/þ/g,'th').trim();
       const searchInput=window.resolveDestinationName?.(rawSearch,destinationCities)||rawSearch;
@@ -1282,7 +1307,10 @@
       const layoutHref=mode=>{const q=new URLSearchParams(params);if(mode==='grid')q.delete('layout');else q.set('layout','list');return '#/boats?'+q.toString();};
       const startDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('start')||'')?params.get('start'):'';
       const endDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('end')||'')?params.get('end'):'';
-      let filtered=boats.filter(b=>{
+      const unavailableIds=startDate&&endDate&&startDate<=endDate
+        ?new Set(check(await client.rpc('public_unavailable_boat_ids',{p_start:startDate,p_end:endDate})).map(row=>row.boat_id))
+        :new Set();
+      let filtered=boats.filter(b=>!unavailableIds.has(b.id)&&(()=>{
         const where=!search||foldCity(`${b.location||''}, ${b.country||''}`).includes(search)||foldCity(b.country||'')===search||(search==='united states'&&foldCity(b.country||'')==='usa')||(search==='usa'&&foldCity(b.country||'')==='united states');
         const typeOk=!types.length||types.includes(b.type);
         const countryOk=!selectedCountry||foldCity(b.country)===(selectedCountry==='United States'?foldCity('USA'):foldCity(selectedCountry))||(selectedCountry==='United States'&&foldCity(b.country)===foldCity('United States'));
@@ -1295,7 +1323,7 @@
         const hp=Number(specs.engine_hp)||0;
         const equipped=Array.isArray(specs.equipment)?specs.equipment:[];
         return where&&typeOk&&countryOk&&yearOk&&skipperOk&&(!licenceNotRequired||(b.licence_required===false&&b.without_skipper!==false))&&(!withSkipperOnly||(b.with_skipper===true&&b.without_skipper===false))&&Number(b.guests)>=guests&&(!cabins||Number(specs.cabins)>=cabins)&&(!berths||Number(specs.berths)>=berths)&&(!engineMin||hp>=engineMin)&&(engineMax===400||hp<=engineMax)&&(!minPrice||price>=minPrice)&&(!maxPrice||price<=maxPrice)&&(!minLength||length>=minLength)&&(maxLength===15||length<=maxLength)&&selectedEquipment.every(id=>equipped.includes(id));
-      });
+      })());
       if(sorting==='price-low')filtered.sort((a,b)=>guestDailyRate(a.price)-guestDailyRate(b.price));
       if(sorting==='price-high')filtered.sort((a,b)=>guestDailyRate(b.price)-guestDailyRate(a.price));
 const PAGE_SIZE=12;
