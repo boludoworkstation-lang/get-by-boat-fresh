@@ -147,13 +147,13 @@
     const typeLabel = types.length === 1 ? types[0] : types.length > 1 ? types.length + ' boat types' : 'Boat type';
     document.querySelectorAll('[data-gbb-skipper-chip]').forEach(node => {
       const span = node.querySelector('span');
-      if (span && span.textContent !== skipperLabel) span.textContent = skipperLabel;
+      if (span && span.textContent !== skipperLabel && span.textContent !== window.GBB_LOCALE?.translate(skipperLabel)) span.textContent = skipperLabel;
       node.classList.toggle('is-selected',Boolean(skipper));
       if (node.getAttribute('aria-label') !== 'Skipper filter: '+skipperLabel) node.setAttribute('aria-label','Skipper filter: '+skipperLabel);
     });
     document.querySelectorAll('[data-gbb-type-chip]').forEach(node => {
       const span = node.querySelector('span');
-      if (span && span.textContent !== typeLabel) span.textContent = typeLabel;
+      if (span && span.textContent !== typeLabel && span.textContent !== window.GBB_LOCALE?.translate(typeLabel)) span.textContent = typeLabel;
       node.classList.toggle('is-selected',types.length > 0);
       if (node.getAttribute('aria-label') !== 'Boat type filter: '+typeLabel) node.setAttribute('aria-label','Boat type filter: '+typeLabel);
     });
@@ -456,11 +456,11 @@
     const startDate = dateInputs.length ? dateInputs[0].value : '';
     document.querySelectorAll('[data-gbb-location-summary]').forEach(node => {
       const text = location || 'Where would you like to go?';
-      if (node.textContent !== text) node.textContent = text;
+      if (node.textContent !== text && node.textContent !== window.GBB_LOCALE?.translate(text)) node.textContent = text;
     });
     document.querySelectorAll('[data-gbb-date-summary]').forEach(node => {
       const text = startDate ? 'From ' + startDate.split('-').reverse().join('/') + ' · Choose your boat' : 'Destination · Dates · Boat type';
-      if (node.textContent !== text) node.textContent = text;
+      if (node.textContent !== text && node.textContent !== window.GBB_LOCALE?.translate(text)) node.textContent = text;
     });
   }
 

@@ -92,6 +92,51 @@ Explore photos, prices and your options.|Sieh dir Fotos, Preise und Optionen an.
 Wait for booking approval|Warte auf die Buchungsbestätigung|Attendez la confirmation de la réservation|Attendi la conferma della prenotazione|Espera la confirmación de la reserva|Poczekaj na potwierdzenie rezerwacji|Várd meg a foglalás jóváhagyását|Περιμένετε την έγκριση της κράτησης
 Once your booking is confirmed, your journey can begin.|Sobald deine Buchung bestätigt ist, kann deine Reise beginnen.|Une fois votre réservation confirmée, votre aventure peut commencer.|Una volta confermata la prenotazione, il tuo viaggio può cominciare.|Cuando se confirme tu reserva, podrá empezar tu viaje.|Gdy rezerwacja zostanie potwierdzona, możesz ruszyć w drogę.|A foglalás visszaigazolása után kezdődhet az utazás.|Μόλις επιβεβαιωθεί η κράτησή σας, μπορεί να ξεκινήσει το ταξίδι σας.
 Say hello to summer|Hallo Sommer|Bonjour l’été|Dai il benvenuto all’estate|Saluda al verano|Przywitaj lato|Köszöntsd a nyarat|Καλωσορίστε το καλοκαίρι
+A boat day,|Ein Tag auf dem Boot,|Une journée en bateau,|Una giornata in barca,|Un día en barco,|Dzień na łodzi,|Egy nap a vízen,|Μια μέρα με σκάφος,
+your way.|ganz nach deinem Geschmack.|à votre façon.|a modo tuo.|a tu manera.|po swojemu.|a te módodon.|με τον δικό σας τρόπο.
+Where would you like to go?|Wohin möchtest du?|Où souhaitez-vous aller ?|Dove vuoi andare?|¿Adónde te gustaría ir?|Dokąd chcesz się wybrać?|Hová szeretnél menni?|Πού θέλετε να πάτε;
+Destination · Dates · Boat type|Reiseziel · Reisedaten · Bootstyp|Destination · Dates · Type de bateau|Destinazione · Date · Tipo di barca|Destino · Fechas · Tipo de barco|Kierunek · Daty · Typ łodzi|Úti cél · Dátumok · Hajótípus|Προορισμός · Ημερομηνίες · Τύπος σκάφους
+Discover beautiful boats and compare your options.|Entdecke schöne Boote und vergleiche deine Optionen.|Découvrez de beaux bateaux et comparez vos options.|Scopri splendide barche e confronta le opzioni.|Descubre barcos increíbles y compara tus opciones.|Odkryj piękne łodzie i porównaj dostępne opcje.|Fedezz fel gyönyörű hajókat, és hasonlítsd össze a lehetőségeket.|Ανακαλύψτε όμορφα σκάφη και συγκρίνετε τις επιλογές σας.
+Every booking is upon request|Buchungen nur auf Anfrage|Toutes les réservations se font sur demande|Prenotazioni solo su richiesta|Todas las reservas son bajo petición|Wszystkie rezerwacje na zapytanie|Foglalás csak kérésre|Όλες οι κρατήσεις κατόπιν αιτήματος
+Clear all|Alles zurücksetzen|Tout réinitialiser|Azzera tutto|Borrar todo|Wyczyść wszystko|Összes törlése|Εκκαθάριση όλων
+Boat types|Bootstypen|Types de bateaux|Tipi di barche|Tipos de barco|Typy łodzi|Hajótípusok|Τύποι σκαφών
+Yacht|Yacht|Yacht|Yacht|Yate|Jacht|Jacht|Γιοτ
+Jetski|Jetski|Jet-ski|Moto d’acqua|Moto acuática|Skuter wodny|Jet-ski|Τζετ σκι
+License not required|Kein Führerschein erforderlich|Permis non requis|Patente non richiesta|No se requiere titulación|Patent niewymagany|Nem szükséges engedély|Δεν απαιτείται άδεια
+Minimum|Minimum|Minimum|Minimo|Mínimo|Minimum|Minimum|Ελάχιστο
+Maximum|Maximum|Maximum|Massimo|Máximo|Maksimum|Maximum|Μέγιστο
+Number of people|Personenzahl|Nombre de personnes|Numero di persone|Número de personas|Liczba osób|Személyek száma|Αριθμός ατόμων
+Number of cabins|Anzahl der Kabinen|Nombre de cabines|Numero di cabine|Número de camarotes|Liczba kabin|Kabinok száma|Αριθμός καμπινών
+Number of berths|Anzahl der Schlafplätze|Nombre de couchages|Numero di posti letto|Número de plazas para dormir|Liczba miejsc do spania|Fekvőhelyek száma|Αριθμός κλινών
+Boat length|Bootslänge|Longueur du bateau|Lunghezza della barca|Eslora|Długość łodzi|Hajóhossz|Μήκος σκάφους
+Engine power|Motorleistung|Puissance du moteur|Potenza del motore|Potencia del motor|Moc silnika|Motorteljesítmény|Ισχύς κινητήρα
+Equipment|Ausstattung|Équipement|Dotazioni|Equipamiento|Wyposażenie|Felszerelés|Εξοπλισμός
+Year of manufacture|Baujahr|Année de construction|Anno di costruzione|Año de fabricación|Rok produkcji|Gyártási év|Έτος κατασκευής
+Newest listings|Neueste Angebote|Annonces récentes|Annunci più recenti|Anuncios recientes|Najnowsze oferty|Legújabb hirdetések|Νεότερες καταχωρίσεις
+Price: low to high|Preis aufsteigend|Prix croissant|Prezzo crescente|Precio ascendente|Cena rosnąco|Ár szerint növekvő|Τιμή αύξουσα
+Price: high to low|Preis absteigend|Prix décroissant|Prezzo decrescente|Precio descendente|Cena malejąco|Ár szerint csökkenő|Τιμή φθίνουσα
+boat found|Boot gefunden|bateau trouvé|barca trovata|barco encontrado|znaleziona łódź|talált hajó|σκάφος βρέθηκε
+boats found|Boote gefunden|bateaux trouvés|barche trovate|barcos encontrados|znalezione łodzie|talált hajó|σκάφη βρέθηκαν
+No boats match just yet.|Keine passenden Boote gefunden.|Aucun bateau ne correspond à votre recherche.|Nessuna barca corrisponde alla ricerca.|No hay barcos que coincidan con la búsqueda.|Brak pasujących łodzi.|Nincs a keresésnek megfelelő hajó.|Δεν βρέθηκαν σκάφη που να ταιριάζουν.
+Try adjusting your filters or explore another destination.|Passe deine Filter an oder entdecke ein anderes Reiseziel.|Modifiez vos filtres ou explorez une autre destination.|Modifica i filtri o esplora un’altra destinazione.|Ajusta los filtros o explora otro destino.|Zmień filtry lub sprawdź inny kierunek.|Módosítsd a szűrőket, vagy keress másik úti célt.|Αλλάξτε τα φίλτρα ή εξερευνήστε άλλον προορισμό.
+Explore all boats|Alle Boote entdecken|Découvrir tous les bateaux|Esplora tutte le barche|Explorar todos los barcos|Zobacz wszystkie łodzie|Összes hajó megtekintése|Δείτε όλα τα σκάφη
+Dates|Reisedaten|Dates|Date|Fechas|Daty|Dátumok|Ημερομηνίες
+Check-in|Übergabe|Départ|Consegna|Entrega|Odbiór|Átvétel|Παραλαβή
+Check-out|Rückgabe|Retour|Riconsegna|Devolución|Zwrot|Visszaadás|Επιστροφή
+check-in|Übergabe|départ|consegna|entrega|odbiór|átvétel|παραλαβή
+check-out|Rückgabe|retour|riconsegna|devolución|zwrot|visszaadás|επιστροφή
+day|Tag|jour|giorno|día|dzień|nap|ημέρα
+days|Tage|jours|giorni|días|dni|nap|ημέρες
+Choose your rental dates|Wähle deine Mietdaten|Choisissez vos dates de location|Scegli le date del noleggio|Elige las fechas de alquiler|Wybierz daty wynajmu|Válaszd ki a bérlés dátumait|Επιλέξτε ημερομηνίες ενοικίασης
+Clear dates|Daten zurücksetzen|Effacer les dates|Cancella le date|Borrar fechas|Wyczyść daty|Dátumok törlése|Εκκαθάριση ημερομηνιών
+Cancel|Abbrechen|Annuler|Annulla|Cancelar|Anuluj|Mégse|Ακύρωση
+Save|Speichern|Enregistrer|Salva|Guardar|Zapisz|Mentés|Αποθήκευση
+Select the first day, then the last day.|Wähle zuerst den ersten, dann den letzten Tag.|Sélectionnez le premier jour, puis le dernier.|Seleziona il primo giorno, poi l’ultimo.|Selecciona el primer día y después el último.|Wybierz pierwszy dzień, a następnie ostatni.|Válaszd ki az első, majd az utolsó napot.|Επιλέξτε πρώτα την πρώτη ημέρα και έπειτα την τελευταία.
+Previous month|Vorheriger Monat|Mois précédent|Mese precedente|Mes anterior|Poprzedni miesiąc|Előző hónap|Προηγούμενος μήνας
+Next month|Nächster Monat|Mois suivant|Mese successivo|Mes siguiente|Następny miesiąc|Következő hónap|Επόμενος μήνας
+Professional skipper included with boat|Professioneller Skipper inbegriffen|Skipper professionnel inclus|Skipper professionista incluso|Patrón profesional incluido|Zawodowy sternik w cenie|Hivatásos kapitány az árban|Περιλαμβάνεται επαγγελματίας κυβερνήτης
+Skipper included in the boat price.|Der Skipper ist im Mietpreis enthalten.|Le skipper est compris dans le prix de la location.|Lo skipper è incluso nel prezzo del noleggio.|El patrón está incluido en el precio del alquiler.|Sternik jest wliczony w cenę wynajmu.|A kapitány díját a bérleti ár tartalmazza.|Ο κυβερνήτης περιλαμβάνεται στην τιμή ενοικίασης.
+Send booking request|Buchungsanfrage senden|Envoyer la demande de réservation|Invia la richiesta di prenotazione|Enviar solicitud de reserva|Wyślij prośbę o rezerwację|Foglalási kérelem küldése|Αποστολή αιτήματος κράτησης
 `.trim().split('\n').map(line => {
   const [key, ...translations] = line.split('|');
   return [key, translations];
