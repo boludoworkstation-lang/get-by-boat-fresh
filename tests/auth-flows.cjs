@@ -305,6 +305,31 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  assert.match(galleryHtml,/test-deck\.jpg/);
  assert.match(galleryHtml,/10:00/);
  assert.match(galleryHtml,/17:45/);
+ // Open the lightbox, move to the next image, then close it with Escape.
+ const galleryNodes={
+   '[data-lightbox-image]':{src:''},
+   '[data-lightbox-count]':{textContent:''},
+   '[data-lightbox-close]':{addEventListener(){},focus(){}}
+ };
+ const galleryButtons=['-1','1'].map(step=>({dataset:{lightboxStep:step},addEventListener(type,handler){this.handler=handler;}}));
+ let lightboxRemoved=false,lightboxAdded=false;
+ const overlay={style:{},setAttribute(){},querySelector:s=>galleryNodes[s],querySelectorAll:()=>galleryButtons,addEventListener(){},remove(){lightboxRemoved=true;}};
+ galleryEnv.ctx.document.createElement=()=>overlay;
+ galleryEnv.ctx.document.body={style:{},appendChild(){lightboxAdded=true;}};
+ const fakeGallery={dataset:{images:JSON.stringify([firstPhoto,secondPhoto])}};
+ const fakeTrigger={dataset:{galleryOpen:'0'},hasAttribute:s=>s==='data-gallery-open',closest:s=>s==='[data-boat-gallery]'?fakeGallery:null};
+ const photoClick=galleryEnv.events.click.find(fn=>String(fn).includes("const trigger=event.target.closest?.('[data-gallery-open]"));
+ assert.ok(photoClick,'Gallery click handler must be registered');
+ photoClick({target:{closest:()=>fakeTrigger},preventDefault(){}});
+ assert.equal(lightboxAdded,true);
+ assert.equal(galleryNodes['[data-lightbox-image]'].src,firstPhoto);
+ galleryButtons[1].handler({preventDefault(){},stopImmediatePropagation(){}});
+ assert.equal(galleryNodes['[data-lightbox-image]'].src,secondPhoto);
+ const galleryKeys=galleryEnv.events.keydown.find(fn=>String(fn).includes("if(!galleryLightbox)return"));
+ assert.ok(galleryKeys,'Gallery keyboard handler must be registered');
+ galleryKeys({key:'Escape'});
+ assert.equal(lightboxRemoved,true);
+ assert.equal(galleryEnv.ctx.document.body.style.overflow,'');
  const editorEnv=await environment({hash:'#/owner?edit=boat-1',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'},boatOptions:{check_in_time:'10:00:00',check_out_time:'17:45:00'}});
  const editorHtml=await editorEnv.route('#/owner?edit=boat-1');
  assert.match(editorHtml,/name="check_in_time"/);
