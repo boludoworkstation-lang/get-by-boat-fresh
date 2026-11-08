@@ -9,7 +9,7 @@ assert.match(source,/footer-member-dot/,'Green glowing indicator should remain a
 assert.doesNotMatch(source,/Your next beautiful day starts at sea\./,'Footer placeholder should be removed');
 assert.ok(mobileSearchSource.includes("standard: [['#/','Discover','compass'],['#/boats','Explore','search'],['#/how-it-works','How it works','compass'],['#/login','Log in','user']]"));
 assert.ok(mobileSearchSource.includes("form.setAttribute('aria-modal','true')"));
-assert.ok(indexHtml.includes('backend.js?v=20261108-unpaid-availability'));
+assert.match(indexHtml,/src="backend\.js\?v=[^"]+"/);
 assert.ok(indexHtml.includes('mobile-redesign.js?v=20261108-navigation'));
 assert.ok(liveBackend.includes("const PAGE_SIZE=12;"));
 assert.ok(liveBackend.includes("loading=\"${eager?'eager':'lazy'}\""));

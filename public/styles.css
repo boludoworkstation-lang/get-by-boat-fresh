@@ -2817,3 +2817,13 @@ button[data-gallery-select]:has(img)::after {
 .destination-card[href*="country=Bahamas"] img { filter:saturate(1.12) contrast(1.05) brightness(1.11); object-position:center 56%; }
 .destination-card[href*="country=Bahamas"] .destination-shade { background:linear-gradient(0deg,rgba(3,42,55,.83) 0%,rgba(3,42,55,.24) 28%,transparent 60%); }
 .destination-card[href*="country=USA"] img { object-position:center 49%; filter:saturate(1.15) contrast(1.045) brightness(1.055); }
+
+.site-language-picker {
+  max-width: 9rem;
+  padding: .35rem .5rem;
+  border: 1px solid currentColor;
+  border-radius: .5rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}

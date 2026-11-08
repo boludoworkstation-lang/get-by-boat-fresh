@@ -27,8 +27,33 @@ function protectResponse(response, request) {
   });
 }
 
+const displayCurrencies = ['USD','AUD','BSD','ALL','TRY','PLN','HUF'];
+
+async function displayExchangeRates() {
+  try {
+    const endpoint = 'https://api.frankfurter.dev/v2/rates?base=EUR&quotes=' + displayCurrencies.join(',');
+    const response = await fetch(endpoint, {
+      signal: AbortSignal.timeout(5000),
+      cf: {cacheEverything:true, cacheTtlByStatus:{'200-299':3600,'400-599':0}}
+    });
+    if (!response.ok) throw new Error('Exchange rates unavailable');
+    const quotes = await response.json();
+    const rates = Object.fromEntries(quotes
+      .filter(row => row.base === 'EUR' && displayCurrencies.includes(row.quote) && Number.isFinite(row.rate) && row.rate > 0)
+      .map(row => [row.quote, row.rate]));
+    // The Bahamian dollar is pegged to the US dollar at parity.
+    if (!rates.BSD && rates.USD) rates.BSD = rates.USD;
+    return Response.json(rates, {headers:{'Cache-Control':'public, max-age=3600, stale-while-revalidate=86400'}});
+  } catch {
+    return Response.json({}, {status:503, headers:{'Cache-Control':'no-store'}});
+  }
+}
+
 export default {
   async fetch(request, env) {
+    if (request.method === 'GET' && new URL(request.url).pathname === '/api/display-exchange-rates') {
+      return protectResponse(await displayExchangeRates(), request);
+    }
     const seoResponse = getPublicSeoResponse(request);
     if (seoResponse) return protectResponse(seoResponse, request);
     const assetResponse = await env.ASSETS.fetch(request);
