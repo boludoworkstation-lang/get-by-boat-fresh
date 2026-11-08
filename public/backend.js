@@ -838,7 +838,7 @@
     const dates=Array.from({length:before},()=>'<span class="fleet-calendar-empty" aria-hidden="true"></span>').concat(Array.from({length:days},(_,i)=>{
       const day=i+1,iso=`${safeMonth}-${String(day).padStart(2,'0')}`,s=statusDay(iso);
       const content=`<b>${day}</b><small>${s==='available'?'':s==='booked'?'Booked':s==='blocked'?'Blocked':'Request'}</small>`;
-      if(s==='available'&&iso>=today())return `<button type="button" class="fleet-calendar-day available" data-calendar-date="${iso}" aria-pressed="false" aria-label="Select ${iso}">${content}</button>`;
+      if((s==='available'||s==='requested')&&iso>=today())return `<button type="button" class="fleet-calendar-day ${s}" data-calendar-date="${iso}" aria-pressed="false" aria-label="Select ${iso}${s==='requested'?' (unpaid request)':''}">${content}</button>`;
       return `<span class="fleet-calendar-day ${s} ${iso<today()?'past':''}" aria-label="${iso}: ${s}; not selectable">${content}</span>`;
     }));
     return `<div class="fleet-calendar-toolbar"><h3>${esc(monthTitle)}</h3><div><button type="button" data-calendar-month="${back}" aria-label="Previous month">‹</button><button type="button" data-calendar-month="${ahead}" aria-label="Next month">›</button></div></div><div class="fleet-calendar-weekdays">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<span>${d}</span>`).join('')}</div><div class="fleet-calendar-grid">${dates.join('')}</div><div class="fleet-calendar-legend"><span><i class="available"></i> Available</span><span><i class="requested"></i> Request</span><span><i class="booked"></i> Reserved</span><span><i class="blocked"></i> Blocked</span></div>`;
