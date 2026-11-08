@@ -12,7 +12,10 @@
   } catch {}
   const picker = () => `<select class="site-language-picker" data-site-language aria-label="Website language">${Object.entries(languages).map(([code,label])=>`<option value="${code}"${code===language?' selected':''}>${label}</option>`).join('')}</select>`;
   const rates = {EUR:1};
-  const businessCurrency = code => ({US:'USD', AU:'AUD', BS:'BSD', AL:'ALL', TR:'TRY', PL:'PLN', HU:'HUF'}[code] || 'EUR');
+  const boatCurrency = country => {
+    const key = String(country).trim().toLowerCase();
+    return Object.hasOwn(countryCurrencies,key) ? countryCurrencies[key] : 'EUR';
+  };
   const supportedCurrencies = ['EUR','USD','AUD','BSD','ALL','TRY','PLN','HUF'];
   const registeredPricing = boat => {
     const entry = boat?.specifications?.registered_pricing;
@@ -20,17 +23,17 @@
   };
   const nativeMoney = (value,currency) => new Intl.NumberFormat(language === 'en' ? 'en-IE' : language,{style:'currency',currency,currencyDisplay:currency === 'EUR' ? 'symbol' : 'code',minimumFractionDigits:2,maximumFractionDigits:2}).format(value);
   const format = (amount, currency) => {
-    const rate = currency !== 'EUR' && rates[currency];
-    const displayCurrency = rate ? currency : 'EUR';
-    return (rate ? '≈ ' : '') + new Intl.NumberFormat(language === 'en' ? 'en-IE' : language, {
+    const rate = rates[currency];
+    if(!rate)return translate('Price unavailable');
+    const displayCurrency = currency;
+    return (currency !== 'EUR' ? '≈ ' : '') + new Intl.NumberFormat(language === 'en' ? 'en-IE' : language, {
       style:'currency', currency:displayCurrency, currencyDisplay:displayCurrency === 'EUR' ? 'symbol' : 'code'
     }).format(amount * (rate || 1));
   };
   const price = (value, country) => {
     const amount = Number(value);
     if (!Number.isFinite(amount)) return '';
-    const key = String(country).trim().toLowerCase();
-    const currency = Object.hasOwn(countryCurrencies,key) ? countryCurrencies[key] : 'EUR';
+    const currency = boatCurrency(country);
     return `<span data-local-price="${amount}" data-local-currency="${currency}">${format(amount, currency)}</span>`;
   };
   const fixedPrice = (value,currency) => `<span data-local-price="${Number(value)}" data-local-currency="${currency}" data-fixed-price>${nativeMoney(value,currency)}</span>`;
@@ -80,7 +83,7 @@
     }
     refreshPrices();
   }).catch(() => {});
-  window.GBB_LOCALE = {picker, price, fixedPrice, businessCurrency, registeredPricing, nativeMoney, ready, rate:currency=>rates[currency], translate, dateLocale:()=>language==='en'?'en-GB':language};
+  window.GBB_LOCALE = {picker, price, fixedPrice, boatCurrency, registeredPricing, nativeMoney, ready, rate:currency=>rates[currency], translate, dateLocale:()=>language==='en'?'en-GB':language};
   document.documentElement.lang = language;
   document.addEventListener('change', event => {
     if (!event.target.matches('[data-site-language]') || !Object.hasOwn(languages,event.target.value)) return;

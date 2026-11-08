@@ -137,6 +137,7 @@ Next month|Nächster Monat|Mois suivant|Mese successivo|Mes siguiente|Następny 
 Professional skipper included with boat|Professioneller Skipper inbegriffen|Skipper professionnel inclus|Skipper professionista incluso|Patrón profesional incluido|Zawodowy sternik w cenie|Hivatásos kapitány az árban|Περιλαμβάνεται επαγγελματίας κυβερνήτης
 Skipper included in the boat price.|Der Skipper ist im Mietpreis enthalten.|Le skipper est compris dans le prix de la location.|Lo skipper è incluso nel prezzo del noleggio.|El patrón está incluido en el precio del alquiler.|Sternik jest wliczony w cenę wynajmu.|A kapitány díját a bérleti ár tartalmazza.|Ο κυβερνήτης περιλαμβάνεται στην τιμή ενοικίασης.
 Send booking request|Buchungsanfrage senden|Envoyer la demande de réservation|Invia la richiesta di prenotazione|Enviar solicitud de reserva|Wyślij prośbę o rezerwację|Foglalási kérelem küldése|Αποστολή αιτήματος κράτησης
+Price unavailable|Preis nicht verfügbar|Prix indisponible|Prezzo non disponibile|Precio no disponible|Cena niedostępna|Az ár nem érhető el|Η τιμή δεν είναι διαθέσιμη
 `.trim().split('\n').map(line => {
   const [key, ...translations] = line.split('|');
   return [key, translations];

@@ -46,18 +46,27 @@ const button={disabled:false};const form={dataset:{liveForm:'request',id:'boat-1
 const sendForm={dataset:{liveForm:'message',id:'request-1'},values:{content:'Hello, where do we meet?'},querySelector:s=>s==='[data-feedback]'?feedback:button};await handlers.submit[0]({target:sendForm,preventDefault(){}});assert.equal(lastWrite.table,'booking_messages');assert.equal(lastWrite.value.sender_id,'guest-1');assert.equal(lastWrite.value.content,'Hello, where do we meet?');assert.equal(notifications[1].body.event_type,'message');
 user={id:'owner-1'};account={display_name:'Captain',account_type:'owner'};await liveClick({target:{closest:()=>refresh},preventDefault(){}});html=await route('#/owner?filter=published');assert.match(html,/fleet-card-grid/);assert.match(html,/Published/);assert.match(html,/#\/owner\?edit=boat-1/);html=await route('#/owner?filter=drafts');assert.match(html,/No boats match this filter/);html=await route('#/owner?view=calendar&boat=boat-1&month=2027-07');assert.match(html,/July 2027/);assert.match(html,/data-live-form="block"/);assert.match(html,/Blocked periods/);assert.match(html,/Guest activity/);html=await route('#/owner?edit=boat-1');assert.match(html,/data-live="boat-step"/);assert.match(html,/name="skipper_fee_per_day"/);assert.match(html,/data-editor-step="2" hidden/);assert.doesNotMatch(html,/name="cabins"/);assert.doesNotMatch(html,/Your boat\. Your next guests/);
 // An Australian business can list a boat in Croatia. Its daily rate and
-// the public card must both use AUD, even when the boat country is Croatia.
+// the public card must both use EUR when the boat country is Croatia.
 ownerBusiness={business_country:'AU'};
 ctx.window.GBB_LOCALE={
-  picker:()=>'', ready:Promise.resolve(), businessCurrency:country=>country==='AU'?'AUD':'EUR',
+  picker:()=>'', ready:Promise.resolve(), boatCurrency:country=>country==='Australia'?'AUD':'EUR',
   rate:code=>code==='AUD'?1.6:1, registeredPricing:boat=>boat?.specifications?.registered_pricing,
+  price:(amount,country)=>country==='Australia'?(amount*1.6).toFixed(2)+' AUD':amount.toFixed(2)+' €',
   nativeMoney:(amount,code)=>amount.toFixed(2)+' '+code,
   fixedPrice:(amount,code)=>amount.toFixed(2)+' '+code, dateLocale:()=>'en-GB'
 };
 await liveClick({target:{closest:()=>refresh},preventDefault(){}});
 html=await route('#/owner?edit=boat-1');
-assert.match(html,/Your payout per day \(AUD\)<input name="price" type="number" value="1280"/);
+assert.match(html,/Your payout per day \(€\)<input name="price" type="number" value="800"/);
 boat.specifications.registered_pricing={currency:'AUD',eur_rate:1.6,daily_amount:1280,eur_daily_amount:800};
+html=await route('#/boats');
+assert.match(html,/rental-card-bottom[^\n]*€/);
+assert.doesNotMatch(html,/rental-card-bottom[^\n]*AUD/);
+ownerBusiness={business_country:'HR'};
+boat.country='Australia';
+await liveClick({target:{closest:()=>refresh},preventDefault(){}});
+html=await route('#/owner?edit=boat-1');
+assert.match(html,/Your payout per day \(AUD\)<input name="price" type="number" value="1280"/);
 html=await route('#/boats');
 assert.match(html,/rental-card-bottom[^\n]*AUD/);
 assert.doesNotMatch(html,/rental-card-bottom[^\n]*€/);
