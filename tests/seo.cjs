@@ -83,7 +83,9 @@ const workflow = fs.readFileSync(path.join(repo, '.github/workflows/deploy-worke
   assert.ok(homeJsonLd);
   assert.equal(JSON.parse(homeJsonLd[1])['@graph'].length,2);
   assert.match(app, /aria-label="Popular destinations"/);
-  assert.doesNotMatch(app, /FOOTER_COUNTER_BASE|342,507/);
+  assert.doesNotMatch(app, /FOOTER_COUNTER_BASE/);
+  assert.match(app, /data-member-count>342,507<\/strong>/);
+  assert.match(app, /Internal reference counter, not a verified user count/);
   assert.doesNotMatch(workflow, /appendFileSync\('public\/app\.js'/);
   console.log('PASS: indexable destination pages, sitemap, social metadata, safe cache headers, truthful homepage and one-copy frontend.');
 })().catch(error => {console.error(error); process.exitCode=1});
