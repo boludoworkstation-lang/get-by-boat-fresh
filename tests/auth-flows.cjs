@@ -285,6 +285,29 @@ async function environment({hash='#/login',user=null,profile=null,search='',requ
  e.events.click.find(fn=>String(fn).includes("const month=event.target.closest?.('[data-calendar-month]')"))({target:nextMonth,preventDefault(){}});
  assert.match(calendarPanel.innerHTML,/August 2027/);
  assert.match(e.ctx.location.hash,/month=2027-08/);assert.equal(inputs.start_date.value,'2027-07-11');
+ // Unpaid accepted requests must remain visible without blocking an owner's calendar.
+ const sampleBooking={id:'request-unpaid',boat_id:'boat-1',customer_id:'guest-1',status:'awaiting_payment',start_date:'2027-07-10',end_date:'2027-07-12',guests:2,with_skipper:false};
+ let availabilityEnv=await environment({hash:'#/owner?view=calendar&boat=boat-1&month=2027-07',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'},bookings:[sampleBooking]});
+ let availabilityHtml=await availabilityEnv.route('#/owner?view=calendar&boat=boat-1&month=2027-07');
+ assert.match(availabilityHtml,/class="fleet-calendar-day requested" data-calendar-date="2027-07-10"/);
+ assert.match(availabilityHtml,/aria-label="Select 2027-07-10 \(unpaid request\)"/);
+ availabilityEnv=await environment({hash:'#/owner?view=calendar&boat=boat-1&month=2027-07',user:{id:'owner-1'},profile:{display_name:'Owner',account_type:'owner'},bookings:[{...sampleBooking,status:'confirmed'}]});
+ availabilityHtml=await availabilityEnv.route('#/owner?view=calendar&boat=boat-1&month=2027-07');
+ assert.match(availabilityHtml,/class="fleet-calendar-day booked[^"]*" aria-label="2027-07-10: booked/);
+ assert.doesNotMatch(availabilityHtml,/data-calendar-date="2027-07-10"/);
+ // Real listing gallery and the owner's rental times are rendered from each boat's own data.
+ const firstPhoto='https://example.supabase.co/storage/v1/object/public/boat-photos/test-cover.jpg';
+ const secondPhoto='https://example.supabase.co/storage/v1/object/public/boat-photos/test-deck.jpg';
+ let galleryEnv=await environment({hash:'#/listing/boat-1',boatOptions:{photo_url:firstPhoto,photo_urls:[firstPhoto,secondPhoto],check_in_time:'10:00:00',check_out_time:'17:45:00'}});
+ let galleryHtml=await galleryEnv.route('#/listing/boat-1');
+ assert.match(galleryHtml,/data-boat-gallery/);
+ assert.match(galleryHtml,/data-gallery-open="0"/);
+ assert.match(galleryHtml,/test-deck\.jpg/);
+ assert.match(galleryHtml,/10:00/);
+ assert.match(galleryHtml,/17:45/);
+ galleryHtml=await galleryEnv.route('#/owner?edit=boat-1');
+ assert.match(galleryHtml,/name="check_in_time"/);
+ assert.match(galleryHtml,/name="check_out_time"/);
  // Google supplies a full name: a customer profile is created without an extra form.
  e=await environment({hash:'#/dashboard',user:{id:'google-user',user_metadata:{given_name:'Luka',family_name:'Kovač'}},profile:null});
  assert.equal(e.state.profile.account_type,'customer');assert.equal(e.state.profile.display_name,'Luka Kovač');
