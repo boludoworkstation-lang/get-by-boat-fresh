@@ -10,7 +10,8 @@
     const saved = localStorage.getItem('gbb.language');
     if (Object.hasOwn(languages, saved)) language = saved;
   } catch {}
-  const picker = () => `<select class="site-language-picker" data-site-language aria-label="Website language">${Object.entries(languages).map(([code,label])=>`<option value="${code}"${code===language?' selected':''}>${label}</option>`).join('')}</select>`;
+  const globe = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>';
+  const picker = () => `<details class="site-language-menu" data-site-language-menu><summary aria-label="Website language" aria-haspopup="true">${globe}<span data-language-label>${languages[language]}</span><svg class="site-language-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary><div class="site-language-panel"><div class="site-language-heading">Language</div><div class="site-language-options">${Object.entries(languages).map(([code,label])=>`<button type="button" data-language-option="${code}" aria-pressed="${code===language}"><span class="site-language-code">${code.toUpperCase()}</span><span>${label}</span><svg class="site-language-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg></button>`).join('')}</div></div><select hidden data-site-language aria-label="Website language">${Object.entries(languages).map(([code,label])=>`<option value="${code}"${code===language?' selected':''}>${label}</option>`).join('')}</select></details>`;
   const rates = {EUR:1};
   const boatCurrency = country => {
     const key = String(country).trim().toLowerCase();
@@ -54,7 +55,7 @@
   };
   function localize(root) {
     if (root.nodeType === Node.TEXT_NODE) {
-      if (root.parentElement?.closest('script, style, textarea, option:not([value]), [data-site-language], [data-local-price], [data-user-content], .booking-message, .rental-card h3, .listing-title')) return;
+      if (root.parentElement?.closest('script, style, textarea, option:not([value]), [data-site-language], [data-language-label], [data-language-option], [data-local-price], [data-user-content], .booking-message, .rental-card h3, .listing-title')) return;
       const current = root.data;
       const previous = originals.get(root);
       const source = previous?.translated === current ? previous.source : current;
@@ -92,8 +93,33 @@
     try { localStorage.setItem('gbb.language', language); } catch {}
     document.documentElement.lang = language;
     document.querySelectorAll('[data-site-language]').forEach(select => { select.value = language; });
+    document.querySelectorAll('[data-site-language-menu]').forEach(menu => {
+      menu.querySelector('[data-language-label]').textContent = languages[language];
+      menu.querySelectorAll('[data-language-option]').forEach(option => option.setAttribute('aria-pressed', String(option.dataset.languageOption === language)));
+      menu.open = false;
+    });
     localize(document.body);
     refreshPrices();
+  });
+  document.addEventListener('click', event => {
+    const option = event.target.closest('[data-language-option]');
+    if (option) {
+      const menu = option.closest('[data-site-language-menu]');
+      const select = menu.querySelector('[data-site-language]');
+      select.value = option.dataset.languageOption;
+      select.dispatchEvent(new Event('change', {bubbles:true}));
+      menu.querySelector('summary').focus();
+    }
+    document.querySelectorAll('[data-site-language-menu][open]').forEach(menu => {
+      if (!menu.contains(event.target)) menu.open = false;
+    });
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    document.querySelectorAll('[data-site-language-menu][open]').forEach(menu => {
+      menu.open = false;
+      if (menu.contains(document.activeElement)) menu.querySelector('summary').focus();
+    });
   });
   document.addEventListener('DOMContentLoaded', () => {
     if (language !== 'en') localize(document.body);
