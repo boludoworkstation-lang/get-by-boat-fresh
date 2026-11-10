@@ -2828,14 +2828,14 @@ button[data-gallery-select]:has(img)::after {
 .site-language-menu summary:hover,.site-language-menu[open] summary{background:#f6fafb;border-color:#cbdde2}
 .site-language-menu summary:focus-visible,.site-language-options button:focus-visible{outline:2px solid #00a3bb;outline-offset:3px}
 .site-language-menu[open] summary .site-language-chevron{transform:rotate(180deg)}
-.site-language-panel{position:absolute;right:0;top:calc(100% + 12px);z-index:120;width:248px;padding:17px 9px 9px;border:1px solid #e5edef;border-radius:18px;background:#fff;box-shadow:0 16px 50px #153b461f,0 3px 10px #153b4608;white-space:normal}
+.site-language-panel{position:absolute;right:0;top:calc(100% + 12px);z-index:120;width:240px;padding:16px 8px 8px;border:1px solid #e5edef;border-radius:20px;background:#fff;box-shadow:0 20px 60px #153b4624,0 2px 8px #153b4608;white-space:normal}
 .site-language-heading{padding:0 11px 12px;color:#81939a;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 .site-language-options{display:grid;gap:3px;max-height:min(430px,60dvh);overflow-y:auto}
-.site-language-options button{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:9px 11px;border:0;border-radius:10px;background:transparent;color:#36535e;text-align:left;font:500 13px/1.4 var(--sans);transition:background .15s,color .15s}
+.site-language-options button{display:flex;align-items:center;gap:12px;width:100%;min-height:46px;padding:10px 12px;border:0;border-radius:10px;background:transparent;color:#36535e;text-align:left;font:500 13px/1.4 var(--sans);transition:background .15s,color .15s}
 .site-language-options button:hover{background:#f3f7f8}
 .site-language-options button[aria-pressed="true"]{background:#edf8fa;color:#007e94}
-.site-language-code{display:grid;place-items:center;width:29px;height:26px;border:1px solid #e3ebee;border-radius:6px;color:#83969e;font-size:9px;font-weight:650;letter-spacing:.04em;flex:none}
-.site-language-options button[aria-pressed="true"] .site-language-code{border-color:#cae9ee;color:#00869a;background:#fff}
+.site-language-flag{display:inline-flex;align-items:center;justify-content:center;width:27px;flex:none;font:22px/1 "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;letter-spacing:0}
+.site-language-menu summary .site-language-flag{width:23px;font-size:20px}
 .site-language-check{width:15px;height:15px;margin-left:auto;opacity:0;flex:none}
 .site-language-options button[aria-pressed="true"] .site-language-check{opacity:1}
 .mobile-menu .site-language-menu{align-self:flex-start;max-width:100%}

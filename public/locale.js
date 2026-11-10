@@ -10,8 +10,8 @@
     const saved = localStorage.getItem('gbb.language');
     if (Object.hasOwn(languages, saved)) language = saved;
   } catch {}
-  const globe = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>';
-  const picker = () => `<details class="site-language-menu" data-site-language-menu><summary aria-label="Website language" aria-haspopup="true">${globe}<span data-language-label>${languages[language]}</span><svg class="site-language-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary><div class="site-language-panel"><div class="site-language-heading">Language</div><div class="site-language-options">${Object.entries(languages).map(([code,label])=>`<button type="button" data-language-option="${code}" aria-pressed="${code===language}"><span class="site-language-code">${code.toUpperCase()}</span><span>${label}</span><svg class="site-language-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg></button>`).join('')}</div></div><select hidden data-site-language aria-label="Website language">${Object.entries(languages).map(([code,label])=>`<option value="${code}"${code===language?' selected':''}>${label}</option>`).join('')}</select></details>`;
+  const flags = {en:'🇬🇧', de:'🇩🇪', fr:'🇫🇷', it:'🇮🇹', es:'🇪🇸', pl:'🇵🇱', hu:'🇭🇺', el:'🇬🇷'};
+  const picker = () => `<details class="site-language-menu" data-site-language-menu><summary aria-label="Website language" aria-haspopup="true"><span class="site-language-flag" data-language-flag aria-hidden="true">${flags[language]}</span><span data-language-label>${languages[language]}</span><svg class="site-language-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary><div class="site-language-panel"><div class="site-language-heading">Language</div><div class="site-language-options">${Object.entries(languages).map(([code,label])=>`<button type="button" data-language-option="${code}" aria-pressed="${code===language}"><span class="site-language-flag" aria-hidden="true">${flags[code]}</span><span>${label}</span><svg class="site-language-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg></button>`).join('')}</div></div><select hidden data-site-language aria-label="Website language">${Object.entries(languages).map(([code,label])=>`<option value="${code}"${code===language?' selected':''}>${label}</option>`).join('')}</select></details>`;
   const rates = {EUR:1};
   const boatCurrency = country => {
     const key = String(country).trim().toLowerCase();
@@ -95,6 +95,7 @@
     document.querySelectorAll('[data-site-language]').forEach(select => { select.value = language; });
     document.querySelectorAll('[data-site-language-menu]').forEach(menu => {
       menu.querySelector('[data-language-label]').textContent = languages[language];
+      menu.querySelector('[data-language-flag]').textContent = flags[language];
       menu.querySelectorAll('[data-language-option]').forEach(option => option.setAttribute('aria-pressed', String(option.dataset.languageOption === language)));
       menu.open = false;
     });
